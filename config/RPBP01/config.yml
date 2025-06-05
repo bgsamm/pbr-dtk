@@ -1,0 +1,6 @@
+object_base: orig/RPBP01
+object: sys/main.dol
+hash: ffcd539d239722b8bb27e45c9ad4aacc818c8933
+symbols: config/RPBP01/symbols.txt
+splits: config/RPBP01/splits.txt
+mw_comment_version: 14 # 3.0a3+

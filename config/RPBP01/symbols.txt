@@ -1,0 +1,2 @@
+fn_803a6138 = .text:0x803a6138; // type:function size:0x28
+fn_803a6160 = .text:0x803a6160; // type:function
