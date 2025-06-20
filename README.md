@@ -1,5 +1,5 @@
-Some Game  
-[![Build Status]][actions] [![Code Progress]][progress] [![Data Progress]][progress] [![Discord Badge]][discord]
+Pokémon Battle Revolution 
+[![Build Status]][actions] [![Discord Badge]][discord]
 =============
 
 [Build Status]: https://github.com/bgsamm/pbr-dtk/actions/workflows/build.yml/badge.svg
