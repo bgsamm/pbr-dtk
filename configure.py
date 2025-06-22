@@ -267,10 +267,33 @@ config.libs = [
         "lib": "Runtime.PPCEABI.H",
         "mw_version": config.linker_version,
         "cflags": cflags_runtime,
-        "progress_category": "sdk",  # str | List[str]
+        "progress_category": "sdk",
         "objects": [
             Object(NonMatching, "Runtime.PPCEABI.H/global_destructor_chain.c"),
             Object(NonMatching, "Runtime.PPCEABI.H/__init_cpp_exceptions.cpp"),
+        ],
+    },
+    {
+        "lib": "game",
+        "mw_version": config.linker_version,
+        "cflags": cflags_base,
+        "progress_category": "game",
+        "objects": [
+            Object(NonMatching, "main.cpp"),
+        ],
+    },
+    {
+        "lib": "gs",
+        "mw_version": config.linker_version,
+        "cflags": cflags_base,
+        "progress_category": "game",
+        "objects": [
+            Object(NonMatching, "gs/operators.cpp"),
+            Object(NonMatching, "gs/GSmem.cpp"),
+            Object(NonMatching, "gs/GStask.cpp"),
+            Object(NonMatching, "gs/GSrender.cpp"),
+            Object(NonMatching, "gs/GSrender2.cpp"),
+            Object(NonMatching, "gs/GSvideo.cpp"),
         ],
     },
 ]

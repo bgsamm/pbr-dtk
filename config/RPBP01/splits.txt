@@ -13,9 +13,47 @@ Sections:
 	.sdata2     type:rodata align:8
 	.sbss2      type:bss align:32
 
+main.cpp:
+	.text       start:0x80006980 end:0x8000748C
+	.ctors      start:0x803E1E64 end:0x803E1E68
+	.data       start:0x80405D60 end:0x80405D88
+	.sdata      start:0x8063D2C0 end:0x8063D2D0
+	.sbss       start:0x8063E8E8 end:0x8063E918
+	.sdata2     start:0x80640600 end:0x80640610
+
 Runtime.PPCEABI.H/__init_cpp_exceptions.cpp:
 	.text       start:0x801C77C0 end:0x801C7830
 	.ctors      start:0x803E1E60 end:0x803E1E64 rename:.ctors$10
 	.dtors      start:0x803E22A0 end:0x803E22A4 rename:.dtors$10
 	.dtors      start:0x803E22A4 end:0x803E22A8 rename:.dtors$15
 	.sdata      start:0x8063D698 end:0x8063D6A0
+
+gs/operators.cpp:
+	.text       start:0x801DAA30 end:0x801DAAE0
+	.ctors      start:0x803E203C end:0x803E2040
+	.sbss       start:0x8063F2C8 end:0x8063F2D0
+
+gs/GSmem.cpp:
+	.text       start:0x801DAAE0 end:0x801DB040
+	.ctors      start:0x803E2040 end:0x803E2044
+	.bss        start:0x804912B0 end:0x80491370
+	.sbss       start:0x8063F2D0 end:0x8063F2E0
+
+gs/GStask.cpp:
+	.text       start:0x80223C54 end:0x80224104
+	.ctors      start:0x803E2120 end:0x803E2124
+	.sbss       start:0x8063F5C8 end:0x8063F5F8
+
+gs/GSrender.cpp:
+	.text       start:0x80230E48 end:0x8023234C
+	.ctors      start:0x803E2154 end:0x803E2158
+
+gs/GSrender2.cpp:
+	.text       start:0x8023234C end:0x8023283C
+	.ctors      start:0x803E2158 end:0x803E215C
+
+gs/GSvideo.cpp:
+	.text       start:0x8023EE6C end:0x80240060
+	.ctors      start:0x803E2198 end:0x803E219C
+	.sbss       start:0x8063F780 end:0x8063F790
+	.sdata2     start:0x806423E8 end:0x80642420
