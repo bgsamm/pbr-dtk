@@ -53,6 +53,12 @@ typedef enum {
     VI_XFBMODE_DF
 } VIXFBMode;
 
+typedef enum _VITimeToDIM {
+    VI_DM_DEFAULT = 0,
+    VI_DM_10M,
+    VI_DM_15M
+} VITimeToDIM;
+
 typedef void (*VIRetraceCallback)(u32 retraceCount);
 
 #ifdef __cplusplus

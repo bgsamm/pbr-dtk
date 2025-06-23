@@ -19,16 +19,30 @@ u32 __OSBusClock = 0x800000F8;
 #define OS_TIMER_CLOCK      (OS_BUS_CLOCK/4)
 
 typedef struct OSThread OSThread;
-typedef void (*OSIdleFunction)(void*);
 
+typedef void (*OSIdleFunction)(void*);
+typedef void (*OSResetCallback)(void);
+typedef void (*OSPowerCallback)(void);
+
+
+
+void* OSGetMEM1ArenaHi(void);
+void* OSGetMEM2ArenaHi(void);
+void* OSGetMEM1ArenaLo(void);
+void* OSGetMEM2ArenaLo(void);
+void OSSetMEM1ArenaLo(void* newLo);
+void OSSetMEM2ArenaLo(void* newLo);
 void DCFlushRange(void* startAddr, u32 nBytes);
 
 OSTime OSGetTime(void);
 
-OSThread* OSSetIdleFunction(OSIdleFunction idleFunction, void* param, void* stack, u32 stackSize);
-
 BOOL OSDisableInterrupts(void);
 BOOL OSRestoreInterrupts(BOOL);
+
+OSThread* OSSetIdleFunction(OSIdleFunction idleFunction, void* param, void* stack, u32 stackSize);
+OSResetCallback OSSetResetCallback(OSResetCallback callback);
+OSPowerCallback OSSetPowerCallback(OSPowerCallback callback);
+
 
 #ifdef __cplusplus
 }
