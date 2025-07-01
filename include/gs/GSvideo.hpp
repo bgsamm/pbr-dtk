@@ -43,21 +43,21 @@ union U32F32 {
 
 class GSvideo {
 public:
-    GXRenderModeObj mRenderMode;
-    XfbInfo mXfbs[MAX_XFBS];
-    XfbInfo *mActiveXfb;
-    u8 mNumBuffers;
-    u8 mRefreshRate;
-    u8 mNextField;
-    bool mWaitForRetrace;
-    u16 mEfbHeight;
-    u16 mXfbHeight;
-    GXGamma mGamma;
-    GXPixelFmt mPixelFmt;
-    f32 mYScale;
-    u32 mRetraceCount;
-    VideoFormat mVideoFmt;
-    VIRetraceCallback mRetraceCallback;
+    /* 0x0 */ GXRenderModeObj mRenderMode;
+    /* 0x3c */ XfbInfo mXfbs[MAX_XFBS];
+    /* 0x54 */ XfbInfo *mActiveXfb;
+    /* 0x58 */ u8 mNumBuffers;
+    /* 0x59 */ u8 mRefreshRate;
+    /* 0x5a */ u8 mNextField;
+    /* 0x5b */ bool mWaitForRetrace;
+    /* 0x5c */ u16 mEfbHeight;
+    /* 0x5e */ u16 mXfbHeight;
+    /* 0x60 */ GXGamma mGamma;
+    /* 0x64 */ GXPixelFmt mPixelFmt;
+    /* 0x68 */ f32 mYScale;
+    /* 0x6c */ u32 mRetraceCount;
+    /* 0x70 */ VideoFormat mVideoFmt;
+    /* 0x74 */ VIRetraceCallback mRetraceCallback;
     u8 _78;
     u8 _79;
     u8 _7a;
@@ -94,8 +94,8 @@ public:
     };
     s32 _c8;
     s32 _cc;
-    GXColor mClearColor;
-    u32 mClearZ;
+    /* 0xd0 */ GXColor mClearColor;
+    /* 0xd4 */ u32 mClearZ;
     void **_d8;
 
     GSvideo(u8, u16, VideoFormat);

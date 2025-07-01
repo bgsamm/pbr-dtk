@@ -187,7 +187,7 @@ cflags_base = [
     "-Cpp_exceptions off",
     # "-W all",
     "-O4,p",
-    "-inline auto",
+    "-inline on",
     '-pragma "cats off"',
     '-pragma "warn_notinlined off"',
     "-maxerrors 1",
@@ -280,6 +280,8 @@ config.libs = [
         "progress_category": "game",
         "objects": [
             Object(NonMatching, "main.cpp"),
+            Object(NonMatching, "800559D4.cpp"),
+            Object(NonMatching, "8005B4A4.cpp"),
         ],
     },
     {
@@ -290,10 +292,14 @@ config.libs = [
         "objects": [
             Object(NonMatching, "gs/operators.cpp"),
             Object(NonMatching, "gs/GSmem.cpp"),
+            Object(NonMatching, "gs/GSfile.cpp"),
+            Object(NonMatching, "gs/GSnand.cpp"),
             Object(NonMatching, "gs/GStask.cpp"),
+            Object(NonMatching, "gs/GSthread.cpp"),
             Object(NonMatching, "gs/GSrender.cpp"),
             Object(NonMatching, "gs/GSrender2.cpp"),
             Object(NonMatching, "gs/GSvideo.cpp"),
+            Object(NonMatching, "gs/GSfsys.cpp"),
         ],
     },
 ]

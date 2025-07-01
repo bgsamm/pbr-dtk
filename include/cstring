@@ -1,0 +1,21 @@
+#ifndef __CSTRING__
+#define __CSTRING__
+
+#include "cstddef"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void *memcpy(void *, const void *, unsigned long);
+void *memset(void *dest, int c, size_t n);
+
+int strcmp(const char *, const char *);
+char* strcpy(char *pDest, const char *pSrc);
+char* strncat(char* dest, const char* src, size_t count);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif // __CSTRING__

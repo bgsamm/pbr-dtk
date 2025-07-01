@@ -1,6 +1,6 @@
 #include <version.hpp>
 
-#include <string.h>
+#include <cstring>
 #include "gs/GSmem.hpp"
 
 extern MEMHeapHandle lbl_8063E8E8;
@@ -96,7 +96,7 @@ void *GSmem::allocFromHeapAndFill(MEMHeapHandle heap, u32 size, u32 value) {
 }
 
 void *GSmem::allocFromHeapAndClear(MEMHeapHandle heap, u32 size) {
-    allocFromHeapAndFill(heap, size, 0);
+    return allocFromHeapAndFill(heap, size, 0);
 }
 
 void *GSmem::allocFromHeapAligned(MEMHeapHandle heap, u32 size, int align) {
@@ -185,6 +185,7 @@ void GSmem::freeAllInGroup(MEMHeapHandle heap, u16 groupID) {
     MEMVisitAllocatedForExpHeap(heap, freeAllInGroupVisitor, (u32)&context);
 }
 
+// TODO revisit this function (asm?)
 void GSmem::copyMem(void *dst, const void *src, u32 size) {
     if (((u32)dst & 0x1f) != 0 || ((u32)src & 0x1f) != 0 || (size & 0x1f) != 0) {
         memcpy(dst, src, size);

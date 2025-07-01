@@ -21,6 +21,14 @@ main.cpp:
 	.sbss       start:0x8063E8E8 end:0x8063E918
 	.sdata2     start:0x80640600 end:0x80640610
 
+800559D4.cpp:
+	.text       start:0x800559D4 end:0x800598F8
+	.ctors      start:0x803E1F14 end:0x803E1F18
+
+8005B4A4.cpp:
+	.text       start:0x8005B4A4 end:0x8005CEAC
+	.ctors      start:0x803E1F20 end:0x803E1F24
+
 Runtime.PPCEABI.H/__init_cpp_exceptions.cpp:
 	.text       start:0x801C77C0 end:0x801C7830
 	.ctors      start:0x803E1E60 end:0x803E1E64 rename:.ctors$10
@@ -39,10 +47,28 @@ gs/GSmem.cpp:
 	.bss        start:0x804912B0 end:0x80491370
 	.sbss       start:0x8063F2D0 end:0x8063F2E0
 
+gs/GSfile.cpp:
+	.text       start:0x801DBE90 end:0x801DCE6C
+	.ctors      start:0x803E2050 end:0x803E2054
+	.data       start:0x804232C8 end:0x80423338
+	.bss        start:0x804917F0 end:0x80491870
+	.sdata      start:0x8063D6D0 end:0x8063D6F8
+	.sbss       start:0x8063F318 end:0x8063F340
+
+gs/GSnand.cpp:
+	.text       start:0x801DCE6C end:0x801DD5C8
+	.ctors      start:0x803E2054 end:0x803E2058
+	.sdata      start:0x8063D6F8 end:0x8063D700
+	.sbss       start:0x8063F340 end:0x8063F348
+
 gs/GStask.cpp:
 	.text       start:0x80223C54 end:0x80224104
 	.ctors      start:0x803E2120 end:0x803E2124
 	.sbss       start:0x8063F5C8 end:0x8063F5F8
+
+gs/GSthread.cpp:
+	.text       start:0x80224104 end:0x802247A0
+	.ctors      start:0x803E2124 end:0x803E2128
 
 gs/GSrender.cpp:
 	.text       start:0x80230E48 end:0x8023234C
@@ -57,3 +83,7 @@ gs/GSvideo.cpp:
 	.ctors      start:0x803E2198 end:0x803E219C
 	.sbss       start:0x8063F780 end:0x8063F790
 	.sdata2     start:0x806423E8 end:0x80642420
+
+gs/GSfsys.cpp:
+	.text       start:0x80247280 end:0x80249B7C
+	.ctors      start:0x803E21C4 end:0x803E21C8

@@ -1,5 +1,5 @@
 #include <version.hpp>
-#include <string.h>
+#include <cstring>
 
 #include "gs/GSrender.hpp"
 

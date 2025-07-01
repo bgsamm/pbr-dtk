@@ -19,12 +19,23 @@ u32 __OSBusClock = 0x800000F8;
 #define OS_TIMER_CLOCK      (OS_BUS_CLOCK/4)
 
 typedef struct OSThread OSThread;
+typedef struct OSThreadQueue OSThreadQueue;
+typedef struct OSSemaphore OSSemaphore;
+
+struct OSThreadQueue {
+    OSThread* head;
+    OSThread* tail;
+};
+
+// size: 0xc
+struct OSSemaphore {
+    s32 count;
+    OSThreadQueue queue;
+};
 
 typedef void (*OSIdleFunction)(void*);
 typedef void (*OSResetCallback)(void);
 typedef void (*OSPowerCallback)(void);
-
-
 
 void* OSGetMEM1ArenaHi(void);
 void* OSGetMEM2ArenaHi(void);
@@ -32,7 +43,12 @@ void* OSGetMEM1ArenaLo(void);
 void* OSGetMEM2ArenaLo(void);
 void OSSetMEM1ArenaLo(void* newLo);
 void OSSetMEM2ArenaLo(void* newLo);
+void DCInvalidateRange(void* startAddr, u32 nBytes);
 void DCFlushRange(void* startAddr, u32 nBytes);
+
+void OSInitSemaphore(OSSemaphore* sem, s32 count);
+s32 OSWaitSemaphore(OSSemaphore* sem);
+s32 OSSignalSemaphore(OSSemaphore* sem);
 
 OSTime OSGetTime(void);
 

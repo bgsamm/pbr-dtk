@@ -1,5 +1,5 @@
 #include <version.hpp>
-#include <string.h>
+#include <cstring>
 
 #include <revolution/os.h>
 #include <revolution/vi.h>
