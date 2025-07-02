@@ -1,4 +1,4 @@
-#include <version.hpp>
+#include "version.hpp"
 
 #include <cstring>
 #include "gs/GSmem.hpp"
@@ -6,33 +6,32 @@
 extern MEMHeapHandle lbl_8063E8E8;
 extern MEMHeapHandle lbl_8063E8EC;
 
-/* lbl_804912B0 */ static HeapSlot heapPool[MAX_HEAPS];
+/* lbl_804912B0 */ static HeapSlot sHeapPool[MAX_HEAPS];
 
-/* lbl_8063F2D6 */ static bool initialized; 
-/* lbl_8063F2D7 */ static bool unusedFlag; 
-/* lbl_8063F2D8 */ static MEMHeapHandle defaultHeap;
-/* lbl_8063F2DC */ static u16 defaultGroupID;
+/* lbl_8063F2D6 */ static bool sInitialized; 
+/* lbl_8063F2D7 */ static bool sUnusedFlag; 
+/* lbl_8063F2D8 */ static MEMHeapHandle sDefaultHeap;
+/* lbl_8063F2DC */ static u16 sDefaultGroupID;
 
 HeapSlot *GSmem::getFreeHeapSlot() {
     for (int i = 0; i < MAX_HEAPS; i++) {
-        if (!heapPool[i].isUsed) {
-            return &heapPool[i];
+        if (!sHeapPool[i].isUsed) {
+            return &sHeapPool[i];
         }
     }
-
     return NULL;
 }
 
 bool GSmem::isInitialized() {
-    return initialized;
+    return sInitialized;
 }
 
 void GSmem::init() {
-    memset(heapPool, 0, sizeof(heapPool));
-    defaultHeap = NULL;
-    defaultGroupID = 0;
-    initialized = true;
-    unusedFlag = false;
+    memset(sHeapPool, 0, sizeof(sHeapPool));
+    sDefaultHeap = NULL;
+    sDefaultGroupID = 0;
+    sInitialized = true;
+    sUnusedFlag = false;
 }
 
 MEMHeapHandle GSmem::createHeap(void *startAddress, u32 size, u16 optFlag) {
@@ -56,22 +55,22 @@ MEMHeapHandle GSmem::createHeap(void *startAddress, u32 size, u16 optFlag) {
 }
 
 MEMHeapHandle GSmem::getDefaultHeap() {
-    return defaultHeap;
+    return sDefaultHeap;
 }
 
 MEMHeapHandle GSmem::setDefaultHeap(MEMHeapHandle heap) {
     MEMHeapHandle oldHeap = getDefaultHeap();
-    defaultHeap = heap;
+    sDefaultHeap = heap;
 
     return oldHeap;
 }
 
 // TODO revisit once more info about specific heaps is known
 u16 GSmem::setDefaultGroupID(u16 groupID) {
-    u16 oldID = defaultGroupID;
-    defaultGroupID = groupID;
-    MEMSetGroupIDForExpHeap(lbl_8063E8E8, (u8)defaultGroupID);
-    MEMSetGroupIDForExpHeap(lbl_8063E8EC, (u8)defaultGroupID);
+    u16 oldID = sDefaultGroupID;
+    sDefaultGroupID = groupID;
+    MEMSetGroupIDForExpHeap(lbl_8063E8E8, (u8)sDefaultGroupID);
+    MEMSetGroupIDForExpHeap(lbl_8063E8EC, (u8)sDefaultGroupID);
 
     return oldID;
 }
@@ -185,15 +184,15 @@ void GSmem::freeAllInGroup(MEMHeapHandle heap, u16 groupID) {
     MEMVisitAllocatedForExpHeap(heap, freeAllInGroupVisitor, (u32)&context);
 }
 
-// TODO revisit this function (asm?)
 void GSmem::copyMem(void *dst, const void *src, u32 size) {
-    if (((u32)dst & 0x1f) != 0 || ((u32)src & 0x1f) != 0 || (size & 0x1f) != 0) {
+    if ((u32)dst % 0x20 != 0 || (u32)src % 0x20 != 0 || size % 0x20 != 0) {
         memcpy(dst, src, size);
         return;
     }
 
     u32 *pDst = (u32 *)dst - 1;
-    u32 *pSrc = (u32 *)src - 1; 
+    u32 *pSrc = (u32 *)src - 1;
+    // TODO get this loop to unroll properly (asm? hand unrolled?)
     for (int i = 0;  i < size / 4; i++) {
         *(++pDst) = *(++pSrc);
     }

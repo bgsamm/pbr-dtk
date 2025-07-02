@@ -69,6 +69,8 @@ gs/GStask.cpp:
 gs/GSthread.cpp:
 	.text       start:0x80224104 end:0x802247A0
 	.ctors      start:0x803E2124 end:0x803E2128
+	.data       start:0x80423C10 end:0x80423C20
+	.sbss       start:0x8063F5F8 end:0x8063F608
 
 gs/GSrender.cpp:
 	.text       start:0x80230E48 end:0x8023234C
@@ -87,3 +89,8 @@ gs/GSvideo.cpp:
 gs/GSfsys.cpp:
 	.text       start:0x80247280 end:0x80249B7C
 	.ctors      start:0x803E21C4 end:0x803E21C8
+
+gs/debug/regionOverride.cpp:
+	.text       start:0x80249BC8 end:0x80249BF0
+	.ctors      start:0x803E21D0 end:0x803E21D4
+	.sbss       start:0x8063F8A8 end:0x8063F8B8

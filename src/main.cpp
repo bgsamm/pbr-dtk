@@ -4,12 +4,13 @@
 
 #include "gs/GSmem.hpp"
 #include "gs/GStask.hpp"
+#include "gs/GSthread.hpp"
 #include "gs/GSvideo.hpp"
 
 void fn_80006980(u32, u32);
 void fn_80006A00(u32, u32);
 void fn_80006A84(u32, u32);
-void fn_80006A88();
+void *fn_80006A88(void *);
 void fn_800071F8();
 void fn_80007260();
 void fn_800072C4();
@@ -93,7 +94,7 @@ void main(void) {
     u8 *var1, *var2;
     u32 var3, var4;
     struct UnkStruct1 var5;
-    u32 var6, var7;
+    u32 var6, taskID;
     
     lbl_8063E8FC = 0;
     
@@ -146,11 +147,14 @@ void main(void) {
     OSSetMEM2ArenaLo(var1 + var3);
 
     GSmem::setDefaultHeap(lbl_8063E8E8);
+
     var4 = 0xC000;
     fn_80249BF0(var4);
     fn_80249BA0(var4 - 0x4000, 2);
     fn_801DB978(0);
-    fn_80223F0C(0x20, 4);
+
+    GStask::init(32, 4);
+    
     fn_801DB15C(0x190);
     var5._16 = 1;
     var5._17 = 1;
@@ -164,22 +168,37 @@ void main(void) {
     new UnkClass1(0x20);
     fn_802353F8(&var5);
     fn_80237794(lbl_8063F698, 0);
+
     VIEnableDimming(TRUE);
     VISetTimeToDimming(VI_DM_10M);
+
     fn_8024483C(2);
-    // TODO consider inline function
-    var7 = GStask::createTask(TASK_TYPE_1, 0, 0, fn_80006980);
-    GStask::setTaskName(var7, "main render");
-    var7 = GStask::createTask(TASK_TYPE_1, 1, 0, fn_80006A00);
-    GStask::setTaskName(var7, "input");
-    var7 = GStask::createTask(TASK_TYPE_1, 0x80, 0, fn_80006A84);
-    GStask::setTaskName(var7, "main");
-    fn_8022410C(0x20);
+
+    taskID = GStask::createTask(TASK_TYPE_MAIN, 0, 0, fn_80006980);
+    GStask::setTaskName(taskID, "main render");
+    taskID = GStask::createTask(TASK_TYPE_MAIN, 1, 0, fn_80006A00);
+    GStask::setTaskName(taskID, "input");
+    taskID = GStask::createTask(TASK_TYPE_MAIN, 0x80, 0, fn_80006A84);
+    GStask::setTaskName(taskID, "main");
+
+    GSthread::init(32);
+
     fn_802247C8(0x20);
+
     OSSetPowerCallback(fn_80007338);
     OSSetResetCallback(fn_800072C4);
+
     fn_8005925C(0);
-    fn_80224214(lbl_8063F600, 1, fn_80006A88, 0, 0x4000, 0, 1);
+
+    GSthreadManager::sInstance->createThread(
+        1,
+        fn_80006A88,
+        NULL,
+        0x4000,
+        0,
+        OS_THREAD_ATTR_DETACH
+    );
+
     fn_80059208();
     
     while (1) {
@@ -193,6 +212,6 @@ void main(void) {
         if (lbl_8063E900) {
             fn_80007260();
         }
-        GStask::fn_8022406C();
+        GStask::runMainTasks();
     }
 }

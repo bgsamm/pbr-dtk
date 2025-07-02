@@ -15,7 +15,7 @@ enum GSdvdError {
 };
 
 enum GSdvdErrorState {
-    DVD_ERROR_STATE_IDLE                = 0,
+    DVD_ERROR_STATE_OK                  = 0,
     DVD_ERROR_STATE_COVER_OPEN          = 1,
     DVD_ERROR_STATE_WAIT_COVER_CLOSE    = 2,
     DVD_ERROR_STATE_NO_DISK             = 3,
@@ -55,7 +55,7 @@ namespace GSfile {
     void readAsyncCallback(s32 result, DVDFileInfo *fileInfo);
     void seekAsyncCallback(s32 result, DVDFileInfo *fileInfo);
     bool init(u32 nFileHandles, bool patchDiskID);
-    void fn_801DC264() NO_INLINE;
+    void waitForDvdErrorClear() NO_INLINE;
     GSfileHandle *openFile(char *fileName) NO_INLINE;
     bool fileExists(char *fileName) NO_INLINE;
     s32 readFile(GSfileHandle *fileHandle, void *buffer, u32 length, u32 offset);
@@ -72,7 +72,7 @@ namespace GSfile {
     bool checkDisk() NO_INLINE;
     void errorTaskCallback(u32 taskID, u32 userParam);
     void *loadFile(char *fileName, u32 *outLength);
-    void *loadFileOnHeap(char *fileName, GSheapHandle heap, u32 *outLength);
+    void *loadFileOnHeap(char *fileName, MEMHeapHandle heap, u32 *outLength);
     bool copyFileToNand(char *fileName);
     void setErrorCallbacks(GSdvdErrorCallback errorCallback, GSdvdErrorHandledCallback errorHandledCallback);
     GSdvdError getCurrentError();

@@ -1,15 +1,13 @@
-#include <version.hpp>
+#include "version.hpp"
 
 #include <cstring>
 #include <revolution/nand.h>
 
 #include "gs/GSfile.hpp"
 #include "gs/GSnand.hpp"
+#include "gs/GSthread.hpp"
 
-extern GSheapHandle lbl_8063E8EC;
-extern u32 lbl_8063F600; // static instance?
-
-extern void fn_80224588(u32);
+extern MEMHeapHandle lbl_8063E8EC;
 
 char *GSnand::getFileName(GSnandFileHandle *nandHandle) {
     return nandHandle->mName;
@@ -209,7 +207,7 @@ bool GSnandManager::copyFile(char *fileName, bool unusedParam) {
                 if (nRead < 0) {
                     if (nRead == -1) {
                         while (true) {
-                            fn_80224588(lbl_8063F600);
+                            GSthreadManager::sInstance->sleepCurrentThread();
                         }
                     }
                     GSmem::freeHeapBlock(lbl_8063E8EC, buffer);

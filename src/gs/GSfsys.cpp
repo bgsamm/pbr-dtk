@@ -1,4 +1,4 @@
-#include <version.hpp>
+#include "version.hpp"
 
 #include <cstdio>
 #include <revolution/os.h>
@@ -286,10 +286,10 @@ bool GSfsys::fn_80248B4C(bool param1, bool param2, bool param3) {
         return false;
     }
 
-    lbl_8063F884 = GStask::createTask(TASK_TYPE_1, 254, 0, fn_802482B4);
+    lbl_8063F884 = GStask::createTask(TASK_TYPE_MAIN, 254, 0, fn_802482B4);
     GStask::setTaskName(lbl_8063F884, "GSfsysDaemonForeground");
 
-    lbl_8063F888 = GStask::createTask(TASK_TYPE_1, 2, 0, fn_80248A54);
+    lbl_8063F888 = GStask::createTask(TASK_TYPE_MAIN, 2, 0, fn_80248A54);
     GStask::setTaskName(lbl_8063F888, "GSfsysDaemonBackground");
 
     isInitialized = true;

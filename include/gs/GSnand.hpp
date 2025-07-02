@@ -1,6 +1,7 @@
 #pragma once
 
 #include <revolution/types.h>
+#include <revolution/nand.h>
 
 // TODO introduce #define's for various array sizes
 

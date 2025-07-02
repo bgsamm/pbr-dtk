@@ -1,4 +1,4 @@
-#include <version.hpp>
+#include "version.hpp"
 #include <cstring>
 
 #include <revolution/os.h>
@@ -10,81 +10,78 @@
 
 #define STACK_SIZE 0x2000
 
-// TODO name remaining unnamed labels
-/* lbl_8063F5D0 */ static TaskNode *taskPool;
-static u32 lbl_8063F5D4;
-static u32 lbl_8063F5D8;
-static u32 lbl_8063F5DC;
+/* lbl_8063F5D0 */ static GStaskHandle *sTaskPool;
+/* lbl_8063F5D4 */ static u32 sActiveTaskHandleCount;
+/* lbl_8063F5D8 */ static u32 sIdleTaskHandleCount;
+/* lbl_8063F5DC */ static u32 sTotalTaskHandleCount;
+// TODO name this variable
 static bool lbl_8063F5E0;
-/* lbl_8063F5E4 */ static u8 *stack;
-/* lbl_8063F5E8 */ static TaskNode *active;
-/* lbl_8063F5EC */ static TaskNode *head;
-static TaskNode *lbl_8063F5F0;
-static VIRetraceCallback lbl_8063F5F4;
+/* lbl_8063F5E4 */ static u8 *sIdleStack;
+/* lbl_8063F5E8 */ static GStaskHandle *sCurrentTask;
+/* lbl_8063F5EC */ static GStaskHandle *sTaskListHead;
+/* lbl_8063F5F0 */ static GStaskHandle *sIdleTaskListHead;
+/* lbl_8063F5F4 */ static VIRetraceCallback sRetraceCallback;
 
-static inline u32 getTaskID(TaskNode *task) {
-    return ((u32)task - (u32)taskPool) / sizeof(TaskNode) + 1;
+static inline u32 getTaskID(GStaskHandle *task) {
+    return ((u32)task - (u32)sTaskPool) / sizeof(GStaskHandle) + 1;
 }
 
-void GStask::runTasksOfType(TaskType type) {
-    TaskNode *task = head;
+void GStask::runTasksOfType(GStaskType type) {
+    GStaskHandle *task = sTaskListHead;
     while (task) {
-        TaskNode *next = task->next;
-        if (task->type == type && !task->disabled && (!lbl_8063F5E0 || !task->_C)) {
-            active = task;
-            task->run(getTaskID(task), task->userParam);
+        GStaskHandle *next = task->mNext;
+        if (task->mType == type && !task->mDisabled && (!lbl_8063F5E0 || !task->_C)) {
+            sCurrentTask = task;
+            task->mCallback(getTaskID(task), task->mUserParam);
         }
         task = next;
     }
-    active = NULL;
+    sCurrentTask = NULL;
 }
 
-// TODO name this function
-void GStask::fn_80223D0C(u32 param1) {
-    runTasksOfType(TASK_TYPE_3);
+void GStask::retraceCallback(u32 retraceCount) {
+    runTasksOfType(TASK_TYPE_RETRACE);
 
-    if (lbl_8063F5F4 != NULL) {
-        lbl_8063F5F4(param1);
+    if (sRetraceCallback != NULL) {
+        sRetraceCallback(retraceCount);
     }
 }
 
 void GStask::idleCallback(void *param) {
-    #pragma unused(param)
-
-    TaskNode *node, *next;
+    GStaskHandle *node, *next;
 
     while (true) {
-        runTasksOfType(TASK_TYPE_2);
+        runTasksOfType(TASK_TYPE_IDLE);
     
         BOOL intEnabled = OSDisableInterrupts();
 
-        node = lbl_8063F5F0;
+        node = sIdleTaskListHead;
         while (node) {
-            next = node->next;
-            fn_80223E00(node);
+            next = node->mNext;
+            insertTaskByPriority(node);
             node = next;
         }
-        lbl_8063F5F0 = NULL;
+        sIdleTaskListHead = NULL;
     
         OSRestoreInterrupts(intEnabled);
     }
 }
 
-TaskNode *GStask::getFreeTaskNode(TaskType type) {
-    TaskNode *node;
+GStaskHandle *GStask::getFreeTaskHandle(GStaskType taskType) {
+    GStaskHandle *node;
     int count;
     
-    if (type == TASK_TYPE_2) {
-        node = taskPool + lbl_8063F5D4;
-        count = lbl_8063F5D8;
+    if (taskType == TASK_TYPE_IDLE) {
+        node = sTaskPool + sActiveTaskHandleCount;
+        count = sIdleTaskHandleCount;
     }
     else {
-        node = taskPool;
-        count = lbl_8063F5D4;
+        node = sTaskPool;
+        count = sActiveTaskHandleCount;
     }
 
     for (int i = 0; i != count; i++, node++) {
-        if (node->type == TASK_TYPE_NULL) {
+        if (node->mType == TASK_TYPE_NULL) {
             return node;
         }
     }
@@ -92,124 +89,120 @@ TaskNode *GStask::getFreeTaskNode(TaskType type) {
     return NULL;
 }
 
-// TODO name this function
-void GStask::fn_80223E00(TaskNode *newNode) {
-    TaskNode *node = head;
-    while (node->next && node->priority < newNode->priority) {
-        node = node->next;
+void GStask::insertTaskByPriority(GStaskHandle *taskHandle) {
+    GStaskHandle *node = sTaskListHead;
+    while (node->mNext && node->mPriority < taskHandle->mPriority) {
+        node = node->mNext;
     }
 
-    if (!node->next && node->priority < newNode->priority) {
-        newNode->prev = node;
-        newNode->next = NULL;
-        node->next = newNode;
+    if (!node->mNext && node->mPriority < taskHandle->mPriority) {
+        taskHandle->mPrev = node;
+        taskHandle->mNext = NULL;
+        node->mNext = taskHandle;
         return;
     }
 
-    if (node->prev != NULL) {
-        node->prev->next = newNode;
+    if (node->mPrev != NULL) {
+        node->mPrev->mNext = taskHandle;
     }
 
-    newNode->prev = node->prev;
-    newNode->next = node;
-    node->prev = newNode;
+    taskHandle->mPrev = node->mPrev;
+    taskHandle->mNext = node;
+    node->mPrev = taskHandle;
 
-    if (head == node) {
-        head = newNode;
+    if (sTaskListHead == node) {
+        sTaskListHead = taskHandle;
     }
 }
 
-// TODO name this function
-void GStask::fn_80223E88(TaskNode *newNode) {
-    newNode->next = lbl_8063F5F0;
-    lbl_8063F5F0 = newNode;
+void GStask::pushIdleTask(GStaskHandle *taskHandle) {
+    taskHandle->mNext = sIdleTaskListHead;
+    sIdleTaskListHead = taskHandle;
 }
 
-void GStask::insertTaskNode(TaskNode *newNode) {
-    if (head == NULL) {
-        head = newNode;
+void GStask::enqueueTask(GStaskHandle *taskHandle) {
+    if (sTaskListHead == NULL) {
+        sTaskListHead = taskHandle;
         return;
     }
 
     BOOL intEnabled = OSDisableInterrupts();
-    if (newNode->type == TASK_TYPE_2) {
-        fn_80223E88(newNode);
+    if (taskHandle->mType == TASK_TYPE_IDLE) {
+        pushIdleTask(taskHandle);
     }
     else {
-        fn_80223E00(newNode);
+        insertTaskByPriority(taskHandle);
     }
     OSRestoreInterrupts(intEnabled);
 }
 
-void GStask::init(int param1, int param2) {
-    lbl_8063F5D4 = param1;
-    lbl_8063F5D8 = param2;
-    lbl_8063F5DC = param1 + param2;
-    active = NULL;
-    taskPool = (TaskNode *)GSmem::allocFromDefaultHeap(lbl_8063F5DC * sizeof(TaskNode));
-    
-    if (taskPool == NULL) {
+void GStask::init(u32 activeCount, u32 idleCount) {
+    sActiveTaskHandleCount = activeCount;
+    sIdleTaskHandleCount = idleCount;
+    sTotalTaskHandleCount = activeCount + idleCount;
+
+    sCurrentTask = NULL;
+
+    sTaskPool = (GStaskHandle *)GSmem::allocFromDefaultHeap(sTotalTaskHandleCount * sizeof(GStaskHandle));
+    if (sTaskPool == NULL) {
         return;
     }
     
-    for (int i = 0; i < lbl_8063F5DC; i++) {
-        taskPool[i].type = TASK_TYPE_NULL;
+    for (u32 i = 0; i < sTotalTaskHandleCount; i++) {
+        sTaskPool[i].mType = TASK_TYPE_NULL;
     }
 
-    stack = (u8 *)GSmem::allocFromDefaultHeap(STACK_SIZE);
-    OSSetIdleFunction(idleCallback, NULL, stack + STACK_SIZE - 4, STACK_SIZE - 4);
+    sIdleStack = (u8 *)GSmem::allocFromDefaultHeap(STACK_SIZE);
+    OSSetIdleFunction(idleCallback, NULL, sIdleStack + STACK_SIZE - 4, STACK_SIZE - 4);
 
     if (GSvideo::sInstance) {
         VIRetraceCallback temp = GSvideo::sInstance->mRetraceCallback;
-        GSvideo::sInstance->mRetraceCallback = fn_80223D0C;
-        lbl_8063F5F4 = temp;
+        GSvideo::sInstance->mRetraceCallback = retraceCallback;
+        sRetraceCallback = temp;
     }
 }
 
-u32 GStask::createTask(TaskType type, u8 priority, u32 userParam, TaskCallback callback) {
-    TaskNode *node = getFreeTaskNode(type);
+u32 GStask::createTask(GStaskType taskType, u8 priority, u32 userParam, GStaskCallback callback) {
+    GStaskHandle *node = getFreeTaskHandle(taskType);
 
     if (node == NULL) {
         return 0;
     }
 
-    node->prev = NULL;
-    node->next = NULL;
-    node->type = type;
-    node->priority = priority;
-    node->disabled = false;
-    node->userParam = userParam;
-    node->run = callback;
+    node->mPrev = NULL;
+    node->mNext = NULL;
+    node->mType = taskType;
+    node->mPriority = priority;
+    node->mDisabled = false;
+    node->mUserParam = userParam;
+    node->mCallback = callback;
     node->_C = 0;
-    node->name[0] = '\0';
+    node->mName[0] = '\0';
 
-    insertTaskNode(node);
+    enqueueTask(node);
 
     return getTaskID(node);
 }
 
-// TODO name this function
-void GStask::fn_8022406C() {
-    runTasksOfType(TASK_TYPE_1);
+void GStask::runMainTasks() {
+    runTasksOfType(TASK_TYPE_MAIN);
 }
 
 // TODO name this function
-TaskNode *GStask::fn_80224074(u32 param) {
-    #pragma unused(param)
-
-    TaskNode *node = head;
+GStaskHandle *GStask::fn_80224074(u32 param1) {
+    GStaskHandle *node = sTaskListHead;
     while (node) {
-        node = node->next;
+        node = node->mNext;
     }
     return node;
 }
 
 void GStask::setTaskName(u32 taskID, char *name) {
-    TaskNode *node;
+    GStaskHandle *node;
     
     if (name != NULL && taskID != 0) {
-        node = &taskPool[taskID - 1];
-        memcpy(node->name, name, sizeof(node->name) - 1);
-        node->name[sizeof(node->name) - 1] = '\0';
+        node = &sTaskPool[taskID - 1];
+        memcpy(node->mName, name, sizeof(node->mName) - 1);
+        node->mName[sizeof(node->mName) - 1] = '\0';
     }
 }

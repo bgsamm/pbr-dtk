@@ -3,6 +3,8 @@
 
 #include <revolution/types.h>
 
+#include <revolution/os/OSThread.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -18,21 +20,6 @@ u32 __OSBusClock = 0x800000F8;
 #define OS_BUS_CLOCK        __OSBusClock
 #define OS_TIMER_CLOCK      (OS_BUS_CLOCK/4)
 
-typedef struct OSThread OSThread;
-typedef struct OSThreadQueue OSThreadQueue;
-typedef struct OSSemaphore OSSemaphore;
-
-struct OSThreadQueue {
-    OSThread* head;
-    OSThread* tail;
-};
-
-// size: 0xc
-struct OSSemaphore {
-    s32 count;
-    OSThreadQueue queue;
-};
-
 typedef void (*OSIdleFunction)(void*);
 typedef void (*OSResetCallback)(void);
 typedef void (*OSPowerCallback)(void);
@@ -46,16 +33,13 @@ void OSSetMEM2ArenaLo(void* newLo);
 void DCInvalidateRange(void* startAddr, u32 nBytes);
 void DCFlushRange(void* startAddr, u32 nBytes);
 
-void OSInitSemaphore(OSSemaphore* sem, s32 count);
-s32 OSWaitSemaphore(OSSemaphore* sem);
-s32 OSSignalSemaphore(OSSemaphore* sem);
+BOOL OSDisableInterrupts(void);
+BOOL OSRestoreInterrupts(BOOL enabled);
+
+OSThread* OSSetIdleFunction(OSIdleFunction idleFunction, void* param, void* stack, u32 stackSize);
 
 OSTime OSGetTime(void);
 
-BOOL OSDisableInterrupts(void);
-BOOL OSRestoreInterrupts(BOOL);
-
-OSThread* OSSetIdleFunction(OSIdleFunction idleFunction, void* param, void* stack, u32 stackSize);
 OSResetCallback OSSetResetCallback(OSResetCallback callback);
 OSPowerCallback OSSetPowerCallback(OSPowerCallback callback);
 
