@@ -3,6 +3,7 @@
 
 #include <revolution/types.h>
 
+#include <revolution/os/OSFastCast.h>
 #include <revolution/os/OSThread.h>
 
 #ifdef __cplusplus

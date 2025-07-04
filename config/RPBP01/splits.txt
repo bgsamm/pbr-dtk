@@ -61,6 +61,31 @@ gs/GSnand.cpp:
 	.sdata      start:0x8063D6F8 end:0x8063D700
 	.sbss       start:0x8063F340 end:0x8063F348
 
+gs/math/GSrand.cpp:
+	.text       start:0x80223830 end:0x802238A0
+	.ctors      start:0x803E2110 end:0x803E2114
+	.bss        start:0x80493320 end:0x80493330
+	.sbss       start:0x8063F598 end:0x8063F5A0
+
+gs/math/GStrig.cpp:
+	.text       start:0x802238A0 end:0x80223A0C
+	.ctors      start:0x803E2114 end:0x803E2118
+	.bss        start:0x80493330 end:0x80493608
+	.sbss       start:0x8063F5A0 end:0x8063F5A8
+	.sdata2     start:0x80642238 end:0x80642268
+
+gs/math/GSquat.cpp:
+	.text       start:0x80223A0C end:0x80223BC8
+	.ctors      start:0x803E2118 end:0x803E211C
+	.bss        start:0x80493608 end:0x80493648
+	.sbss       start:0x8063F5A8 end:0x8063F5C0
+	.sdata2     start:0x80642268 end:0x80642278
+
+gs/math/GSmathInit.cpp:
+	.text       start:0x80223BC8 end:0x80223C54
+	.ctors      start:0x803E211C end:0x803E2120
+	.sbss       start:0x8063F5C0 end:0x8063F5C8
+
 gs/GStask.cpp:
 	.text       start:0x80223C54 end:0x80224104
 	.ctors      start:0x803E2120 end:0x803E2124

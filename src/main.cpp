@@ -2,6 +2,7 @@
 #include <revolution/os.h>
 #include <revolution/vi.h>
 
+#include "gs/GSmath.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GStask.hpp"
 #include "gs/GSthread.hpp"
@@ -22,7 +23,6 @@ void fn_80059208();
 void fn_8005925C(u32);
 void fn_801DB15C(u32);
 void fn_801DB978(u32);
-void fn_80223BC8();
 void fn_80223F0C(u32, u32);
 void fn_8022410C(u32);
 void fn_80224214(u32, u32, void *, u32, u32, u32, u32);
@@ -98,7 +98,7 @@ void main(void) {
     
     lbl_8063E8FC = 0;
     
-    fn_80223BC8();
+    GSmath::init();
     GSmem::init();
     fn_80244A50();
     fn_8024575C();
