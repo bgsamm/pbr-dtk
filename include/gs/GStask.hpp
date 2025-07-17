@@ -12,6 +12,7 @@ enum GStaskType {
     TASK_TYPE_RETRACE   = 3
 };
 
+// size: 0x3c
 struct GStaskHandle {
     /* 0x0 */ GStaskHandle *mPrev;
     /* 0x4 */ GStaskHandle *mNext;

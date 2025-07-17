@@ -110,7 +110,7 @@ void main(void) {
     if (var3 > 0x1500000) {
         var3 = 0x1500000;
     }
-    lbl_8063E8E8 = GSmem::createHeap(var1, var3, 4);
+    lbl_8063E8E8 = GSmem::createHeap(var1, var3, MEM_HEAP_OPT_THREAD_SAFE);
     OSSetMEM1ArenaLo(var1 + var3);
 
     var1 = (u8 *)OSGetMEM1ArenaLo();
@@ -119,7 +119,7 @@ void main(void) {
     if (var3 > 0x100000) {
         var3 = 0x100000;
     }
-    lbl_8063E8F8 = GSmem::createHeap(var1, var3, 4);
+    lbl_8063E8F8 = GSmem::createHeap(var1, var3, MEM_HEAP_OPT_THREAD_SAFE);
     OSSetMEM1ArenaLo(var1 + var3);
 
     var1 = (u8 *)OSGetMEM2ArenaLo();
@@ -128,7 +128,7 @@ void main(void) {
     if (var3 > 0xc00000) {
         var3 = 0xc00000;
     }
-    lbl_8063E8F0 = GSmem::createHeap(var1, var3, 4);
+    lbl_8063E8F0 = GSmem::createHeap(var1, var3, MEM_HEAP_OPT_THREAD_SAFE);
     OSSetMEM2ArenaLo(var1 + var3);
 
     var1 = (u8 *)OSGetMEM2ArenaLo();
@@ -137,13 +137,13 @@ void main(void) {
     if (var3 > 0x100000) {
         var3 = 0x100000;
     }
-    lbl_8063E8F4 = GSmem::createHeap(var1, var3, 4);
+    lbl_8063E8F4 = GSmem::createHeap(var1, var3, MEM_HEAP_OPT_THREAD_SAFE);
     OSSetMEM2ArenaLo(var1 + var3);
 
     var1 = (u8 *)OSGetMEM2ArenaLo();
     var2 = (u8 *)OSGetMEM2ArenaHi();
     var3 = var2 - var1;
-    lbl_8063E8EC = GSmem::createHeap(var1, var3, 4);
+    lbl_8063E8EC = GSmem::createHeap(var1, var3, MEM_HEAP_OPT_THREAD_SAFE);
     OSSetMEM2ArenaLo(var1 + var3);
 
     GSmem::setDefaultHeap(lbl_8063E8E8);

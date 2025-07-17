@@ -23,7 +23,7 @@ extern "C" {
 
 typedef struct DVDDiskID DVDDiskID;
 typedef struct DVDCommandBlock DVDCommandBlock;
-typedef struct DVDFileInfo  DVDFileInfo;
+typedef struct DVDFileInfo DVDFileInfo;
 typedef void (*DVDCallback)(s32 result, DVDFileInfo* fileInfo);
 typedef void (*DVDCBCallback)(s32 result, DVDCommandBlock* block);
 

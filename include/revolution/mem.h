@@ -7,6 +7,10 @@
 extern "C" {
 #endif
 
+#define MEM_HEAP_OPT_0_CLEAR         (1 << 0)
+#define MEM_HEAP_OPT_DEBUG_FILL      (1 << 1)
+#define MEM_HEAP_OPT_THREAD_SAFE     (1 << 2)
+
 typedef struct MEMiHeapHead MEMiHeapHead;
 typedef MEMiHeapHead* MEMHeapHandle;
 

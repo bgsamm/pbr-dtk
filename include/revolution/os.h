@@ -25,6 +25,8 @@ typedef void (*OSIdleFunction)(void*);
 typedef void (*OSResetCallback)(void);
 typedef void (*OSPowerCallback)(void);
 
+void OSReport(const char* msg, ...);
+
 void* OSGetMEM1ArenaHi(void);
 void* OSGetMEM2ArenaHi(void);
 void* OSGetMEM1ArenaLo(void);
@@ -35,6 +37,7 @@ void DCInvalidateRange(void* startAddr, u32 nBytes);
 void DCFlushRange(void* startAddr, u32 nBytes);
 
 BOOL OSDisableInterrupts(void);
+BOOL OSEnableInterrupts(void);
 BOOL OSRestoreInterrupts(BOOL enabled);
 
 OSThread* OSSetIdleFunction(OSIdleFunction idleFunction, void* param, void* stack, u32 stackSize);

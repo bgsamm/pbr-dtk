@@ -219,7 +219,6 @@ void GSthreadHandle::stopThread(bool wait) {
         return;
     }
 
-    // TODO get this to load new copy of mFlags
     mFlags |= 2;
 
     if (OSGetCurrentThread() == &mThread) {
@@ -241,7 +240,7 @@ void GSthreadHandle::suspendThread() {
 }
 
 bool GSthreadHandle::isThreadStopped() {
-    // Does not match using !(mFlags & 1)
+    // NOTE does not match using !(mFlags & 1)
     if ((mFlags & 1) == 0) {
         return true;
     }
