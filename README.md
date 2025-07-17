@@ -1,5 +1,5 @@
 Pokémon Battle Revolution 
-[![Build Status]][actions] [![Discord Badge]][discord]
+[![Build Status]][actions] [![Progress]][progress] [![Discord Badge]][discord]
 =============
 
 [Build Status]: https://github.com/bgsamm/pbr-dtk/actions/workflows/build.yml/badge.svg
@@ -7,10 +7,9 @@ Pokémon Battle Revolution
 <!--
 decomp.dev progress badges
 See https://decomp.dev/api for an API overview.
-[Code Progress]: https://decomp.dev/zeldaret/tww.svg?mode=shield&measure=code&label=Code
-[Data Progress]: https://decomp.dev/zeldaret/tww.svg?mode=shield&measure=data&label=Data
-[progress]: https://decomp.dev/zeldaret/tww
 -->
+[Progress]: https://decomp.dev/bgsamm/pbr-dtk.svg?mode=shield&label=Progress
+[progress]: https://decomp.dev/bgsamm/pbr-dtk
 [Discord Badge]: https://img.shields.io/discord/727908905392275526?color=%237289DA&logo=discord&logoColor=%23FFFFFF
 [discord]: https://discord.gg/hKx3FJJgrV
 
