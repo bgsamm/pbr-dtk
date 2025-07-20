@@ -95,11 +95,11 @@ void GSrender::fn_80232770() {
     GXSetGPFifo(NULL);
 
     if (_163c._16e4 != NULL) {
-        GSmem::freeDefaultHeapBlock(_163c._16e4);
+        GSmem::free(_163c._16e4);
     }
 
     if (_163c._16c4 != NULL) {
-        GSmem::freeDefaultHeapBlock(_163c._16c4);
+        GSmem::free(_163c._16c4);
     }
 
     memset(&_163c, 0, 0xac);

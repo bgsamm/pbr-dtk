@@ -3,10 +3,9 @@
 #include <cstring>
 #include <revolution/os.h>
 
+#include "gs/GScache.hpp"
 #include "gs/GSfsys.hpp"
 #include "gs/GSmem.hpp"
-
-extern void *fn_801DB360(u32, u32, u32, u32, u32);
 
 #define DATA_HEAP_SIZE 0x50000
 
@@ -202,7 +201,6 @@ bool GSfsys::releaseFirstCacheEntryForFsys(u32 fsysId) {
     return releaseFsysCacheEntry(cacheEntry);
 }
 
-// TODO name this function once fn_801DB360 understood
-void *GSfsys::fn_80244EA8(u32 size, u32 fsysId, u32 fileId) {
-    return fn_801DB360(size, 0x20, fsysId, fileId, 0);
+void *GSfsys::allocBufferInFileCache(u32 size, u32 fsysId, u32 fileId) {
+    return GScache::createCacheEntryAligned(size, 0x20, fsysId, fileId, 0);
 }

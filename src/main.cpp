@@ -2,6 +2,8 @@
 #include <revolution/os.h>
 #include <revolution/vi.h>
 
+#include "gs/GScache.hpp"
+#include "gs/GSfsys.hpp"
 #include "gs/GSmath.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GStask.hpp"
@@ -21,7 +23,6 @@ void fn_8000AE8C();
 void fn_80055D94();
 void fn_80059208();
 void fn_8005925C(u32);
-void fn_801DB15C(u32);
 void fn_801DB978(u32);
 void fn_80223F0C(u32, u32);
 void fn_8022410C(u32);
@@ -32,8 +33,6 @@ void fn_80231544(void *);
 void fn_802353F8(void *);
 void fn_80237794(void *, u32);
 void fn_8024483C(u32);
-void fn_80244A50();
-void fn_8024575C();
 void fn_80249BA0(u32, u32);
 void fn_80249BF0(u32);
 
@@ -56,12 +55,12 @@ public:
     UnkClass1(u32);
 };
 
-MEMHeapHandle lbl_8063E8E8; // global
-MEMHeapHandle lbl_8063E8EC; // global
+MEMHeapHandle lbl_8063E8E8;
+MEMHeapHandle lbl_8063E8EC;
 MEMHeapHandle lbl_8063E8F0;
 MEMHeapHandle lbl_8063E8F4;
-MEMHeapHandle lbl_8063E8F8; // global
-u8 lbl_8063E8FC; // global?
+MEMHeapHandle lbl_8063E8F8;
+u8 lbl_8063E8FC;
 u8 lbl_8063E8FE;
 u8 lbl_8063E8FF;
 u8 lbl_8063E900;
@@ -100,8 +99,8 @@ void main(void) {
     
     GSmath::init();
     GSmem::init();
-    fn_80244A50();
-    fn_8024575C();
+    GSfsys::initFsysDataHeap();
+    GSfsys::initFsysCacheHeap();
     
     // TODO consider inline function(s)
     var1 = (u8 *)OSGetMEM1ArenaLo();
@@ -151,11 +150,13 @@ void main(void) {
     var4 = 0xC000;
     fn_80249BF0(var4);
     fn_80249BA0(var4 - 0x4000, 2);
+
     fn_801DB978(0);
 
     GStask::init(32, 4);
     
-    fn_801DB15C(0x190);
+    GScache::initFileCache(400);
+
     var5._16 = 1;
     var5._17 = 1;
     var5._8 = 0x100000;
@@ -167,6 +168,7 @@ void main(void) {
     var5._14 = 0x80;
     new UnkClass1(0x20);
     fn_802353F8(&var5);
+
     fn_80237794(lbl_8063F698, 0);
 
     VIEnableDimming(TRUE);

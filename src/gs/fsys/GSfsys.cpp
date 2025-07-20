@@ -41,7 +41,7 @@ static inline GStocEntry *getTocTableStart() {
 }
 
 void *GSfsys::allocAligned32(u32 size) {
-    return GSmem::allocFromDefaultHeapAligned(size, 0x20);
+    return GSmem::allocAligned(size, 0x20);
 }
 
 bool GSfsys::loadToc() {
@@ -712,7 +712,7 @@ void GSfsys::foregroundTaskCallback(u32 taskId, u32 userParam) {
                     }
                 }
                 if (fsysEntryHandle->mRingBuffer != NULL) {
-                    GSmem::freeDefaultHeapBlock(fsysEntryHandle->mRingBuffer);
+                    GSmem::free(fsysEntryHandle->mRingBuffer);
                     fsysEntryHandle->mRingBuffer = NULL;
                 }
                 dequeueFsysEntry(fsysEntryHandle);
@@ -796,7 +796,7 @@ void GSfsys::decompressLzss(GSfsysEntryHandle *fsysEntryHandle) {
     if (fsysEntryHandle->mRingBuffer == NULL) {
         // TODO better understand where these 17s and 18s are coming from
         u32 size = LZSS_RING_BUF_LEN + 17;
-        fsysEntryHandle->mRingBuffer = (u8 *)GSmem::allocFromDefaultHeapAlignedTop(size, -0x20);
+        fsysEntryHandle->mRingBuffer = (u8 *)GSmem::allocAlignedTop(size, -0x20);
         if (fsysEntryHandle->mRingBuffer == NULL) {
             return;
         }
@@ -969,9 +969,9 @@ void GSfsys::readUncompressedFile(GSfsysEntryHandle *fsysEntryHandle, bool doCop
         }
 
         if (doCopy == true) {
-            void *dest = (u8 *)fsysEntryHandle->mInfo->mOutputBuffer + fsysEntryHandle->mSourcePosition;
+            void *dst = (u8 *)fsysEntryHandle->mInfo->mOutputBuffer + fsysEntryHandle->mSourcePosition;
             u32 size = getChunkSize(fsysEntryHandle->mInfo->mPackedSize, fsysEntryHandle->mSourcePosition);
-            memcpy(dest, nextChunk->mBuffer, size);
+            memcpy(dst, nextChunk->mBuffer, size);
         }
 
         popChunkFromList(&fsysEntryHandle->mInfo->mCompletedChunks, true);
@@ -998,7 +998,7 @@ void GSfsys::backgroundTaskCallback(u32 taskId, u32 userParam) {
                 );
             }
             else {
-                outBuf = fn_80244EA8(
+                outBuf = allocBufferInFileCache(
                     (fsysEntryHandle->mInfo->mUnpackedSize + 0x1f) / 0x20 * 0x20,
                     fsysEntryHandle->mFsysHandle->mFsysId,
                     fsysEntryHandle->mInfo->mFileId

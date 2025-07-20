@@ -598,14 +598,14 @@ void *GSfile::loadFile(char *fileName, u32 *outLength) {
         return NULL;
     }
 
-    void *buffer = GSmem::allocFromDefaultHeap(length);
+    void *buffer = GSmem::alloc(length);
     if (buffer == NULL) {
         return NULL;
     }
 
     u32 read = readFile(fileHandle, buffer, length, 0);
     if (read != length) {
-        GSmem::freeDefaultHeapBlock(buffer);
+        GSmem::free(buffer);
         return NULL;
     }
 

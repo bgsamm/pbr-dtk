@@ -291,7 +291,10 @@ config.libs = [
         "progress_category": "game",
         "objects": [
             Object(Matching, "gs/operators.cpp"),
-            Object(NonMatching, "gs/GSmem.cpp"),
+            Object(Matching, "gs/GSmem.cpp"),
+            Object(Matching, "gs/cache/GScache.cpp"),
+            Object(Matching, "gs/cache/GScacheScratchpad.cpp"),
+            Object(Matching, "gs/cache/GScachePool.cpp"),
             Object(Matching, "gs/GSfile.cpp"),
             Object(NonMatching, "gs/GSnand.cpp"),
             Object(Matching, "gs/math/GSrand.cpp"),

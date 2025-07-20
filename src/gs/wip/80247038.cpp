@@ -1,44 +1,42 @@
 #include "version.hpp"
 
-extern void fn_801DB4FC(u32, void *);
-extern void fn_801DB548(u32, void *);
+#include "gs/GScache.hpp"
 
 class UnkClass1 {
 public:
     /* 0x0 */ s32 mCapacity;
-    /* 0x4 */ void **mItems;
+    /* 0x4 */ u32 *mFileIds;
 
     UnkClass1(u32 param1);
     ~UnkClass1();
 
     bool fn_802470E8();
-    bool fn_80247110(void *param1);
-    void **fn_80247180();
+    bool fn_80247110(u32 param1);
+    u32 *fn_80247180();
     void fn_80247188(u32 param1);
     void fn_802471F4(u32 param1);
 };
 
 UnkClass1::UnkClass1(u32 capacity) {
     mCapacity = capacity;
-    // TODO verify array type
-    mItems = new void *[capacity + 1];
+    mFileIds = new u32[capacity + 1];
 
-    if (mItems != NULL) {
-        mItems[0] = NULL;
+    if (mFileIds != NULL) {
+        mFileIds[0] = 0;
     }
 }
 
 UnkClass1::~UnkClass1() {
-    if (mItems != NULL) {
-        delete[] mItems;
+    if (mFileIds != NULL) {
+        delete[] mFileIds;
     }
 }
 
-// empty
+// isEmpty
 bool UnkClass1::fn_802470E8() {
     // Does not match as a single `if`
-    if (mItems != NULL) {
-        if (mItems[0] != NULL) {
+    if (mFileIds != NULL) {
+        if (mFileIds[0] != 0) {
             return false;
         }
     }
@@ -46,41 +44,41 @@ bool UnkClass1::fn_802470E8() {
 }
 
 // push_back
-bool UnkClass1::fn_80247110(void *param1) {
+bool UnkClass1::fn_80247110(u32 fileId) {
     for (s32 i = 0; i < mCapacity; i++) {
-        if (param1 == mItems[i]) {
+        if (fileId == mFileIds[i]) {
             return true;
         }
 
-        if (mItems[i] == NULL) {
-            mItems[i] = param1;
-            mItems[++i] = NULL;
+        if (mFileIds[i] == 0) {
+            mFileIds[i] = fileId;
+            mFileIds[++i] = 0;
             return true;
         }
     }
     return false;
 }
 
-void **UnkClass1::fn_80247180() {
-    return mItems;
+u32 *UnkClass1::fn_80247180() {
+    return mFileIds;
 }
 
-void UnkClass1::fn_80247188(u32 param1) {
-    if (mItems == NULL) {
+void UnkClass1::fn_80247188(u32 fsysId) {
+    if (mFileIds == NULL) {
         return;
     }
 
-    for (u32 i = 0; mItems[i] != NULL; i++) {
-        fn_801DB4FC(param1, mItems[i]);
+    for (u32 i = 0; mFileIds[i] != 0; i++) {
+        GScache::incrementRefCount(fsysId, mFileIds[i]);
     }
 }
 
-void UnkClass1::fn_802471F4(u32 param1) {
-    if (mItems == NULL) {
+void UnkClass1::fn_802471F4(u32 fsysId) {
+    if (mFileIds == NULL) {
         return;
     }
 
-    for (u32 i = 0; mItems[i] != NULL; i++) {
-        fn_801DB548(param1, mItems[i]);
+    for (u32 i = 0; mFileIds[i] != 0; i++) {
+        GScache::decrementRefCount(fsysId, mFileIds[i]);
     }
 }

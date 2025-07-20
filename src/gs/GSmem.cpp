@@ -128,37 +128,37 @@ u32 GSmem::getTotalFreeSizeInHeap(MEMHeapHandle heap) {
     return MEMGetTotalFreeSizeForExpHeap(heap);
 }
 
-void *GSmem::allocFromDefaultHeap(u32 size) {
+void *GSmem::alloc(u32 size) {
     return allocFromHeap(getDefaultHeap(), size);
 }
 
-void *GSmem::allocFromDefaultHeapAndClear(u32 size) {
+void *GSmem::allocAndClear(u32 size) {
     return allocFromHeapAndClear(getDefaultHeap(), size);
 }
 
-void *GSmem::allocFromDefaultHeapAligned(u32 size, int align) {
+void *GSmem::allocAligned(u32 size, int align) {
     return allocFromHeapAligned(getDefaultHeap(), size, align);
 }
 
-void *GSmem::allocFromDefaultHeapAlignedTop(u32 size, int align) {
+void *GSmem::allocAlignedTop(u32 size, int align) {
     if (align > 0) {
         align = -align;
     }
     return allocFromHeapAligned(getDefaultHeap(), size, align);
 }
 
-u32 GSmem::resizeDefaultHeapBlock(void *block, u32 size) {
+u32 GSmem::realloc(void *block, u32 size) {
     return resizeHeapBlock(getDefaultHeap(), block, size);
 }
 
-void GSmem::freeDefaultHeapBlock(void *block) {
+void GSmem::free(void *block) {
     if (block == NULL) {
         return;
     }
     freeHeapBlock(getDefaultHeap(), block);
 }
 
-u32 GSmem::getDefaultHeapBlockSize(void *block) {
+u32 GSmem::getAllocatedSize(void *block) {
     if (block == NULL) {
         return 0;
     }
@@ -184,16 +184,38 @@ void GSmem::freeAllInGroup(MEMHeapHandle heap, u16 groupID) {
     MEMVisitAllocatedForExpHeap(heap, freeAllInGroupVisitor, (u32)&context);
 }
 
-void GSmem::copyMem(void *dst, const void *src, u32 size) {
-    if ((u32)dst % 0x20 != 0 || (u32)src % 0x20 != 0 || size % 0x20 != 0) {
-        memcpy(dst, src, size);
-        return;
-    }
+asm void GSmem::copyMem(register void *dst, register const void *src, register u32 size) {
+    clrlwi. r0, dst, 27
+    bne     use_memcpy
+    clrlwi. r0, src, 27
+    bne     use_memcpy
+    clrlwi. r0, size, 27
+    beq     manual_copy
 
-    u32 *pDst = (u32 *)dst - 1;
-    u32 *pSrc = (u32 *)src - 1;
-    // TODO get this loop to unroll properly (asm? hand unrolled?)
-    for (int i = 0;  i < size / 4; i++) {
-        *(++pDst) = *(++pSrc);
-    }
+use_memcpy:
+    b       memcpy
+
+manual_copy:
+    srwi    size, size, 5
+    mtctr   size
+    subi    dst, dst, 4
+    subi    src, src, 4
+loop:
+    lwzu    r0, 0x4(src)
+    lwzu    r5, 0x4(src)
+    lwzu    r6, 0x4(src)
+    lwzu    r7, 0x4(src)
+    lwzu    r8, 0x4(src)
+    lwzu    r9, 0x4(src)
+    lwzu    r10, 0x4(src)
+    lwzu    r11, 0x4(src)
+    stwu    r0, 0x4(dst)
+    stwu    r5, 0x4(dst)
+    stwu    r6, 0x4(dst)
+    stwu    r7, 0x4(dst)
+    stwu    r8, 0x4(dst)
+    stwu    r9, 0x4(dst)
+    stwu    r10, 0x4(dst)
+    stwu    r11, 0x4(dst)
+    bdnz    loop
 }

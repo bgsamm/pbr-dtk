@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-void *memcpy(void *, const void *, unsigned long);
+void *memcpy(void *dest, const void *src, unsigned long count);
 void *memset(void *dest, int c, size_t n);
 
 int strcmp(const char *, const char *);

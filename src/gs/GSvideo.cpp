@@ -175,7 +175,7 @@ GSvideo::GSvideo(u8 numBuffers, u16 efbHeight, VideoFormat videoFmt) {
     u32 size = xfbWidth * mXfbHeight * VI_DISPLAY_PIX_SZ;
     for (int i = 0; i < MAX_XFBS; i++) {
         if (i < mNumBuffers) {
-            mXfbs[i].buf = GSmem::allocFromDefaultHeap(size);
+            mXfbs[i].buf = GSmem::alloc(size);
             mXfbs[i].state = XFB_STATE_3;
             fn_8023FBA0(&mXfbs[i], size);
         }
@@ -214,7 +214,7 @@ GSvideo::~GSvideo() {
 
     for (int i = 0; i < mNumBuffers; i++) {
         if (mXfbs[i].buf != NULL) {
-            GSmem::freeDefaultHeapBlock(mXfbs[i].buf);
+            GSmem::free(mXfbs[i].buf);
             mXfbs[i].buf = NULL;
         }
     }

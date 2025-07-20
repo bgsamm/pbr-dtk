@@ -6,20 +6,20 @@ void *operator new(u32 size) {
     if (!GSmem::isInitialized()) {
         return NULL;
     }
-    return GSmem::allocFromDefaultHeap(size);
+    return GSmem::alloc(size);
 }
 
 void *operator new[](u32 size) {
     if (!GSmem::isInitialized()) {
         return NULL;
     }
-    return GSmem::allocFromDefaultHeap(size);
+    return GSmem::alloc(size);
 }
 
 void operator delete(void *ptr) {
-    GSmem::freeDefaultHeapBlock(ptr);
+    GSmem::free(ptr);
 }
 
 void operator delete[](void *ptr) {
-    GSmem::freeDefaultHeapBlock(ptr);
+    GSmem::free(ptr);
 }

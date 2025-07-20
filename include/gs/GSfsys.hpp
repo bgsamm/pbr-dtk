@@ -278,7 +278,7 @@ namespace GSfsys {
     extern GSfsysFileTypeHandler *gFileTypeHandlerList;
     extern u32 gFileTypeHandlerCount;
 
-    // 80244A18
+    // GSfsysMem.cpp
     void *allocFromFsysDataHeap(u32 size);
     bool freeToFsysDataHeap(void *ptr);
     bool initFsysDataHeap();
@@ -292,9 +292,9 @@ namespace GSfsys {
     void *allocCachedBuffer(GSfsysHandle *fsysHandle, u32 entryIndex, u32 length, u32 fsysCacheIndex);
     bool freeCachedBuffer(void *buffer);
     bool releaseFirstCacheEntryForFsys(u32 fsysId);
-    void *fn_80244EA8(u32 size, u32 fsysId, u32 fileId);
+    void *allocBufferInFileCache(u32 size, u32 fsysId, u32 fileId);
 
-    // 80244EDC
+    // GSfsysChunk.cpp
     bool initFsysChunkSystem(u32 heapSize);
     GSfsysChunk *getFreeFsysChunk();
     bool popChunkFromList(GSfsysChunk **list, bool fromFront);
@@ -302,7 +302,7 @@ namespace GSfsys {
     void prependToChunkList(GSfsysChunk **list, GSfsysChunk *chunk);
     void transferChunkListTail(GSfsysChunk **srcList, GSfsysChunk **dstList);
 
-    // 802452E8
+    // GSfsysCache.cpp
     void addToCacheRequestList(GSfsysCacheRequest *cacheRequest);
     GSfsysCacheRequest *getFreeCacheRequest();
     void removeFromCacheRequestList(GSfsysCacheRequest *cacheRequest);
@@ -328,7 +328,7 @@ namespace GSfsys {
     bool fsysCacheReadEx(GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry, void *buffer, u32 length, u32 offset, GSfsysCacheCallback callback, GSfsysCallback userCallback, u32 userParam1, u32 userParam2);
     void copyToCachedBuffer(GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry, void *src, void *dst, u32 length, u32 offset, GSfsysCacheCallback callback);
 
-    // 80245C60
+    // GSfsysRead.cpp
     void seekFsysCallback(s32 result, GSfileHandle *fileHandle);
     GSfsysFileTypeHandler *getHandlerForFileType(u32 fileType);
     bool queueFsysEntryForCopying(GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry);
@@ -351,7 +351,7 @@ namespace GSfsys {
     void readFsysData(GSfsysHandle *fsysHandle);
     void seekFsysToStart(GSfsysHandle *fsysHandle);
 
-    // 80246CCC
+    // GSfsysStream.cpp
     u32 getStreamBufferSize();
     u32 getHalfStreamBufferSize();
     u32 getStreamChunkSize();

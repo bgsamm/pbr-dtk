@@ -47,6 +47,23 @@ gs/GSmem.cpp:
 	.bss        start:0x804912B0 end:0x80491370
 	.sbss       start:0x8063F2D0 end:0x8063F2E0
 
+gs/cache/GScache.cpp:
+	.text       start:0x801DB040 end:0x801DB81C
+	.ctors      start:0x803E2044 end:0x803E2048
+	.sbss       start:0x8063F2E0 end:0x8063F2F0
+
+gs/cache/GScacheScratchpad.cpp:
+	.text       start:0x801DB81C end:0x801DBB3C
+	.ctors      start:0x803E2048 end:0x803E204C
+	.bss        start:0x80491370 end:0x80491470
+	.sbss       start:0x8063F2F0 end:0x8063F310
+
+gs/cache/GScachePool.cpp:
+	.text       start:0x801DBB3C end:0x801DBE90
+	.ctors      start:0x803E204C end:0x803E2050
+	.bss        start:0x80491470 end:0x804917F0
+	.sbss       start:0x8063F310 end:0x8063F318
+
 gs/GSfile.cpp:
 	.text       start:0x801DBE90 end:0x801DCE6C
 	.ctors      start:0x803E2050 end:0x803E2054

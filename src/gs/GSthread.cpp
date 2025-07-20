@@ -23,7 +23,7 @@ GSthreadManager::GSthreadManager(u32 poolCount) {
     mThreadHandleCount = poolCount;
     mThreadStartQueue = NULL;
     mParentThreadPriority = OSGetThreadPriority(OSGetCurrentThread());
-    mThreadHandlePool = (GSthreadHandle *)GSmem::allocFromDefaultHeapAndClear(poolCount * sizeof(GSthreadHandle));
+    mThreadHandlePool = (GSthreadHandle *)GSmem::allocAndClear(poolCount * sizeof(GSthreadHandle));
     mParentThread = OSGetCurrentThread();
     OSInitThreadQueue(&mThreadQueue);
 }
@@ -60,7 +60,7 @@ GSthreadHandle *GSthreadManager::createThread(
         priority = 29;
     }
 
-    void *stack = GSmem::allocFromDefaultHeap(stackSize);
+    void *stack = GSmem::alloc(stackSize);
     if (stack == NULL) {
         return NULL;
     }
@@ -200,7 +200,7 @@ void GSthreadHandle::sleepThread() {
 
 void GSthreadHandle::resetHandle() {
     if (mStack != NULL) {
-        GSmem::freeDefaultHeapBlock(mStack);
+        GSmem::free(mStack);
         mStack = NULL;
     }
     mFlags = 0;

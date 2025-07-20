@@ -36,6 +36,12 @@ void OSSetMEM2ArenaLo(void* newLo);
 void DCInvalidateRange(void* startAddr, u32 nBytes);
 void DCFlushRange(void* startAddr, u32 nBytes);
 
+#define LC_BASE_PREFIX 0xE000
+#define LC_BASE (LC_BASE_PREFIX << 16)
+#define LCGetBase() ((void*)LC_BASE)
+
+void LCEnable(void);
+
 BOOL OSDisableInterrupts(void);
 BOOL OSEnableInterrupts(void);
 BOOL OSRestoreInterrupts(BOOL enabled);

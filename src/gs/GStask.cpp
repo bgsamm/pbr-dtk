@@ -143,7 +143,7 @@ void GStask::init(u32 activeCount, u32 idleCount) {
 
     sCurrentTask = NULL;
 
-    sTaskPool = (GStaskHandle *)GSmem::allocFromDefaultHeap(sTotalTaskHandleCount * sizeof(GStaskHandle));
+    sTaskPool = (GStaskHandle *)GSmem::alloc(sTotalTaskHandleCount * sizeof(GStaskHandle));
     if (sTaskPool == NULL) {
         return;
     }
@@ -152,7 +152,7 @@ void GStask::init(u32 activeCount, u32 idleCount) {
         sTaskPool[i].mType = TASK_TYPE_NULL;
     }
 
-    sIdleStack = (u8 *)GSmem::allocFromDefaultHeap(STACK_SIZE);
+    sIdleStack = (u8 *)GSmem::alloc(STACK_SIZE);
     OSSetIdleFunction(idleCallback, NULL, sIdleStack + STACK_SIZE - 4, STACK_SIZE - 4);
 
     if (GSvideo::sInstance) {
