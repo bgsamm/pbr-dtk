@@ -35,7 +35,7 @@ public:
     static void *allocFromHeapAligned(MEMHeapHandle heap, u32 size, int align) NO_INLINE;
     static void *allocFromHeapAlignedTop(MEMHeapHandle heap, u32 size, int align);
     static bool resizeHeapBlock(MEMHeapHandle heap, void *block, u32 size) NO_INLINE;
-    static void freeHeapBlock(MEMHeapHandle heap, void *block) NO_INLINE;
+    static void freeToHeap(MEMHeapHandle heap, void *block) NO_INLINE;
     static u32 getHeapBlockSize(MEMHeapHandle heap, void *block);
     static u32 getTotalFreeSizeInHeap(MEMHeapHandle heap) NO_INLINE;
     static void *alloc(u32 size);

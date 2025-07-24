@@ -104,3 +104,8 @@ void GSrender::fn_80232770() {
 
     memset(&_163c, 0, 0xac);
 }
+
+void GSrender::fn_802327E8() {
+    fn_8023B6BC();
+    fn_8023FD64();
+}

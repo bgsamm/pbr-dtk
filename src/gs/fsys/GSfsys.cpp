@@ -679,7 +679,7 @@ void GSfsys::doFsysState(GSfsysHandle *fsysHandle) {
     OSRestoreInterrupts(intEnabled);
 }
 
-void GSfsys::foregroundTaskCallback(u32 taskId, u32 userParam) {
+void GSfsys::foregroundTaskCallback(u32 taskId, void *userParam) {
     GSfsysEntryHandle *fsysEntryHandle, *next;
 
     fsysEntryHandle = sFsysEntryList;
@@ -982,7 +982,7 @@ void GSfsys::readUncompressedFile(GSfsysEntryHandle *fsysEntryHandle, bool doCop
     fsysEntryHandle->mReadComplete = true;
 }
 
-void GSfsys::backgroundTaskCallback(u32 taskId, u32 userParam) {
+void GSfsys::backgroundTaskCallback(u32 taskId, void *userParam) {
     GSfsysEntryHandle *fsysEntryHandle = sFsysEntryList;
     while (fsysEntryHandle != NULL) {
         if (!fsysEntryHandle->mProcessed) {
@@ -1080,10 +1080,10 @@ bool GSfsys::initSubroutine(u32 chunkHeapSize, u32 cacheHeapSize, u32 nCacheEntr
         return false;
     }
 
-    sForegroundTaskID = GStask::createTask(TASK_TYPE_MAIN, 254, 0, foregroundTaskCallback);
+    sForegroundTaskID = GStask::createTask(TASK_TYPE_MAIN, 254, NULL, foregroundTaskCallback);
     GStask::setTaskName(sForegroundTaskID, "GSfsysDaemonForeground");
 
-    sBackgroundTaskID = GStask::createTask(TASK_TYPE_MAIN, 2, 0, backgroundTaskCallback);
+    sBackgroundTaskID = GStask::createTask(TASK_TYPE_MAIN, 2, NULL, backgroundTaskCallback);
     GStask::setTaskName(sBackgroundTaskID, "GSfsysDaemonBackground");
 
     sInitialized = true;

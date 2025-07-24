@@ -2,7 +2,7 @@
 
 #include <revolution/types.h>
 
-typedef void (*GStaskCallback)(u32, u32);
+typedef void (*GStaskCallback)(u32, void *);
 
 // TODO rename remaining enum values
 enum GStaskType {
@@ -23,7 +23,7 @@ struct GStaskHandle {
     /* 0x11 */ bool mDisabled;
     u8 pad[2];
     /* 0x14 */ char mName[0x20];
-    /* 0x34 */ u32 mUserParam;
+    /* 0x34 */ void *mUserParam;
     /* 0x38 */ GStaskCallback mCallback;
 };
 
@@ -37,7 +37,7 @@ public:
     static void pushIdleTask(GStaskHandle *taskHandle);
     static void enqueueTask(GStaskHandle *taskHandle);
     static void init(u32 activeCount, u32 idleCount);
-    static u32 createTask(GStaskType type, u8 priority, u32 userParam, GStaskCallback callback);
+    static u32 createTask(GStaskType type, u8 priority, void *userParam, GStaskCallback callback);
     static void runMainTasks();
     static GStaskHandle *fn_80224074(u32 param1);
     static void setTaskName(u32 taskID, char *name);

@@ -4,35 +4,48 @@
 
 #include "gs/GScache.hpp"
 #include "gs/GSfsys.hpp"
+#include "gs/GSinput.hpp"
 #include "gs/GSmath.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GStask.hpp"
 #include "gs/GSthread.hpp"
+#include "gs/GStimeline.hpp"
 #include "gs/GSvideo.hpp"
 
-void fn_80006980(u32, u32);
-void fn_80006A00(u32, u32);
-void fn_80006A84(u32, u32);
+void fn_80006980(u32, void *);
+void fn_80006A00(u32, void *);
+void fn_80006A84(u32, void *);
 void *fn_80006A88(void *);
+void *fn_80006FD4(void *);
+void fn_80007090(GSdvdError);
+void fn_80007164();
 void fn_800071F8();
 void fn_80007260();
 void fn_800072C4();
 void fn_80007338();
 
+void fn_8000748C();
+void fn_8000A73C();
+void fn_8000A77C();
+void fn_8000A790();
+void fn_8000AC94();
+void fn_8000ADC0(char *, MEMHeapHandle);
 void fn_8000AE8C();
+void fn_8000AEB0(u8);
+void fn_8000C764();
+void fn_8000C7E8();
 void fn_80055D94();
+u8 fn_80058B10(bool);
 void fn_80059208();
+bool fn_8005924C();
 void fn_8005925C(u32);
-void fn_801DB978(u32);
-void fn_80223F0C(u32, u32);
-void fn_8022410C(u32);
-void fn_80224214(u32, u32, void *, u32, u32, u32, u32);
-void fn_802247C8(u32);
+void fn_8015D3D0();
+void fn_80162F48(MEMHeapHandle);
+void fn_8021C274(u32);
 void fn_80231490(void *, f32);
 void fn_80231544(void *);
 void fn_802353F8(void *);
 void fn_80237794(void *, u32);
-void fn_8024483C(u32);
 void fn_80249BA0(u32, u32);
 void fn_80249BF0(u32);
 
@@ -55,6 +68,8 @@ public:
     UnkClass1(u32);
 };
 
+extern GSfsysFileTypeHandler *lbl_8044E828;
+
 MEMHeapHandle lbl_8063E8E8;
 MEMHeapHandle lbl_8063E8EC;
 MEMHeapHandle lbl_8063E8F0;
@@ -73,8 +88,8 @@ void fn_80006980(void) {
     u8 refreshRate;
     f32 var2;
 
-    refreshRate = GSvideo::sInstance->mRefreshRate;
-    var2 = GSvideo::sInstance->fn_8023FFEC() / refreshRate;
+    refreshRate = GSvideoManager::sInstance->mRefreshRate;
+    var2 = GSvideoManager::sInstance->fn_8023FFEC() / refreshRate;
 
     fn_80231490(lbl_8063F698, var2 > 0f ? var2 : 0f);
     fn_80231544(lbl_8063F698);
@@ -87,6 +102,42 @@ void fn_80006980(void) {
 // "main"
 void fn_80006A84(void) {
     fn_80055D94();
+}
+
+void *fn_80006A88(void *param1) {
+    OSInitFastCast();
+    
+    GSfile::setErrorCallbacks(fn_80007090, fn_80007164);
+    GSfsys::init(0x40, 0, 0, 0);
+    GSfsys::setFileTypeHandlers(lbl_8044E828);
+    fn_8005925C(1);
+
+    while (!fn_8005924C()) {
+        GSthreadManager::sInstance->sleepCurrentThread();
+    }
+
+    fn_80162F48(lbl_8063E8F4);
+    fn_8021C274(0x20);
+    fn_8000ADC0("sound/pbr_sound.brsar", lbl_8063E8F0);
+    fn_8000AEB0(fn_80058B10(0));
+    fn_8000C7E8();
+    fn_8000C764();
+    fn_8015D3D0();
+    fn_8000A73C();
+    // inline_func(lbl_8063F698, fn_8000A77C, fn_8000A790);
+    // lbl_8063F698->_172C = fn_80058178;
+    fn_8000AC94();
+    fn_8000748C();
+    GSthreadManager::sInstance->createThread(
+        100,
+        fn_80006FD4,
+        NULL,
+        0x4000,
+        8,
+        OS_THREAD_ATTR_DETACH
+    );
+    
+    return 0;
 }
 
 void main(void) {
@@ -151,7 +202,7 @@ void main(void) {
     fn_80249BF0(var4);
     fn_80249BA0(var4 - 0x4000, 2);
 
-    fn_801DB978(0);
+    GScache::fn_801DB978(0);
 
     GStask::init(32, 4);
     
@@ -174,18 +225,17 @@ void main(void) {
     VIEnableDimming(TRUE);
     VISetTimeToDimming(VI_DM_10M);
 
-    fn_8024483C(2);
+    GSinput::init(2);
 
-    taskID = GStask::createTask(TASK_TYPE_MAIN, 0, 0, fn_80006980);
+    taskID = GStask::createTask(TASK_TYPE_MAIN, 0, NULL, fn_80006980);
     GStask::setTaskName(taskID, "main render");
-    taskID = GStask::createTask(TASK_TYPE_MAIN, 1, 0, fn_80006A00);
+    taskID = GStask::createTask(TASK_TYPE_MAIN, 1, NULL, fn_80006A00);
     GStask::setTaskName(taskID, "input");
-    taskID = GStask::createTask(TASK_TYPE_MAIN, 0x80, 0, fn_80006A84);
+    taskID = GStask::createTask(TASK_TYPE_MAIN, 128, NULL, fn_80006A84);
     GStask::setTaskName(taskID, "main");
 
     GSthread::init(32);
-
-    fn_802247C8(0x20);
+    GStimeline::init(32);
 
     OSSetPowerCallback(fn_80007338);
     OSSetResetCallback(fn_800072C4);

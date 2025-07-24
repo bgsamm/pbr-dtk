@@ -8,14 +8,14 @@
 
 /* lbl_8063F600 */ GSthreadManager *GSthreadManager::sInstance;
 
-void GSthread::threadTaskCallback(u32 taskID, u32 userParam) {
+void GSthread::threadTaskCallback(u32 taskID, void *userParam) {
     GSthreadManager::sInstance->update();
 }
 
 void GSthread::init(u32 poolCount) {
     GSthreadManager::sInstance = new GSthreadManager(poolCount);
 
-    u32 taskID = GStask::createTask(TASK_TYPE_MAIN, 0, 0, threadTaskCallback);
+    u32 taskID = GStask::createTask(TASK_TYPE_MAIN, 0, NULL, threadTaskCallback);
     GStask::setTaskName(taskID, "GSthreadManager");
 }
 

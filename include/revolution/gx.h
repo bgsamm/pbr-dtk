@@ -12,6 +12,7 @@ extern "C" {
 
 typedef void (*GXBreakPtCallback)(void);
 typedef void (*GXDrawDoneCallback)(void);
+typedef void (*GXDrawSyncCallback)(u16 token);
 
 void GXSetCPUFifo(const GXFifoObj* fifo);
 void GXSetGPFifo(const GXFifoObj* fifo);
@@ -22,7 +23,8 @@ void GXDisableBreakPt(void);
 void GXSetMisc(GXMiscToken token, u32 value);
 void GXFlush(void);
 void GXSetDrawDone(void);
-GXDrawDoneCallback GXSetDrawDoneCallback(GXDrawDoneCallback);
+GXDrawSyncCallback GXSetDrawSyncCallback(GXDrawSyncCallback cb);
+GXDrawDoneCallback GXSetDrawDoneCallback(GXDrawDoneCallback cb);
 void GXSetDispCopySrc(u16 left, u16 top, u16 wd, u16 ht);
 void GXSetDispCopyDst(u16 wd, u16 ht);
 void GXSetDispCopyFrame2Field(GXCopyMode mode);

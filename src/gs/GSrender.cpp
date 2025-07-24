@@ -11,7 +11,7 @@ static void *lbl_804245BC[0x10]; // dummy
 static GSrender *lbl_8063F698;
 
 GSrender::GSrender(UnkStruct1 *param1)
-    : GSvideo(param1->mNumBuffers, param1->mEfbHeight, param1->mVidFmt) {
+    : GSvideoManager(param1->mNumBuffers, param1->mEfbHeight, param1->mVidFmt) {
     _d8 = lbl_804245BC;
     _1638 = 0;
     _16e8 = 0;
@@ -65,4 +65,21 @@ GSrender::GSrender(UnkStruct1 *param1)
     fn_802327E8();
     _1719 = 0;
     _16f9 = 0;
+}
+
+GSrender::~GSrender() {
+    _d8 = lbl_804245BC;
+    
+    GXSetDrawDoneCallback(NULL);
+    GXSetDrawSyncCallback(NULL);
+    GXSetBreakPtCallback(NULL);
+
+    fn_80232770();
+
+    if (_16e8 != NULL) {
+        delete _16e8;
+        _16e8 = NULL;
+    }
+
+    sInstance = NULL;
 }

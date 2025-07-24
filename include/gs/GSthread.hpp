@@ -51,6 +51,6 @@ public:
 };
 
 namespace GSthread {
-    void threadTaskCallback(u32 taskID, u32 userParam);
+    void threadTaskCallback(u32 taskID, void *userParam);
     void init(u32 poolCount);
 };

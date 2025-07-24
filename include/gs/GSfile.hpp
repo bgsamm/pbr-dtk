@@ -70,7 +70,7 @@ namespace GSfile {
     void notifyErrorHandled();
     void checkDiskCallback(s32 result, DVDCommandBlock *block);
     bool checkDisk();
-    void errorTaskCallback(u32 taskID, u32 userParam);
+    void errorTaskCallback(u32 taskID, void *userParam);
     void *loadFile(char *fileName, u32 *outLength);
     void *loadFileOnHeap(char *fileName, MEMHeapHandle heap, u32 *outLength);
     bool copyFileToNand(char *fileName);

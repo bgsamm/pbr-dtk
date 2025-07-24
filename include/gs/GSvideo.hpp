@@ -41,7 +41,7 @@ union U32F32 {
     f32 fval;
 };
 
-class GSvideo {
+class GSvideoManager {
 public:
     /* 0x0 */ GXRenderModeObj mRenderMode;
     /* 0x3c */ XfbInfo mXfbs[MAX_XFBS];
@@ -98,13 +98,13 @@ public:
     /* 0xd4 */ u32 mClearZ;
     void **_d8;
 
-    GSvideo(u8, u16, VideoFormat);
-    ~GSvideo();
+    GSvideoManager(u8, u16, VideoFormat);
+    ~GSvideoManager();
 
     static void preRetraceCallback(u32 retraceCount);
     static void postRetraceCallback(u32 retraceCount);
 
-    void waitForRetrace() NO_INLINE;
+    void waitForRetrace();
     void fn_8023F45C();
     void fn_8023F4B8();
     void prepareCopyDisp();
@@ -114,14 +114,14 @@ public:
     bool fn_8023F858(VideoFormat, u32, u32, u32);
     void fn_8023FB04(bool);
     void fn_8023FBA0(XfbInfo *, u32);
-    XfbInfo *fn_8023FC0C(XfbState) NO_INLINE;
+    XfbInfo *fn_8023FC0C(XfbState);
     XfbInfo *fn_8023FC54(u32);
     void fn_8023FD64();
-    void fn_8023FE30(u32) NO_INLINE;
+    void fn_8023FE30(u32);
     void fn_8023FEE8(f32, f32, f32, f32, f32, f32);
     void setScissor(u32, u32, u32, u32);
     void setScissorBoxOffset(s32, s32);
     f32 fn_8023FFEC();
 
-    static GSvideo *sInstance;
+    static GSvideoManager *sInstance;
 };

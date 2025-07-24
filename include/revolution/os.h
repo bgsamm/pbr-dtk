@@ -11,6 +11,7 @@ extern "C" {
 #endif
 
 typedef s64 OSTime;
+typedef u32 OSTick;
 
 #ifdef __MWERKS__
 u32 __OSBusClock : (0x8000 << 16 | 0x00F8);
@@ -49,6 +50,7 @@ BOOL OSRestoreInterrupts(BOOL enabled);
 OSThread* OSSetIdleFunction(OSIdleFunction idleFunction, void* param, void* stack, u32 stackSize);
 
 OSTime OSGetTime(void);
+OSTick OSGetTick(void);
 
 OSResetCallback OSSetResetCallback(OSResetCallback callback);
 OSPowerCallback OSSetPowerCallback(OSPowerCallback callback);

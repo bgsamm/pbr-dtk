@@ -168,7 +168,7 @@ bool GSfile::init(u32 nFileHandles, bool patchDiskID) {
 
     DVDSetAutoFatalMessaging(FALSE);
 
-    sDvdErrorTaskID = GStask::createTask(TASK_TYPE_MAIN, 19, 0, errorTaskCallback);
+    sDvdErrorTaskID = GStask::createTask(TASK_TYPE_MAIN, 19, NULL, errorTaskCallback);
     GStask::setTaskName(sDvdErrorTaskID, "GSdvdErrorTask");
 
     sInitialized = 1;
@@ -491,7 +491,7 @@ bool GSfile::checkDisk() {
     return gDiscCheckResult != 0;
 }
 
-void GSfile::errorTaskCallback(u32 taskID, u32 userParam) {
+void GSfile::errorTaskCallback(u32 taskID, void *userParam) {
     s32 dvdState = getDriveStatus();
 
     switch (sDvdErrorState) {
@@ -640,7 +640,7 @@ void *GSfile::loadFileOnHeap(char *fileName, MEMHeapHandle heap, u32 *pLength) {
 
     u32 read = readFile(fileHandle, buffer, length, 0);
     if (read != length) {
-        GSmem::freeHeapBlock(heap, buffer);
+        GSmem::freeToHeap(heap, buffer);
         return NULL;
     }
 

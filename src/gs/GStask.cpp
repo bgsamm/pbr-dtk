@@ -155,14 +155,19 @@ void GStask::init(u32 activeCount, u32 idleCount) {
     sIdleStack = (u8 *)GSmem::alloc(STACK_SIZE);
     OSSetIdleFunction(idleCallback, NULL, sIdleStack + STACK_SIZE - 4, STACK_SIZE - 4);
 
-    if (GSvideo::sInstance) {
-        VIRetraceCallback temp = GSvideo::sInstance->mRetraceCallback;
-        GSvideo::sInstance->mRetraceCallback = retraceCallback;
+    if (GSvideoManager::sInstance) {
+        VIRetraceCallback temp = GSvideoManager::sInstance->mRetraceCallback;
+        GSvideoManager::sInstance->mRetraceCallback = retraceCallback;
         sRetraceCallback = temp;
     }
 }
 
-u32 GStask::createTask(GStaskType taskType, u8 priority, u32 userParam, GStaskCallback callback) {
+u32 GStask::createTask(
+    GStaskType taskType,
+    u8 priority,
+    void *userParam,
+    GStaskCallback callback
+) {
     GStaskHandle *node = getFreeTaskHandle(taskType);
 
     if (node == NULL) {

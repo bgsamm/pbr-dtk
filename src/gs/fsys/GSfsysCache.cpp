@@ -275,7 +275,7 @@ void *GSfsys::allocFromFsysCacheHeap(u32 size) {
 void GSfsys::freeToFsysCacheHeap(void *ptr, u32 size) {
     BOOL intEnabled = OSDisableInterrupts();
 
-    GSmem::freeHeapBlock(sFsysCacheHeap, ptr);
+    GSmem::freeToHeap(sFsysCacheHeap, ptr);
 
     OSRestoreInterrupts(intEnabled);
 

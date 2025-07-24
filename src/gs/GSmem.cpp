@@ -113,7 +113,7 @@ bool GSmem::resizeHeapBlock(MEMHeapHandle heap, void *block, u32 size) {
     return MEMResizeForMBlockExpHeap(heap, block, size) != 0;
 }
 
-void GSmem::freeHeapBlock(MEMHeapHandle heap, void *block) {
+void GSmem::freeToHeap(MEMHeapHandle heap, void *block) {
     if (block == NULL) {
         return;
     }
@@ -155,7 +155,7 @@ void GSmem::free(void *block) {
     if (block == NULL) {
         return;
     }
-    freeHeapBlock(getDefaultHeap(), block);
+    freeToHeap(getDefaultHeap(), block);
 }
 
 u32 GSmem::getAllocatedSize(void *block) {

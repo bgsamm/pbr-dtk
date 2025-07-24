@@ -29,6 +29,7 @@ class UnkClass5 {
     u8 unk1[0xc];
 public:
     UnkClass5(u32 param1);
+    ~UnkClass5();
 };
 
 struct UnkStruct8 {
@@ -37,7 +38,7 @@ struct UnkStruct8 {
     u32 _8;
 };
 
-class GSrender : public GSvideo {
+class GSrender : public GSvideoManager {
 public:
     u32 _dc;
     u8 unk5[0x1558];
@@ -85,6 +86,7 @@ public:
     u32 _173c;
     
     GSrender(UnkStruct1 *param1);
+    ~GSrender();
 
     void fn_802311AC(UnkStruct8 *);
     void fn_802311BC(UnkStruct8 *);
@@ -104,6 +106,7 @@ public:
     void fn_80237798(u32);
 
     void fn_80239E58();
+    void fn_8023B6BC();
     void fn_8023B704();
     u32 fn_8023B864(u32);
     u32 fn_8023B948(u32);

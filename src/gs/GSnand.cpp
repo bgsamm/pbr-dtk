@@ -210,7 +210,7 @@ bool GSnandManager::copyFile(char *fileName, bool unusedParam) {
                             GSthreadManager::sInstance->sleepCurrentThread();
                         }
                     }
-                    GSmem::freeHeapBlock(lbl_8063E8EC, buffer);
+                    GSmem::freeToHeap(lbl_8063E8EC, buffer);
                     GSfile::closeFile(fileHandle);
                     return false;
                 }
@@ -234,7 +234,7 @@ bool GSnandManager::copyFile(char *fileName, bool unusedParam) {
     }
 
     if (buffer != NULL) {
-        GSmem::freeHeapBlock(lbl_8063E8EC, buffer);
+        GSmem::freeToHeap(lbl_8063E8EC, buffer);
     }
     GSfile::closeFile(fileHandle);
 

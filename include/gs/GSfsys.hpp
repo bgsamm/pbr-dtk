@@ -386,12 +386,12 @@ namespace GSfsys {
     void clearTocEntryFlags(u32 fsysId, u32 flags);
     void readFsysSizeCallback(s32 result, GSfileHandle *fileHandle);
     void doFsysState(GSfsysHandle *fsysHandle);
-    void foregroundTaskCallback(u32 taskId, u32 userParam);
+    void foregroundTaskCallback(u32 taskId, void *userParam);
     bool processMidCopyCancel(GSfsysEntryHandle *fsysEntryHandle);
     void fillAndFlushBuffer(void *buffer, u8 value, u32 length);
     void decompressLzss(GSfsysEntryHandle *fsysEntryHandle);
     void readUncompressedFile(GSfsysEntryHandle *fsysEntryHandle, bool param2);
-    void backgroundTaskCallback(u32 taskId, u32 userParam);
+    void backgroundTaskCallback(u32 taskId, void *userParam);
     bool initSubroutine(u32 chunkHeapSize, u32 cacheHeapSize, u32 nCacheEntries);
     void setFileTypeHandlers(GSfsysFileTypeHandler *param1);
     s32 getFsysLoadStatus(u32 fsysId);

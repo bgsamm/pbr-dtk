@@ -33,7 +33,7 @@ GScacheEntry *GScache::releaseCacheEntry(
 
     if (cacheEntry->mOwnsBuffer) {
         if (cacheEntry->mBuffer != NULL) {
-            GSmem::freeHeapBlock(cacheEntry->mHeap, cacheEntry->mBuffer);
+            GSmem::freeToHeap(cacheEntry->mHeap, cacheEntry->mBuffer);
             cacheEntry->mBuffer = NULL;
         }
         cacheEntry->mOwnsBuffer = false;

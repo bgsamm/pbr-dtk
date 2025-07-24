@@ -16,7 +16,7 @@ void *GSfsys::allocFromFsysDataHeap(u32 size) {
 }
 
 bool GSfsys::freeToFsysDataHeap(void *ptr) {
-    GSmem::freeHeapBlock(sFsysDataHeap, ptr);
+    GSmem::freeToHeap(sFsysDataHeap, ptr);
     return true;
 }
 
