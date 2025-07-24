@@ -1,3 +1,5 @@
+#include "version.hpp"
+
 #include <revolution/types.h>
 #include <revolution/os.h>
 #include <revolution/vi.h>
@@ -11,6 +13,8 @@
 #include "gs/GSthread.hpp"
 #include "gs/GStimeline.hpp"
 #include "gs/GSvideo.hpp"
+#include "wip/80249BA0.hpp"
+#include "wip/80249BF0.hpp"
 
 void fn_80006980(u32, void *);
 void fn_80006A00(u32, void *);
@@ -46,8 +50,6 @@ void fn_80231490(void *, f32);
 void fn_80231544(void *);
 void fn_802353F8(void *);
 void fn_80237794(void *, u32);
-void fn_80249BA0(u32, u32);
-void fn_80249BF0(u32);
 
 struct UnkStruct1 {
     u8 _0;
@@ -199,8 +201,8 @@ void main(void) {
     GSmem::setDefaultHeap(lbl_8063E8E8);
 
     var4 = 0xC000;
-    fn_80249BF0(var4);
-    fn_80249BA0(var4 - 0x4000, 2);
+    GSunk::fn_80249BF0(var4);
+    GSunk::fn_80249BA0(var4 - 0x4000, 2);
 
     GScache::fn_801DB978(0);
 

@@ -21,11 +21,11 @@ main.cpp:
 	.sbss       start:0x8063E8E8 end:0x8063E918
 	.sdata2     start:0x80640600 end:0x80640610
 
-800559D4.cpp:
+wip/800559D4.cpp:
 	.text       start:0x800559D4 end:0x800598F8
 	.ctors      start:0x803E1F14 end:0x803E1F18
 
-8005B4A4.cpp:
+wip/8005B4A4.cpp:
 	.text       start:0x8005B4A4 end:0x8005CEAC
 	.ctors      start:0x803E1F20 end:0x803E1F24
 
@@ -78,83 +78,83 @@ gs/GSnand.cpp:
 	.sdata      start:0x8063D6F8 end:0x8063D700
 	.sbss       start:0x8063F340 end:0x8063F348
 
-gs/wip/801DD5C8.cpp:
+wip/801DD5C8.cpp:
 	.text       start:0x801DD5C8 end:0x801DD8C0
 	.ctors      start:0x803E2058 end:0x803E205C
 
-gs/wip/801DD8C0.cpp:
+wip/801DD8C0.cpp:
 	.text       start:0x801DD8C0 end:0x801DDF78
 	.ctors      start:0x803E205C end:0x803E2060
 
-gs/wip/801DDF78.cpp:
+wip/801DDF78.cpp:
 	.text       start:0x801DDF78 end:0x801DF040
 	.ctors      start:0x803E2060 end:0x803E2064
 
-gs/wip/801DF040.cpp:
+wip/801DF040.cpp:
 	.text       start:0x801DF040 end:0x801E07E8
 	.ctors      start:0x803E2064 end:0x803E2068
 
-gs/wip/801E07E8.cpp:
+wip/801E07E8.cpp:
 	.text       start:0x801E07E8 end:0x801E0810
 	.ctors      start:0x803E2068 end:0x803E206C
 
-gs/wip/801E0810.cpp:
+wip/801E0810.cpp:
 	.text       start:0x801E0810 end:0x801E0A54
 	.ctors      start:0x803E206C end:0x803E2070
 
-gs/wip/801E0A54.cpp:
+wip/801E0A54.cpp:
 	.text       start:0x801E0A54 end:0x801E4360
 	.ctors      start:0x803E2070 end:0x803E2074
 
-gs/wip/801E4360.cpp:
+wip/801E4360.cpp:
 	.text       start:0x801E4360 end:0x801E474C
 	.ctors      start:0x803E2074 end:0x803E2078
 
-gs/wip/801E474C.cpp:
+wip/801E474C.cpp:
 	.text       start:0x801E474C end:0x801E5F7C
 	.ctors      start:0x803E2078 end:0x803E207C
 
-gs/wip/801E5F7C.cpp:
+wip/801E5F7C.cpp:
 	.text       start:0x801E5F7C end:0x801E6BF8
 	.ctors      start:0x803E207C end:0x803E2080
 
-gs/wip/801E6BF8.cpp:
+wip/801E6BF8.cpp:
 	.text       start:0x801E6BF8 end:0x801ED3F0
 	.ctors      start:0x803E2080 end:0x803E2084
 
-gs/wip/801ED3F0.cpp:
+wip/801ED3F0.cpp:
 	.text       start:0x801ED3F0 end:0x801EE044
 	.ctors      start:0x803E2084 end:0x803E2088
 
-gs/wip/801EE044.cpp:
+wip/801EE044.cpp:
 	.text       start:0x801EE044 end:0x801F1AE8
 	.ctors      start:0x803E2088 end:0x803E208C
 
-gs/wip/801F1AE8.cpp:
+wip/801F1AE8.cpp:
 	.text       start:0x801F1AE8 end:0x801F40E0
 	.ctors      start:0x803E208C end:0x803E2090
 
-gs/wip/801F40E0.cpp:
+wip/801F40E0.cpp:
 	.text       start:0x801F40E0 end:0x801F98EC
 	.ctors      start:0x803E2090 end:0x803E2094
 
-gs/wip/801F98EC.cpp:
+wip/801F98EC.cpp:
 	.text       start:0x801F98EC end:0x801FA094
 	.ctors      start:0x803E2094 end:0x803E2098
 
-gs/wip/801FA094.cpp:
+wip/801FA094.cpp:
 	.text       start:0x801FA094 end:0x801FA38C
 	.ctors      start:0x803E2098 end:0x803E209C
 
-gs/wip/801FA38C.cpp:
+wip/801FA38C.cpp:
 	.text       start:0x801FA38C end:0x801FB42C
 	.ctors      start:0x803E209C end:0x803E20A0
 
-gs/wip/801FB42C.cpp:
+wip/801FB42C.cpp:
 	.text       start:0x801FB42C end:0x801FF308
 	.ctors      start:0x803E20A0 end:0x803E20A4
 
-gs/wip/801FF308.cpp:
+wip/801FF308.cpp:
 	.text       start:0x801FF308 end:0x802000BC
 	.ctors      start:0x803E20A4 end:0x803E20A8
 
@@ -201,15 +201,15 @@ gs/GStimeline.cpp:
 	.sbss       start:0x8063F608 end:0x8063F618
 	.sdata2     start:0x80642278 end:0x80642280
 
-gs/wip/80226364.cpp:
+wip/80226364.cpp:
 	.text       start:0x80226364 end:0x8022773C
 	.ctors      start:0x803E2138 end:0x803E213C
 
-gs/GSrender.cpp:
+gs/render/GSrender.cpp:
 	.text       start:0x80230E48 end:0x8023234C
 	.ctors      start:0x803E2154 end:0x803E2158
 
-gs/GSrender2.cpp:
+gs/render/8023234C.cpp:
 	.text       start:0x8023234C end:0x8023283C
 	.ctors      start:0x803E2158 end:0x803E215C
 
@@ -219,13 +219,13 @@ gs/GSvideo.cpp:
 	.sbss       start:0x8063F780 end:0x8063F790
 	.sdata2     start:0x806423E8 end:0x80642420
 
-gs/wip/802437EC.cpp:
+gs/input/GSinput.cpp:
 	.text       start:0x802437EC end:0x802448E8
 	.ctors      start:0x803E21A4 end:0x803E21A8
 	.sbss       start:0x8063F7A8 end:0x8063F7B8
 	.sdata2     start:0x80642488 end:0x806424C0
 
-gs/wip/802448E8.cpp:
+gs/input/802448E8.cpp:
 	.text       start:0x802448E8 end:0x80244A18
 	.ctors      start:0x803E21A8 end:0x803E21AC
 	.sbss       start:0x8063F7B8 end:0x8063F7C0
@@ -258,7 +258,7 @@ gs/fsys/GSfsysStream.cpp:
 	.ctors      start:0x803E21BC end:0x803E21C0
 	.sbss       start:0x8063F840 end:0x8063F848
 
-gs/wip/80247038.cpp:
+gs/fsys/80247038.cpp:
 	.text       start:0x80247038 end:0x80247280
 	.ctors      start:0x803E21C0 end:0x803E21C4
 	.sbss       start:0x8063F848 end:0x8063F850
@@ -271,12 +271,12 @@ gs/fsys/GSfsys.cpp:
 	.sdata      start:0x8063D9A0 end:0x8063D9A8
 	.sbss       start:0x8063F850 end:0x8063F898
 
-gs/wip/80249B7C.cpp:
+wip/80249B7C.cpp:
 	.text       start:0x80249B7C end:0x80249BA0
 	.ctors      start:0x803E21C8 end:0x803E21CC
 	.sbss       start:0x8063F898 end:0x8063F8A0
 
-gs/wip/80249BA0.cpp:
+wip/80249BA0.cpp:
 	.text       start:0x80249BA0 end:0x80249BC8
 	.ctors      start:0x803E21CC end:0x803E21D0
 	.sbss       start:0x8063F8A0 end:0x8063F8A8
@@ -286,12 +286,12 @@ gs/debug/regionOverride.cpp:
 	.ctors      start:0x803E21D0 end:0x803E21D4
 	.sbss       start:0x8063F8A8 end:0x8063F8B8
 
-gs/wip/80249BF0.cpp:
+wip/80249BF0.cpp:
 	.text       start:0x80249BF0 end:0x80249D38
 	.ctors      start:0x803E21D4 end:0x803E21D8
 	.sbss       start:0x8063F8B8 end:0x8063F8C8
 
-gs/wip/8025B6AC.cpp:
+wip/8025B6AC.cpp:
 	.text       start:0x8025B6AC end:0x8025B6E8
 	.ctors      start:0x803E2200 end:0x803E2204
 	.sbss       start:0x8063F950 end:0x8063F958

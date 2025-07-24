@@ -1,6 +1,7 @@
 #include "version.hpp"
 
 #include "gs/GSmem.hpp"
+#include "wip/80249BF0.hpp"
 
 extern MEMHeapHandle lbl_8063E8E8;
 
@@ -12,7 +13,7 @@ struct UnkStruct1 {
 static UnkStruct1 *lbl_8063F8C0;
 static UnkStruct1 *lbl_8063F8C4;
 
-void fn_80249BF0(u32 param1) {
+void GSunk::fn_80249BF0(u32 param1) {
     if (lbl_8063F8C0 != NULL) {
         GSmem::freeToHeap(lbl_8063E8E8, lbl_8063F8C0);
     }
@@ -29,13 +30,13 @@ void fn_80249BF0(u32 param1) {
     var1->mNext = NULL;
 }
 
-UnkStruct1 *fn_80249CF8() {
+UnkStruct1 *GSunk::fn_80249CF8() {
     UnkStruct1 *var1 = lbl_8063F8C4;
     lbl_8063F8C4 = var1->mNext;
     return var1;
 }
 
-void fn_80249D08(UnkStruct1 *param1) {
+void GSunk::fn_80249D08(UnkStruct1 *param1) {
     param1->mNext = lbl_8063F8C4;
     lbl_8063F8C4 = param1;
 }
