@@ -1,4 +1,4 @@
-#include "version.hpp"
+#include "global.hpp"
 
 #include <cstring>
 #include <revolution/kpad.h>
@@ -129,19 +129,6 @@ void GSinput::fn_80243A48(GScontrolStick *param1) {
     param1->mTargetPos.y = 0f;
     param1->mCurrentPos.x = 0f;
     param1->mCurrentPos.y = 0f;
-}
-
-#define EPSILON 0.00001f
-
-static inline f32 ensure_nonzero(f32 x) {
-    if (x < EPSILON && x > -EPSILON) {
-        x = (x < 0f) ? -EPSILON : EPSILON;
-    }
-    return x;
-}
-
-static inline f32 abs(f32 x) {
-    return (x > 0f) ? x : -x;
 }
 
 static inline void sub_vec2(Vec2 *a, Vec2 *b, Vec2 *out) {

@@ -36,12 +36,15 @@ void OSSetMEM1ArenaLo(void* newLo);
 void OSSetMEM2ArenaLo(void* newLo);
 void DCInvalidateRange(void* startAddr, u32 nBytes);
 void DCFlushRange(void* startAddr, u32 nBytes);
+void DCStoreRangeNoSync(void* startAddr, u32 nBytes);
 
 #define LC_BASE_PREFIX 0xE000
 #define LC_BASE (LC_BASE_PREFIX << 16)
 #define LCGetBase() ((void*)LC_BASE)
 
 void LCEnable(void);
+
+void OSPanic(const char *file, int line, const char *msg, ...);
 
 BOOL OSDisableInterrupts(void);
 BOOL OSEnableInterrupts(void);

@@ -85,6 +85,7 @@ void OSInitThreadQueue(OSThreadQueue* queue);
 OSThread* OSGetCurrentThread(void);
 BOOL OSIsThreadSuspended(OSThread* thread);
 BOOL OSIsThreadTerminated(OSThread* thread);
+void OSYieldThread(void);
 BOOL OSCreateThread(OSThread* thread, void* (*func)(void*), void* param, void* stackBase, u32 stackSize, OSPriority priority, u16 attribute);
 void OSExitThread(void* val);
 void OSCancelThread(OSThread* thread);

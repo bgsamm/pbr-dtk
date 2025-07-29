@@ -1,4 +1,4 @@
-#include "version.hpp"
+#include "global.hpp"
 
 #include <revolution/os.h>
 
@@ -7,7 +7,7 @@
 /* 
  * The way this initializes the seed to 1, and the LCG
  * inlined throughout the codebase, is equivalent to
- * sysdolphin's HSD_Rand
+ * sysdolphin's HSD_Rand - coincidence?
  */
 
 struct GSrandState {

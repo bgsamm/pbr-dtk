@@ -1,5 +1,5 @@
-#ifndef MTX_H
-#define MTX_H
+#ifndef __MTX_H__
+#define __MTX_H__
 
 #include <revolution/types.h>
 
@@ -11,8 +11,16 @@ typedef struct {
     f32 x, y, z;
 } Vec, *VecPtr;
 
+typedef f32 Mtx[3][4];
+typedef f32 (*MtxPtr)[4];
+
+void PSMTXMultVec(const Mtx m, const Vec* src, Vec* dst);
+
+void PSVECScale(const Vec* src, Vec* dst, f32 scale);
+f32 PSVECSquareMag(const Vec* v);
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif // MTX_H
+#endif // __MTX_H__

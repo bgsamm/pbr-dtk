@@ -1,4 +1,4 @@
-#include "version.hpp"
+#include "global.hpp"
 
 #include <revolution/mem.h>
 #include <revolution/os.h>

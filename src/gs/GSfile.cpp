@@ -1,4 +1,4 @@
-#include "version.hpp"
+#include "global.hpp"
 
 #include <cstring>
 
@@ -185,7 +185,7 @@ void GSfile::waitForDvdErrorClear() {
     }
 
     while (true) {
-        errorTaskCallback(sDvdErrorTaskID, 0);
+        errorTaskCallback(sDvdErrorTaskID, NULL);
 
         if (sDvdErrorState == DVD_ERROR_STATE_OK) {
             break;

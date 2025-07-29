@@ -1,1 +1,1 @@
-#include "version.hpp"
+#include "global.hpp"

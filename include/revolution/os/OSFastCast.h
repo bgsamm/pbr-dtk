@@ -57,48 +57,79 @@ extern "C" {
 #define GQR6 0x396
 #define GQR7 0x397
 
-static inline void OSInitFastCast(void)
-{
-    #ifdef __MWERKS__
-    asm
-    {
-        li      r3, 4
-        oris    r3, r3, 4
+#define OS_FASTCAST_U8  2
+#define OS_FASTCAST_U16 3
+#define OS_FASTCAST_S8  4
+#define OS_FASTCAST_S16 5
+
+static inline void OSInitFastCast(void) {
+    asm {
+        li      r3, OS_GQR_U8
+        oris    r3, r3, OS_GQR_U8
         mtspr   GQR2, r3
 
-        li      r3, 5
-        oris    r3, r3, 5
+        li      r3, OS_GQR_U16
+        oris    r3, r3, OS_GQR_U16
         mtspr   GQR3, r3
 
-        li      r3, 6
-        oris    r3, r3, 6
+        li      r3, OS_GQR_S8
+        oris    r3, r3, OS_GQR_S8
         mtspr   GQR4, r3
 
-        li      r3, 7
-        oris    r3, r3, 7
+        li      r3, OS_GQR_S16
+        oris    r3, r3, OS_GQR_S16
         mtspr   GQR5, r3
     }
-    #endif
 }
 
 static inline void OSSetGQR6(register u32 type, register u32 scale) {
     register u32 val = ((scale << 8 | type) << 16) | ((scale << 8) | type);
 
-    #ifdef __MWERKS__
     asm {
         mtspr GQR6, val
     }
-    #endif
 }
 
 static inline void OSSetGQR7(register u32 type, register u32 scale) {
     register u32 val = ((scale << 8 | type) << 16) | ((scale << 8) | type);
 
-    #ifdef __MWERKS__
     asm {
         mtspr GQR7, val
     }
-    #endif
+}
+
+static inline f32 __OSu16tof32(register u16* in)
+{
+    register f32   r;
+    asm
+    {
+        psq_l      r, 0(in), 1, OS_FASTCAST_U16
+    }
+    return r;
+}
+
+static inline void OSu16tof32(register u16* in, volatile register f32* out)
+{
+    *out = __OSu16tof32(in);
+}
+
+static inline u16 __OSf32tou16(register f32 in)
+{
+    f32           a;
+    register f32* ptr = &a;
+    register u16  r;
+
+    asm
+    {
+        psq_st  in, 0(ptr), 1, OS_FASTCAST_U16
+        lhz     r, 0(ptr)
+    }
+    return r;
+}
+
+static inline void OSf32tou16(register f32* in, volatile register u16* out)
+{
+    *out = __OSf32tou16(*in);
 }
 
 #ifdef __cplusplus

@@ -187,7 +187,7 @@ cflags_base = [
     "-Cpp_exceptions off",
     # "-W all",
     "-O4,p",
-    "-inline on",
+    "-inline auto",
     '-pragma "cats off"',
     '-pragma "warn_notinlined off"',
     "-maxerrors 1",
@@ -223,6 +223,30 @@ cflags_rel = [
     *cflags_base,
     "-sdata 0",
     "-sdata2 0",
+]
+
+cflags_game = [
+    "-nodefaults",
+    "-proc gekko",
+    "-align powerpc",
+    "-enum int",
+    "-fp hardware",
+    "-Cpp_exceptions off",
+    # "-W all",
+    "-O4,p",
+    "-inline on",
+    '-pragma "cats off"',
+    '-pragma "warn_notinlined off"',
+    "-maxerrors 1",
+    "-nosyspath",
+    "-RTTI off",
+    "-fp_contract off",
+    "-str reuse",
+    "-enc SJIS",
+    "-i include",
+    f"-i build/{config.version}/include",
+    f"-DBUILD_VERSION={version_num}",
+    f"-DVERSION_{config.version}",
 ]
 
 config.linker_version = "GC/3.0a5.2"
@@ -276,7 +300,7 @@ config.libs = [
     {
         "lib": "game",
         "mw_version": config.linker_version,
-        "cflags": cflags_base,
+        "cflags": cflags_game,
         "progress_category": "game",
         "objects": [
             Object(NonMatching, "main.cpp"),
@@ -287,7 +311,7 @@ config.libs = [
     {
         "lib": "gs",
         "mw_version": config.linker_version,
-        "cflags": cflags_base,
+        "cflags": cflags_game,
         "progress_category": "game",
         "objects": [
             Object(Matching, "gs/operators.cpp"),
@@ -319,7 +343,7 @@ config.libs = [
             Object(NonMatching, "wip/801FF308.cpp"),
             Object(Matching, "gs/math/GSrand.cpp"),
             Object(Matching, "gs/math/GStrig.cpp"),
-            Object(NonMatching, "gs/math/GSquat.cpp"),
+            Object(Matching, "gs/math/GSquat.cpp"),
             Object(Matching, "gs/math/GSmathInit.cpp"),
             Object(Matching, "gs/GStask.cpp"),
             Object(Matching, "gs/GSthread.cpp"),
@@ -327,6 +351,8 @@ config.libs = [
             Object(NonMatching, "wip/80226364.cpp"),
             Object(NonMatching, "gs/render/GSrender.cpp"),
             Object(NonMatching, "gs/render/8023234C.cpp"),
+            Object(Matching, "gs/render/GSrenderLight.cpp"),
+            Object(NonMatching, "gs/render/802377BC.cpp"),
             Object(NonMatching, "gs/GSvideo.cpp"),
             Object(NonMatching, "gs/input/GSinput.cpp"),
             Object(NonMatching, "gs/input/802448E8.cpp"),

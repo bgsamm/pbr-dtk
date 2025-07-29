@@ -5,9 +5,11 @@
 extern "C" {
 #endif
 
+double cos(double x);
+
 double fmod(double x, double y);
 
-double cos(double x);
+double sqrt(double num);
 
 #ifdef __cplusplus
 };

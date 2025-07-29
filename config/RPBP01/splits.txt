@@ -208,10 +208,75 @@ wip/80226364.cpp:
 gs/render/GSrender.cpp:
 	.text       start:0x80230E48 end:0x8023234C
 	.ctors      start:0x803E2154 end:0x803E2158
+	.data       start:0x80424598 end:0x804245E0
+	.sbss       start:0x8063F690 end:0x8063F6A8
+	.sdata2     start:0x80642300 end:0x80642330
 
 gs/render/8023234C.cpp:
 	.text       start:0x8023234C end:0x8023283C
 	.ctors      start:0x803E2158 end:0x803E215C
+
+gs/render/8023283C.cpp:
+	.text       start:0x8023283C end:0x80232D24
+	.ctors      start:0x803E215C end:0x803E2160
+
+gs/render/80232D24.cpp:
+	.text       start:0x80232D24 end:0x802353F8
+	.ctors      start:0x803E2160 end:0x803E2164
+
+gs/render/802353F8.cpp:
+	.text       start:0x802353F8 end:0x80235474
+	.ctors      start:0x803E2164 end:0x803E2168
+
+gs/render/GSrenderLight.cpp:
+	.text       start:0x80235474 end:0x80235A74
+	.ctors      start:0x803E2168 end:0x803E216C
+	.sbss       start:0x8063F6D0 end:0x8063F6D8
+	.sdata2     start:0x80642378 end:0x80642390
+
+gs/render/80235A74.cpp:
+	.text       start:0x80235A74 end:0x80236704
+	.ctors      start:0x803E216C end:0x803E2170
+
+gs/render/80236704.cpp:
+	.text       start:0x80236704 end:0x8023694C
+	.ctors      start:0x803E2170 end:0x803E2174
+
+gs/render/8023694C.cpp:
+	.text       start:0x8023694C end:0x80236B08
+	.ctors      start:0x803E2174 end:0x803E2178
+
+gs/render/80236B08.cpp:
+	.text       start:0x80236B08 end:0x80237794
+	.ctors      start:0x803E2178 end:0x803E217C
+
+gs/render/80237794.cpp:
+	.text       start:0x80237794 end:0x802377BC
+	.ctors      start:0x803E217C end:0x803E2180
+
+gs/render/802377BC.cpp:
+	.text       start:0x802377BC end:0x8023AF8C
+	.ctors      start:0x803E2180 end:0x803E2184
+
+gs/render/8023AF8C.cpp:
+	.text       start:0x8023AF8C end:0x8023B64C
+	.ctors      start:0x803E2184 end:0x803E2188
+
+gs/render/8023B64C.cpp:
+	.text       start:0x8023B64C end:0x8023B9F4
+	.ctors      start:0x803E2188 end:0x803E218C
+
+gs/render/8023B9F4.cpp:
+	.text       start:0x8023B9F4 end:0x8023D008
+	.ctors      start:0x803E218C end:0x803E2190
+
+gs/render/8023D008.cpp:
+	.text       start:0x8023D008 end:0x8023EA44
+	.ctors      start:0x803E2190 end:0x803E2194
+
+gs/render/8023EA44.cpp:
+	.text       start:0x8023EA44 end:0x8023EE6C
+	.ctors      start:0x803E2194 end:0x803E2198
 
 gs/GSvideo.cpp:
 	.text       start:0x8023EE6C end:0x80240060

@@ -1,4 +1,4 @@
-#include "version.hpp"
+#include "global.hpp"
 
 #include <cstring>
 #include "gs/GSmem.hpp"

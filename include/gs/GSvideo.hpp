@@ -23,9 +23,9 @@ enum XfbState {
     XFB_STATE_4
 };
 
-struct XfbInfo {
-    XfbState state;
-    void *buf;
+struct GSxfbHandle {
+    XfbState mState;
+    void *mBuffer;
 };
 
 struct UnkStruct7 {
@@ -44,8 +44,8 @@ union U32F32 {
 class GSvideoManager {
 public:
     /* 0x0 */ GXRenderModeObj mRenderMode;
-    /* 0x3c */ XfbInfo mXfbs[MAX_XFBS];
-    /* 0x54 */ XfbInfo *mActiveXfb;
+    /* 0x3c */ GSxfbHandle mXfbs[MAX_XFBS];
+    /* 0x54 */ GSxfbHandle *mActiveXfb;
     /* 0x58 */ u8 mNumBuffers;
     /* 0x59 */ u8 mRefreshRate;
     /* 0x5a */ u8 mNextField;
@@ -64,18 +64,18 @@ public:
     u32 _7c;
     u8 _80;
     u8 _81;
-    u8 _82;
-    u8 _83;
+    /* 0x82 */ bool _82;
+    /* 0x83 */ bool _83;
     u32 _84;
     u32 _88;
-    f32 _8c;
-    f32 _90;
-    OSTime _98;
+    /* 0x8c */ f32 _8c;
+    /* 0x90 */ f32 _90;
+    /* 0x98 */ OSTime _98;
     f64 _a0;
     U32F32 _a8;
     U32F32 _ac;
-    U32F32 _b0;
-    U32F32 _b4;
+    /* 0xb0 */ U32F32 mViewportWidth;
+    /* 0xb4 */ U32F32 mViewportHeight;
     U32F32 _b8;
     U32F32 _bc;
     union {
@@ -108,20 +108,23 @@ public:
     void fn_8023F45C();
     void fn_8023F4B8();
     void prepareCopyDisp();
-    void copyDisp(XfbInfo *);
+    void copyDisp(GSxfbHandle *);
     void fn_8023F5E8(u32, u32, u32, u32);
     void fn_8023F778();
     bool fn_8023F858(VideoFormat, u32, u32, u32);
     void fn_8023FB04(bool);
-    void fn_8023FBA0(XfbInfo *, u32);
-    XfbInfo *fn_8023FC0C(XfbState);
-    XfbInfo *fn_8023FC54(u32);
+    void fn_8023FBA0(GSxfbHandle *, u32);
+    GSxfbHandle *fn_8023FC0C(XfbState);
+    GSxfbHandle *fn_8023FC54(u32);
     void fn_8023FD64();
-    void fn_8023FE30(u32);
-    void fn_8023FEE8(f32, f32, f32, f32, f32, f32);
+    void fn_8023FE30(bool);
+    void setViewport(f32, f32, f32, f32, f32, f32);
     void setScissor(u32, u32, u32, u32);
     void setScissorBoxOffset(s32, s32);
     f32 fn_8023FFEC();
+    
+    void fn_8024041C();
+    void fn_80240440();
 
     static GSvideoManager *sInstance;
 };
