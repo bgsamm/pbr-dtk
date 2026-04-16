@@ -362,6 +362,9 @@ src/wip/8025B6AC.cpp:
 	.sbss       start:0x8063F950 end:0x8063F958
 	.sdata2     start:0x806425E8 end:0x806425F0
 
+libs/RVL_SDK/src/os/OSSync.c:
+	.text       start:0x80270FE0 end:0x80271060
+
 libs/RVL_SDK/src/os/OSThread.c:
 	.text       start:0x80271060 end:0x802727B8
 	.bss        start:0x805147D8 end:0x805151E0
