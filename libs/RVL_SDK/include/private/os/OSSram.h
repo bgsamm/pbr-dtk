@@ -41,15 +41,7 @@ typedef struct OSSramEx {
 
 void __OSInitSram();
 
-OSSram* __OSLockSram();
-OSSramEx* __OSLockSramEx();
-
-BOOL __OSUnlockSram(int commit);
-BOOL __OSUnlockSramEx(int commit);
-
 BOOL __OSSyncSram();
-
-BOOL __OSCheckSram();
 
 BOOL __OSReadROM(void* buffer, s32 length, s32 offset);
 

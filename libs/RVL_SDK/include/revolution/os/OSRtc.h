@@ -7,9 +7,6 @@
 extern "C" {
 #endif
 
-u16 OSGetGbsMode();
-void OSSetGbsMode(u16 mode);
-
 #define OS_SOUND_MODE_MONO 0
 #define OS_SOUND_MODE_STEREO 1
 

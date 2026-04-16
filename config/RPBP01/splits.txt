@@ -362,6 +362,10 @@ src/wip/8025B6AC.cpp:
 	.sbss       start:0x8063F950 end:0x8063F958
 	.sdata2     start:0x806425E8 end:0x806425F0
 
+libs/RVL_SDK/src/os/OSRtc.c:
+	.text       start:0x802703DC end:0x80270E68
+	.bss        start:0x80514780 end:0x805147D8
+
 libs/RVL_SDK/src/os/OSSemaphore.c:
 	.text       start:0x80270E68 end:0x80270FE0
 
