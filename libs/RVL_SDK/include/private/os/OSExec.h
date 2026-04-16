@@ -33,7 +33,7 @@ BOOL __OSCheckTmdCountryCode(ESTmdView* tmd);
 
 int __OSGetValidTicketIndex(ESTicketView* ticketViewList, u32 numTickets);
 
-void __OSLaunchMenu();
+void __OSLaunchMenu(void);
 void __OSLaunchTitle(ESTitleId titleId);
 
 void __OSLaunchTitlevForSystem(ESTitleId titleId, u32 launchCode, const char** argv);

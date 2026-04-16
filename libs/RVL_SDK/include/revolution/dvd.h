@@ -14,24 +14,39 @@
 extern "C" {
 #endif
 
-#define DVD_STATE_FATAL_ERROR   -1
-#define DVD_STATE_END            0
-#define DVD_STATE_BUSY           1
-#define DVD_STATE_WAITING        2
-#define DVD_STATE_COVER_CLOSED   3
-#define DVD_STATE_NO_DISK        4
-#define DVD_STATE_COVER_OPEN     5
-#define DVD_STATE_WRONG_DISK     6
-#define DVD_STATE_MOTOR_STOPPED  7
-#define DVD_STATE_PAUSING        8
-#define DVD_STATE_IGNORED        9
-#define DVD_STATE_CANCELED      10
-#define DVD_STATE_RETRY         11
+enum {
+    DVD_STATE_FATAL = -1,
+    DVD_STATE_IDLE,
+    DVD_STATE_BUSY,
+    DVD_STATE_WAITING,
+    DVD_STATE_COVER_CLOSED,
+    DVD_STATE_NO_DISK,
+    DVD_STATE_COVER_OPEN,
+    DVD_STATE_WRONG_DISK,
+    DVD_STATE_MOTOR_STOPPED,
+    DVD_STATE_PAUSED,
+    DVD_STATE_IGNORED,
+    DVD_STATE_CANCELED,
+    DVD_STATE_RETRY,
+    DVD_STATE_NO_INPUT
+};
 
-#define DVD_RESULT_GOOD         0
-#define DVD_RESULT_FATAL_ERROR -1
-#define DVD_RESULT_IGNORED     -2
-#define DVD_RESULT_CANCELED    -3
+enum {
+    DVD_PRIO_HIGHEST = 0,
+    DVD_PRIO_HIGH,
+    DVD_PRIO_MEDIUM,
+    DVD_PRIO_LOW,
+
+    DVD_PRIO_MAX,
+};
+
+enum {
+    DVD_RESULT_COVER_CLOSED = -4,
+    DVD_RESULT_CANCELED,
+    DVD_RESULT_IGNORED,
+    DVD_RESULT_FATAL,
+    DVD_RESULT_OK,
+};
 
 typedef struct DVDDiskID {
     char gameName[4];  // 0x00

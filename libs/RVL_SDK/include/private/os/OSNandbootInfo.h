@@ -10,11 +10,14 @@ extern "C" {
 typedef struct OSNandbootInfo {
     u32 checkSum;  // 0x00
     u32 argsOff;   // 0x04
+    
+    // TODO(samm) Determine if this is accurate (union?)
+    u32 returnValue; // 0x08
 
-    u8 padding_0x08[2];
+    // u8 padding_0x08[2];
 
-    u8 prevAppType;  // 0x0A
-    u8 returnValue;  // 0x0B
+    // u8 prevAppType;  // 0x0A
+    // u8 returnValue;  // 0x0B
 
     u32 argValue;  // 0x0C
 

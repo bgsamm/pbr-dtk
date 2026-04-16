@@ -299,6 +299,7 @@ config.libs = [
         ],
     },
     RVLSDKLib("os", [
+            Object(Matching, "os/OSReset.c"),
             Object(Matching, "os/OSRtc.c"),
             Object(Matching, "os/OSSemaphore.c"),
             Object(Matching, "os/OSSync.c"),

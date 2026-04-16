@@ -5,12 +5,13 @@
 
 enum {
     OS_SHUTDOWN_FATAL = 0,
-    OS_SHUTDOWN_RESTART_PRIVATE = 1, /* ????? */
-    OS_SHUTDOWN_STANDBY = 2,
-    OS_SHUTDOWN_3 = 3,
+    OS_SHUTDOWN_REBOOT = 1,
+    OS_SHUTDOWN_SHUTDOWN = 2,
+    OS_SHUTDOWN_IDLE = 3,
     OS_SHUTDOWN_RESTART = 4,
     OS_SHUTDOWN_RETURN_MENU = 5,
-    OS_SHUTDOWN_LAUNCH = 6
+    OS_SHUTDOWN_EXEC = 6,
+    OS_SHUTDOWN_LAUNCH = 7
 };
 
 enum {
@@ -24,14 +25,14 @@ enum {
     OS_SETTING_UPDATE
 };
 
-void OSShutdownSystemForBS();
+void OSShutdownSystemForBS(u32 arg);
 
 BOOL __OSCallShutdownFunctions(BOOL final, u32 event);
 
 void __OSShutdownDevices(u32 id);
 
-void __OSReturnToMenuForError();
-void __OSHotResetForError();
+void __OSReturnToMenuForError(void);
+void __OSHotResetForError(void);
 
 u8 __OSGetDiscState(u8 prev);
 

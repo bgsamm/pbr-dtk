@@ -12,6 +12,7 @@
 #include "gs/GSnand.hpp"
 #include "gs/GStask.hpp"
 #include "gs/GSthread.hpp"
+#include "revolution/DVD.h"
 
 extern MEMHeapHandle lbl_8063E8EC;
 
@@ -400,7 +401,7 @@ u32 GSfile::getFileLength(GSfileHandle *fileHandle) {
 s32 GSfile::getDriveStatus() {
     // Does not match with !sInitialized
     if (sInitialized == false) {
-        return DVD_STATE_FATAL_ERROR;
+        return DVD_STATE_FATAL;
     }
 
     return DVDGetDriveStatus();
@@ -423,7 +424,7 @@ bool GSfile::seekAsync(GSfileHandle *fileHandle, s32 offset, GSdvdCallback callb
 
 void GSfile::updateErrorState(s32 dvdState) {
     switch (dvdState) {
-        case DVD_STATE_FATAL_ERROR:
+        case DVD_STATE_FATAL:
             sDvdErrorState = DVD_ERROR_STATE_FATAL_ERROR;
             break;
         

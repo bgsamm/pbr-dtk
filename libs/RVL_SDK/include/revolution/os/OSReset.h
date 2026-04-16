@@ -27,11 +27,13 @@ typedef struct OSShutdownFunctionQueue {
 void OSRegisterShutdownFunction(OSShutdownFunctionInfo* info);
 void OSUnregisterShutdownFunction(OSShutdownFunctionInfo* info);
 
-u32 OSGetResetCode();
+u32 OSGetResetCode(void);
 
-void OSRebootSystem();
-void OSReturnToMenu();
-void OSShutdownSystem();
+void OSRebootSystem(void);
+void OSReturnToMenu(void);
+void OSShutdownSystem(void);
+
+void OSResetSystem(int reset, u32 resetCode, BOOL forceMenu);
 
 #ifdef __cplusplus
 }

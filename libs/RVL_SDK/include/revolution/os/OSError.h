@@ -26,13 +26,13 @@ void OSVReport(const char* msg, va_list list);
 
 void OSPanic(const char* file, int line, const char* msg, ...);
 
-#define OSHalt(msg, line) OSPanic(__FILE__, line, msg)
-#define OSAssertMsg(exp, msg, line)                                                                                                                  \
+#define OSHalt(msg) OSPanic(__FILE__, __LINE__, msg)
+#define OSAssertMsg(exp, msg)                                                                                                                  \
     if (!(exp))                                                                                                                                      \
-    OSHalt(msg, line)
-#define OSAssertVMsg(exp, line, ...)                                                                                                                 \
+    OSHalt(msg)
+#define OSAssertVMsg(exp, ...)                                                                                                                 \
     if (!(exp))                                                                                                                                      \
-    OSPanic(__FILE__, line, __VA_ARGS__)
+    OSPanic(__FILE__, __LINE__, __VA_ARGS__)
 
 void OSRegisterVersion(const char* version);
 

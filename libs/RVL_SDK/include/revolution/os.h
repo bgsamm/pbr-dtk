@@ -85,9 +85,9 @@ enum {
     OS_APP_TYPE_84 = 0x84,
 };
 
-u8 OSGetAppType();
-u32 OSGetConsoleType();
-const char* OSGetAppGamename();
+u8 OSGetAppType(void);
+u32 OSGetConsoleType(void);
+const char* OSGetAppGamename(void);
 
 #ifdef DEBUG
 
