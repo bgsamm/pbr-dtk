@@ -62,6 +62,7 @@ void GScache::fn_801DB92C(u8 start, u8 count, bool param3) {
     }
 }
 
+// TODO(samm) Move asm blocks into their own functions
 bool GScache::fn_801DB978(u8 param1) {
     asm {
         mflr    r3
