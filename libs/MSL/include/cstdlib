@@ -1,0 +1,32 @@
+#ifndef MSL_CSTDLIB_H
+#define MSL_CSTDLIB_H
+
+#include <stdlib.h>
+
+#include <cmalloc>
+#include <cmath>
+#include <csearch>
+
+#ifdef __cplusplus
+
+namespace std {
+    using ::rand;
+    using ::srand;
+
+    using ::mbstowcs;
+    using ::mbtowc;
+
+    using ::wcstombs;
+
+    using ::strtol;
+    using ::strtoull;
+
+    using ::atoi;
+    using ::atol;
+
+    using ::itoa;
+}  // namespace std
+
+#endif
+
+#endif  // MSL_CSTDLIB_H

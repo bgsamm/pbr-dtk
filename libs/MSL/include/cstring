@@ -1,0 +1,40 @@
+#ifndef MSL_CSTRING_H
+#define MSL_CSTRING_H
+
+#include <string.h>
+
+#ifdef __cplusplus
+
+namespace std {
+    using ::memchr;
+    using ::memcmp;
+    using ::memcpy;
+    using ::memmove;
+    using ::memset;
+
+    using ::strcat;
+    using ::strchr;
+    using ::strcmp;
+    using ::strcpy;
+    using ::strlen;
+    using ::strpbrk;
+    using ::strrchr;
+    using ::strspn;
+    using ::strstr;
+    using ::strtok;
+
+    using ::strncat;
+    using ::strncmp;
+    using ::strncpy;
+    using ::strnlen;
+
+    using ::strcspn;
+
+    using ::strcmpi;
+    using ::stricmp;
+    using ::strnicmp;
+}  // namespace std
+
+#endif
+
+#endif  // MSL_CSTRING_H

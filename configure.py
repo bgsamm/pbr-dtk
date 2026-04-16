@@ -307,6 +307,10 @@ config.libs = [
             Object(NonMatching, "Runtime.PPCEABI.H/__init_cpp_exceptions.cpp"),
         ],
     },
+    RVLSDKLib("os", [
+            Object(NonMatching, "os/OSThread.c"),
+        ]
+    ),
     {
         "lib": "game",
         "mw_version": config.linker_version,
