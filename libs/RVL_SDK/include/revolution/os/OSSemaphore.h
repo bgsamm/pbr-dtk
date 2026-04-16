@@ -14,6 +14,7 @@ typedef struct OSSemaphore {
 
 void OSInitSemaphore(OSSemaphore* sem, s32 count);
 s32 OSWaitSemaphore(OSSemaphore* sem);
+s32 OSTryWaitSemaphore(OSSemaphore* sem);
 s32 OSSignalSemaphore(OSSemaphore* sem);
 
 #ifdef __cplusplus
