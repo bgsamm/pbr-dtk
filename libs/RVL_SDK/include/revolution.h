@@ -1,7 +1,8 @@
 #ifndef REVOLUTION_H
 #define REVOLUTION_H
 
-// TODO Properly credit Wii Menu decomp
+// TODO(samm) Properly credit Wii Menu decomp
+// TODO(samm) Clean out anything unused
 
 #include <revolution/types.h>
 

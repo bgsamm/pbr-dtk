@@ -53,6 +53,22 @@
 #define DECOMP_FORCE_DTOR(module, cls)
 #endif // NON_MATCHING
 
+#ifndef __MWERKS__
+
+#define asm
+#define register
+#define __attribute__(x)
+#define __declspec(x)
+
+extern void         __sync();
+extern unsigned int __cntlzw(unsigned int value);
+extern void         __memclr(void* buffer, int len);
+extern unsigned int __rlwimi(unsigned int a, unsigned int b, unsigned int c, unsigned int d, unsigned int e);
+extern void*        __alloca(unsigned int blockSize);
+extern int          __abs(int n);
+
+#endif
+
 typedef unsigned char   undefined;
 typedef unsigned short  undefined2;
 typedef unsigned long   undefined4;

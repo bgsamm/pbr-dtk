@@ -18,7 +18,7 @@ extern "C" {
 #define WPAD_MAX_SPEAKER_VOLUME 127
 
 typedef void* (*WPADAllocFunc)(u32 size);
-typedef BOOL (*WPADFreeFunc)(void* block);
+typedef u8    (*WPADFreeFunc)(void* block);
 
 typedef void (*WPADSyncDeviceCallback)(s32 result, s32 num);
 typedef void (*WPADClearDeviceCallback)(s32 result);
@@ -36,14 +36,14 @@ typedef void (*WPADClearDeviceCallback)(s32 result);
 /* ERRORS */
 
 enum {
-    WPAD_ERR_OK = 0,
+    WPAD_ERR_NONE = 0,
     WPAD_ERR_NO_CONTROLLER = -1,
-    WPAD_ERR_COMMUNICATION_ERROR = -2,
+    WPAD_ERR_BUSY = -2,
     WPAD_ERR_TRANSFER = -3,
     WPAD_ERR_INVALID = -4,
+    WPAD_ERR_NOPERM = -5,
+    WPAD_ERR_BROKEN = -6,
     WPAD_ERR_CORRUPTED = -7,
-
-    WPAD_ERR_BUSY = WPAD_ERR_COMMUNICATION_ERROR,
 };
 
 /* DEVICE TYPE */
@@ -305,23 +305,23 @@ typedef void (*WPADConnectCallback)(s32 chan, s32 result);
 typedef void (*WPADExtensionCallback)(s32 chan, s32 dev);
 typedef void (*WPADSaveCallback)(int status);
 
-void WPADInit();
-void WPADShutdown();
+void WPADInit(void);
+void WPADShutdown(void);
 
-BOOL WPADStartSimpleSync();
-BOOL WPADStartFastSimpleSync();
-BOOL WPADStopSimpleSync();
-BOOL WPADStartClearDevice();
+BOOL WPADStartSimpleSync(void);
+BOOL WPADStartFastSimpleSync(void);
+BOOL WPADStopSimpleSync(void);
+BOOL WPADStartClearDevice(void);
 
 WPADSyncDeviceCallback WPADSetSimpleSyncCallback(WPADSyncDeviceCallback pCallback);
 
 WPADClearDeviceCallback WPADSetClearDeviceCallback(WPADClearDeviceCallback pCallback);
 
 void WPADRegisterAllocator(WPADAllocFunc pAllocFunc, WPADFreeFunc pFreeFunc);
-u32 WPADGetWorkMemorySize();
+u32 WPADGetWorkMemorySize(void);
 
-s32 WPADGetStatus();
-u8 WPADGetSensorBarPosition();
+s32 WPADGetStatus(void);
+u8 WPADGetSensorBarPosition(void);
 
 void WPADGetAccGravityUnit(s32 chan, u32 type, WPADAccGravityUnit* acc);
 
@@ -339,7 +339,7 @@ s32 WPADGetInfoAsync(s32 chan, WPADInfo* info, WPADCallback callback);
 
 void WPADControlMotor(s32 chan, u32 command);
 void WPADEnableMotor(BOOL enable);
-BOOL WPADIsMotorEnabled();
+BOOL WPADIsMotorEnabled(void);
 
 s32 WPADControlLed(s32 chan, u8 flags, WPADCallback pCallback);
 BOOL WPADSaveConfig(WPADSaveCallback callback);
@@ -351,14 +351,14 @@ u32 WPADGetLatestIndexInBuf(s32 chan);
 
 BOOL WPADIsSpeakerEnabled(s32 chan);
 s32 WPADControlSpeaker(s32 chan, u32 command, WPADCallback callback);
-u8 WPADGetSpeakerVolume();
+u8 WPADGetSpeakerVolume(void);
 void WPADSetSpeakerVolume(u8 volume);
 
 BOOL WPADCanSendStreamData(s32 chan);
 s32 WPADSendStreamData(s32 chan, void* data, u16 len);
 
 void WPADSetDpdSensitivity(u8 sensitivity);
-u8 WPADGetDpdSensitivity();
+u8 WPADGetDpdSensitivity(void);
 BOOL WPADSetSensorBarPower(BOOL enable);
 BOOL WPADIsDpdEnabled(s32 chan);
 s32 WPADControlDpd(s32 chan, u32 command, WPADCallback callback);

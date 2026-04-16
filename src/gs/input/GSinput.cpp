@@ -34,7 +34,7 @@ void GSinput::fn_80243820(GSinputUnkStruct2 *param1, u32 buttons, u32 buttonsDow
         }
         else {
             param1->_14 -= param4;
-            if (param1->_14 < 0f) {
+            if (param1->_14 < 0.0f) {
                 param1->_14 = param1->_1c;
                 param1->_C = var1;
             }
@@ -71,7 +71,7 @@ void GSinput::fn_802438AC(GSinputUnkStruct3 *param1, u32 buttons, u32 buttonsDow
         
         case 1:
             param1->_4 -= param4;
-            if (param1->_4 <= 0f) {
+            if (param1->_4 <= 0.0f) {
                 param1->mState = 0;
             }
             else if ((buttons & buttonsDown) == 0) {
@@ -81,7 +81,7 @@ void GSinput::fn_802438AC(GSinputUnkStruct3 *param1, u32 buttons, u32 buttonsDow
         
         case 2:
             param1->_4 -= param4;
-            if (param1->_4 <= 0f) {
+            if (param1->_4 <= 0.0f) {
                 param1->mState = 0;
             }
             else if (param1->_10 == (buttons & buttonsDown)) {
@@ -93,7 +93,7 @@ void GSinput::fn_802438AC(GSinputUnkStruct3 *param1, u32 buttons, u32 buttonsDow
             break;
         
         case 3:
-            if (param1->_4 < (param1->_18 - 2f)) {
+            if (param1->_4 < (param1->_18 - 2.0f)) {
                 param1->_C = 0;
             }
 
@@ -102,7 +102,7 @@ void GSinput::fn_802438AC(GSinputUnkStruct3 *param1, u32 buttons, u32 buttonsDow
             }
             else {
                 param1->_4 -= param4;
-                if (param1->_4 == 0f) {
+                if (param1->_4 == 0.0f) {
                     param1->_8 = param1->_10 | (buttons & ~buttonsDown);
                 }
             }
@@ -123,12 +123,12 @@ void GSinput::fn_80243A48(GScontrolStick *param1) {
     param1->_4 = 0;
     param1->_8 = 0;
     param1->mNumSteps = 7;
-    param1->mPosDelta.x = 0f;
-    param1->mPosDelta.y = 0f;
-    param1->mTargetPos.x = 0f;
-    param1->mTargetPos.y = 0f;
-    param1->mCurrentPos.x = 0f;
-    param1->mCurrentPos.y = 0f;
+    param1->mPosDelta.x = 0.0f;
+    param1->mPosDelta.y = 0.0f;
+    param1->mTargetPos.x = 0.0f;
+    param1->mTargetPos.y = 0.0f;
+    param1->mCurrentPos.x = 0.0f;
+    param1->mCurrentPos.y = 0.0f;
 }
 
 static inline void sub_vec2(Vec2 *a, Vec2 *b, Vec2 *out) {
@@ -141,10 +141,10 @@ void GSinput::fn_80243A7C(GScontrolStick *param1, Vec2 *targetPos) {
     // This variable never actually gets used
     Vec2 var1;
     sub_vec2(&param1->mTargetPos, targetPos, &var1);
-    if (var1.x < 0f) {
+    if (var1.x < 0.0f) {
         var1.x = -var1.x;
     }
-    if (var1.y < 0f) {
+    if (var1.y < 0.0f) {
         var1.y = -var1.y;
     }
 
@@ -152,13 +152,13 @@ void GSinput::fn_80243A7C(GScontrolStick *param1, Vec2 *targetPos) {
 
     if (param1->_4 == 0) {
         f32 nSteps = ensure_nonzero(param1->mNumSteps);
-        param1->mPosDelta.x *= 1f / nSteps;
-        param1->mPosDelta.y *= 1f / nSteps;
+        param1->mPosDelta.x *= 1.0f / nSteps;
+        param1->mPosDelta.y *= 1.0f / nSteps;
     }
     else if (param1->_4 == 1) {
         f32 nSteps = ensure_nonzero(param1->mNumSteps * 0.25f);
-        param1->mPosDelta.x *= 1f / nSteps;
-        param1->mPosDelta.y *= 1f / nSteps;
+        param1->mPosDelta.x *= 1.0f / nSteps;
+        param1->mPosDelta.y *= 1.0f / nSteps;
     }
 
     param1->_8 = 0;
@@ -168,20 +168,20 @@ void GSinput::fn_80243A7C(GScontrolStick *param1, Vec2 *targetPos) {
     param1->mCurrentPos.y += param1->mPosDelta.y;
     
     if (param1->_4 == 1 && (param1->_8 = 1) < param1->mNumSteps) {
-        f32 nSteps = ensure_nonzero(2f);
-        param1->mPosDelta.x *= 1f / nSteps;
-        param1->mPosDelta.y *= 1f / nSteps;
+        f32 nSteps = ensure_nonzero(2.0f);
+        param1->mPosDelta.x *= 1.0f / nSteps;
+        param1->mPosDelta.y *= 1.0f / nSteps;
 
-        if (abs(param1->mPosDelta.x) < 1f) {
+        if (abs(param1->mPosDelta.x) < 1.0f) {
             param1->mPosDelta.x = (param1->mPosDelta.x > 0) ? 1 : -1;
         }
 
-        if (abs(param1->mPosDelta.y) < 1f) {
+        if (abs(param1->mPosDelta.y) < 1.0f) {
             param1->mPosDelta.y = (param1->mPosDelta.y > 0) ? 1 : -1;
         }
     }
 
-    if (param1->mPosDelta.x < 0f) {
+    if (param1->mPosDelta.x < 0.0f) {
         if (param1->mCurrentPos.x < param1->mTargetPos.x) {
             param1->mCurrentPos.x = param1->mTargetPos.x;
         }
@@ -192,7 +192,7 @@ void GSinput::fn_80243A7C(GScontrolStick *param1, Vec2 *targetPos) {
         }
     }
 
-    if (param1->mPosDelta.y < 0f) {
+    if (param1->mPosDelta.y < 0.0f) {
         if (param1->mCurrentPos.y < param1->mTargetPos.y) {
             param1->mCurrentPos.y = param1->mTargetPos.y;
         }
@@ -206,16 +206,16 @@ void GSinput::fn_80243A7C(GScontrolStick *param1, Vec2 *targetPos) {
 
 void GSinputDevice::resetData() {
     mButtons = 0;
-    mStick1PosRaw.x = 0f;
-    mStick1PosRaw.y = 0f;
-    mStick2PosRaw.x = 0f;
-    mStick2PosRaw.y = 0f;
+    mStick1PosRaw.x = 0.0f;
+    mStick1PosRaw.y = 0.0f;
+    mStick2PosRaw.x = 0.0f;
+    mStick2PosRaw.y = 0.0f;
     mButtonsLast = 0;
     mButtonsDown = 0;
-    _28 = 0f;
-    _2c = 0f;
-    _30 = 0f;
-    _34 = 0f;
+    _28 = 0.0f;
+    _2c = 0.0f;
+    _30 = 0.0f;
+    _34 = 0.0f;
     mDataSetsRead = 0;
     mLastError = WPAD_ERR_NO_CONTROLLER;
 }
@@ -381,7 +381,7 @@ f32 GSinputDevice::fn_80244168(s32 param2) {
             return _34;
         
         default:
-            return 0f;
+            return 0.0f;
     }
 }
 
@@ -404,21 +404,21 @@ GSinputManager::GSinputManager(s32 maxDevices) {
         GSinput::fn_80243A18(&device->mStick2);
         GSinput::fn_802448E8(&device->_918);
         device->mDeviceType = DEV_TYPE_INVALID;
-        device->mStick1PosRaw.x = 0f;
-        device->mStick1PosRaw.y = 0f;
-        device->mStick2PosRaw.x = 0f;
-        device->mStick2PosRaw.y = 0f;
+        device->mStick1PosRaw.x = 0.0f;
+        device->mStick1PosRaw.y = 0.0f;
+        device->mStick2PosRaw.x = 0.0f;
+        device->mStick2PosRaw.y = 0.0f;
         device->mButtons = 0;
         device->mButtonsLast = 0;
         device->mButtonsDown = 0;
-        device->mStick1Pos.x = 0f;
-        device->mStick1Pos.y = 0f;
-        device->mStick2Pos.x = 0f;
-        device->mStick2Pos.y = 0f;
-        device->_28 = 0f;
-        device->_2c = 0f;
-        device->_30 = 0f;
-        device->_34 = 0f;
+        device->mStick1Pos.x = 0.0f;
+        device->mStick1Pos.y = 0.0f;
+        device->mStick2Pos.x = 0.0f;
+        device->mStick2Pos.y = 0.0f;
+        device->_28 = 0.0f;
+        device->_2c = 0.0f;
+        device->_30 = 0.0f;
+        device->_34 = 0.0f;
         device->mDataSetsRead = 0;
         device++;
     } while (device < &mDevices[WPAD_MAX_CONTROLLERS]);

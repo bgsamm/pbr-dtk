@@ -39,8 +39,6 @@ typedef struct {
     OSMutex* prev;  // 0x04
 } OSMutexLink;
 
-void OSInitMutexQueue(OSMutexQueue* queue);
-
 struct OSThread {
     OSContext context;    // 0x00
     u16 state;            // 0x2C8
@@ -84,11 +82,10 @@ void OSInitThreadQueue(OSThreadQueue* queue);
 void OSSleepThread(OSThreadQueue* queue);
 void OSWakeupThread(OSThreadQueue* queue);
 
-void OSSetCurrentThread(OSThread* thread);
-OSThread* OSGetCurrentThread();
+OSThread* OSGetCurrentThread(void);
 
-s32 OSEnableScheduler();
-s32 OSDisableScheduler();
+s32 OSEnableScheduler(void);
+s32 OSDisableScheduler(void);
 
 BOOL OSIsThreadSuspended(OSThread* thread);
 BOOL OSIsThreadTerminated(OSThread* thread);
@@ -99,7 +96,7 @@ void OSCancelThread(OSThread* thread);
 BOOL OSJoinThread(OSThread* thread, void* val);
 void OSDetachThread(OSThread* thread);
 
-void OSYieldThread();
+void OSYieldThread(void);
 
 s32 OSSuspendThread(OSThread* thread);
 s32 OSResumeThread(OSThread* thread);
@@ -107,7 +104,9 @@ s32 OSResumeThread(OSThread* thread);
 BOOL OSSetThreadPriority(OSThread* thread, OSPriority priority);
 s32 OSGetThreadPriority(OSThread* thread);
 
-s32 OSCheckActiveThreads();
+OSThread* OSSetIdleFunction(OSIdleFunction idleFunc, void* param, void* stack, u32 stackSize);
+
+s32 OSCheckActiveThreads(void);
 
 void OSSetThreadSpecific(s32 index, void* ptr);
 void* OSGetThreadSpecific(s32 index);

@@ -1,7 +1,7 @@
 #ifndef REVOLUTION_TYPES_H
 #define REVOLUTION_TYPES_H
 
-// TODO Remove this?
+// TODO(samm) Remove this?
 #include "decomp.h"
 
 typedef signed char s8;

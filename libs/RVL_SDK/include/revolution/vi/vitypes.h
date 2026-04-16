@@ -7,6 +7,12 @@
 extern "C" {
 #endif
 
+typedef enum _VITimeToDIM {
+    VI_DM_DEFAULT = 0,
+    VI_DM_10M,
+    VI_DM_15M
+} VITimeToDIM;
+
 #define VI_DISPLAY_PIX_SZ (2)
 
 #define VI_MAX_WIDTH_NTSC (720)

@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-typedef void (*GXBreakPtCallback)();
+typedef void (*GXBreakPtCallback)(void);
 
 void GXInitFifoBase(GXFifoObj* fifo, void* base, u32 size);
 void GXInitFifoPtrs(GXFifoObj* fifo, void* readPtr, void* writePtr);
@@ -23,10 +23,12 @@ void GXGetGPStatus(GXBool* overhi, GXBool* underlow, GXBool* readIdle, GXBool* c
 GXBreakPtCallback GXSetBreakPtCallback(GXBreakPtCallback cb);
 
 GXBool GXGetCPUFifo(GXFifoObj* fifo);
-GXFifoObj* GXGetGPFifo();
+GXFifoObj* GXGetGPFifo(void);
 
 u32 GXGetFifoCount(const GXFifoObj* fifo);
 GXBool GXGetFifoWrap(const GXFifoObj* fifo);
+
+void GXDisableBreakPt(void);
 
 #ifdef __cplusplus
 }

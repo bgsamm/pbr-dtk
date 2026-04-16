@@ -89,8 +89,8 @@ extern u8 _stack_end[];
 
 /* Queue initialization */
 
-void OSInitMutexQueue(OSMutexQueue* queue);
 void OSInitThreadQueue(OSThreadQueue* queue);
+static void OSInitMutexQueue(OSMutexQueue* queue);
 
 /* Other small utilities */
 
@@ -107,30 +107,13 @@ static void OSClearStack(u8 value) {
     }
 }
 
-void OSSetCurrentThread(OSThread* thread);
+static void OSSetCurrentThread(OSThread* thread);
 
 /* Switch thread callback */
 
 static void DefaultSwitchThreadCallback(OSThread* from, OSThread* to) {
 }
 static OSSwitchThreadCallback SwitchThreadCallback = DefaultSwitchThreadCallback;
-
-OSSwitchThreadCallback OSSetSwitchThreadCallback(OSSwitchThreadCallback callback) {
-    OSSwitchThreadCallback prev;
-    BOOL enabled;
-
-    enabled = OSDisableInterrupts();
-    prev = SwitchThreadCallback;
-
-    SwitchThreadCallback = callback ? callback : DefaultSwitchThreadCallback;
-    OSRestoreInterrupts(enabled);
-
-    if (prev == DefaultSwitchThreadCallback) {
-        return NULL;
-    }
-
-    return prev;
-}
 
 void __OSThreadInit() {
     OSThread* thread = &DefaultThread;
@@ -195,7 +178,7 @@ OSThread* OSGetCurrentThread() {
     return __OSCurrentThread;
 }
 
-void __OSSwitchThread(OSThread* thread) {
+static void __OSSwitchThread(OSThread* thread) {
     OSSetCurrentThread(thread);
     OSSetCurrentContext(&thread->context);
     OSLoadContext(&thread->context);
@@ -209,7 +192,7 @@ BOOL OSIsThreadTerminated(OSThread* thread) {
     return thread->state == OS_THREAD_STATE_DEAD || thread->state == OS_THREAD_STATE_UNINITIALIZED ? TRUE : FALSE;
 }
 
-BOOL __OSIsThreadActive(OSThread* thread) {
+static BOOL __OSIsThreadActive(OSThread* thread) {
     OSThread* active;
     if (thread->state == OS_THREAD_STATE_UNINITIALIZED) {
         return FALSE;
@@ -549,19 +532,6 @@ BOOL OSJoinThread(OSThread* thread, void* val) {
     return FALSE;
 }
 
-void OSDetachThread(OSThread* thread) {
-    BOOL enabled = OSDisableInterrupts();
-
-    thread->attr |= OS_THREAD_ATTR_DETACH;
-    if (thread->state == OS_THREAD_STATE_DEAD) {
-        DEQUEUE_THREAD(thread, &__OSActiveThreadQueue, linkActive);
-        thread->state = OS_THREAD_STATE_UNINITIALIZED;
-    }
-
-    OSWakeupThread(&thread->queueJoin);
-    OSRestoreInterrupts(enabled);
-}
-
 s32 OSResumeThread(OSThread* thread) {
     BOOL enabled;
     s32 suspendCount;
@@ -697,134 +667,17 @@ OSPriority OSGetThreadPriority(OSThread* thread) {
     return thread->base;
 }
 
-BOOL CheckThreadQueue(OSThreadQueue* queue) {
-    OSThread* thread;
-    if (queue->head != NULL && queue->head->link.prev != NULL) {
-        return FALSE;
-    }
-    if (queue->tail != NULL && queue->tail->link.next != NULL) {
-        return FALSE;
-    }
-    for (thread = queue->head; thread != NULL; thread = thread->link.next) {
-        if (thread->link.next != NULL && thread != thread->link.next->link.prev) {
-            return FALSE;
+OSThread* OSSetIdleFunction(OSIdleFunction idleFunc, void* param, void* stack, u32 stackSize) {
+    if (idleFunc) {
+        if (IdleThread.state == OS_THREAD_STATE_UNINITIALIZED) {
+            OSCreateThread(&IdleThread, (void* (*)(void*))idleFunc, param, stack, stackSize, 31, OS_THREAD_ATTR_DETACH);
+            OSResumeThread(&IdleThread);
+            return &IdleThread;
         }
-        if (thread->link.prev != NULL && thread != thread->link.prev->link.next) {
-            return FALSE;
+    } else {
+        if (IdleThread.state != OS_THREAD_STATE_UNINITIALIZED) {
+            OSCancelThread(&IdleThread);
         }
-    }
-    return TRUE;
-}
-
-static BOOL IsMember(OSThreadQueue* queue, OSThread* thread) {
-    OSThread* threadFind;
-    for (threadFind = queue->head; threadFind; threadFind = threadFind->link.next) {
-        if (thread == threadFind) {
-            return TRUE;
-        }
-    }
-    return FALSE;
-}
-
-#define OS_ACTIVE_THREAD_ASSERT(exp, line)                                                                                                           \
-    {                                                                                                                                                \
-        if (!(exp)) {                                                                                                                                \
-            OSReport("OSCheckActiveThreads: Failed " #exp " in %d\n", line);                                                                         \
-            OSHalt("", line);                                                                                                                        \
-        }                                                                                                                                            \
-    }
-
-s32 OSCheckActiveThreads() {
-    OSThread* thread;
-    OSPriority prio;
-
-    s32 threadId = 0;
-
-    BOOL enabled = OSDisableInterrupts();
-
-    // clang-format off
-    for (prio = OS_PRIORITY_MIN; prio <= OS_PRIORITY_MAX; prio++) {
-        if (RunQueueBits & (1 << (OS_PRIORITY_MAX - prio))) {
-            OS_ACTIVE_THREAD_ASSERT(RunQueue[prio].head != NULL && RunQueue[prio].tail != NULL, 1513);
-        } else {
-            OS_ACTIVE_THREAD_ASSERT(RunQueue[prio].head == NULL && RunQueue[prio].tail == NULL, 1518);
-        }
-        OS_ACTIVE_THREAD_ASSERT(CheckThreadQueue(&RunQueue[prio]), 1520);
-    }
-
-    OS_ACTIVE_THREAD_ASSERT(__OSActiveThreadQueue.head == NULL || __OSActiveThreadQueue.head->linkActive.prev == NULL, 1525);
-    OS_ACTIVE_THREAD_ASSERT(__OSActiveThreadQueue.tail == NULL || __OSActiveThreadQueue.tail->linkActive.next == NULL, 1527);
-
-    for (thread = __OSActiveThreadQueue.head; thread != NULL; thread = thread->linkActive.next) {
-        threadId++;
-
-        OS_ACTIVE_THREAD_ASSERT(thread->linkActive.next == NULL || thread == thread->linkActive.next->linkActive.prev, 1535);
-        OS_ACTIVE_THREAD_ASSERT(thread->linkActive.prev == NULL || thread == thread->linkActive.prev->linkActive.next, 1537);
-
-        OS_ACTIVE_THREAD_ASSERT(*(thread->stackEnd) == OS_THREAD_STACK_MAGIC, 1540);
-
-        OS_ACTIVE_THREAD_ASSERT(OS_PRIORITY_MIN <= thread->priority && thread->priority <= OS_PRIORITY_MAX+1, 1543);
-        OS_ACTIVE_THREAD_ASSERT(0 <= thread->suspend, 1544);
-        OS_ACTIVE_THREAD_ASSERT(CheckThreadQueue(&thread->queueJoin), 1545);
-
-        switch (thread->state) {
-            case OS_THREAD_STATE_READY: {
-                if (!IsSuspended(thread->suspend)) {
-                    OS_ACTIVE_THREAD_ASSERT(thread->queue == &RunQueue[thread->priority], 1551);
-                    OS_ACTIVE_THREAD_ASSERT(IsMember(&RunQueue[thread->priority], thread), 1552);
-                    OS_ACTIVE_THREAD_ASSERT(thread->priority == __OSGetEffectivePriority(thread), 1553);
-                }
-                break;
-            }
-            case OS_THREAD_STATE_RUNNING: {
-                OS_ACTIVE_THREAD_ASSERT(!IsSuspended(thread->suspend), 1557);
-                OS_ACTIVE_THREAD_ASSERT(thread->queue == NULL, 1558);
-                OS_ACTIVE_THREAD_ASSERT(thread->priority == __OSGetEffectivePriority(thread), 1559);
-                break;
-            }
-            case OS_THREAD_STATE_WAITING: {
-                OS_ACTIVE_THREAD_ASSERT(thread->queue != NULL, 1562);
-                OS_ACTIVE_THREAD_ASSERT(CheckThreadQueue(thread->queue), 1563);
-                OS_ACTIVE_THREAD_ASSERT(IsMember(thread->queue, thread), 1564);
-                if (!IsSuspended(thread->suspend)) {
-                    OS_ACTIVE_THREAD_ASSERT(thread->priority == __OSGetEffectivePriority(thread), 1567);
-                } else {
-                    OS_ACTIVE_THREAD_ASSERT(thread->priority == 32, 1571);
-                }
-                OS_ACTIVE_THREAD_ASSERT(!__OSCheckDeadLock(thread), 1573);
-                break;
-            }
-            case OS_THREAD_STATE_DEAD: {
-                OS_ACTIVE_THREAD_ASSERT(thread->queueMutex.head == NULL && thread->queueMutex.tail == NULL, 1577);
-                break;
-            }
-            default: {
-                OSReport("OSCheckActiveThreads: Failed. unkown thread state (%d) of thread %p\n", thread->state, thread);
-                OSHalt("", 1583);
-                break;
-            }
-        }
-
-        OS_ACTIVE_THREAD_ASSERT(__OSCheckMutexes(thread), 1588);
-    }
-
-    // clang-format on
-
-    OSRestoreInterrupts(enabled);
-    return threadId;
-}
-
-void OSSetThreadSpecific(s32 index, void* ptr) {
-    OSThread* thread = __OSCurrentThread;
-    if (thread && 0 <= index && index < OS_THREAD_SPECIFIC_MAX) {
-        thread->specific[index] = ptr;
-    }
-}
-
-void* OSGetThreadSpecific(s32 index) {
-    OSThread* thread = __OSCurrentThread;
-    if (thread && 0 <= index && index < OS_THREAD_SPECIFIC_MAX) {
-        return thread->specific[index];
     }
     return NULL;
 }
@@ -857,5 +710,3 @@ void OSSleepTicks(OSTime tick) {
 
     OSRestoreInterrupts(enabled);
 }
-
-DECOMP_FORCE_ACTIVE(OSThread_c, IdleThread);  // IdleThread is unused but linked anyway.

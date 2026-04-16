@@ -37,8 +37,9 @@ void GXSetDispCopyGamma(GXGamma gamma);
 void GXCopyDisp(void* dest, GXBool clear);
 void GXCopyTex(void* dest, GXBool clear);
 
-void GXClearBoundingBox();
+void GXClearBoundingBox(void);
 
+u16 GXGetNumXfbLines(u16 height, f32 scale);
 f32 GXGetYScaleFactor(u16 efbHeight, u16 xfbHeight);
 
 #ifdef __cplusplus

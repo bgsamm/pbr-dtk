@@ -18,6 +18,14 @@ void GXSetIndTexOrder(GXIndTexStageID ind_stage, GXTexCoordID tex_coord, GXTexMa
 void GXSetNumIndStages(u8 nIndStages);
 
 void GXSetTevDirect(GXTevStageID tev_stage);
+void GXSetTevIndWarp(GXTevStageID tevStage, GXIndTexStageID indStage, GXBool isSignedOffset, GXBool isReplaceMode,
+                     GXIndTexMtxID mtx);
+
+void GXSetTevIndTile(GXTevStageID tevStage, GXIndTexStageID indStage, u16 sTileSize, u16 tTileSize, u16 sTileSpacing,
+                     u16 tTileSpacing, GXIndTexFormat format, GXIndTexMtxID mtx, GXIndTexBiasSel bias, GXIndTexAlphaSel alpha);
+void GXSetTevIndBumpST(GXTevStageID tevStage, GXIndTexStageID indStage, GXIndTexMtxID mtx);
+void GXSetTevIndBumpXYZ(GXTevStageID tevStage, GXIndTexStageID indStage, GXIndTexMtxID mtx);
+void GXSetTevIndRepeat(GXTevStageID stage);
 
 #ifdef __cplusplus
 }

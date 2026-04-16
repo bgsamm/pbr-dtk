@@ -85,6 +85,9 @@ void C_MTXOrtho(Mtx44 m, f32 t, f32 b, f32 l, f32 r, f32 n, f32 f);
 
 // Vec
 
+f32 PSVECSquareMag(Vec* vec);
+void PSVECScale(const Vec* src, Vec* dst, f32 scale);
+
 void PSVECNormalize(const Vec* src, Vec* dst);
 void PSVECCrossProduct(const Vec* a, const Vec* b, Vec* axb);
 

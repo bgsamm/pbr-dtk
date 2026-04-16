@@ -64,12 +64,13 @@ typedef struct KPADStatus {
     KPADEXStatus ex_status;
 } KPADStatus;
 
-void KPADInit();
+void KPADInit(void);
 s32 KPADRead(s32 chan, KPADStatus* status, u32 length);
 
 void KPADSetSensorHeight(s32 chan, f32 sensorHeight);
 void KPADGetProjectionPos(Vec2* dest, Vec2* src, const Rect* param_3, f32 param_4);
 
+void KPADSetFSStickClamp(s8 min, s8 max);
 void KPADSetPosParam(s32 chan, f32 x, f32 y);
 void KPADSetBtnRepeat(s32 chan, f32, f32);
 

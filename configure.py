@@ -245,6 +245,13 @@ cflags_runtime = [
     "-inline auto",
 ]
 
+# RVL SDK flags
+cflags_sdk = [
+    *cflags_base,
+    "-ipa file",
+    "-fp_contract off",
+]
+
 # REL flags
 cflags_rel = [
     *cflags_base,
@@ -260,27 +267,17 @@ cflags_game = [
 
 config.linker_version = "GC/3.0a5.2"
 
+config.src_dir = "src"
 
-# Helper function for Dolphin libraries
+# Helper function for RVL SDK libraries
 def RVLSDKLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
     return {
         "lib": lib_name,
         "mw_version": config.linker_version,
-        "cflags": cflags_base,
+        "cflags": cflags_sdk,
         "progress_category": "sdk",
         "objects": objects,
         "src_dir": "libs/RVL_SDK/src",
-    }
-
-
-# Helper function for REL script objects
-def Rel(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
-    return {
-        "lib": lib_name,
-        "mw_version": "GC/1.3.2",
-        "cflags": cflags_rel,
-        "progress_category": "game",
-        "objects": objects,
     }
 
 
@@ -330,10 +327,10 @@ config.libs = [
         "objects": [
             Object(Matching, "gs/operators.cpp"),
             Object(Matching, "gs/GSmem.cpp"),
-            Object(Matching, "gs/cache/GScache.cpp"),
-            Object(Matching, "gs/cache/GScacheScratchpad.cpp"),
-            Object(Matching, "gs/cache/GScachePool.cpp"),
-            Object(Matching, "gs/GSfile.cpp"),
+            Object((NonMatching), "gs/cache/GScache.cpp"),
+            Object((NonMatching), "gs/cache/GScacheScratchpad.cpp"),
+            Object((NonMatching), "gs/cache/GScachePool.cpp"),
+            Object((NonMatching), "gs/GSfile.cpp"),
             Object(NonMatching, "gs/GSnand.cpp"),
             Object(NonMatching, "wip/801DD5C8.cpp"),
             Object(NonMatching, "wip/801DD8C0.cpp"),
@@ -355,31 +352,31 @@ config.libs = [
             Object(NonMatching, "wip/801FA38C.cpp"),
             Object(NonMatching, "wip/801FB42C.cpp"),
             Object(NonMatching, "wip/801FF308.cpp"),
-            Object(Matching, "gs/math/GSrand.cpp"),
-            Object(Matching, "gs/math/GStrig.cpp"),
-            Object(Matching, "gs/math/GSquat.cpp"),
-            Object(Matching, "gs/math/GSmathInit.cpp"),
-            Object(Matching, "gs/GStask.cpp"),
-            Object(Matching, "gs/GSthread.cpp"),
-            Object(Matching, "gs/GStimeline.cpp"),
+            Object((NonMatching), "gs/math/GSrand.cpp"),
+            Object((NonMatching), "gs/math/GStrig.cpp"),
+            Object((NonMatching), "gs/math/GSquat.cpp"),
+            Object((NonMatching), "gs/math/GSmathInit.cpp"),
+            Object((NonMatching), "gs/GStask.cpp"),
+            Object((NonMatching), "gs/GSthread.cpp"),
+            Object((NonMatching), "gs/GStimeline.cpp"),
             Object(NonMatching, "wip/80226364.cpp"),
             Object(NonMatching, "gs/render/GSrender.cpp"),
             Object(NonMatching, "gs/render/8023234C.cpp"),
-            Object(Matching, "gs/render/GSrenderLight.cpp"),
+            Object((NonMatching), "gs/render/GSrenderLight.cpp"),
             Object(NonMatching, "gs/render/802377BC.cpp"),
             Object(NonMatching, "gs/GSvideo.cpp"),
             Object(NonMatching, "gs/input/GSinput.cpp"),
             Object(NonMatching, "gs/input/802448E8.cpp"),
-            Object(Matching, "gs/fsys/GSfsysMem.cpp"),
-            Object(Matching, "gs/fsys/GSfsysChunk.cpp"),
-            Object(Matching, "gs/fsys/GSfsysCache.cpp"),
-            Object(Matching, "gs/fsys/GSfsysRead.cpp"),
-            Object(Matching, "gs/fsys/GSfsysStream.cpp"),
+            Object((NonMatching), "gs/fsys/GSfsysMem.cpp"),
+            Object((NonMatching), "gs/fsys/GSfsysChunk.cpp"),
+            Object((NonMatching), "gs/fsys/GSfsysCache.cpp"),
+            Object((NonMatching), "gs/fsys/GSfsysRead.cpp"),
+            Object((NonMatching), "gs/fsys/GSfsysStream.cpp"),
             Object(NonMatching, "gs/fsys/80247038.cpp"),
             Object(NonMatching, "gs/fsys/GSfsys.cpp"),
             Object(NonMatching, "wip/80249B7C.cpp"),
             Object(NonMatching, "wip/80249BA0.cpp"),
-            Object(Matching, "gs/debug/regionOverride.cpp"),
+            Object((NonMatching), "gs/debug/regionOverride.cpp"),
             Object(NonMatching, "wip/80249BF0.cpp"),
             Object(NonMatching, "wip/8025B6AC.cpp"),
         ],

@@ -2,6 +2,7 @@
 #define REVOLUTION_GX_PIXEL_H
 
 #include <revolution/gx/GXStruct.h>
+#include <revolution/mtx.h>
 #include <revolution/types.h>
 
 #ifdef __cplusplus
@@ -9,6 +10,8 @@ extern "C" {
 #endif
 
 void GXSetFog(GXFogType type, f32 startz, f32 endz, f32 nearz, f32 farz, GXColor color);
+void GXSetFogColor(GXColor color);
+void GXInitFogAdjTable(GXFogAdjTable *table, u16 width, const Mtx44 proj);
 void GXSetFogRangeAdj(GXBool enable, u16 center, const GXFogAdjTable* table);
 
 void GXSetBlendMode(GXBlendMode type, GXBlendFactor src_factor, GXBlendFactor dst_factor, GXLogicOp op);

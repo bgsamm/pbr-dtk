@@ -13,7 +13,7 @@ Sections:
 	.sdata2     type:rodata align:8
 	.sbss2      type:bss align:32
 
-main.cpp:
+src/main.cpp:
 	.text       start:0x80006980 end:0x8000748C
 	.ctors      start:0x803E1E64 end:0x803E1E68
 	.data       start:0x80405D60 end:0x80405D88
@@ -21,11 +21,11 @@ main.cpp:
 	.sbss       start:0x8063E8E8 end:0x8063E918
 	.sdata2     start:0x80640600 end:0x80640610
 
-wip/800559D4.cpp:
+src/wip/800559D4.cpp:
 	.text       start:0x800559D4 end:0x800598F8
 	.ctors      start:0x803E1F14 end:0x803E1F18
 
-wip/8005B4A4.cpp:
+src/wip/8005B4A4.cpp:
 	.text       start:0x8005B4A4 end:0x8005CEAC
 	.ctors      start:0x803E1F20 end:0x803E1F24
 
@@ -36,35 +36,35 @@ Runtime.PPCEABI.H/__init_cpp_exceptions.cpp:
 	.dtors      start:0x803E22A4 end:0x803E22A8 rename:.dtors$15
 	.sdata      start:0x8063D698 end:0x8063D6A0
 
-gs/operators.cpp:
+src/gs/operators.cpp:
 	.text       start:0x801DAA30 end:0x801DAAE0
 	.ctors      start:0x803E203C end:0x803E2040
 	.sbss       start:0x8063F2C8 end:0x8063F2D0
 
-gs/GSmem.cpp:
+src/gs/GSmem.cpp:
 	.text       start:0x801DAAE0 end:0x801DB040
 	.ctors      start:0x803E2040 end:0x803E2044
 	.bss        start:0x804912B0 end:0x80491370
 	.sbss       start:0x8063F2D0 end:0x8063F2E0
 
-gs/cache/GScache.cpp:
+src/gs/cache/GScache.cpp:
 	.text       start:0x801DB040 end:0x801DB81C
 	.ctors      start:0x803E2044 end:0x803E2048
 	.sbss       start:0x8063F2E0 end:0x8063F2F0
 
-gs/cache/GScacheScratchpad.cpp:
+src/gs/cache/GScacheScratchpad.cpp:
 	.text       start:0x801DB81C end:0x801DBB3C
 	.ctors      start:0x803E2048 end:0x803E204C
 	.bss        start:0x80491370 end:0x80491470
 	.sbss       start:0x8063F2F0 end:0x8063F310
 
-gs/cache/GScachePool.cpp:
+src/gs/cache/GScachePool.cpp:
 	.text       start:0x801DBB3C end:0x801DBE90
 	.ctors      start:0x803E204C end:0x803E2050
 	.bss        start:0x80491470 end:0x804917F0
 	.sbss       start:0x8063F310 end:0x8063F318
 
-gs/GSfile.cpp:
+src/gs/GSfile.cpp:
 	.text       start:0x801DBE90 end:0x801DCE6C
 	.ctors      start:0x803E2050 end:0x803E2054
 	.data       start:0x804232C8 end:0x80423338
@@ -72,263 +72,263 @@ gs/GSfile.cpp:
 	.sdata      start:0x8063D6D0 end:0x8063D6F8
 	.sbss       start:0x8063F318 end:0x8063F340
 
-gs/GSnand.cpp:
+src/gs/GSnand.cpp:
 	.text       start:0x801DCE6C end:0x801DD5C8
 	.ctors      start:0x803E2054 end:0x803E2058
 	.sdata      start:0x8063D6F8 end:0x8063D700
 	.sbss       start:0x8063F340 end:0x8063F348
 
-wip/801DD5C8.cpp:
+src/wip/801DD5C8.cpp:
 	.text       start:0x801DD5C8 end:0x801DD8C0
 	.ctors      start:0x803E2058 end:0x803E205C
 
-wip/801DD8C0.cpp:
+src/wip/801DD8C0.cpp:
 	.text       start:0x801DD8C0 end:0x801DDF78
 	.ctors      start:0x803E205C end:0x803E2060
 
-wip/801DDF78.cpp:
+src/wip/801DDF78.cpp:
 	.text       start:0x801DDF78 end:0x801DF040
 	.ctors      start:0x803E2060 end:0x803E2064
 
-wip/801DF040.cpp:
+src/wip/801DF040.cpp:
 	.text       start:0x801DF040 end:0x801E07E8
 	.ctors      start:0x803E2064 end:0x803E2068
 
-wip/801E07E8.cpp:
+src/wip/801E07E8.cpp:
 	.text       start:0x801E07E8 end:0x801E0810
 	.ctors      start:0x803E2068 end:0x803E206C
 
-wip/801E0810.cpp:
+src/wip/801E0810.cpp:
 	.text       start:0x801E0810 end:0x801E0A54
 	.ctors      start:0x803E206C end:0x803E2070
 
-wip/801E0A54.cpp:
+src/wip/801E0A54.cpp:
 	.text       start:0x801E0A54 end:0x801E4360
 	.ctors      start:0x803E2070 end:0x803E2074
 
-wip/801E4360.cpp:
+src/wip/801E4360.cpp:
 	.text       start:0x801E4360 end:0x801E474C
 	.ctors      start:0x803E2074 end:0x803E2078
 
-wip/801E474C.cpp:
+src/wip/801E474C.cpp:
 	.text       start:0x801E474C end:0x801E5F7C
 	.ctors      start:0x803E2078 end:0x803E207C
 
-wip/801E5F7C.cpp:
+src/wip/801E5F7C.cpp:
 	.text       start:0x801E5F7C end:0x801E6BF8
 	.ctors      start:0x803E207C end:0x803E2080
 
-wip/801E6BF8.cpp:
+src/wip/801E6BF8.cpp:
 	.text       start:0x801E6BF8 end:0x801ED3F0
 	.ctors      start:0x803E2080 end:0x803E2084
 
-wip/801ED3F0.cpp:
+src/wip/801ED3F0.cpp:
 	.text       start:0x801ED3F0 end:0x801EE044
 	.ctors      start:0x803E2084 end:0x803E2088
 
-wip/801EE044.cpp:
+src/wip/801EE044.cpp:
 	.text       start:0x801EE044 end:0x801F1AE8
 	.ctors      start:0x803E2088 end:0x803E208C
 
-wip/801F1AE8.cpp:
+src/wip/801F1AE8.cpp:
 	.text       start:0x801F1AE8 end:0x801F40E0
 	.ctors      start:0x803E208C end:0x803E2090
 
-wip/801F40E0.cpp:
+src/wip/801F40E0.cpp:
 	.text       start:0x801F40E0 end:0x801F98EC
 	.ctors      start:0x803E2090 end:0x803E2094
 
-wip/801F98EC.cpp:
+src/wip/801F98EC.cpp:
 	.text       start:0x801F98EC end:0x801FA094
 	.ctors      start:0x803E2094 end:0x803E2098
 
-wip/801FA094.cpp:
+src/wip/801FA094.cpp:
 	.text       start:0x801FA094 end:0x801FA38C
 	.ctors      start:0x803E2098 end:0x803E209C
 
-wip/801FA38C.cpp:
+src/wip/801FA38C.cpp:
 	.text       start:0x801FA38C end:0x801FB42C
 	.ctors      start:0x803E209C end:0x803E20A0
 
-wip/801FB42C.cpp:
+src/wip/801FB42C.cpp:
 	.text       start:0x801FB42C end:0x801FF308
 	.ctors      start:0x803E20A0 end:0x803E20A4
 
-wip/801FF308.cpp:
+src/wip/801FF308.cpp:
 	.text       start:0x801FF308 end:0x802000BC
 	.ctors      start:0x803E20A4 end:0x803E20A8
 
-gs/math/GSrand.cpp:
+src/gs/math/GSrand.cpp:
 	.text       start:0x80223830 end:0x802238A0
 	.ctors      start:0x803E2110 end:0x803E2114
 	.bss        start:0x80493320 end:0x80493330
 	.sbss       start:0x8063F598 end:0x8063F5A0
 
-gs/math/GStrig.cpp:
+src/gs/math/GStrig.cpp:
 	.text       start:0x802238A0 end:0x80223A0C
 	.ctors      start:0x803E2114 end:0x803E2118
 	.bss        start:0x80493330 end:0x80493608
 	.sbss       start:0x8063F5A0 end:0x8063F5A8
 	.sdata2     start:0x80642238 end:0x80642268
 
-gs/math/GSquat.cpp:
+src/gs/math/GSquat.cpp:
 	.text       start:0x80223A0C end:0x80223BC8
 	.ctors      start:0x803E2118 end:0x803E211C
 	.bss        start:0x80493608 end:0x80493648
 	.sbss       start:0x8063F5A8 end:0x8063F5C0
 	.sdata2     start:0x80642268 end:0x80642278
 
-gs/math/GSmathInit.cpp:
+src/gs/math/GSmathInit.cpp:
 	.text       start:0x80223BC8 end:0x80223C54
 	.ctors      start:0x803E211C end:0x803E2120
 	.sbss       start:0x8063F5C0 end:0x8063F5C8
 
-gs/GStask.cpp:
+src/gs/GStask.cpp:
 	.text       start:0x80223C54 end:0x80224104
 	.ctors      start:0x803E2120 end:0x803E2124
 	.sbss       start:0x8063F5C8 end:0x8063F5F8
 
-gs/GSthread.cpp:
+src/gs/GSthread.cpp:
 	.text       start:0x80224104 end:0x802247A0
 	.ctors      start:0x803E2124 end:0x803E2128
 	.data       start:0x80423C10 end:0x80423C20
 	.sbss       start:0x8063F5F8 end:0x8063F608
 
-gs/GStimeline.cpp:
+src/gs/GStimeline.cpp:
 	.text       start:0x802247A0 end:0x8022494C
 	.ctors      start:0x803E2128 end:0x803E212C
 	.data       start:0x80423C20 end:0x80423C38
 	.sbss       start:0x8063F608 end:0x8063F618
 	.sdata2     start:0x80642278 end:0x80642280
 
-wip/80226364.cpp:
+src/wip/80226364.cpp:
 	.text       start:0x80226364 end:0x8022773C
 	.ctors      start:0x803E2138 end:0x803E213C
 
-gs/render/GSrender.cpp:
+src/gs/render/GSrender.cpp:
 	.text       start:0x80230E48 end:0x8023234C
 	.ctors      start:0x803E2154 end:0x803E2158
 	.data       start:0x80424598 end:0x804245E0
 	.sbss       start:0x8063F690 end:0x8063F6A8
 	.sdata2     start:0x80642300 end:0x80642330
 
-gs/render/8023234C.cpp:
+src/gs/render/8023234C.cpp:
 	.text       start:0x8023234C end:0x8023283C
 	.ctors      start:0x803E2158 end:0x803E215C
 
-gs/render/8023283C.cpp:
+src/gs/render/8023283C.cpp:
 	.text       start:0x8023283C end:0x80232D24
 	.ctors      start:0x803E215C end:0x803E2160
 
-gs/render/80232D24.cpp:
+src/gs/render/80232D24.cpp:
 	.text       start:0x80232D24 end:0x802353F8
 	.ctors      start:0x803E2160 end:0x803E2164
 
-gs/render/802353F8.cpp:
+src/gs/render/802353F8.cpp:
 	.text       start:0x802353F8 end:0x80235474
 	.ctors      start:0x803E2164 end:0x803E2168
 
-gs/render/GSrenderLight.cpp:
+src/gs/render/GSrenderLight.cpp:
 	.text       start:0x80235474 end:0x80235A74
 	.ctors      start:0x803E2168 end:0x803E216C
 	.sbss       start:0x8063F6D0 end:0x8063F6D8
 	.sdata2     start:0x80642378 end:0x80642390
 
-gs/render/80235A74.cpp:
+src/gs/render/80235A74.cpp:
 	.text       start:0x80235A74 end:0x80236704
 	.ctors      start:0x803E216C end:0x803E2170
 
-gs/render/80236704.cpp:
+src/gs/render/80236704.cpp:
 	.text       start:0x80236704 end:0x8023694C
 	.ctors      start:0x803E2170 end:0x803E2174
 
-gs/render/8023694C.cpp:
+src/gs/render/8023694C.cpp:
 	.text       start:0x8023694C end:0x80236B08
 	.ctors      start:0x803E2174 end:0x803E2178
 
-gs/render/80236B08.cpp:
+src/gs/render/80236B08.cpp:
 	.text       start:0x80236B08 end:0x80237794
 	.ctors      start:0x803E2178 end:0x803E217C
 
-gs/render/80237794.cpp:
+src/gs/render/80237794.cpp:
 	.text       start:0x80237794 end:0x802377BC
 	.ctors      start:0x803E217C end:0x803E2180
 
-gs/render/802377BC.cpp:
+src/gs/render/802377BC.cpp:
 	.text       start:0x802377BC end:0x8023AF8C
 	.ctors      start:0x803E2180 end:0x803E2184
 
-gs/render/8023AF8C.cpp:
+src/gs/render/8023AF8C.cpp:
 	.text       start:0x8023AF8C end:0x8023B64C
 	.ctors      start:0x803E2184 end:0x803E2188
 
-gs/render/8023B64C.cpp:
+src/gs/render/8023B64C.cpp:
 	.text       start:0x8023B64C end:0x8023B9F4
 	.ctors      start:0x803E2188 end:0x803E218C
 
-gs/render/8023B9F4.cpp:
+src/gs/render/8023B9F4.cpp:
 	.text       start:0x8023B9F4 end:0x8023D008
 	.ctors      start:0x803E218C end:0x803E2190
 
-gs/render/8023D008.cpp:
+src/gs/render/8023D008.cpp:
 	.text       start:0x8023D008 end:0x8023EA44
 	.ctors      start:0x803E2190 end:0x803E2194
 
-gs/render/8023EA44.cpp:
+src/gs/render/8023EA44.cpp:
 	.text       start:0x8023EA44 end:0x8023EE6C
 	.ctors      start:0x803E2194 end:0x803E2198
 
-gs/GSvideo.cpp:
+src/gs/GSvideo.cpp:
 	.text       start:0x8023EE6C end:0x80240060
 	.ctors      start:0x803E2198 end:0x803E219C
 	.sbss       start:0x8063F780 end:0x8063F790
 	.sdata2     start:0x806423E8 end:0x80642420
 
-gs/input/GSinput.cpp:
+src/gs/input/GSinput.cpp:
 	.text       start:0x802437EC end:0x802448E8
 	.ctors      start:0x803E21A4 end:0x803E21A8
 	.sbss       start:0x8063F7A8 end:0x8063F7B8
 	.sdata2     start:0x80642488 end:0x806424C0
 
-gs/input/802448E8.cpp:
+src/gs/input/802448E8.cpp:
 	.text       start:0x802448E8 end:0x80244A18
 	.ctors      start:0x803E21A8 end:0x803E21AC
 	.sbss       start:0x8063F7B8 end:0x8063F7C0
 	.sdata2     start:0x806424C0 end:0x806424D0
 
-gs/fsys/GSfsysMem.cpp:
+src/gs/fsys/GSfsysMem.cpp:
 	.text       start:0x80244A18 end:0x80244EDC
 	.ctors      start:0x803E21AC end:0x803E21B0
 	.sdata      start:0x8063D998 end:0x8063D9A0
 	.sbss       start:0x8063F7C0 end:0x8063F7D0
 
-gs/fsys/GSfsysChunk.cpp:
+src/gs/fsys/GSfsysChunk.cpp:
 	.text       start:0x80244EDC end:0x802452E8
 	.ctors      start:0x803E21B0 end:0x803E21B4
 	.sbss       start:0x8063F7D0 end:0x8063F7F0
 
-gs/fsys/GSfsysCache.cpp:
+src/gs/fsys/GSfsysCache.cpp:
 	.text       start:0x802452E8 end:0x80245C60
 	.ctors      start:0x803E21B4 end:0x803E21B8
 	.sbss       start:0x8063F7F0 end:0x8063F830
 
-gs/fsys/GSfsysRead.cpp:
+src/gs/fsys/GSfsysRead.cpp:
 	.text       start:0x80245C60 end:0x80246CCC
 	.ctors      start:0x803E21B8 end:0x803E21BC
 	.data       start:0x80424958 end:0x80424968
 	.sbss       start:0x8063F830 end:0x8063F840
 
-gs/fsys/GSfsysStream.cpp:
+src/gs/fsys/GSfsysStream.cpp:
 	.text       start:0x80246CCC end:0x80247038
 	.ctors      start:0x803E21BC end:0x803E21C0
 	.sbss       start:0x8063F840 end:0x8063F848
 
-gs/fsys/80247038.cpp:
+src/gs/fsys/80247038.cpp:
 	.text       start:0x80247038 end:0x80247280
 	.ctors      start:0x803E21C0 end:0x803E21C4
 	.sbss       start:0x8063F848 end:0x8063F850
 
-gs/fsys/GSfsys.cpp:
+src/gs/fsys/GSfsys.cpp:
 	.text       start:0x80247280 end:0x80249B7C
 	.ctors      start:0x803E21C4 end:0x803E21C8
 	.data       start:0x80424968 end:0x80424A80
@@ -336,27 +336,27 @@ gs/fsys/GSfsys.cpp:
 	.sdata      start:0x8063D9A0 end:0x8063D9A8
 	.sbss       start:0x8063F850 end:0x8063F898
 
-wip/80249B7C.cpp:
+src/wip/80249B7C.cpp:
 	.text       start:0x80249B7C end:0x80249BA0
 	.ctors      start:0x803E21C8 end:0x803E21CC
 	.sbss       start:0x8063F898 end:0x8063F8A0
 
-wip/80249BA0.cpp:
+src/wip/80249BA0.cpp:
 	.text       start:0x80249BA0 end:0x80249BC8
 	.ctors      start:0x803E21CC end:0x803E21D0
 	.sbss       start:0x8063F8A0 end:0x8063F8A8
 
-gs/debug/regionOverride.cpp:
+src/gs/debug/regionOverride.cpp:
 	.text       start:0x80249BC8 end:0x80249BF0
 	.ctors      start:0x803E21D0 end:0x803E21D4
 	.sbss       start:0x8063F8A8 end:0x8063F8B8
 
-wip/80249BF0.cpp:
+src/wip/80249BF0.cpp:
 	.text       start:0x80249BF0 end:0x80249D38
 	.ctors      start:0x803E21D4 end:0x803E21D8
 	.sbss       start:0x8063F8B8 end:0x8063F8C8
 
-wip/8025B6AC.cpp:
+src/wip/8025B6AC.cpp:
 	.text       start:0x8025B6AC end:0x8025B6E8
 	.ctors      start:0x803E2200 end:0x803E2204
 	.sbss       start:0x8063F950 end:0x8063F958
@@ -364,3 +364,6 @@ wip/8025B6AC.cpp:
 
 libs/RVL_SDK/src/os/OSThread.c:
 	.text       start:0x80271060 end:0x802727B8
+	.bss        start:0x805147D8 end:0x805151E0
+	.sdata      start:0x8063DAA0 end:0x8063DAA8
+	.sbss       start:0x8063FAE8 end:0x8063FAF8

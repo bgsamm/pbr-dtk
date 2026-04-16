@@ -190,7 +190,7 @@ bool GSnandManager::copyFile(char *fileName, bool unusedParam) {
 
     s32 result = NANDCreate(
         nandHandle->mPath,
-        NAND_PERM_OWNER_READ | NAND_PERM_OWNER_WRITE,
+        NAND_PERM_RUSR | NAND_PERM_WUSR,
         0
     );
 
