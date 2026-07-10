@@ -1,4 +1,4 @@
-#include "global.hpp"
+#include "version.hpp"
 
 #include <cstring>
 
@@ -12,7 +12,6 @@
 #include "gs/GSnand.hpp"
 #include "gs/GStask.hpp"
 #include "gs/GSthread.hpp"
-#include "revolution/DVD.h"
 
 extern MEMHeapHandle lbl_8063E8EC;
 

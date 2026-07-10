@@ -1,6 +1,6 @@
 #pragma once
 
-#include <revolution/types.h>
+#include "common.hpp"
 
 enum GSlightType {
     GS_LIGHT_SPEC,

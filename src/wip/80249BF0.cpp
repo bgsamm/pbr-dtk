@@ -1,4 +1,4 @@
-#include "global.hpp"
+#include "version.hpp"
 
 #include "gs/GSmem.hpp"
 #include "wip/80249BF0.hpp"

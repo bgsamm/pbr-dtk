@@ -1,4 +1,4 @@
-#include "global.hpp"
+#include "version.hpp"
 
 void fn_8005C9C8();
 

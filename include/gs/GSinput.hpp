@@ -1,6 +1,6 @@
 #pragma once
 
-#include <revolution/types.h>
+#include "common.hpp"
 #include <revolution/kpad.h>
 #include <revolution/wpad.h>
 

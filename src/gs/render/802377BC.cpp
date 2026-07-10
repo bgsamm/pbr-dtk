@@ -1,4 +1,4 @@
-#include "global.hpp"
+#include "version.hpp"
 
 #include <revolution/base/PPCArch.h>
 

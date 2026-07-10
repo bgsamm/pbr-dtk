@@ -1,4 +1,4 @@
-#include "global.hpp"
+#include "version.hpp"
 
 #include "gs/GStask.hpp"
 #include "gs/GStimeline.hpp"

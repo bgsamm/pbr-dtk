@@ -5,7 +5,6 @@
 #include <revolution/mtx.h>
 
 #include "gs/GSfile.hpp"
-#include "gs/GSmem.hpp"
 #include "gs/GSvideo.hpp"
 #include "gs/render/GSrenderLight.hpp"
 
@@ -431,7 +430,7 @@ public:
     /* 0x16f0 */ u32 _16f0;
     /* 0x16f4 */ u32 _16f4;
     /* 0x16f8 */ bool _16f8;
-    /* 0x16f9 */ bool _16f9;
+    /* 0x16f9 */ u8 _16f9;
     /* 0x16fa */ u8 _16fa;
     /* 0x16fb */ u8 _16fb;
     /* 0x16fc */ bool _16fc;

@@ -1,4 +1,4 @@
-#include "global.hpp"
+#include "version.hpp"
 #include <cstring>
 
 #include "gs/GSmem.hpp"
@@ -69,7 +69,7 @@ GSvideoManager::GSvideoManager(u8 numBuffers, u16 efbHeight, VideoFormat videoFm
     mXfbHeight = 528;
     mGamma = GX_GM_1_0;
     mPixelFmt = GX_PF_RGB8_Z24;
-    mYScale = 1f;
+    mYScale = 1.0f;
     mRetraceCount = 0;
     mVideoFmt = videoFmt;
     mRetraceCallback = NULL;
@@ -83,8 +83,8 @@ GSvideoManager::GSvideoManager(u8 numBuffers, u16 efbHeight, VideoFormat videoFm
     _83 = false;
     _84 = 0;
     _88 = 0;
-    _8c = 0f;
-    _90 = 0f;
+    _8c = 0.0f;
+    _90 = 0.0f;
     _98 = 0;
     _a0 = 0.0;
     _a8.ival = 0;
@@ -93,10 +93,10 @@ GSvideoManager::GSvideoManager(u8 numBuffers, u16 efbHeight, VideoFormat videoFm
     mViewportHeight.ival = 0;
     _b8.ival = 0;
     _bc.ival = 0;
-    _a8.fval = 0f;
-    _ac.fval = 0f;
-    mViewportWidth.fval = 640f;
-    mViewportHeight.fval = 480f;
+    _a8.fval = 0.0f;
+    _ac.fval = 0.0f;
+    mViewportWidth.fval = 640.0f;
+    mViewportHeight.fval = 480.0f;
     _c0_u32 = 0;
     _c4_u32 = 0;
     mScissorXOrig = 0;
@@ -105,7 +105,7 @@ GSvideoManager::GSvideoManager(u8 numBuffers, u16 efbHeight, VideoFormat videoFm
     mScissorHeight = 480;
     _c8 = 0;
     _cc = 0;
-    lbl_8063D988 = (f32)mRefreshRate / 60f;
+    lbl_8063D988 = (f32)mRefreshRate / 60.0f;
 
     if (numBuffers == 0) {
         return;
@@ -151,7 +151,7 @@ GSvideoManager::GSvideoManager(u8 numBuffers, u16 efbHeight, VideoFormat videoFm
     }
 
     bool aspectRatio = (SCGetAspectRatio() == 1);
-    lbl_8063D988 = mRefreshRate / 60f;
+    lbl_8063D988 = mRefreshRate / 60.0f;
     fn_8023F858(fmt, var2, 1, aspectRatio);
 
     switch (fmt) {
@@ -411,7 +411,7 @@ bool GSvideoManager::fn_8023F858(VideoFormat vidFmt, u32 param2, u32 param3, u32
     else {
         mRefreshRate = 60;
     }
-    lbl_8063D988 = mRefreshRate / 60f;
+    lbl_8063D988 = mRefreshRate / 60.0f;
     mYScale = GXGetYScaleFactor(mRenderMode.efbHeight, mRenderMode.xfbHeight);
     return true;
 }
@@ -520,8 +520,8 @@ void GSvideoManager::fn_8023FE30(bool param1) {
         fn_8025B6B8(&var1, &var2);
     }
     else {
-        var1 = 0f;
-        var2 = 0f;
+        var1 = 0.0f;
+        var2 = 0.0f;
     }
 
     if (mRenderMode.field_rendering) {
@@ -602,7 +602,7 @@ void GSvideoManager::setScissorBoxOffset(s32 param1, s32 param2) {
 
 f32 GSvideoManager::fn_8023FFEC() {
     if (_82) {
-        return 0f;
+        return 0.0f;
     }
 
     if (_81) {

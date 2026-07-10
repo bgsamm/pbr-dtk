@@ -1,4 +1,4 @@
-#include "global.hpp"
+#include "version.hpp"
 
 void fn_8025B6AC() {
     
