@@ -32,4 +32,5 @@ compile_commands.json
 
 # Miscellaneous
 /*.txt
+*.bak
 *.exe
