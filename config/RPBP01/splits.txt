@@ -193,7 +193,7 @@ src/.unsorted/80055504.cpp:
 	.text       start:0x80055504 end:0x800559D4
 	.ctors      start:0x803E1F10 end:0x803E1F14
 
-src/wip/800559D4.cpp:
+src/.unsorted/800559D4.cpp:
 	.text       start:0x800559D4 end:0x800598F8
 	.ctors      start:0x803E1F14 end:0x803E1F18
 
@@ -205,7 +205,7 @@ src/.unsorted/8005A588.cpp:
 	.text       start:0x8005A588 end:0x8005B4A4
 	.ctors      start:0x803E1F1C end:0x803E1F20
 
-src/wip/8005B4A4.cpp:
+src/.unsorted/8005B4A4.cpp:
 	.text       start:0x8005B4A4 end:0x8005CEAC
 	.ctors      start:0x803E1F20 end:0x803E1F24
 
@@ -453,7 +453,7 @@ src/.unsorted/80176EB4.cpp:
 	.text       start:0x80176EB4 end:0x80177C24
 	.ctors      start:0x803E2014 end:0x803E2018
 
-src/wip/80177C24.cpp:
+src/.unsorted/80177C24.cpp:
 	.text       start:0x80177C24 end:0x8017B4B8
 	.ctors      start:0x803E2018 end:0x803E201C
 
@@ -548,83 +548,83 @@ src/gs/GSnand.cpp:
 	.sdata      start:0x8063D6F8 end:0x8063D700
 	.sbss       start:0x8063F340 end:0x8063F348
 
-src/wip/801DD5C8.cpp:
+src/.unsorted/801DD5C8.cpp:
 	.text       start:0x801DD5C8 end:0x801DD8C0
 	.ctors      start:0x803E2058 end:0x803E205C
 
-src/wip/801DD8C0.cpp:
+src/.unsorted/801DD8C0.cpp:
 	.text       start:0x801DD8C0 end:0x801DDF78
 	.ctors      start:0x803E205C end:0x803E2060
 
-src/wip/801DDF78.cpp:
+src/.unsorted/801DDF78.cpp:
 	.text       start:0x801DDF78 end:0x801DF040
 	.ctors      start:0x803E2060 end:0x803E2064
 
-src/wip/801DF040.cpp:
+src/.unsorted/801DF040.cpp:
 	.text       start:0x801DF040 end:0x801E07E8
 	.ctors      start:0x803E2064 end:0x803E2068
 
-src/wip/801E07E8.cpp:
+src/.unsorted/801E07E8.cpp:
 	.text       start:0x801E07E8 end:0x801E0810
 	.ctors      start:0x803E2068 end:0x803E206C
 
-src/wip/801E0810.cpp:
+src/.unsorted/801E0810.cpp:
 	.text       start:0x801E0810 end:0x801E0A54
 	.ctors      start:0x803E206C end:0x803E2070
 
-src/wip/801E0A54.cpp:
+src/.unsorted/801E0A54.cpp:
 	.text       start:0x801E0A54 end:0x801E4360
 	.ctors      start:0x803E2070 end:0x803E2074
 
-src/wip/801E4360.cpp:
+src/.unsorted/801E4360.cpp:
 	.text       start:0x801E4360 end:0x801E474C
 	.ctors      start:0x803E2074 end:0x803E2078
 
-src/wip/801E474C.cpp:
+src/.unsorted/801E474C.cpp:
 	.text       start:0x801E474C end:0x801E5F7C
 	.ctors      start:0x803E2078 end:0x803E207C
 
-src/wip/801E5F7C.cpp:
+src/.unsorted/801E5F7C.cpp:
 	.text       start:0x801E5F7C end:0x801E6BF8
 	.ctors      start:0x803E207C end:0x803E2080
 
-src/wip/801E6BF8.cpp:
+src/.unsorted/801E6BF8.cpp:
 	.text       start:0x801E6BF8 end:0x801ED3F0
 	.ctors      start:0x803E2080 end:0x803E2084
 
-src/wip/801ED3F0.cpp:
+src/.unsorted/801ED3F0.cpp:
 	.text       start:0x801ED3F0 end:0x801EE044
 	.ctors      start:0x803E2084 end:0x803E2088
 
-src/wip/801EE044.cpp:
+src/.unsorted/801EE044.cpp:
 	.text       start:0x801EE044 end:0x801F1AE8
 	.ctors      start:0x803E2088 end:0x803E208C
 
-src/wip/801F1AE8.cpp:
+src/.unsorted/801F1AE8.cpp:
 	.text       start:0x801F1AE8 end:0x801F40E0
 	.ctors      start:0x803E208C end:0x803E2090
 
-src/wip/801F40E0.cpp:
+src/.unsorted/801F40E0.cpp:
 	.text       start:0x801F40E0 end:0x801F98EC
 	.ctors      start:0x803E2090 end:0x803E2094
 
-src/wip/801F98EC.cpp:
+src/.unsorted/801F98EC.cpp:
 	.text       start:0x801F98EC end:0x801FA094
 	.ctors      start:0x803E2094 end:0x803E2098
 
-src/wip/801FA094.cpp:
+src/.unsorted/801FA094.cpp:
 	.text       start:0x801FA094 end:0x801FA38C
 	.ctors      start:0x803E2098 end:0x803E209C
 
-src/wip/801FA38C.cpp:
+src/.unsorted/801FA38C.cpp:
 	.text       start:0x801FA38C end:0x801FB42C
 	.ctors      start:0x803E209C end:0x803E20A0
 
-src/wip/801FB42C.cpp:
+src/.unsorted/801FB42C.cpp:
 	.text       start:0x801FB42C end:0x801FF308
 	.ctors      start:0x803E20A0 end:0x803E20A4
 
-src/wip/801FF308.cpp:
+src/.unsorted/801FF308.cpp:
 	.text       start:0x801FF308 end:0x802000BC
 	.ctors      start:0x803E20A4 end:0x803E20A8
 
@@ -787,7 +787,7 @@ src/.unsorted/80225E44.cpp:
 	.text       start:0x80225E44 end:0x80226364
 	.ctors      start:0x803E2134 end:0x803E2138
 
-src/wip/80226364.cpp:
+src/.unsorted/80226364.cpp:
 	.text       start:0x80226364 end:0x8022773C
 	.ctors      start:0x803E2138 end:0x803E213C
 
@@ -954,12 +954,12 @@ src/gs/fsys/GSfsys.cpp:
 	.sdata      start:0x8063D9A0 end:0x8063D9A8
 	.sbss       start:0x8063F850 end:0x8063F898
 
-src/wip/80249B7C.cpp:
+src/.unsorted/80249B7C.cpp:
 	.text       start:0x80249B7C end:0x80249BA0
 	.ctors      start:0x803E21C8 end:0x803E21CC
 	.sbss       start:0x8063F898 end:0x8063F8A0
 
-src/wip/80249BA0.cpp:
+src/.unsorted/80249BA0.cpp:
 	.text       start:0x80249BA0 end:0x80249BC8
 	.ctors      start:0x803E21CC end:0x803E21D0
 	.sbss       start:0x8063F8A0 end:0x8063F8A8
@@ -969,7 +969,7 @@ src/gs/debug/regionOverride.cpp:
 	.ctors      start:0x803E21D0 end:0x803E21D4
 	.sbss       start:0x8063F8A8 end:0x8063F8B8
 
-src/wip/80249BF0.cpp:
+src/.unsorted/80249BF0.cpp:
 	.text       start:0x80249BF0 end:0x80249D38
 	.ctors      start:0x803E21D4 end:0x803E21D8
 	.sbss       start:0x8063F8B8 end:0x8063F8C8
@@ -1014,7 +1014,7 @@ src/.unsorted/8025B164.cpp:
 	.text       start:0x8025B164 end:0x8025B6AC
 	.ctors      start:0x803E21FC end:0x803E2200
 
-src/wip/8025B6AC.cpp:
+src/.unsorted/8025B6AC.cpp:
 	.text       start:0x8025B6AC end:0x8025B6E8
 	.ctors      start:0x803E2200 end:0x803E2204
 	.sbss       start:0x8063F950 end:0x8063F958

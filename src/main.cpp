@@ -13,8 +13,8 @@
 #include "gs/GSthread.hpp"
 #include "gs/GStimeline.hpp"
 #include "gs/GSvideo.hpp"
-#include "wip/80249BA0.hpp"
-#include "wip/80249BF0.hpp"
+#include ".unsorted/80249BA0.hpp"
+#include ".unsorted/80249BF0.hpp"
 
 void fn_80006980(u32, void *);
 void fn_80006A00(u32, void *);

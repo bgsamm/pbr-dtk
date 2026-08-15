@@ -1,4 +1,4 @@
-#include "wip/80177C24.hpp"
+#include ".unsorted/80177C24.hpp"
 
 #include "gs/GScache.hpp"
 #include "types/pokemonDeck.hpp"
