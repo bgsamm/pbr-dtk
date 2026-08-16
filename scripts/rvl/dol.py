@@ -7,12 +7,15 @@ import logging
 
 WII_MEM1_START = 0x8000_0000
 
+
 class DolError(Exception):
     pass
+
 
 class DolSectionType(enum.Enum):
     TEXT = enum.auto()
     DATA = enum.auto()
+
 
 # TODO Merge with Symbol?
 class DolSection:
@@ -37,6 +40,7 @@ class DolSection:
     def contains_address(self, address):
         return address >= self.address and address < self.end_address
 
+
 class Dol(BytesReader):
     HEADER_SIZE = 0x100
     BSS_ADDRESS_OFFSET = 0xD8
@@ -45,7 +49,7 @@ class Dol(BytesReader):
 
     MAX_TEXT_SECTIONS = 7
     MAX_DATA_SECTIONS = 11
-    MAX_SECTIONS = MAX_TEXT_SECTIONS + MAX_DATA_SECTIONS # = 18
+    MAX_SECTIONS = MAX_TEXT_SECTIONS + MAX_DATA_SECTIONS  # = 18
 
     _sections: list[DolSection]
     _section_map: dict[str, DolSection | None]
@@ -54,15 +58,15 @@ class Dol(BytesReader):
         super().__init__(data)
 
         self._section_map = {
-            '.init': None,
-            '.text': None,
-            '.ctors': None,
-            '.dtors': None
+            ".init": None,
+            ".text": None,
+            ".ctors": None,
+            ".dtors": None,
         }
         self._symbol_map = SymbolMap()
 
         if not self._init_sections():
-            raise DolError('Failed to initialize sections')
+            raise DolError("Failed to initialize sections")
 
     @property
     def n_sections(self):
@@ -83,17 +87,13 @@ class Dol(BytesReader):
     @property
     def text_sections(self):
         yield from (
-            section
-            for section in self._sections
-            if section.type == DolSectionType.TEXT
+            section for section in self._sections if section.type == DolSectionType.TEXT
         )
 
     @property
     def data_sections(self):
         yield from (
-            section
-            for section in self._sections
-            if section.type == DolSectionType.DATA
+            section for section in self._sections if section.type == DolSectionType.DATA
         )
 
     @cached_property
@@ -110,19 +110,19 @@ class Dol(BytesReader):
 
     @property
     def init_section(self) -> DolSection | None:
-        return self._section_map['.init']
+        return self._section_map[".init"]
 
     @property
     def text_section(self) -> DolSection | None:
-        return self._section_map['.text']
+        return self._section_map[".text"]
 
     @property
     def ctors_section(self) -> DolSection | None:
-        return self._section_map['.ctors']
+        return self._section_map[".ctors"]
 
     @property
     def dtors_section(self) -> DolSection | None:
-        return self._section_map['.dtors']
+        return self._section_map[".dtors"]
 
     def _init_sections(self) -> bool:
         section_offsets = self.read_many(u32, 0x0, n=self.MAX_SECTIONS)
@@ -152,20 +152,22 @@ class Dol(BytesReader):
 
         self._n_sections = self._n_text_sections + self._n_data_sections
 
-        self._section_map['.init'] = self.get_section_by_address(self.entry_point)
+        self._section_map[".init"] = self.get_section_by_address(self.entry_point)
 
         # TODO Handle more than 2 text sections
         if self._n_text_sections == 2:
-            self._section_map['.text'] = (self._sections[1]
-                                          if self._sections[0] is self.init_section
-                                          else self._sections[0])
+            self._section_map[".text"] = (
+                self._sections[1]
+                if self._sections[0] is self.init_section
+                else self._sections[0]
+            )
 
         if not self._try_find_rom_copy_info():
-            logging.error('Failed to find _rom_copy_info')
+            logging.error("Failed to find _rom_copy_info")
             return False
 
         if not self._try_find_ctors_dtors():
-            logging.error('Failed to find .ctors/.dtors')
+            logging.error("Failed to find .ctors/.dtors")
             return False
 
         return True
@@ -181,7 +183,12 @@ class Dol(BytesReader):
         min_section_addr = min(section.address for section in self._sections)
 
         # 0x1c for max section padding
-        offset = self.init_section.end_offset - MAX_ROM_COPY_INFO_SIZE - MAX_BSS_INIT_INFO_SIZE - 0x1c
+        offset = (
+            self.init_section.end_offset
+            - MAX_ROM_COPY_INFO_SIZE
+            - MAX_BSS_INIT_INFO_SIZE
+            - 0x1C
+        )
 
         rom_copy_info_off = None
         while offset < self.init_section.end_offset:
@@ -203,16 +210,16 @@ class Dol(BytesReader):
             src, dst, size = self.read_many(u32, offset, n=3)
 
             # Update now so equal to end if break is hit
-            offset += 12 # = 3 * sizeof(uint)
+            offset += 12  # = 3 * sizeof(uint)
 
             if src != dst:
-                logging.error('Non-matching source/dest in _rom_copy_info')
+                logging.error("Non-matching source/dest in _rom_copy_info")
                 return False
 
             # Null entry hit
             if src == 0:
                 if dst != 0 or size != 0:
-                    logging.error('Unexpected null source address in _rom_copy_info')
+                    logging.error("Unexpected null source address in _rom_copy_info")
                     return False
                 break
 
@@ -220,28 +227,28 @@ class Dol(BytesReader):
             section = self.get_section_by_address(src)
 
             if section is None or section.address != src:
-                logging.error('Non-section address in _rom_copy_info')
+                logging.error("Non-section address in _rom_copy_info")
                 return False
 
             if section.real_size_known:
-                logging.error('Repeated entry in _rom_copy_info')
+                logging.error("Repeated entry in _rom_copy_info")
                 return False
 
             section.size = size
             section.real_size_known = True
 
         if any(not section.real_size_known for section in self._sections):
-            logging.error('Section missing from _rom_copy_info')
+            logging.error("Section missing from _rom_copy_info")
             return False
 
         rom_copy_info_addr = self.offset_to_address(rom_copy_info_off)
         rom_copy_info_size = offset - rom_copy_info_off
-        self.add_symbol('_rom_copy_info', rom_copy_info_addr, rom_copy_info_size)
+        self.add_symbol("_rom_copy_info", rom_copy_info_addr, rom_copy_info_size)
 
         return True
 
     def _try_find_ctors_dtors(self):
-        candidate_sections  = []
+        candidate_sections = []
         candidate_functions = []
 
         for section in self.data_sections:
@@ -275,65 +282,75 @@ class Dol(BytesReader):
                 offset += 4
 
         if len(candidate_sections) < 2:
-            logging.error('Unable to find .ctors/.dtors')
+            logging.error("Unable to find .ctors/.dtors")
             return False
 
         if len(candidate_sections) > 2:
-            logging.warning('Found multiple candidates for .ctors/.dtors; using first 2')
+            logging.warning(
+                "Found multiple candidates for .ctors/.dtors; using first 2"
+            )
 
         # Assumes .ctors always comes before .dtors
-        self._section_map['.ctors'] = candidate_sections[0]
-        self._section_map['.dtors'] = candidate_sections[1]
+        self._section_map[".ctors"] = candidate_sections[0]
+        self._section_map[".dtors"] = candidate_sections[1]
 
         ctors, dtors = candidate_functions
 
         # ctors
 
         if len(ctors) < 1:
-            logging.error('Invalid .ctors section; not enough entries')
+            logging.error("Invalid .ctors section; not enough entries")
             return False
 
-        self.add_symbol('__init_cpp_exceptions', ctors[0], None)
+        self.add_symbol("__init_cpp_exceptions", ctors[0], None)
 
         # TODO Something better?
         self.ctors = []
         for func_addr in ctors[1:]:
-            symbol = self.add_symbol(f'fn_{func_addr:08x}', func_addr, None)
+            symbol = self.add_symbol(f"fn_{func_addr:08x}", func_addr, None)
             self.ctors.append(symbol)
 
         # dtors
 
         if len(dtors) < 2:
-            logging.error('Invalid .dtors section; not enough entries')
+            logging.error("Invalid .dtors section; not enough entries")
             return False
 
-        self.add_symbol('__destroy_global_chain', dtors[0], None)
-        self.add_symbol('__fini_cpp_exceptions', dtors[1], None)
+        self.add_symbol("__destroy_global_chain", dtors[0], None)
+        self.add_symbol("__fini_cpp_exceptions", dtors[1], None)
 
         # TODO Something better?
         self.dtors = []
         for func_addr in dtors[2:]:
-            symbol = self.add_symbol(f'fn_{func_addr:08x}', func_addr, None)
+            symbol = self.add_symbol(f"fn_{func_addr:08x}", func_addr, None)
             self.dtors.append(symbol)
 
         return True
 
     def read(self, type: ctype, addr_or_off: int) -> int:
-        offset = addr_or_off if addr_or_off < WII_MEM1_START else self.address_to_offset(addr_or_off)
+        offset = (
+            addr_or_off
+            if addr_or_off < WII_MEM1_START
+            else self.address_to_offset(addr_or_off)
+        )
         return super().read(type, offset)
 
     def read_many(self, type: ctype, addr_or_off: int, n: int) -> tuple[int, ...]:
-        offset = addr_or_off if addr_or_off < WII_MEM1_START else self.address_to_offset(addr_or_off)
+        offset = (
+            addr_or_off
+            if addr_or_off < WII_MEM1_START
+            else self.address_to_offset(addr_or_off)
+        )
         return super().read_many(type, offset, n)
 
     def offset_to_address(self, offset: int) -> int:
         if (section := self.get_section_by_offset(offset)) is None:
-            raise ValueError('Invalid offset')
+            raise ValueError("Invalid offset")
         return offset - section.offset + section.address
 
     def address_to_offset(self, address: int) -> int:
         if (section := self.get_section_by_address(address)) is None:
-            raise ValueError('Invalid address')
+            raise ValueError("Invalid address")
         return address - section.address + section.offset
 
     def get_section_by_offset(self, offset: int) -> DolSection | None:

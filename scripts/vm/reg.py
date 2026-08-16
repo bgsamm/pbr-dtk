@@ -1,13 +1,14 @@
 from enum import IntEnum
 import enum
 
+
 class VmReg(IntEnum):
     NULL = 0
     # SPRs
-    PC  = enum.auto()
-    LR  = enum.auto()
+    PC = enum.auto()
+    LR = enum.auto()
     CTR = enum.auto()
-    CR  = enum.auto()
+    CR = enum.auto()
     XER = enum.auto()
     # GPRs
     GPR0 = enum.auto()

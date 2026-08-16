@@ -2,31 +2,32 @@ from rvl.types import *
 from .common import sign_ext
 from .reg import VmReg
 
+
 class VmInstr(int):
     _ls_type_map = {
-        # lwz/lwzu
-        0x20: u32, 0x21: u32,
-        # lbz/lbzu
-        0x22: u8,  0x23: u8,
-        # stw/stwu
-        0x24: u32, 0x25: u32,
-        # stb/stbu
-        0x26: u8,  0x27: u8,
-        # lhz/lhzu
-        0x28: u16, 0x29: u16,
-        # lha/lhau
-        0x2a: s16, 0x2b: s16,
-        # sth/sthu
-        0x2c: u16, 0x2d: u16
+        0x20: u32,  # lwz
+        0x21: u32,  # lwzu
+        0x22: u8,  # lbz
+        0x23: u8,  # lbzu
+        0x24: u32,  # stw
+        0x25: u32,  # stwu
+        0x26: u8,  # stb
+        0x27: u8,  # stbu
+        0x28: u16,  # lhz
+        0x29: u16,  # lhzu
+        0x2A: s16,  # lha
+        0x2B: s16,  # lhau
+        0x2C: u16,  # sth
+        0x2D: u16,  # sthu
     }
 
     @property
     def opcode(self) -> int:
-        return (self >> 26) & 0x3f
+        return (self >> 26) & 0x3F
 
     @property
     def subop(self) -> int:
-        return (self >> 1) & 0x3ff
+        return (self >> 1) & 0x3FF
 
     def bit(self, n: int) -> int:
         return (self >> (31 - n)) & 0x1
@@ -66,5 +67,5 @@ class VmInstr(int):
     @classmethod
     def loadstore_type(cls, instr: VmInstr) -> ctype:
         if not (instr.is_load() or instr.is_store()):
-            raise TypeError('Not a load/store instruction')
+            raise TypeError("Not a load/store instruction")
         return cls._ls_type_map[instr.opcode]

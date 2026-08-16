@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 import logging
 
+
 @dataclass(frozen=True)
 class Symbol:
     name: str
@@ -15,6 +16,7 @@ class Symbol:
     @property
     def is_size_known(self) -> bool:
         return self.size is not None
+
 
 class SymbolMap:
     _symbols: dict[tuple[int, str], Symbol]
@@ -48,8 +50,10 @@ class SymbolMap:
         if old_symbol:
             if symbol.is_size_known and old_symbol.size != symbol.size:
                 if old_symbol.is_size_known:
-                    logging.warning(f'Size conflict for {symbol.name} at {symbol.address:#x}: ' +
-                                    f'{old_symbol.size} (old) vs {symbol.size} (new); adopting new size')
+                    logging.warning(
+                        f"Size conflict for {symbol.name} at {symbol.address:#x}: "
+                        + f"{old_symbol.size} (old) vs {symbol.size} (new); adopting new size"
+                    )
                 self._replace(old_symbol, symbol)
             return
 
@@ -81,18 +85,18 @@ class SymbolMap:
             tokens = line.split()
 
             name = tokens[0]
-            assert tokens[1] == '='
+            assert tokens[1] == "="
             addr = tokens[2]
-            assert tokens[3] == '//'
+            assert tokens[3] == "//"
             meta = tokens[4:]
 
-            section, addr = addr.split(':')
+            section, addr = addr.split(":")
             addr = int(addr[:-1], 16)
 
-            meta = [token.split(':') for token in meta]
-            meta = {e[0]:(True if len(e) == 1 else e[1]) for e in meta}
+            meta = [token.split(":") for token in meta]
+            meta = {e[0]: (True if len(e) == 1 else e[1]) for e in meta}
 
-            if (size := meta.get('size')) is not None:
+            if (size := meta.get("size")) is not None:
                 assert isinstance(size, str)
                 size = int(size, 16)
 
@@ -100,7 +104,7 @@ class SymbolMap:
 
         symbol_map = SymbolMap()
 
-        with open(path, 'r') as f:
+        with open(path, "r") as f:
             for line in f:
                 name, addr, size = parse_line(line)
                 symbol_map.add(name, addr, size)

@@ -10,18 +10,21 @@ from .reg import VmReg
 from .symval import SymbolicValue
 import logging
 
-type VmCallback = Callable[['VmThread', 'VmOp'], bool]
+type VmCallback = Callable[["VmThread", "VmOp"], bool]
 
-def _dummy_callback(thread: 'VmThread', op: 'VmOp') -> bool:
+
+def _dummy_callback(thread: "VmThread", op: "VmOp") -> bool:
     return VmThread.CONTINUE
 
+
 class VmOpType(IntEnum):
-    UNKNOWN   = 0
-    READ_REG  = 1
+    UNKNOWN = 0
+    READ_REG = 1
     WRITE_REG = 2
-    READ_MEM  = 3
+    READ_MEM = 3
     WRITE_MEM = 4
-    CALL      = 5
+    CALL = 5
+
 
 @dataclass(frozen=True)
 class VmOp:
@@ -31,8 +34,11 @@ class VmOp:
     value: SymbolicValue = SymbolicValue.Unknown
     dtype: ctype | None = None
 
+
 class VmThread:
-    type InstructionCallback = Callable[[VmThread, VmInstr], None | tuple[VmThread, ...]]
+    type InstructionCallback = Callable[
+        [VmThread, VmInstr], None | tuple[VmThread, ...]
+    ]
 
     CONTINUE = False
     HALT = True
@@ -48,11 +54,13 @@ class VmThread:
     _local_seen_addrs: set[int]
 
     # TODO Do I really want to be passing a DOL in?
-    def __init__(self,
-                 dol: Dol,
-                 init_state: dict[VmReg, SymOrInt] | None = None,
-                 reg_tags: dict[VmReg, int] | None = None,
-                 step_into_calls: bool | set[int] = False):
+    def __init__(
+        self,
+        dol: Dol,
+        init_state: dict[VmReg, SymOrInt] | None = None,
+        reg_tags: dict[VmReg, int] | None = None,
+        step_into_calls: bool | set[int] = False,
+    ):
         self._dol = dol
         self._regs = [SymbolicValue.Unknown for _ in range(max(VmReg) + 1)]
         self._reg_tags = [self.NULL_TAG] * len(self._regs)
@@ -90,13 +98,15 @@ class VmThread:
         return self._regs[VmReg.CR]
 
     def _log_invalid_instr(self, instr: int, msg: str):
-        logging.warning(f'Invalid instruction: 0x{instr:08x} ({msg})')
+        logging.warning(f"Invalid instruction: 0x{instr:08x} ({msg})")
 
     def _log_unhandled_op(self, op: int):
-        logging.error(f'Unhandled opcode: 0x{op:02x} (PC=0x{self._pc.value:08x})')
+        logging.error(f"Unhandled opcode: 0x{op:02x} (PC=0x{self._pc.value:08x})")
 
     def _log_unhandled_subop(self, op: int, subop: int):
-        logging.error(f'Unhandled 0x{op:02x} sub-op: 0x{subop:02x} (PC=0x{self._pc.value:08x})')
+        logging.error(
+            f"Unhandled 0x{op:02x} sub-op: 0x{subop:02x} (PC=0x{self._pc.value:08x})"
+        )
 
     def _do_callback(self, op: VmOp):
         self._terminate |= self._callback(self, op)
@@ -111,12 +121,16 @@ class VmThread:
     def _op_read_xer_so_bit(self) -> SymbolicValue:
         return (self._op_read_reg(VmReg.XER) >> 31) & 0x1
 
-    def _op_set_xer(self, so: bool | None = None, ov: bool | None = None, ca: bool | None = None):
+    def _op_set_xer(
+        self, so: bool | None = None, ov: bool | None = None, ca: bool | None = None
+    ):
         xer = self._op_read_reg(VmReg.XER)
         _so = ((xer >> 31) & 0x1) if so is None else int(so)
         _ov = ((xer >> 30) & 0x1) if ov is None else int(ov)
         _ca = ((xer >> 29) & 0x1) if ca is None else int(ca)
-        self._op_write_reg(VmReg.XER, (xer & (0x1FFF_FFFF)) | (_so << 31) | (_ov << 30) | (_ca << 29))
+        self._op_write_reg(
+            VmReg.XER, (xer & (0x1FFF_FFFF)) | (_so << 31) | (_ov << 30) | (_ca << 29)
+        )
 
     def _op_update_cr(self, value: SymbolicValue, crf: int = 0):
         assert 0 <= crf <= 7
@@ -150,7 +164,11 @@ class VmThread:
         self._reg_tags[reg] = tag
 
     def _op_read_mem(self, type: ctype, addr: SymbolicValue) -> SymbolicValue:
-        value = self._mmap.read(type, addr.value) if addr.is_known else SymbolicValue.Unknown
+        value = (
+            self._mmap.read(type, addr.value)
+            if addr.is_known
+            else SymbolicValue.Unknown
+        )
         self._do_callback(VmOp(VmOpType.READ_MEM, addr=addr, value=value, dtype=type))
         return value
 
@@ -161,7 +179,7 @@ class VmThread:
         if addr.is_known:
             self._mmap.write(type, addr.value, sym)
 
-    def _op_call(self, target_addr: SymbolicValue, step_over: bool=False):
+    def _op_call(self, target_addr: SymbolicValue, step_over: bool = False):
         self._do_callback(VmOp(VmOpType.CALL, addr=target_addr))
         self._op_write_reg(VmReg.LR, self._op_read_pc() + 4)
         if step_over:
@@ -178,7 +196,7 @@ class VmThread:
     def _set_post_call_state(self):
         for reg in range(len(self._regs)):
             # Special registers that (should) remain unaffected
-            if reg in { VmReg.PC, VmReg.LR, VmReg.GPR1, VmReg.GPR2, VmReg.GPR13 }:
+            if reg in {VmReg.PC, VmReg.LR, VmReg.GPR1, VmReg.GPR2, VmReg.GPR13}:
                 continue
             # Callee-saved registers
             if VmReg.GPR14 <= reg <= VmReg.GPR31 or VmReg.FPR14 <= reg <= VmReg.FPR31:
@@ -189,15 +207,16 @@ class VmThread:
         self._mmap.reset()
 
     def _exec_add(self, instr: VmInstr):
-        #< Generated by Gemini
+        # < Generated by Gemini
         def check_overflow(a, b, res):
             ov = (a ^ res) & (b ^ res) & (1 << 31)
             return bool(ov)
-        #>
 
-        D  = instr.gpr_field(6, 10)
-        A  = instr.gpr_field(11, 15)
-        B  = instr.gpr_field(16, 20)
+        # >
+
+        D = instr.gpr_field(6, 10)
+        A = instr.gpr_field(11, 15)
+        B = instr.gpr_field(16, 20)
         OE = instr.bit(21)
         Rc = instr.bit(31)
 
@@ -228,9 +247,9 @@ class VmThread:
         A = instr.field(11, 15)
         SIMM = instr.field(16, 31)
 
-        if op == 0xe: # addi
+        if op == 0xE:  # addi
             value = sign_ext(SIMM, 16)
-        elif op == 0xf: # addis
+        elif op == 0xF:  # addis
             value = SIMM << 16
         else:
             self._log_unhandled_op(op)
@@ -258,7 +277,9 @@ class VmThread:
             target_addr = SymbolicValue(offset)
 
         if LK == 1:
-            self._op_call(target_addr, step_over=self._should_step_over_call(target_addr))
+            self._op_call(
+                target_addr, step_over=self._should_step_over_call(target_addr)
+            )
         else:
             self._op_write_reg(VmReg.PC, target_addr)
 
@@ -279,12 +300,12 @@ class VmThread:
 
         if (BO & 0b00100) == 0:
             if op == 0x13 and subop == 528:
-                self._log_invalid_instr(instr, 'decrement-and-test in bcctr')
+                self._log_invalid_instr(instr, "decrement-and-test in bcctr")
             self._op_write_reg(VmReg.CTR, self._op_read_reg(VmReg.CTR) - 1)
 
             ctr = self._op_read_reg(VmReg.CTR)
             if ctr.is_known:
-                ctr_ok = ((ctr == 0) == ((BO & 0b00010) != 0))
+                ctr_ok = (ctr == 0) == ((BO & 0b00010) != 0)
             else:
                 ctr_ok = None
         else:
@@ -301,28 +322,30 @@ class VmThread:
 
         offset = sign_ext(BD << 2, 16)
 
-        if op == 0x10: # bc
+        if op == 0x10:  # bc
             if AA == 0:
                 target_addr = self._op_read_pc() + offset
             else:
                 target_addr = SymbolicValue(offset)
-        elif op == 0x13: # bcctr/bclr
-            if subop == 528: # bcctr
+        elif op == 0x13:  # bcctr/bclr
+            if subop == 528:  # bcctr
                 reg = VmReg.CTR
-            elif subop == 16: # bclr
+            elif subop == 16:  # bclr
                 reg = VmReg.LR
             else:
                 self._log_unhandled_subop(op, subop)
                 return None
 
-            target_addr = self._op_read_reg(reg) & 0xffff_fffc
+            target_addr = self._op_read_reg(reg) & 0xFFFF_FFFC
         else:
             self._log_unhandled_op(op)
             return None
 
         branch = self.clone()
         if LK == 1:
-            branch._op_call(target_addr, step_over=self._should_step_over_call(target_addr))
+            branch._op_call(
+                target_addr, step_over=self._should_step_over_call(target_addr)
+            )
         else:
             branch._op_write_reg(VmReg.PC, target_addr)
 
@@ -350,19 +373,19 @@ class VmThread:
         SIMM = instr.field(16, 31)
 
         if L == 1:
-            self._log_invalid_instr(instr, 'L==1 in compare instruction')
+            self._log_invalid_instr(instr, "L==1 in compare instruction")
 
         rA = self._op_read_reg(A)
 
-        if op == 11: # cmpi
+        if op == 11:  # cmpi
             value = sign_ext(SIMM, 16)
             rA = sign_ext(rA, 32)
         elif op == 31:
             rB = self._op_read_reg(B)
-            if subop == 0: # cmpw
+            if subop == 0:  # cmpw
                 value = sign_ext(rB, 32)
                 rA = sign_ext(rA, 32)
-            elif subop == 32: # cmpl
+            elif subop == 32:  # cmpl
                 value = rB & 0xFFFF_FFFF
                 rA &= 0xFFFF_FFFF
             else:
@@ -389,11 +412,11 @@ class VmThread:
 
         if A == 0:
             if with_update(op):
-                self._log_invalid_instr(instr, 'rA==0 in load/store-with-update')
+                self._log_invalid_instr(instr, "rA==0 in load/store-with-update")
             addr = SymbolicValue(offset)
         else:
             if A == D and instr.is_load() and with_update(op):
-                self._log_invalid_instr(instr, 'rA==rD in load-with-update')
+                self._log_invalid_instr(instr, "rA==rD in load-with-update")
             addr = self._op_read_reg(VmReg.GPR(A)) + offset
 
         if instr.is_store():
@@ -424,10 +447,10 @@ class VmThread:
         spr2 = instr.field(16, 20)
         SPR = (spr2 << 0x5) + spr1
 
-        spr_map = { 1: VmReg.XER, 8: VmReg.LR, 9: VmReg.CTR }
+        spr_map = {1: VmReg.XER, 8: VmReg.LR, 9: VmReg.CTR}
 
         if not (spr := spr_map.get(SPR)):
-            self._log_invalid_instr(op, 'Invalid SPR in mfspr/mtspr instruction')
+            self._log_invalid_instr(op, "Invalid SPR in mfspr/mtspr instruction")
             return None
 
         if subop == 339:
@@ -441,7 +464,7 @@ class VmThread:
         self._op_inc_pc()
 
         return (self,)
-    
+
     def _exec_neg(self, instr: VmInstr):
         D = instr.gpr_field(6, 10)
         A = instr.gpr_field(11, 15)
@@ -451,7 +474,7 @@ class VmThread:
         rA = self._op_read_reg(A) & 0xFFFF_FFFF
 
         if OE == 1:
-            overflow = (rA == 0x8000_0000)
+            overflow = rA == 0x8000_0000
             self._op_set_xer(so=(overflow or None), ov=overflow)
 
         result = sign_ext((~rA + 1) & 0xFFFF_FFFF, 32)
@@ -493,9 +516,9 @@ class VmThread:
 
         rS = self._op_read_reg(S)
 
-        if op == 0x18: # ori
+        if op == 0x18:  # ori
             value = rS | UIMM
-        elif op == 0x19: # oris
+        elif op == 0x19:  # oris
             value = rS | (UIMM << 16)
         else:
             self._log_unhandled_op(op)
@@ -518,8 +541,8 @@ class VmThread:
                 bitmask = ~bitmask
             return bitmask & 0xFFFF_FFFF
 
-        S  = instr.gpr_field(6, 10)
-        A  = instr.gpr_field(11, 15)
+        S = instr.gpr_field(6, 10)
+        A = instr.gpr_field(11, 15)
         SH = instr.field(16, 20)
         MB = instr.field(21, 25)
         ME = instr.field(26, 30)
@@ -559,13 +582,20 @@ class VmThread:
         24: _exec_ori,
         25: _exec_ori,
         31: _dispatch_op_1f,
-        32: _exec_loadstore, 33: _exec_loadstore,
-        34: _exec_loadstore, 35: _exec_loadstore,
-        36: _exec_loadstore, 37: _exec_loadstore,
-        38: _exec_loadstore, 39: _exec_loadstore,
-        40: _exec_loadstore, 41: _exec_loadstore,
-        42: _exec_loadstore, 43: _exec_loadstore,
-        44: _exec_loadstore, 45: _exec_loadstore,
+        32: _exec_loadstore,
+        33: _exec_loadstore,
+        34: _exec_loadstore,
+        35: _exec_loadstore,
+        36: _exec_loadstore,
+        37: _exec_loadstore,
+        38: _exec_loadstore,
+        39: _exec_loadstore,
+        40: _exec_loadstore,
+        41: _exec_loadstore,
+        42: _exec_loadstore,
+        43: _exec_loadstore,
+        44: _exec_loadstore,
+        45: _exec_loadstore,
     }
 
     _subop_lookup = {
@@ -584,7 +614,8 @@ class VmThread:
     def is_at_seen_address(self, local_only=False):
         return self._pc.is_known and (
             self._pc.value in self._local_seen_addrs
-            or (not local_only and self._pc.value in self._global_seen_addrs))
+            or (not local_only and self._pc.value in self._global_seen_addrs)
+        )
 
     def set_callback(self, callback: VmCallback | None):
         self._callback = callback or _dummy_callback
@@ -664,17 +695,17 @@ class VmThread:
     def print_regs(self, include_fprs: bool = True):
         def print_reg(name: str, sym: SymbolicValue, width: int):
             # TODO Simplify once SymbolicValue.__format__ is working
-            val_str = format(sym, f'0{width}x') if sym.is_known else ('?' * width)
-            print(f'{name.rjust(3)}: {val_str}', end=' ')
+            val_str = format(sym, f"0{width}x") if sym.is_known else ("?" * width)
+            print(f"{name.rjust(3)}: {val_str}", end=" ")
 
         def print_spr(i: int, reg: SymbolicValue):
             print_reg(VmReg(i).name.lower(), reg, 8)
 
         def print_gpr(i: int, reg: SymbolicValue):
-            print_reg(f'r{i}', reg, 8)
+            print_reg(f"r{i}", reg, 8)
 
         def print_fpr(i: int, reg: SymbolicValue):
-            print_reg(f'f{i}', reg, 16)
+            print_reg(f"f{i}", reg, 16)
 
         for reg, value in enumerate(self._regs):
             reg = VmReg(reg)
@@ -702,15 +733,15 @@ class VmThread:
         addr = (addr // row_len) * row_len
         size = ((size + row_len - 1) // row_len) * row_len
 
-        print(' ' * 9 + ' '.join(f'{x:02X}' for x in range(row_len)))
+        print(" " * 9 + " ".join(f"{x:02X}" for x in range(row_len)))
 
         data = self._mmap.dump(addr, size)
         for i, sym in enumerate(data):
             if i % row_len == 0:
-                print(f'{addr + i:08X}', end=' ')
+                print(f"{addr + i:08X}", end=" ")
 
             # TODO Simplify once SymbolicValue.__format__ is working
-            print(f'{sym:02X}' if sym.is_known else '??', end=' ')
+            print(f"{sym:02X}" if sym.is_known else "??", end=" ")
 
             if i % row_len == row_len - 1:
                 print()

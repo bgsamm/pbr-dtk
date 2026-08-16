@@ -2,6 +2,7 @@ from pathlib import Path
 import logging
 import re
 
+
 class Split:
     _sections: dict[str, tuple[int, int]]
 
@@ -25,6 +26,7 @@ class Split:
             if start <= address < end:
                 return True
         return False
+
 
 class SplitMap:
     _splits: dict[str, Split]
@@ -53,11 +55,11 @@ class SplitMap:
             start = tokens[1]
             end = tokens[2]
 
-            assert start.startswith('start:')
-            assert end.startswith('end:')
+            assert start.startswith("start:")
+            assert end.startswith("end:")
 
-            start = int(start[len('start:'):], 16)
-            end = int(end[len('end:'):], 16)
+            start = int(start[len("start:") :], 16)
+            end = int(end[len("end:") :], 16)
 
             assert start < end
 
@@ -65,19 +67,19 @@ class SplitMap:
 
         split_map = SplitMap()
 
-        with open(path, 'r') as f:
+        with open(path, "r") as f:
             active_split = None
 
             for line in f:
                 # Try to match a file path
-                match = re.match(r'([._0-9A-Za-z/]+):', line)
+                match = re.match(r"([._0-9A-Za-z/]+):", line)
 
                 if match is not None:
                     split_path = match.groups()[0]
                     active_split = split_map.add_split(split_path)
-                elif 'start' in line:
+                elif "start" in line:
                     if active_split is None:
-                        logging.warning('Unexpected split information; ignoring')
+                        logging.warning("Unexpected split information; ignoring")
                         continue
                     section, start, end = parse_line(line)
                     active_split.add_section(section, start, end)
