@@ -37,7 +37,7 @@ def exec_analyze(args):
     result = analyzer.analyze_function(address, max_depth)
 
     if len(result.structs) > 0:
-        print("Found the following structs:")
+        print("Found the following structs:\n")
         for struct in result.structs:
             print(codegen.gen_struct(struct, result.type_registry))
 
@@ -47,9 +47,8 @@ def exec_analyze(args):
 
     if len(result.subcalls) > 0:
         print("Identified subcalls:")
-        for subresult in result.subcalls.values():
+        for _, subresult in sorted(result.subcalls.items()):
             print("    " + gen_function_signature(subresult))
-            print()
 
 
 def exec_find_split(args):

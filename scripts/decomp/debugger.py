@@ -114,7 +114,7 @@ class Debugger:
         if self._mem_watch:
             self._print_mem(state, self._mem_watch, self._DEFAULT_MEM_DUMP_SIZE)
 
-        while True:
+        while self._in_breakpoint:
             args = input(">> ").lower().split()
 
             if len(args) == 0:

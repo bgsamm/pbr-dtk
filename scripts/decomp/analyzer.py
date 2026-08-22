@@ -91,12 +91,15 @@ class _FunctionAnalyzer:
     # f1 used for floating-point returns
     _RETURN_REGISTERS = {PpcReg.GPR3, PpcReg.GPR4, PpcReg.FPR1}
 
-    _global_seen_addrs: set[int]
+    _seen_addresses: set[int]
 
     _subcalls: dict[int, _InternalResult]
 
     _thread_map: dict[int, _ShadowState]
     """A mapping from thread ID to shadow state"""
+
+    _thread_trace: dict[int, list[int]]
+    """A mapping from thread ID to addresses visited by that thread"""
 
     _found_args: dict[int, int]
     """A mapping from argument ID (e.g. PpcReg value) to type ID"""
@@ -129,9 +132,10 @@ class _FunctionAnalyzer:
 
         self._type_registry = type_registry or TypeRegistry()
 
-        self._global_seen_addrs = set()
+        self._seen_addresses = set()
         self._subcalls = {}
         self._thread_map = defaultdict(_ShadowState)
+        self._thread_trace = defaultdict(list)
         self._found_args = {}
         self._arg_graph = defaultdict(set)
         self._return_type = self._create_void_type()
@@ -194,28 +198,35 @@ class _FunctionAnalyzer:
 
         return type_ref
 
-    def _add_argument(self, arg_id: int, type_ref: int) -> None:
+    def _add_argument(self, shadow: _ShadowState, arg_id: int, type_ref: int) -> None:
+        # TODO Handle stack args
+        assert arg_id in PpcReg
+
+        arg_reg = PpcReg(arg_id)
+
         if arg_type_ref := self._found_args.get(arg_id):
-            self._type_registry.unify(arg_type_ref, type_ref)
+            arg_type_ref = self._type_registry.unify(arg_type_ref, type_ref)
         else:
-            self._found_args[arg_id] = type_ref
+            arg_type_ref = self._found_args[arg_id] = type_ref
 
-        if arg_id in PpcReg:
-            arg_reg = PpcReg(arg_id)
-            assert self._is_argument_reg(arg_reg)
+        # Ensure argument type is not void
+        arg_type = self._type_registry[arg_type_ref]
+        if isinstance(arg_type, VoidType):
+            type_ref = self._create_numeric_type(u32 if arg_reg.is_gpr() else f32)
+            arg_type_ref = self._type_registry.unify(arg_type_ref, type_ref)
 
-            # Mark all preceding argument registers as arguments & add to predecessors
-            if arg_reg.is_gpr():
-                for reg in range(PpcReg.GPR3, arg_reg):
-                    self._add_argument(reg, self._create_numeric_type(u32))
-                    self._arg_graph[arg_reg].add(reg)
-            else:
-                for reg in range(PpcReg.FPR1, arg_reg):
-                    self._add_argument(reg, self._create_numeric_type(f32))
-                    self._arg_graph[arg_reg].add(reg)
-        else:
-            # TODO Handle stack args
-            pass
+        # Ensure arg has entry in arg graph
+        self._arg_graph.setdefault(arg_id, set())
+
+        assert self._is_argument_reg(arg_reg)
+
+        # Mark all preceding argument registers as arguments & add to predecessors
+        start = PpcReg.GPR3 if arg_reg.is_gpr() else PpcReg.FPR1
+        for reg in range(start, arg_reg):
+            if reg not in self._found_args:
+                type_ref = self._ensure_reg_type(shadow, PpcReg(reg))
+                self._add_argument(shadow, reg, type_ref)
+            self._arg_graph[arg_reg].add(reg)
 
     def _update_types(self, shadow: _ShadowState, pc: int, instr: PpcInstr) -> bool:
         # TODO Refactor this function
@@ -242,13 +253,13 @@ class _FunctionAnalyzer:
             else:
                 data_ref = self._ensure_reg_type(shadow, data_reg)
 
-            self._type_registry.unify(data_ref, data_type)
+            data_ref = self._type_registry.unify(data_ref, data_type)
 
             # Base register for load/store -> struct or array
             if offset == 0:
                 # Assume simple pointer if offset is 0
                 pointer_ref = self._create_pointer_type(data_type)
-                self._type_registry.unify(base_ref, pointer_ref)
+                base_ref = self._type_registry.unify(base_ref, pointer_ref)
             else:
                 if offset < 0 and not self._is_dedicated_reg(base_reg):
                     # TODO Some way to avoid this special case?
@@ -257,7 +268,7 @@ class _FunctionAnalyzer:
                 # Assume pointer-to-struct otherwise
                 struct_ref = self._create_struct_type({offset: data_type})
                 pointer_ref = self._create_pointer_type(struct_ref)
-                self._type_registry.unify(base_ref, pointer_ref)
+                base_ref = self._type_registry.unify(base_ref, pointer_ref)
 
             base_type = self._type_registry[base_ref]
 
@@ -274,7 +285,7 @@ class _FunctionAnalyzer:
                 self._type_registry.add_struct_field(target_type, offset, data_ref)
             else:
                 assert offset == 0
-                self._type_registry.unify(base_type.target, data_ref)
+                base_type.target = self._type_registry.unify(base_type.target, data_ref)
 
             return True
         return False
@@ -286,25 +297,26 @@ class _FunctionAnalyzer:
         for reg in self._RETURN_REGISTERS:
             if maybe_has_return_value(reg):
                 type_ref = self._ensure_reg_type(shadow, reg)
-                self._type_registry.unify(self._return_type, type_ref)
+                self._return_type = self._type_registry.unify(
+                    self._return_type, type_ref
+                )
 
     def _apply_subanalysis_result(
         self, shadow: _ShadowState, result: _InternalResult
     ) -> None:
         # Unify argument types
         for arg_id, sub_type_ref in result.found_args.items():
-            if arg_id in PpcReg:
-                reg = PpcReg(arg_id)
+            # TODO Handle stack args
+            assert arg_id in PpcReg
 
-                type_ref = self._ensure_reg_type(shadow, reg)
-                self._type_registry.unify(type_ref, sub_type_ref)
+            reg = PpcReg(arg_id)
 
-                # Mark any unmodified input registers as arguments to outer call
-                if not shadow.is_reg_modified(reg):
-                    self._add_argument(reg, type_ref)
-            else:
-                # TODO Handle stack args
-                pass
+            type_ref = self._ensure_reg_type(shadow, reg)
+            type_ref = self._type_registry.unify(type_ref, sub_type_ref)
+
+            # Mark any unmodified input registers as arguments to outer call
+            if not shadow.is_reg_modified(reg):
+                self._add_argument(shadow, reg, type_ref)
 
         # TODO Add any modified-but-unaccessed input registers as arguments to inner call?
 
@@ -314,13 +326,17 @@ class _FunctionAnalyzer:
             shadow.set_reg_type_ref(reg, result.return_type)
 
     def _handle_post_call(self, shadow: _ShadowState) -> None:
-        # Apply subanalysis result, if any
         if self._subanalysis_result:
+            # Apply subanalysis result, if any
             self._apply_subanalysis_result(shadow, self._subanalysis_result)
             self._subanalysis_result = None
+        else:
+            # Otherwise, reset the types of return registers to void
+            for reg in self._RETURN_REGISTERS:
+                shadow.set_reg_type_ref(reg, self._create_void_type())
 
-        # Mark volatile registers as modified but unaccessed after calls
         for reg in PpcReg:
+            # Mark volatile registers as modified but unaccessed after calls
             if reg.is_volatile():
                 shadow.mark_reg_unaccessed(reg)
                 shadow.mark_reg_modified(reg)
@@ -344,17 +360,19 @@ class _FunctionAnalyzer:
 
     def _on_pre_execute(self, event: VmPreExecuteEvent, state: VmState) -> VmSignal:
         curr_addr = event.pc
+        thread_id = event.thread_id
 
-        if curr_addr in self._global_seen_addrs:
+        if curr_addr in self._seen_addresses:
             return VmSignal.HALT
 
-        shadow_state = self._thread_map[event.thread_id]
+        shadow_state = self._thread_map[thread_id]
 
         if event.instr.is_blr() and not self._in_save_rest_sub(curr_addr):
             self._update_return_type(shadow_state)
             return VmSignal.HALT
 
-        self._global_seen_addrs.add(curr_addr)
+        self._seen_addresses.add(curr_addr)
+        self._thread_trace[thread_id].append(curr_addr)
 
         return VmSignal.CONTINUE
 
@@ -376,35 +394,40 @@ class _FunctionAnalyzer:
 
     def _on_read_reg(self, event: VmReadRegEvent, state: VmState) -> VmSignal:
         reg = event.reg
-        shadow_state = self._thread_map[event.thread_id]
+        shadow = self._thread_map[event.thread_id]
 
         # Record argument after uninitialized read
-        if not shadow_state.is_reg_modified(reg):
+        if not shadow.is_reg_modified(reg):
             if self._is_argument_reg(reg):
                 self._log_debug(
                     f"Unmodified read of {reg}; marking as argument", event.pc
                 )
-                type_ref = self._ensure_reg_type(shadow_state, reg)
-                self._add_argument(reg, type_ref)
+                type_ref = self._ensure_reg_type(shadow, reg)
+                self._add_argument(shadow, reg, type_ref)
             elif (reg.is_gpr() or reg.is_fpr()) and reg.is_volatile():
                 self._log_warning(
                     f"Unexpected unmodified read of {reg}; not an argument register",
                     event.pc,
                 )
 
-        shadow_state.mark_reg_accessed(reg)
+        shadow.mark_reg_accessed(reg)
 
         return VmSignal.CONTINUE
 
     def _on_write_reg(self, event: VmWriteRegEvent, state: VmState) -> VmSignal:
-        shadow_state = self._thread_map[event.thread_id]
-        shadow_state.mark_reg_modified(event.reg)
+        shadow = self._thread_map[event.thread_id]
+        shadow.mark_reg_modified(event.reg)
         self._modified_regs.add(event.reg)
         return VmSignal.CONTINUE
 
     def _on_fork(self, event: VmForkEvent, state: VmState) -> VmSignal:
-        parent_shadow = self._thread_map[event.parent_id]
-        self._thread_map[event.child_id] = parent_shadow.copy()
+        parent_id = event.parent_id
+        child_id = event.child_id
+
+        parent_shadow = self._thread_map[parent_id]
+        self._thread_map[child_id] = parent_shadow.copy()
+        self._thread_trace[child_id] = self._thread_trace[parent_id].copy()
+
         return VmSignal.CONTINUE
 
     def _on_call(self, event: VmCallEvent, state: VmState) -> VmSignal:
@@ -564,8 +587,8 @@ class DolAnalyzer:
 
             for arg_id in sorter.static_order():
                 assert arg_id in found_args
-                type_ref = registry[found_args[arg_id]]
-                arguments.append(type_ref)
+                type_info = registry[found_args[arg_id]]
+                arguments.append(type_info)
 
             return arguments
 
