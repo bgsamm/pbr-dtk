@@ -1,6 +1,7 @@
 from byteio import BytesWriter
-from rvl.types import *
-from .symval import SymbolicValue
+from symval import SymbolicValue, SymOrInt
+from typealiases import *
+import symval
 
 
 class VmMemMap:
@@ -32,11 +33,13 @@ class VmMemMap:
 
             return SymbolicValue.Unknown
 
-        def write(self, type: ctype, offset: int, sym: SymbolicValue):
+        def write(self, type: ctype, offset: int, value: SymOrInt):
             size = sizeof(type)
 
-            if sym.is_known:
-                self._data.write(type, offset, sym.value)
+            value = symval.ensure_symbolic(value)
+
+            if value.is_known:
+                self._data.write(type, offset, value.value)
                 state_mask = b"\x01" * size
             else:
                 state_mask = b"\x00" * size
@@ -56,17 +59,17 @@ class VmMemMap:
     _page_table: dict[int, Page]
     _owned_pages: set[int]
 
-    def __init__(self, parent_pages: dict | None = None):
+    def __init__(self, parent_pages: dict | None = None) -> None:
         self._page_table = dict(parent_pages) if parent_pages else {}
         self._owned_pages = set()
 
-    def _resolve_address(self, addr: int):
+    def _resolve_address(self, addr: int) -> tuple[int, int]:
         phys = addr & 0x3FFF_FFFF
         if phys < 0x180_0000 or 0x1000_0000 <= phys < 0x1400_0000:
             return (phys >> self._PAGE_SHIFT), (phys & self._PAGE_MASK)
         raise ValueError(f"Invalid memory address: {addr}")
 
-    def read(self, type: ctype, addr: int) -> SymbolicValue:
+    def read(self, addr: int, type: ctype) -> SymbolicValue:
         page_idx, offset = self._resolve_address(addr)
 
         if not (page := self._page_table.get(page_idx)):
@@ -75,39 +78,33 @@ class VmMemMap:
         # TODO Handle cross-page (mis-aligned) reads
         return page.read(type, offset)
 
-    def write(self, type: ctype, addr: int, sym: SymbolicValue):
+    def write(self, addr: int, value: SymOrInt, type: ctype) -> None:
         page_idx, offset = self._resolve_address(addr)
 
         if page_idx not in self._owned_pages:
             if page_idx in self._page_table:
+                # Copy-on-write
                 self._page_table[page_idx] = self._page_table[page_idx].copy()
             else:
                 self._page_table[page_idx] = self.Page(self._PAGE_SIZE)
             self._owned_pages.add(page_idx)
 
-        self._page_table[page_idx].write(type, offset, sym)
+        self._page_table[page_idx].write(type, offset, value)
 
-    def dump(self, addr: int, size: int):
-        result = [SymbolicValue.Unknown for _ in range(size)]
-        pos = 0
-
-        while size > 0:
-            page_idx, offset = self._resolve_address(addr)
-            to_read = min(self._PAGE_SIZE - offset, size)
-
-            if page := self._page_table.get(page_idx):
-                for i in range(to_read):
-                    result[pos + i] = page[offset + i]
-
-            addr += to_read
-            pos += to_read
-            size -= to_read
-
-        return result
-
-    def clone(self) -> VmMemMap:
+    def copy(self) -> VmMemMap:
         return VmMemMap(self._page_table)
 
-    def reset(self):
+    def reset(self) -> None:
         self._page_table.clear()
         self._owned_pages.clear()
+
+
+class VmMemView:
+    def __init__(self, mmap: VmMemMap) -> None:
+        self._mmap = mmap
+
+    def __getitem__(self, address: int) -> SymbolicValue:
+        return self._mmap.read(address, u8)
+
+    def read(self, address: int, dtype: ctype) -> SymbolicValue:
+        return self._mmap.read(address, dtype)

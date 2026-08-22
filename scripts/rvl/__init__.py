@@ -1,1 +1,1 @@
-from .dol import Dol
+from .dol import Dol, DolSection

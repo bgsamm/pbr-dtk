@@ -1,4 +1,4 @@
-from rvl.types import *
+from typealiases import *
 import struct
 
 _fmt_map = {

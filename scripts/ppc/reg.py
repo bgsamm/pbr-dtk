@@ -1,9 +1,9 @@
 from enum import IntEnum
+from typing import Iterable
 import enum
 
 
-class VmReg(IntEnum):
-    NULL = 0
+class PpcReg(IntEnum):
     # SPRs
     PC = enum.auto()
     LR = enum.auto()
@@ -77,16 +77,43 @@ class VmReg(IntEnum):
     FPR30 = enum.auto()
     FPR31 = enum.auto()
 
+    def __str__(self) -> str:
+        return self.name
+
     def is_gpr(self) -> bool:
-        return VmReg.GPR0 <= self <= VmReg.GPR31
+        return PpcReg.GPR0 <= self <= PpcReg.GPR31
 
     def is_fpr(self) -> bool:
-        return VmReg.FPR0 <= self <= VmReg.FPR31
+        return PpcReg.FPR0 <= self <= PpcReg.FPR31
+
+    def is_spr(self) -> bool:
+        return self < PpcReg.GPR0
+
+    def is_volatile(self) -> bool:
+        if self.is_gpr():
+            return self < PpcReg.GPR14 and self not in {
+                PpcReg.GPR1,
+                PpcReg.GPR2,
+                PpcReg.GPR13,
+            }
+        if self.is_fpr():
+            return self < PpcReg.FPR14
+        return self not in {PpcReg.PC, PpcReg.LR}
 
     @classmethod
-    def GPR(cls, i: int) -> VmReg:
-        return VmReg(VmReg.GPR0 + i)
+    def GPR(cls, i: int) -> PpcReg:
+        return PpcReg(PpcReg.GPR0 + i)
 
     @classmethod
-    def FPR(cls, i: int) -> VmReg:
-        return VmReg(VmReg.FPR0 + i)
+    def FPR(cls, i: int) -> PpcReg:
+        return PpcReg(PpcReg.FPR0 + i)
+
+    @classmethod
+    def GPRs(cls) -> Iterable[PpcReg]:
+        for i in range(PpcReg.GPR0, PpcReg.GPR31 + 1):
+            yield PpcReg(i)
+
+    @classmethod
+    def FPRs(cls) -> Iterable[PpcReg]:
+        for i in range(PpcReg.FPR0, PpcReg.FPR31 + 1):
+            yield PpcReg(i)

@@ -1,8 +1,10 @@
 from argparse import ArgumentParser
 from pathlib import Path
-from decomp import DolAnalyzer
-from dtk import SplitMap, SymbolMap
+from decomp import AnalysisResult, DolAnalyzer, codegen
+from dtk.splits import SplitMap
+from dtk.symbols import SymbolMap
 from rvl import Dol
+import logging
 import subprocess
 
 DOL_PATH = Path("orig/RPBP01/sys/main.dol")
@@ -10,43 +12,44 @@ SPLITS_PATH = Path("config/RPBP01/splits.txt")
 SYMBOLS_PATH = Path("config/RPBP01/symbols.txt")
 
 
-def integer_literal(string: str) -> int:
+def _integer_literal(string: str) -> int:
     return int(string, 0)
 
 
-def open_in_code(*paths: Path):
+def _open_in_code(*paths: Path):
     subprocess.run(["code.cmd", *paths], check=True)
 
 
 def exec_analyze(args):
+    def gen_function_signature(result: AnalysisResult) -> str:
+        return codegen.gen_function_signature(
+            result.func_name, result.arguments, result.return_type, result.type_registry
+        )
+
     address = args.address
+    max_depth = args.depth
+    breakpoint = args.breakpoint
 
     dol = Dol.from_file(DOL_PATH)
     symbol_map = SymbolMap.from_file(SYMBOLS_PATH)
 
-    try:
-        analyzer = DolAnalyzer(dol, symbol_map)
-        result = analyzer.analyze_function(address)
-    except RuntimeError:
-        return
+    analyzer = DolAnalyzer(dol, symbol_map, breakpoints={breakpoint})
+    result = analyzer.analyze_function(address, max_depth)
 
-    if len(result.found_structs) > 0:
+    if len(result.structs) > 0:
         print("Found the following structs:")
-        for i, struct_info in enumerate(result.found_structs):
-            struct_info.name = f"Struct_{i}"
-            print(struct_info.to_c())
-
-    symbols = symbol_map.get_by_address(address)
-    if len(symbols) == 0:
-        func_name = f"fn_{address:X}"
-    else:
-        func_name = symbols[0]
+        for struct in result.structs:
+            print(codegen.gen_struct(struct, result.type_registry))
 
     print("Proposed function signature:")
-    param_list = ", ".join(
-        f"{type_info} arg{i}" for i, type_info in enumerate(result.parameters)
-    )
-    print(f"void {func_name}({param_list})")
+    print("    " + gen_function_signature(result))
+    print()
+
+    if len(result.subcalls) > 0:
+        print("Identified subcalls:")
+        for subresult in result.subcalls.values():
+            print("    " + gen_function_signature(subresult))
+            print()
 
 
 def exec_find_split(args):
@@ -64,25 +67,30 @@ def exec_find_split(args):
     if args.open:
         src_path = Path(split.path)
         header_path = "include" / src_path.relative_to("src").with_suffix(".hpp")
-        open_in_code(src_path, header_path)
+        _open_in_code(src_path, header_path)
 
 
 def main():
     parser = ArgumentParser(
         description="A suite of decompilation & binary analysis scripts"
     )
+    parser.add_argument("--debug", action="store_true")
     subparsers = parser.add_subparsers(required=True)
 
     parser_analyze = subparsers.add_parser("analyze")
-    parser_analyze.add_argument("address", type=integer_literal)
+    parser_analyze.add_argument("address", type=_integer_literal)
+    parser_analyze.add_argument("--breakpoint", type=_integer_literal)
+    parser_analyze.add_argument("--depth", type=_integer_literal, default=0)
     parser_analyze.set_defaults(func=exec_analyze)
 
     parser_find_split = subparsers.add_parser("find-split")
-    parser_find_split.add_argument("address", type=integer_literal)
+    parser_find_split.add_argument("address", type=_integer_literal)
     parser_find_split.add_argument("-o", "--open", action="store_true")
     parser_find_split.set_defaults(func=exec_find_split)
 
     args = parser.parse_args()
+    if args.debug:
+        logging.basicConfig(level=logging.DEBUG)
     args.func(args)
 
 

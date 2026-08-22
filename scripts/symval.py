@@ -1,9 +1,13 @@
-from typing import Any, Callable
+from typing import Callable, overload
+from typealiases import ctype, cast
 import operator
 import re
 
 type _OpFunc = Callable[[int, int], int]
 type _CompFunc = Callable[[int, int], bool]
+
+type SymOrInt = SymbolicValue | int
+type SymOrNone = SymbolicValue | None
 
 
 class SymbolicValue:
@@ -24,21 +28,21 @@ class SymbolicValue:
     def is_unknown(self) -> bool:
         return self is SymbolicValue.Unknown
 
-    def _process_operand(self, other: Any) -> SymbolicValue:
+    def _process_operand(self, other: SymOrInt) -> SymbolicValue:
         if isinstance(other, SymbolicValue):
             return other
         if isinstance(other, int):
             return SymbolicValue(other)
         return NotImplemented
 
-    def _apply_op(self, other: Any, op_func: _OpFunc) -> SymbolicValue:
+    def _apply_op(self, other: SymOrInt, op_func: _OpFunc) -> SymbolicValue:
         if (other := self._process_operand(other)) is NotImplemented:
             return NotImplemented
         if self.is_unknown or other.is_unknown:
             return SymbolicValue.Unknown
         return SymbolicValue(op_func(self._value, other._value))
 
-    def _apply_rop(self, other: Any, op_func: _OpFunc) -> SymbolicValue:
+    def _apply_rop(self, other: SymOrInt, op_func: _OpFunc) -> SymbolicValue:
         if (other := self._process_operand(other)) is NotImplemented:
             return NotImplemented
         if self.is_unknown or other.is_unknown:
@@ -46,7 +50,7 @@ class SymbolicValue:
         return SymbolicValue(op_func(other._value, self._value))
 
     def _apply_comp(
-        self, other: Any, comp_func: _CompFunc, on_unknown: bool = False
+        self, other: SymOrInt, comp_func: _CompFunc, on_unknown: bool = False
     ) -> bool:
         if (other := self._process_operand(other)) is NotImplemented:
             return NotImplemented
@@ -59,88 +63,105 @@ class SymbolicValue:
             return SymbolicValue.Unknown
         return SymbolicValue(~self._value)
 
-    def __add__(self, other: Any) -> SymbolicValue:
+    def __neg__(self):
+        if self.is_unknown:
+            return SymbolicValue.Unknown
+        return SymbolicValue(-self.value)
+
+    def __add__(self, other: SymOrInt) -> SymbolicValue:
         return self._apply_op(other, operator.add)
 
-    def __sub__(self, other: Any) -> SymbolicValue:
+    def __sub__(self, other: SymOrInt) -> SymbolicValue:
         return self._apply_op(other, operator.sub)
 
-    def __and__(self, other: Any) -> SymbolicValue:
+    def __mul__(self, other: SymOrInt) -> SymbolicValue:
+        return self._apply_op(other, operator.mul)
+
+    def __and__(self, other: SymOrInt) -> SymbolicValue:
         return self._apply_op(other, operator.and_)
 
-    def __or__(self, other: Any) -> SymbolicValue:
+    def __or__(self, other: SymOrInt) -> SymbolicValue:
         return self._apply_op(other, operator.or_)
 
-    def __xor__(self, other: Any) -> SymbolicValue:
+    def __xor__(self, other: SymOrInt) -> SymbolicValue:
         return self._apply_op(other, operator.xor)
 
-    def __lshift__(self, other: Any) -> SymbolicValue:
+    def __lshift__(self, other: SymOrInt) -> SymbolicValue:
         return self._apply_op(other, operator.lshift)
 
-    def __rshift__(self, other: Any) -> SymbolicValue:
+    def __rshift__(self, other: SymOrInt) -> SymbolicValue:
         return self._apply_op(other, operator.rshift)
 
-    def __radd__(self, other: Any) -> SymbolicValue:
+    def __radd__(self, other: SymOrInt) -> SymbolicValue:
         return self._apply_rop(other, operator.add)
 
-    def __rsub__(self, other: Any) -> SymbolicValue:
+    def __rsub__(self, other: SymOrInt) -> SymbolicValue:
         return self._apply_rop(other, operator.sub)
 
-    def __rand__(self, other: Any) -> SymbolicValue:
+    def __rand__(self, other: SymOrInt) -> SymbolicValue:
         return self._apply_rop(other, operator.and_)
 
-    def __ror__(self, other: Any) -> SymbolicValue:
+    def __ror__(self, other: SymOrInt) -> SymbolicValue:
         return self._apply_rop(other, operator.or_)
 
-    def __rxor__(self, other: Any) -> SymbolicValue:
+    def __rxor__(self, other: SymOrInt) -> SymbolicValue:
         return self._apply_rop(other, operator.xor)
 
-    def __rlshift__(self, other: Any) -> SymbolicValue:
+    def __rlshift__(self, other: SymOrInt) -> SymbolicValue:
         return self._apply_rop(other, operator.lshift)
 
-    def __rrshift__(self, other: Any) -> SymbolicValue:
+    def __rrshift__(self, other: SymOrInt) -> SymbolicValue:
         return self._apply_rop(other, operator.rshift)
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: SymOrInt) -> bool:
         return self._apply_comp(other, operator.eq)
 
-    def __ne__(self, other: Any) -> bool:
+    def __ne__(self, other: SymOrInt) -> bool:
         # Following NaN convention, i.e. every value (incl. NaN) is != NaN
         return self._apply_comp(other, operator.ne, on_unknown=True)
 
-    def __lt__(self, other: Any) -> bool:
+    def __lt__(self, other: SymOrInt) -> bool:
         return self._apply_comp(other, operator.lt)
 
-    def __le__(self, other: Any) -> bool:
+    def __le__(self, other: SymOrInt) -> bool:
         return self._apply_comp(other, operator.le)
 
-    def __gt__(self, other: Any) -> bool:
+    def __gt__(self, other: SymOrInt) -> bool:
         return self._apply_comp(other, operator.gt)
 
-    def __ge__(self, other: Any) -> bool:
+    def __ge__(self, other: SymOrInt) -> bool:
         return self._apply_comp(other, operator.ge)
+
+    def __format__(self, format_spec: str) -> str:
+        def sub_qmarks(match: re.Match[str]) -> str:
+            prefix = match.group(1)
+            digits = match.group(2)
+            return (prefix or "") + ("?" * len(digits))
+
+        result = format(self._value, format_spec)
+        if self.is_unknown:
+            result = re.sub(r"(0[boxX])?([0-9a-fA-F]+)", sub_qmarks, result)
+        return result
 
     def __hash__(self) -> int:
         if self.is_unknown:
             return hash(SymbolicValue.Unknown)
         return hash(self._value)
 
-    def __format__(self, format_spec: str) -> str:
-        result = format(self._value, format_spec)
+    def __repr__(self) -> str:
         if self.is_unknown:
-            # TODO Ignore prefixes (0x, 0b, 0o)
-            result = re.sub(r"[0-9a-fA-F]", "?", result)
-        return result
+            return "SymbolicValue.Unknown"
+        return f"SymbolicValue({self._value})"
 
     def __str__(self) -> str:
         if self.is_unknown:
             return "?"
         return str(self._value)
 
-    def __repr__(self) -> str:
+    def cast(self, dtype: ctype) -> SymbolicValue:
         if self.is_unknown:
-            return "SymbolicValue.Unknown"
-        return f"SymbolicValue({self._value})"
+            return SymbolicValue.Unknown
+        return SymbolicValue(cast(self.value, dtype))
 
 
 class _UnknownSymbolicValue(SymbolicValue):
@@ -153,3 +174,9 @@ class _UnknownSymbolicValue(SymbolicValue):
 
 
 SymbolicValue.Unknown = _UnknownSymbolicValue()
+
+
+def ensure_symbolic(value: SymOrInt) -> SymbolicValue:
+    if isinstance(value, int):
+        return SymbolicValue(value)
+    return value
