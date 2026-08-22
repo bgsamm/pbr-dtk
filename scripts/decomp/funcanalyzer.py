@@ -1,12 +1,9 @@
 from collections import defaultdict
 from dataclasses import dataclass
-from graphlib import TopologicalSorter
-from typing import Sequence
-from dtk.symbols import Symbol, SymbolMap
+from dtk.symbols import Symbol
 from ppc import PpcInstr, PpcReg
 from rvl import Dol
-from symval import SymbolicValue
-from typealiases import *
+from typealiases import ctype, f32, u32
 from vm import VmState, WiiVm
 from vm.event import *
 from .debugger import Debugger
@@ -15,33 +12,21 @@ from .typereg import TypeRegistry
 import logging
 import ppc
 
-# TODO Decouple this module from Debugger?
-
 
 class AnalysisError(Exception):
     pass
 
 
 @dataclass
-class _InternalResult:
+class InternalResult:
     type_registry: TypeRegistry
     found_args: dict[int, int]
     arg_graph: dict[int, set[int]]
     return_type: int
-    subcalls: dict[int, _InternalResult]
+    subcalls: dict[int, InternalResult]
 
 
-@dataclass(frozen=True)
-class AnalysisResult:
-    func_name: str
-    type_registry: TypeRegistry
-    arguments: Sequence[TypeInfo]
-    return_type: TypeInfo
-    structs: Sequence[StructType]
-    subcalls: dict[int, AnalysisResult]
-
-
-class _ShadowState:
+class ShadowState:
     _reg_access_flags: dict[PpcReg, bool]
     _reg_modify_flags: dict[PpcReg, bool]
     _reg_type_refs: dict[PpcReg, int]
@@ -75,15 +60,15 @@ class _ShadowState:
     def set_reg_type_ref(self, reg: PpcReg, type_ref: int) -> None:
         self._reg_type_refs[reg] = type_ref
 
-    def copy(self) -> _ShadowState:
-        new_state = _ShadowState()
+    def copy(self) -> ShadowState:
+        new_state = ShadowState()
         new_state._reg_type_refs = self._reg_type_refs.copy()
         new_state._reg_access_flags = self._reg_access_flags.copy()
         new_state._reg_modify_flags = self._reg_modify_flags.copy()
         return new_state
 
 
-class _FunctionAnalyzer:
+class FunctionAnalyzer:
     _DEDICATED_REGISTERS = {PpcReg.GPR1, PpcReg.GPR2, PpcReg.GPR13}
     # TODO Handle 64-bit types properly, since one value is split across two registers
     # r3 used for integer/pointer returns
@@ -93,9 +78,9 @@ class _FunctionAnalyzer:
 
     _seen_addresses: set[int]
 
-    _subcalls: dict[int, _InternalResult]
+    _subcalls: dict[int, InternalResult]
 
-    _thread_map: dict[int, _ShadowState]
+    _thread_map: dict[int, ShadowState]
     """A mapping from thread ID to shadow state"""
 
     _thread_trace: dict[int, list[int]]
@@ -111,7 +96,7 @@ class _FunctionAnalyzer:
     """A collection of type IDs for pseudo-structs, like the stack"""
 
     _modified_regs: set[PpcReg]
-    _subanalysis_result: _InternalResult | None
+    _subanalysis_result: InternalResult | None
 
     def __init__(
         self,
@@ -134,7 +119,7 @@ class _FunctionAnalyzer:
 
         self._seen_addresses = set()
         self._subcalls = {}
-        self._thread_map = defaultdict(_ShadowState)
+        self._thread_map = defaultdict(ShadowState)
         self._thread_trace = defaultdict(list)
         self._found_args = {}
         self._arg_graph = defaultdict(set)
@@ -189,7 +174,7 @@ class _FunctionAnalyzer:
     def _create_struct_type(self, fields: dict[int, int]) -> int:
         return self._type_registry.add(StructType(fields))
 
-    def _ensure_reg_type(self, state: _ShadowState, reg: PpcReg) -> int:
+    def _ensure_reg_type(self, state: ShadowState, reg: PpcReg) -> int:
         type_ref = state.get_reg_type_ref(reg)
 
         if type_ref is None:
@@ -198,7 +183,7 @@ class _FunctionAnalyzer:
 
         return type_ref
 
-    def _add_argument(self, shadow: _ShadowState, arg_id: int, type_ref: int) -> None:
+    def _add_argument(self, shadow: ShadowState, arg_id: int, type_ref: int) -> None:
         # TODO Handle stack args
         assert arg_id in PpcReg
 
@@ -228,7 +213,7 @@ class _FunctionAnalyzer:
                 self._add_argument(shadow, reg, type_ref)
             self._arg_graph[arg_reg].add(reg)
 
-    def _update_types(self, shadow: _ShadowState, pc: int, instr: PpcInstr) -> bool:
+    def _update_types(self, shadow: ShadowState, pc: int, instr: PpcInstr) -> bool:
         # TODO Refactor this function
         if instr.is_move():
             src_reg = instr.gpr_field(6, 10)
@@ -290,7 +275,7 @@ class _FunctionAnalyzer:
             return True
         return False
 
-    def _update_return_type(self, shadow: _ShadowState) -> None:
+    def _update_return_type(self, shadow: ShadowState) -> None:
         def maybe_has_return_value(reg: PpcReg) -> bool:
             return shadow.is_reg_modified(reg) and not shadow.is_reg_accessed(reg)
 
@@ -302,7 +287,7 @@ class _FunctionAnalyzer:
                 )
 
     def _apply_subanalysis_result(
-        self, shadow: _ShadowState, result: _InternalResult
+        self, shadow: ShadowState, result: InternalResult
     ) -> None:
         # Unify argument types
         for arg_id, sub_type_ref in result.found_args.items():
@@ -325,7 +310,7 @@ class _FunctionAnalyzer:
         for reg in self._RETURN_REGISTERS:
             shadow.set_reg_type_ref(reg, result.return_type)
 
-    def _handle_post_call(self, shadow: _ShadowState) -> None:
+    def _handle_post_call(self, shadow: ShadowState) -> None:
         if self._subanalysis_result:
             # Apply subanalysis result, if any
             self._apply_subanalysis_result(shadow, self._subanalysis_result)
@@ -341,11 +326,11 @@ class _FunctionAnalyzer:
                 shadow.mark_reg_unaccessed(reg)
                 shadow.mark_reg_modified(reg)
 
-    def _analyze_subcall(self, address: int) -> _InternalResult:
+    def _analyze_subcall(self, address: int) -> InternalResult:
         if address in self._subcalls:
             result = self._subcalls[address]
         else:
-            subanalyzer = _FunctionAnalyzer(
+            subanalyzer = FunctionAnalyzer(
                 self._dol,
                 address,
                 self._init_state,
@@ -459,10 +444,10 @@ class _FunctionAnalyzer:
         for breakpoint in self._breakpoints:
             debugger.set_breakpoint(breakpoint)
 
-    def analyze(self) -> _InternalResult:
+    def analyze(self) -> InternalResult:
         # Initialize shadow state for starting thread
         # TODO Make explicit somewhere the fact 0 is the starting thread's ID?
-        start_state = self._thread_map[0] = _ShadowState()
+        start_state = self._thread_map[0] = ShadowState()
 
         # Type all registers at the start so branches don't end up
         # creating separate types for the same register value
@@ -481,7 +466,7 @@ class _FunctionAnalyzer:
 
         vm.run(self._func_address, self._init_state)
 
-        result = _InternalResult(
+        result = InternalResult(
             self._type_registry,
             self._found_args,
             self._arg_graph,
@@ -490,158 +475,3 @@ class _FunctionAnalyzer:
         )
 
         return result
-
-
-class DolAnalyzer:
-    _breakpoints: set[int]
-    _save_rest_subs: set[Symbol]
-
-    def __init__(
-        self, dol: Dol, symbol_map: SymbolMap, breakpoints: set[int] | None = None
-    ):
-        self._dol = dol
-        self._symbol_map = symbol_map
-        self._breakpoints = breakpoints or set()
-
-        r1, r2, r13 = self._find_init_reg_state()
-        self._base_state = VmState(
-            {
-                PpcReg.GPR1: r1,
-                PpcReg.GPR2: r2,
-                PpcReg.GPR13: r13,
-                PpcReg.CR: 0,
-                PpcReg.XER: 0,
-            }
-        )
-
-        self._save_rest_subs = self._find_save_rest_subs()
-
-    def _require_symbol(self, name: str) -> Symbol:
-        symbols = self._symbol_map.get_by_name(name)
-
-        if len(symbols) == 0:
-            raise AnalysisError(f"No symbol named {name}")
-        if len(symbols) > 1:
-            raise AnalysisError(f"Multiple symbols named {name}")
-
-        return symbols[0]
-
-    def _find_save_rest_subs(self) -> set[Symbol]:
-        addresses: set[Symbol] = set()
-
-        for name in {"__save_fpr", "__restore_fpr", "__save_gpr", "__restore_gpr"}:
-            symbol = self._require_symbol(name)
-            addresses.add(symbol)
-
-        return addresses
-
-    def _find_init_reg_state(self):
-        r1 = r2 = r13 = SymbolicValue.Unknown
-
-        def on_pre_execute(event: VmEvent, state: VmState) -> VmSignal:
-            nonlocal r1, r2, r13
-
-            if event.instr.is_blr():
-                r1 = state.read_reg(PpcReg.GPR1)
-                r2 = state.read_reg(PpcReg.GPR2)
-                r13 = state.read_reg(PpcReg.GPR13)
-                return VmSignal.HALT
-
-            return VmSignal.CONTINUE
-
-        __init_registers = self._require_symbol("__init_registers")
-
-        vm = WiiVm(self._dol)
-        vm.register_callback(VmPreExecuteEvent, on_pre_execute)
-        vm.run(__init_registers.address)
-
-        if r1.is_unknown or r2.is_unknown or r13.is_unknown:
-            logging.warning(
-                "Failed to determine initial state of one or more registers"
-            )
-
-        return r1, r2, r13
-
-    def _get_func_name(self, address: int) -> str:
-        symbols = self._symbol_map.get_by_address(address)
-
-        if len(symbols) == 0:
-            logging.warning(f"No symbol exists at 0x{address:08X}; using default name")
-            return f"fn_{address:08x}"
-
-        if len(symbols) > 1:
-            logging.warning(f"Multiple symbols exist at 0x{address:08X}; using first")
-
-        return symbols[0].name
-
-    def _build_result(
-        self, address: int, internal_result: _InternalResult
-    ) -> AnalysisResult:
-        def flatten_args(
-            found_args: dict[int, int],
-            arg_graph: dict[int, set[int]],
-            registry: TypeRegistry,
-        ) -> list[TypeInfo]:
-            arguments: list[TypeInfo] = []
-            sorter = TopologicalSorter(arg_graph)
-
-            for arg_id in sorter.static_order():
-                assert arg_id in found_args
-                type_info = registry[found_args[arg_id]]
-                arguments.append(type_info)
-
-            return arguments
-
-        def is_pseudo_struct(struct: StructType) -> bool:
-            # TODO Something more robust
-            return min(struct.fields) < 0
-
-        def collect_structs(registry: TypeRegistry) -> list[StructType]:
-            structs: list[StructType] = []
-
-            i = 0
-            for type in registry:
-                if isinstance(type, StructType):
-                    if not is_pseudo_struct(type):
-                        type.name = f"UnkStruct_{i}"
-                        structs.append(type)
-                        i += 1
-
-            return structs
-
-        def build_subresults(
-            subresults: dict[int, _InternalResult],
-        ) -> dict[int, AnalysisResult]:
-            built = {
-                addr: self._build_result(addr, subresult)
-                for addr, subresult in subresults.items()
-            }
-            return built
-
-        type_registry = internal_result.type_registry
-        found_args = internal_result.found_args
-        arg_graph = internal_result.arg_graph
-        return_type_ref = internal_result.return_type
-        subresults = internal_result.subcalls
-
-        func_name = self._get_func_name(address)
-        arguments = flatten_args(found_args, arg_graph, type_registry)
-        return_type = type_registry[return_type_ref]
-        structs = collect_structs(type_registry)
-        subcalls = build_subresults(subresults)
-
-        return AnalysisResult(
-            func_name, type_registry, arguments, return_type, structs, subcalls
-        )
-
-    def analyze_function(self, address: int, max_depth: int = 0) -> AnalysisResult:
-        analyzer = _FunctionAnalyzer(
-            self._dol,
-            address,
-            self._base_state,
-            self._save_rest_subs,
-            max_depth,
-            self._breakpoints,
-        )
-        internal_result = analyzer.analyze()
-        return self._build_result(address, internal_result)
