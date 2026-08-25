@@ -1,6 +1,8 @@
 from collections import defaultdict
 from dataclasses import dataclass
+from functools import cached_property
 from pathlib import Path
+from . import demangle
 import logging
 
 
@@ -15,11 +17,15 @@ class Symbol:
     size: int | None
 
     def __str__(self):
-        return self.name
+        return self.demangled_name
 
     @property
     def is_size_known(self) -> bool:
         return self.size is not None
+
+    @cached_property
+    def demangled_name(self) -> str:
+        return demangle.demangle(self.name)
 
 
 class SymbolMap:
@@ -76,7 +82,17 @@ class SymbolMap:
     def get_symbols_named(self, name: str) -> tuple[Symbol, ...]:
         return tuple(self._name_lookup[name])
 
-    def require_symbol(self, name: str) -> Symbol:
+    def require_symbol_at(self, address: int) -> Symbol:
+        symbols = self.get_symbols_at(address)
+
+        if len(symbols) == 0:
+            raise SymbolError(f"No symbol at {address:#x}")
+        if len(symbols) > 1:
+            raise SymbolError(f"Multiple symbols at {address:#x}")
+
+        return symbols[0]
+
+    def require_symbol_named(self, name: str) -> Symbol:
         symbols = self.get_symbols_named(name)
 
         if len(symbols) == 0:

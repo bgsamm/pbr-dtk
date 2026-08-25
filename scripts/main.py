@@ -1,6 +1,6 @@
 from argparse import ArgumentParser
 from pathlib import Path
-from decomp import AnalysisResult, DolAnalyzer, codegen
+from decomp import AnalysisResult, DolAnalyzer, callgraph, codegen
 from dtk.splits import SplitMap
 from dtk.symbols import SymbolMap
 from rvl import Dol
@@ -11,6 +11,8 @@ DOL_PATH = Path("orig/RPBP01/sys/main.dol")
 SPLITS_PATH = Path("config/RPBP01/splits.txt")
 SYMBOLS_PATH = Path("config/RPBP01/symbols.txt")
 
+OUTPUT_PATH = Path("analysis/")
+
 
 def _integer_literal(string: str) -> int:
     return int(string, 0)
@@ -20,28 +22,54 @@ def _open_in_code(*paths: Path):
     subprocess.run(["code.cmd", *paths], check=True)
 
 
+def _call_graphviz(infile: Path, outfile: Path):
+    subprocess.run(["dot", "-Tpng", infile, "-o", outfile])
+
+
+def _prompt_exists_ok(path: Path) -> bool:
+    if path.exists():
+        response = input(f"The file {path} already exists; OK to overwrite? (Y/n) ")
+        if response.lower().strip() != "n":
+            return True
+        return False
+    return True
+
+
+def _parse_boundaries_file(path: Path) -> list[tuple[int, int]]:
+    boundaries = []
+
+    with open(path) as f:
+        for line in f:
+            if not line.startswith("#"):
+                start, end = map(_integer_literal, line.split())
+                boundaries.append((start, end))
+
+    return boundaries
+
+
 def exec_analyze(args):
     def gen_function_signature(result: AnalysisResult) -> str:
         return codegen.gen_function_signature(
             result.func_name, result.arguments, result.return_type, result.type_registry
         )
 
-    address = args.address
-    max_depth = args.depth
-    breakpoint = args.breakpoint
+    func_addr: int = args.address
+    max_depth: int = args.depth
+    breakpoint: int | None = args.breakpoint
 
     dol = Dol.from_file(DOL_PATH)
     symbol_map = SymbolMap.from_file(SYMBOLS_PATH)
 
-    analyzer = DolAnalyzer(dol, symbol_map, breakpoints={breakpoint})
-    result = analyzer.analyze_function(address, max_depth)
+    breakpoints = {breakpoint} if breakpoint is not None else set()
 
-    outfile = Path(f"analysis_{address:X}.txt")
-    if outfile.exists():
-        response = input(f"The file {outfile} already exists; OK to overwrite? (y/N) ")
-        if response.lower().strip() != "y":
-            return
+    analyzer = DolAnalyzer(dol, symbol_map, breakpoints)
+    result = analyzer.analyze_function(func_addr, max_depth)
 
+    outfile = OUTPUT_PATH / f"analysis_{func_addr:X}.txt"
+    if not _prompt_exists_ok(outfile):
+        return
+
+    # TODO Separate output generation from file writing
     with open(outfile, "w") as f:
         f.write("Proposed function signature:\n")
         f.write(f"    {gen_function_signature(result)}\n")
@@ -62,8 +90,45 @@ def exec_analyze(args):
         print(f"Results have been written to {outfile}")
 
 
+def exec_call_graph(args):
+    func_addr: int = args.address
+    max_depth: int = args.depth
+    boundaries_file: Path | None = args.boundaries
+
+    dol = Dol.from_file(DOL_PATH)
+    symbol_map = SymbolMap.from_file(SYMBOLS_PATH)
+
+    if boundaries_file:
+        boundaries = _parse_boundaries_file(boundaries_file)
+    else:
+        boundaries = []
+
+    function = symbol_map.require_symbol_at(func_addr)
+    graph = callgraph.gen_call_graph(dol, function, symbol_map, max_depth, boundaries)
+
+    outfile = OUTPUT_PATH / f"callgraph_{func_addr:X}.dot"
+    if not _prompt_exists_ok(outfile):
+        return
+
+    # TODO Separate output generation from file writing
+    with open(outfile, "w") as f:
+        f.write("digraph CallGraph {\n")
+        f.write('  rankdir="LR"\n')
+        for source, target in sorted(
+            graph, key=lambda call: (call[0].address, call[1].address)
+        ):
+            f.write(f'  "{source}" -> "{target}";\n')
+        f.write("}")
+
+    print(f"Results have been written to {outfile}")
+
+    infile = outfile
+    outfile = OUTPUT_PATH / f"callgraph_{func_addr:X}.png"
+    _call_graphviz(infile, outfile)
+
+
 def exec_find_split(args):
-    address = args.address
+    address: int = args.address
 
     splits = SplitMap.from_file(SPLITS_PATH)
     split = splits.find_split_by_address(address)
@@ -92,6 +157,12 @@ def main():
     parser_analyze.add_argument("--breakpoint", type=_integer_literal)
     parser_analyze.add_argument("--depth", type=_integer_literal, default=0)
     parser_analyze.set_defaults(func=exec_analyze)
+
+    parser_call_graph = subparsers.add_parser("call-graph")
+    parser_call_graph.add_argument("address", type=_integer_literal)
+    parser_call_graph.add_argument("--depth", type=_integer_literal, default=0)
+    parser_call_graph.add_argument("--boundaries", type=Path)
+    parser_call_graph.set_defaults(func=exec_call_graph)
 
     parser_find_split = subparsers.add_parser("find-split")
     parser_find_split.add_argument("address", type=_integer_literal)

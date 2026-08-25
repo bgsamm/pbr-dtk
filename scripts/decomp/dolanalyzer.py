@@ -298,7 +298,7 @@ class DolAnalyzer:
         addresses: set[Symbol] = set()
 
         for name in {"__save_fpr", "__restore_fpr", "__save_gpr", "__restore_gpr"}:
-            symbol = self._symbol_map.require_symbol(name)
+            symbol = self._symbol_map.require_symbol_named(name)
             addresses.add(symbol)
 
         return addresses
