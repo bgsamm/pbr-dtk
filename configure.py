@@ -256,13 +256,14 @@ cflags_sdk = [
 cflags_game = [
     *cflags_base,
     "-ipa file",
-    "-inline on",
+    "-inline all",
     "-fp_contract off",
 ]
 
 config.linker_version = "GC/3.0a5.2"
 
 config.src_dir = Path("src")
+
 
 def RuntimeLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
     return {
@@ -273,6 +274,7 @@ def RuntimeLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
         "objects": objects,
         "src_dir": "libs/Runtime/src",
     }
+
 
 # Helper function for RVL SDK libraries
 def RVLSDKLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
@@ -286,9 +288,11 @@ def RVLSDKLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
     }
 
 
-Matching = True                   # Object matches and should be linked
-NonMatching = False               # Object does not match and should not be linked
-Equivalent = config.non_matching  # Object should be linked when configured with --non-matching
+Matching = True  # Object matches and should be linked
+NonMatching = False  # Object does not match and should not be linked
+Equivalent = (
+    config.non_matching
+)  # Object should be linked when configured with --non-matching
 
 
 # Object is only matching for specific versions
@@ -299,18 +303,22 @@ def MatchingFor(*versions):
 config.warn_missing_config = True
 config.warn_missing_source = False
 config.libs = [
-    RuntimeLib("Runtime.PPCEABI.H",  [
+    RuntimeLib(
+        "Runtime.PPCEABI.H",
+        [
             Object(NonMatching, "global_destructor_chain.c"),
             Object(NonMatching, "__init_cpp_exceptions.cpp"),
         ],
     ),
-    RVLSDKLib("os", [
+    RVLSDKLib(
+        "os",
+        [
             Object(Matching, "os/OSReset.c"),
             Object(Matching, "os/OSRtc.c"),
             Object(Matching, "os/OSSemaphore.c"),
             Object(Matching, "os/OSSync.c"),
             Object(NonMatching, "os/OSThread.c"),
-        ]
+        ],
     ),
     {
         "lib": "game",
@@ -604,7 +612,7 @@ config.libs = [
             Object(NonMatching, ".unsorted/8038F424.cpp"),
             Object(NonMatching, ".unsorted/803D9208.cpp"),
         ],
-    }
+    },
 ]
 
 

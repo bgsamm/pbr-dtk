@@ -31,6 +31,7 @@ objdiff.json
 compile_commands.json
 
 # Miscellaneous
+analysis/
 /*.txt
 *.bak
 *.exe
