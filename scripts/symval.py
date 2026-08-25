@@ -113,10 +113,10 @@ class SymbolicValue:
     def __rrshift__(self, other: SymOrInt) -> SymbolicValue:
         return self._apply_rop(other, operator.rshift)
 
-    def __eq__(self, other: SymOrInt) -> bool:
+    def __eq__(self, other) -> bool:
         return self._apply_comp(other, operator.eq)
 
-    def __ne__(self, other: SymOrInt) -> bool:
+    def __ne__(self, other) -> bool:
         # Following NaN convention, i.e. every value (incl. NaN) is != NaN
         return self._apply_comp(other, operator.ne, on_unknown=True)
 
@@ -145,7 +145,7 @@ class SymbolicValue:
 
     def __hash__(self) -> int:
         if self.is_unknown:
-            return hash(SymbolicValue.Unknown)
+            return object.__hash__(self)
         return hash(self._value)
 
     def __repr__(self) -> str:

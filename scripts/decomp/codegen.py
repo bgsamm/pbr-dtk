@@ -34,13 +34,10 @@ def _build_struct(struct: StructType, registry: TypeRegistry) -> str:
 
     def make_field(offset: int, info: TypeInfo, pad: int) -> str:
         type = _to_type_str(info, registry)
-        # TODO Properly format anonymous structs
         return f"{TAB}{pre_comment(offset, pad)} {type} {field_name(offset, pad)};\n"
 
     def make_dummy(offset: int, size: int, pad: int) -> str:
-        return (
-            f"{TAB}{pre_comment(offset, pad)} u8 {field_name(offset, pad)}[{size}];\n"
-        )
+        return f"{TAB}{pre_comment(offset, pad)} u8 _pad{field_name(offset, pad)}[{size}];\n"
 
     if struct.name:
         s = f"struct {struct.name} {{\n"

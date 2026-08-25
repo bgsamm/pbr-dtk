@@ -4,6 +4,10 @@ from pathlib import Path
 import logging
 
 
+class SymbolError(Exception):
+    pass
+
+
 @dataclass(frozen=True)
 class Symbol:
     name: str
@@ -66,11 +70,21 @@ class SymbolMap:
         self._add(symbol)
         return symbol
 
-    def get_by_address(self, address: int) -> tuple[Symbol, ...]:
+    def get_symbols_at(self, address: int) -> tuple[Symbol, ...]:
         return tuple(self._addr_lookup[address])
 
-    def get_by_name(self, name: str) -> tuple[Symbol, ...]:
+    def get_symbols_named(self, name: str) -> tuple[Symbol, ...]:
         return tuple(self._name_lookup[name])
+
+    def require_symbol(self, name: str) -> Symbol:
+        symbols = self.get_symbols_named(name)
+
+        if len(symbols) == 0:
+            raise SymbolError(f"No symbol named {name}")
+        if len(symbols) > 1:
+            raise SymbolError(f"Multiple symbols named {name}")
+
+        return symbols[0]
 
     def add(self, name: str, address: int, size: int | None) -> Symbol:
         return self._create(name, address, size)

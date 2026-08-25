@@ -36,19 +36,30 @@ def exec_analyze(args):
     analyzer = DolAnalyzer(dol, symbol_map, breakpoints={breakpoint})
     result = analyzer.analyze_function(address, max_depth)
 
-    if len(result.structs) > 0:
-        print("Found the following structs:\n")
-        for struct in result.structs:
-            print(codegen.gen_struct(struct, result.type_registry))
+    outfile = Path(f"analysis_{address:X}.txt")
+    if outfile.exists():
+        response = input(f"The file {outfile} already exists; OK to overwrite? (y/N) ")
+        if response.lower().strip() != "y":
+            return
 
-    print("Proposed function signature:")
-    print("    " + gen_function_signature(result))
-    print()
+    with open(outfile, "w") as f:
+        f.write("Proposed function signature:\n")
+        f.write(f"    {gen_function_signature(result)}\n")
+        f.write("\n")
 
-    if len(result.subcalls) > 0:
-        print("Identified subcalls:")
-        for _, subresult in sorted(result.subcalls.items()):
-            print("    " + gen_function_signature(subresult))
+        if len(result.subcalls) > 0:
+            f.write("Identified subcalls:\n")
+            for _, subresult in sorted(result.subcalls.items()):
+                f.write(f"    {gen_function_signature(subresult)}\n")
+            f.write("\n")
+
+        if len(result.structs) > 0:
+            f.write("Possible structs:\n\n")
+            for struct in result.structs:
+                f.write(f"{codegen.gen_struct(struct, result.type_registry)}\n")
+            f.write("\n")
+
+        print(f"Results have been written to {outfile}")
 
 
 def exec_find_split(args):

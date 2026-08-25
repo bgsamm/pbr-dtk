@@ -9,8 +9,10 @@ import logging
 import ppc
 
 
+# TODO Cleaner handling of halting
+# (Originally, was using an exception, but this lead to branches getting dropped)
 class VmThread:
-    should_terminate: bool
+    halted: bool
 
     _id_generator: Iterator[int]
     _callbacks: dict[type[VmEvent], VmCallback]
@@ -34,7 +36,7 @@ class VmThread:
             self._callbacks = {}
 
         self._did_branch = False
-        self.should_terminate = False
+        self.halted = False
 
     @property
     def id(self) -> int:
@@ -54,6 +56,9 @@ class VmThread:
         return PpcInstr(raw_instr)
 
     def _do_callback(self, event_class: type[VmEvent], **kwargs) -> VmSignal:
+        if self.halted:
+            return VmSignal.HALT
+
         if not (callback := self._callbacks.get(event_class)):
             return VmSignal.CONTINUE
 
@@ -63,7 +68,7 @@ class VmThread:
 
         signal = callback(event, self._state)
         if signal == VmSignal.HALT:
-            raise VmHaltException()
+            self.halted = True
 
         return signal
 
@@ -123,13 +128,12 @@ class VmThread:
         return new_thread
 
     def branch(self, target_addr: SymOrInt, link: bool) -> None:
-        if link:
-            signal = self._do_callback(VmCallEvent, target_addr=target_addr)
-            self.write_reg(PpcReg.LR, self.pc + 4)
-        else:
-            signal = VmSignal.CONTINUE
+        signal = self._do_callback(VmBranchEvent, target_addr=target_addr, link=link)
 
-        if signal == VmSignal.STEP_OVER:
+        if link:
+            self.write_reg(PpcReg.LR, self.pc + 4)
+
+        if link and signal == VmSignal.STEP_OVER:
             logging.debug(f"Stepping over call to 0x{target_addr:X} at 0x{self.pc:X}")
             self._set_post_call_state()
             self.pc += 4
@@ -144,7 +148,8 @@ class VmThread:
             logging.warning(
                 f"PC is unknown for thread {self.id}; halting thread (last known pc: {last_addr:#x})"
             )
-            raise VmHaltException()
+            self.halted = True
+            return (self,)
 
         self._current_address = self.pc.value
         self._current_instruction = self._read_instruction()

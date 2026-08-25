@@ -1,7 +1,7 @@
 from itertools import count
 from rvl import Dol
 from typealiases import *
-from .event import VmCallback, VmEvent, VmHaltException
+from .event import VmCallback, VmEvent
 from .state import VmState
 from .thread import VmCallback, VmThread
 import logging
@@ -52,15 +52,14 @@ class WiiVm:
         while len(self._threads) > 0:
             thread = self._threads.pop()
 
-            if thread.should_terminate:
+            if thread.halted:
                 n_threads = len(self._threads)
-                logging.debug(f"Thread finished; total threads remaining: {n_threads}")
+                logging.debug(
+                    f"Thread {thread.id} halted; total threads remaining: {n_threads}"
+                )
                 continue
 
-            try:
-                branches = thread.step()
-                self._threads.extend(branches)
-            except VmHaltException:
-                thread.should_terminate = True
+            branches = thread.step()
+            self._threads.extend(branches)
 
         logging.debug(f"VM finished running")

@@ -1,5 +1,5 @@
 from typing import Iterator
-from typealiases import u32, sizeof
+from typealiases import *
 from .typeinfo import *
 
 
@@ -73,10 +73,26 @@ class TypeRegistry:
             self.add_struct_field(left, offset, type_ref)
         return left
 
-    def add(self, type: TypeInfo) -> int:
+    def _create_node(self, type: TypeInfo) -> int:
         id = len(self._type_map)
         self._type_map.append(type)
         return id
+
+    def void(self) -> int:
+        return self._create_node(VoidType())
+
+    def numeric(self, dtype: ctype) -> int:
+        return self._create_node(NumericType(dtype))
+
+    def pointer(self, target: int) -> int:
+        return self._create_node(PointerType(target))
+
+    def struct(self, fields: dict[int, int]) -> int:
+        return self._create_node(StructType(fields))
+
+    def struct_pointer(self, fields: dict[int, int]) -> int:
+        struct_ref = self.struct(fields)
+        return self.pointer(struct_ref)
 
     def add_struct_field(self, struct: StructType, offset: int, field: int) -> None:
         # TODO Handle overlapping fields (union?)

@@ -9,6 +9,9 @@ class VmMemMap:
     _PAGE_MASK = _PAGE_SIZE - 1
     _PAGE_SHIFT = 12
 
+    _page_table: dict[int, Page]
+    _owned_pages: set[int]
+
     class Page:
         def __init__(self, size):
             self._data_bytes = bytearray(size)
@@ -55,9 +58,6 @@ class VmMemMap:
             page._state = memoryview(page._state_bytes)
 
             return page
-
-    _page_table: dict[int, Page]
-    _owned_pages: set[int]
 
     def __init__(self, parent_pages: dict | None = None) -> None:
         self._page_table = dict(parent_pages) if parent_pages else {}

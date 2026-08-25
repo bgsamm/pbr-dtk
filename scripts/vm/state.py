@@ -23,6 +23,10 @@ class VmState:
                     value = SymbolicValue(value)
                 self._regs[reg] = value
 
+    def __hash__(self) -> int:
+        # TODO Incorporate mmap
+        return hash(tuple(sorted(self._regs.items())))
+
     @property
     def pc(self) -> SymbolicValue:
         return self.read_reg(PpcReg.PC)

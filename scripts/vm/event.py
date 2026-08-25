@@ -10,10 +10,6 @@ import enum
 type VmCallback[E: VmEvent] = Callable[[E, VmState], VmSignal]
 
 
-class VmHaltException(Exception):
-    pass
-
-
 class VmSignal(IntEnum):
     # fmt: off
     CONTINUE  = enum.auto()
@@ -72,13 +68,13 @@ class VmForkEvent(VmEvent):
 
 
 @dataclass(frozen=True)
-class VmCallEvent(VmEvent):
+class VmBranchEvent(VmEvent):
     target_addr: SymbolicValue
+    link: bool
 
 
 __all__ = [
     "VmCallback",
-    "VmHaltException",
     "VmSignal",
     "VmEvent",
     "VmPreExecuteEvent",
@@ -88,5 +84,5 @@ __all__ = [
     "VmReadMemEvent",
     "VmWriteMemEvent",
     "VmForkEvent",
-    "VmCallEvent",
+    "VmBranchEvent",
 ]
