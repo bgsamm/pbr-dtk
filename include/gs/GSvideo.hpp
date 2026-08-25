@@ -60,7 +60,8 @@ protected:
     /* 0x74 */ VIRetraceCallback mRetraceCallback;
     u8 _78;
     u8 _79;
-    /* 0x7a */ bool _7a;
+    // NOT a boolean
+    /* 0x7a */ u8 _7a;
     u32 _7c;
     u8 _80;
     u8 _81;
@@ -104,7 +105,7 @@ public:
     GSvideoManager(u8, u16, VideoFormat);
     ~GSvideoManager();
 
-    bool get_7a() {
+    u8 get_7a() {
         return _7a;
     }
 

@@ -1,10 +1,12 @@
 #include "gs/GSmem.hpp"
 #include "gs/GSrender.hpp"
-#include "version.hpp"
+
+#include <cstring>
 #include <revolution/gx.h>
 #include <revolution/os.h>
 
-#include <cstring>
+#include "version.hpp"
+
 
 // BreakPtCallback
 void fn_8023234C() {
@@ -12,7 +14,7 @@ void fn_8023234C() {
         return;
     }
 
-    bool var1 = GSrenderManager::getInstance()->get_16f9();
+    u8 var1 = GSrenderManager::getInstance()->get_16f9();
     GSrenderManager::getInstance()->set_16f9(false);
     GXDisableBreakPt();
     GSrenderManager::getInstance()->set_16f9(var1);

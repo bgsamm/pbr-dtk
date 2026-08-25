@@ -1,3 +1,5 @@
+// IWYU pragma: always_keep
+
 #pragma once
 
 #include <revolution/types.h>

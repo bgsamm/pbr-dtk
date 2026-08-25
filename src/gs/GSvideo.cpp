@@ -2,9 +2,10 @@
 
 #include "gs/GSmem.hpp"
 #include "gs/GSrender.hpp"
-#include "version.hpp"
 
 #include <cstring>
+
+#include "version.hpp"
 
 extern void fn_8025B6B4(u32);
 extern void fn_8025B6B8(f32 *, f32 *);
@@ -76,7 +77,7 @@ GSvideoManager::GSvideoManager(u8 numBuffers, u16 efbHeight, VideoFormat videoFm
     mRetraceCallback = NULL;
     _78 = 0xa;
     _79 = 0;
-    _7a = false;
+    _7a = 0;
     _7c = 0;
     _80 = 0;
     _81 = 1;
@@ -424,7 +425,7 @@ GSxfbHandle *GSvideoManager::fn_8023FC54(u32 param1) {
         return NULL;
     }
 
-    GSrenderStruct3 var1;
+    u32 var1;
     GSrenderManager::getInstance()->fn_802311AC(&var1);
 
     GSxfbHandle *var2;

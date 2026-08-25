@@ -456,7 +456,8 @@ private:
     /* 0x16f0 */ u32 _16f0;
     /* 0x16f4 */ u32 _16f4;
     /* 0x16f8 */ bool _16f8;
-    /* 0x16f9 */ bool _16f9;
+    // NOT a boolean
+    /* 0x16f9 */ u8 _16f9;
     /* 0x16fa */ u8 _16fa;
     /* 0x16fb */ u8 _16fb;
     /* 0x16fc */ bool _16fc;
@@ -502,11 +503,11 @@ public:
         _16f8 = value;
     }
 
-    bool get_16f9() {
+    u8 get_16f9() {
         return _16f9;
     }
 
-    void set_16f9(bool value) {
+    void set_16f9(u8 value) {
         _16f9 = value;
     }
 
@@ -519,9 +520,9 @@ public:
     }
 
     void fn_802310C0();
-    void fn_802311AC(GSrenderStruct3 *);
-    void fn_802311BC(GSrenderStruct3 *);
-    void fn_8023125C(GSrenderStruct3 *);
+    void fn_802311AC(u32 *);
+    void fn_802311BC(u32 *);
+    void fn_8023125C(u32 *);
     void fn_80231260();
     void fn_802313B0();
     void fn_80231400();

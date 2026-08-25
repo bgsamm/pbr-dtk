@@ -2,13 +2,12 @@
 
 #include "gs/GSmem.hpp"
 #include "gs/GSvideo.hpp"
-#include "version.hpp"
-#include <revolution/cx.h>
-#include <revolution/gx.h>
-#include <revolution/os.h>
-#include <revolution/vi.h>
 
 #include <cstring>
+#include <revolution.h>
+#include <revolution/cx.h>
+
+#include "version.hpp"
 
 extern MEMHeapHandle lbl_8063E8E8;
 extern MEMHeapHandle lbl_8063E8EC;
@@ -140,11 +139,11 @@ void GSrenderManager::fn_802310C0() {
     VIWaitForRetrace();
 }
 
-void GSrenderManager::fn_802311AC(GSrenderStruct3 *param1) {
-    param1->_0 = GSvideoManager::getInstance()->getRetraceCount();
+void GSrenderManager::fn_802311AC(u32 *param1) {
+    *param1 = GSvideoManager::getInstance()->getRetraceCount();
 }
 
-void GSrenderManager::fn_802311BC(GSrenderStruct3 *param1) {
+void GSrenderManager::fn_802311BC(u32 *param1) {
     OSYieldThread();
 
     GXBool readIdle, dummy;
@@ -153,16 +152,16 @@ void GSrenderManager::fn_802311BC(GSrenderStruct3 *param1) {
         return;
     }
 
-    s32 var1 = GSvideoManager::sInstance->getRetraceCount() - param1->_0;
+    s32 var1 = GSvideoManager::sInstance->getRetraceCount() - *param1;
     u32 var2 = GSvideoManager::sInstance->getRefreshRate() * 3;
     if (var1 < 0 || _1719) {
-        param1->_0 = GSvideoManager::sInstance->getRetraceCount();
+        *param1 = GSvideoManager::sInstance->getRetraceCount();
     } else if (var1 > var2) {
         _1718 = true;
     }
 }
 
-void GSrenderManager::fn_8023125C(GSrenderStruct3 *param1) {}
+void GSrenderManager::fn_8023125C(u32 *param1) {}
 
 void GSrenderManager::fn_80231260() {
     fn_8023B6B0();
