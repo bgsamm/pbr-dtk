@@ -1,14 +1,14 @@
-#include "version.hpp"
+#include "gs/GSrender.hpp"
 
-#include <cstring>
+#include "gs/GSmem.hpp"
+#include "gs/GSvideo.hpp"
+#include "version.hpp"
 #include <revolution/cx.h>
 #include <revolution/gx.h>
 #include <revolution/os.h>
 #include <revolution/vi.h>
 
-#include "gs/GSmem.hpp"
-#include "gs/GSrender.hpp"
-#include "gs/GSvideo.hpp"
+#include <cstring>
 
 extern MEMHeapHandle lbl_8063E8E8;
 extern MEMHeapHandle lbl_8063E8EC;
@@ -68,7 +68,7 @@ GSrenderManager::GSrenderManager(GSrenderStruct1 *param1)
     _1734 = NULL;
     mPrimitiveType = GX_TRIANGLES;
     mVertexFormat = NULL;
-    memset(&_163c, 0, sizeof(_163c));
+    memset(&mGraphicsFifo, 0, sizeof(mGraphicsFifo));
     mState = &_dc;
     _16e8 = new GSrenderClass1(param1->_C);
     fn_8023255C(param1->_8, param1->_10);
@@ -79,7 +79,7 @@ GSrenderManager::GSrenderManager(GSrenderStruct1 *param1)
     GXSetMisc(GX_MT_XF_FLUSH, GX_XF_FLUSH_SAFE);
     fn_8023B704();
     fn_80237798(4);
-    fn_80235204(0, 0f, 0f, 640f, 480f);
+    fn_80235204(0, 0.f, 0.f, 640.f, 480.f);
     fn_80235178(0, 0, 0, 0x280, 0x1e0);
     fn_8024041C();
     fn_8023F45C();
@@ -90,7 +90,7 @@ GSrenderManager::GSrenderManager(GSrenderStruct1 *param1)
 
 GSrenderManager::~GSrenderManager() {
     _d8 = lbl_804245BC;
-    
+
     GXSetDrawDoneCallback(NULL);
     GXSetDrawSyncCallback(NULL);
     GXSetBreakPtCallback(NULL);
@@ -126,9 +126,9 @@ void GSrenderManager::fn_802310C0() {
     VISetPostRetraceCallback(NULL);
     GXAbortFrame();
 
-    if (_163c._88 != NULL) {
-        memset(_163c._88, 0, _163c._84);
-        DCFlushRange(_163c._88, _163c._84);
+    if (mGraphicsFifo._88 != NULL) {
+        memset(mGraphicsFifo._88, 0, mGraphicsFifo._84);
+        DCFlushRange(mGraphicsFifo._88, mGraphicsFifo._84);
     }
 
     VISetBlack(TRUE);
@@ -141,7 +141,7 @@ void GSrenderManager::fn_802310C0() {
 }
 
 void GSrenderManager::fn_802311AC(GSrenderStruct3 *param1) {
-    param1->_0 = GSvideoManager::sInstance->mRetraceCount;
+    param1->_0 = GSvideoManager::getInstance()->getRetraceCount();
 }
 
 void GSrenderManager::fn_802311BC(GSrenderStruct3 *param1) {
@@ -153,20 +153,16 @@ void GSrenderManager::fn_802311BC(GSrenderStruct3 *param1) {
         return;
     }
 
-    s32 var1 = GSvideoManager::sInstance->mRetraceCount - param1->_0;
-    u32 var2 = GSvideoManager::sInstance->mRefreshRate * 3;
+    s32 var1 = GSvideoManager::sInstance->getRetraceCount() - param1->_0;
+    u32 var2 = GSvideoManager::sInstance->getRefreshRate() * 3;
     if (var1 < 0 || _1719) {
-        param1->_0 = GSvideoManager::sInstance->mRetraceCount;
-    }
-    else if (var1 > var2) {
+        param1->_0 = GSvideoManager::sInstance->getRetraceCount();
+    } else if (var1 > var2) {
         _1718 = true;
     }
 }
 
-void GSrenderManager::fn_8023125C(GSrenderStruct3 *param1) {
-
-}
-
+void GSrenderManager::fn_8023125C(GSrenderStruct3 *param1) {}
 
 void GSrenderManager::fn_80231260() {
     fn_8023B6B0();
@@ -179,10 +175,10 @@ void GSrenderManager::fn_80231260() {
     _98 = time;
 
     fn_8023A95C();
-    fn_8023AE54();
+    sync();
 
     GSxfbHandle *xfb;
-    
+
     xfb = fn_8023FC0C(XFB_STATE_4);
     if (xfb != NULL) {
         xfb->mState = XFB_STATE_3;
@@ -192,7 +188,7 @@ void GSrenderManager::fn_80231260() {
     if (xfb != NULL) {
         xfb->mState = XFB_STATE_3;
     }
-    
+
     xfb = fn_8023FC0C(XFB_STATE_1);
     if (xfb != NULL) {
         xfb->mState = XFB_STATE_2;
@@ -203,10 +199,10 @@ void GSrenderManager::fn_80231260() {
 }
 
 void GSrender::fn_80231374(void *param1) {
-    GSrenderManager::sInstance->fn_8023F778();
-    
-    GSrenderManager::sInstance->_16f8 = true;
-    GSrenderManager::sInstance->_16f4 = 0;
+    GSrenderManager::getInstance()->fn_8023F778();
+
+    GSrenderManager::getInstance()->set_16f8(true);
+    GSrenderManager::getInstance()->set_16f4(0);
 }
 
 void GSrenderManager::fn_802313B0() {
@@ -229,17 +225,15 @@ void GSrenderManager::fn_80231400() {
             _16f4 = 0;
         }
     }
-    
+
     OSRestoreInterrupts(intEnabled);
 }
-
 
 void GSrenderManager::fn_80231490(f32 param1) {
     f32 var1;
     if (_82) {
-        var1 = 0f;
-    }
-    else {
+        var1 = 0.f;
+    } else {
         var1 = param1;
     }
 
@@ -262,7 +256,7 @@ void GSrenderManager::fn_80231544() {
 
     fn_8023A95C();
     setScissorBoxOffset(0, 0);
-    fn_80235204(0, 0f, 0f, 640f, 480f);
+    fn_80235204(0, 0.f, 0.f, 640.f, 480.f);
     fn_80235178(0, 0, 0, 640, 480);
 
     GSrenderClass3 *var1 = lbl_8063F6F0;
@@ -307,9 +301,9 @@ void GSrenderManager::fn_80231544() {
     mState->_64 |= (1 << 2);
     mState->_0 |= (1 << 6);
 
-    fn_80235204(0, 0f, 0f, 640f, 480f);
+    fn_80235204(0, 0.f, 0.f, 640.f, 480.f);
     fn_80235178(0, 0, 0, 640, 480);
-    fn_8023AE54();
+    sync();
     prepareCopyDisp();
     fn_8023F4B8();
     fn_802313B0();
@@ -320,11 +314,10 @@ void GSrenderManager::fn_80231544() {
     }
 
     waitForRetrace();
-    
+
     _16ec = NULL;
     _16f9 = false;
 }
-
 
 void GSrenderManager::fn_8023177C(GSdvdError error, u32 param2, GSColor color) {
     mDvdError = error;
@@ -354,20 +347,13 @@ void GSrenderManager::fn_8023177C(GSdvdError error, u32 param2, GSColor color) {
         switch (error) {
             case DVD_ERROR_COVER_OPEN:
             case DVD_ERROR_NO_DISK:
-            case DVD_ERROR_WRONG_DISK:
-                src = fn_80007940();
-                break;
-            
-            case DVD_ERROR_RETRY:
-                src = fn_800079C0();
-                break;
-            
-            case DVD_ERROR_FATAL:
-                src = fn_80007A40();
-                break;
-            
-            default:
-                return;
+            case DVD_ERROR_WRONG_DISK: src = fn_80007940(); break;
+
+            case DVD_ERROR_RETRY:      src = fn_800079C0(); break;
+
+            case DVD_ERROR_FATAL:      src = fn_80007A40(); break;
+
+            default:                   return;
         }
 
         u32 size = CXGetUncompressedSize(src);
@@ -394,7 +380,7 @@ void GSrenderManager::fn_8023177C(GSdvdError error, u32 param2, GSColor color) {
 
 void GSrenderManager::fn_80231918() {
     GSrenderState *state;
-    
+
     if (mDvdError == DVD_ERROR_OK) {
         return;
     }
@@ -403,9 +389,9 @@ void GSrenderManager::fn_80231918() {
         return;
     }
 
-    fn_80235204(0, 0f, 0f, 640f, 480f);
+    fn_80235204(0, 0.f, 0.f, 640.f, 480.f);
     fn_80235178(0, 0, 0, 640, 480);
-    fn_80234FE0(0f, 0f, 640f, 480f, 0f, 100000f);
+    fn_80234FE0(0.f, 0.f, 640.f, 480.f, 0.f, 100000.f);
 
     mState->mCurr.mColorUpdateEnable = GX_TRUE;
     mState->mCurr.mAlphaUpdateEnable = GX_FALSE;
@@ -426,15 +412,15 @@ void GSrenderManager::fn_80231918() {
     mState->mCurr.mZCompareFunc = GX_LEQUAL;
     mState->_64 |= (1 << 3);
     mState->_0 |= (1 << 6);
-    
+
     mState->mCurr.mClipMode = GX_CLIP_DISABLE;
     mState->_10 |= (1 << 2);
     mState->_0 |= (1 << 1);
-    
+
     mState->mCurr.mCullMode = GX_CULL_NONE;
     mState->_10 |= (1 << 1);
     mState->_0 |= (1 << 1);
-    
+
     mState->mCurr.mFogEnable = false;
     mState->_64 |= (1 << 6);
     mState->_0 |= (1 << 6);
@@ -447,8 +433,7 @@ void GSrenderManager::fn_80231918() {
             mState->mCurr.mBlendOp = GX_LO_NOOP;
             mState->_64 |= (1 << 0);
             mState->_0 |= (1 << 6);
-        }
-        else {
+        } else {
             mState->mCurr.mBlendMode = GX_BM_BLEND;
             mState->mCurr.mBlendSrcFactor = GX_BL_SRCALPHA;
             mState->mCurr.mBlendDstFactor = GX_BL_INVSRCALPHA;
@@ -460,15 +445,15 @@ void GSrenderManager::fn_80231918() {
         mState->mCurr.mNumTevStages = 1;
         mState->_24 |= (1 << 0);
         mState->_0 |= (1 << 3);
-        
+
         mState->mCurr.mNumTexGens = 0;
         mState->_4 |= (1 << 0);
         mState->_0 |= (1 << 0);
-        
+
         mState->mCurr.mNumChans = 1;
         mState->_14 |= (1 << 0);
         mState->_0 |= (1 << 2);
-        
+
         mState->mCurr.mNumIndStages = 0;
         mState->_44 |= (1 << 0);
         mState->_0 |= (1 << 7);
@@ -500,27 +485,26 @@ void GSrenderManager::fn_80231918() {
         mPrimitiveType = GX_TRIANGLESTRIP;
 
         fn_8023352C(4);
-            // vert 1
-            GXPosition2f32(0f, 0f);
-            GXColor1u32(mFillColor.rgba);
-            // vert 2
-            GXPosition2f32(0f, 480f);
-            GXColor1u32(mFillColor.rgba);
-            // vert 3
-            GXPosition2f32(640f, 0f);
-            GXColor1u32(mFillColor.rgba);
-            // vert 4
-            GXPosition2f32(640f, 480f);
-            GXColor1u32(mFillColor.rgba);
+        // vert 1
+        GXPosition2f32(0.f, 0.f);
+        GXColor1u32(mFillColor.rgba);
+        // vert 2
+        GXPosition2f32(0.f, 480.f);
+        GXColor1u32(mFillColor.rgba);
+        // vert 3
+        GXPosition2f32(640.f, 0.f);
+        GXColor1u32(mFillColor.rgba);
+        // vert 4
+        GXPosition2f32(640.f, 480.f);
+        GXColor1u32(mFillColor.rgba);
         fn_80233580();
         fn_80250134(_1704, 100, 200, 0, 0, -1);
-    }
-    else if (_1714 != NULL) {
+    } else if (_1714) {
         u16 w = GSrender::fn_8023E540(_1714);
         f32 width;
         OSu16tof32(&w, &width);
         f32 centerX = 0.5f * width;
-        
+
         u16 h = GSrender::fn_8023E548(_1714);
         f32 height;
         OSu16tof32(&h, &height);
@@ -536,35 +520,35 @@ void GSrenderManager::fn_80231918() {
         mState->mCurr.mNumTevStages = 1;
         mState->_24 |= (1 << 0);
         mState->_0 |= (1 << 3);
-        
+
         mState->mCurr.mNumTexGens = 0;
         mState->_4 |= (1 << 0);
         mState->_0 |= (1 << 0);
-        
+
         mState->mCurr.mNumChans = 1;
         mState->_14 |= (1 << 0);
         mState->_0 |= (1 << 2);
-        
+
         mState->mCurr.mNumIndStages = 0;
         mState->_44 |= (1 << 0);
         mState->_0 |= (1 << 7);
-        
+
         mVertexFormat = GSrender::fn_8023CF1C(2);
         mPrimitiveType = GX_TRIANGLESTRIP;
 
         fn_8023352C(4);
-            // vert 1
-            GXPosition2f32(0f, 0f);
-            GXColor1u32(0);
-            // vert 2
-            GXPosition2f32(0f, 480f);
-            GXColor1u32(0);
-            // vert 3
-            GXPosition2f32(640f, 0f);
-            GXColor1u32(0);
-            // vert 4
-            GXPosition2f32(640f, 480f);
-            GXColor1u32(0);
+        // vert 1
+        GXPosition2f32(0.f, 0.f);
+        GXColor1u32(0);
+        // vert 2
+        GXPosition2f32(0.f, 480.f);
+        GXColor1u32(0);
+        // vert 3
+        GXPosition2f32(640.f, 0.f);
+        GXColor1u32(0);
+        // vert 4
+        GXPosition2f32(640.f, 480.f);
+        GXColor1u32(0);
         fn_80233580();
 
         mState->mCurr.mNumTevStages = 1;
@@ -574,20 +558,20 @@ void GSrenderManager::fn_80231918() {
         mState->mCurr.mNumTexGens = 1;
         mState->_4 |= (1 << 0);
         mState->_0 |= (1 << 0);
-        
+
         mState->mCurr.mNumChans = 0;
         mState->_14 |= (1 << 0);
         mState->_0 |= (1 << 2);
-        
+
         mState->mCurr.mNumIndStages = 0;
         mState->_44 |= (1 << 0);
         mState->_0 |= (1 << 7);
 
         fn_80234474(0, 1, 4, 0, 0, 0);
 
-        if (mState->_153c != _1714 || (_1714->_7 & (1 << 0)) == (1 << 0)) {
-            mState->_153c = _1714;
-            mState->_1538 |= (1 << 0);
+        if (mState->mTextures[0] != _1714 || (_1714->mFlags & (1 << 0)) == (1 << 0)) {
+            mState->mTextures[0] = _1714;
+            mState->mTextureFlags |= (1 << 0);
         }
 
         if (mState->mCurr.mIndTexStages[0].mType != TEV_NULL) {
@@ -610,23 +594,23 @@ void GSrenderManager::fn_80231918() {
         state->mCurr.mTevSwapModes[0].mTexSel = GX_TEV_SWAP0;
         mState->mTevSwapModeFlags |= (1 << 0);
         mState->_0 |= (1 << 5);
-        
+
         mVertexFormat = GSrender::fn_8023CF1C(5);
         mPrimitiveType = GX_TRIANGLESTRIP;
 
         fn_8023352C(4);
-            // vert 1
-            GXPosition2f32(320f - centerX, 240f - centerY);
-            GXTexCoord2f32(0f, 0f);
-            // vert 2
-            GXPosition2f32(320f - centerX, 240f + centerY);
-            GXTexCoord2f32(0f, 1f);
-            // vert 3
-            GXPosition2f32(320f + centerX, 240f - centerY);
-            GXTexCoord2f32(1f, 0f);
-            // vert 4
-            GXPosition2f32(320f + centerX, 240f + centerY);
-            GXTexCoord2f32(1f, 1f);
+        // vert 1
+        GXPosition2f32(320.f - centerX, 240.f - centerY);
+        GXTexCoord2f32(0.f, 0.f);
+        // vert 2
+        GXPosition2f32(320.f - centerX, 240.f + centerY);
+        GXTexCoord2f32(0.f, 1.f);
+        // vert 3
+        GXPosition2f32(320.f + centerX, 240.f - centerY);
+        GXTexCoord2f32(1.f, 0.f);
+        // vert 4
+        GXPosition2f32(320.f + centerX, 240.f + centerY);
+        GXTexCoord2f32(1.f, 1.f);
         fn_80233580();
     }
 }
@@ -649,7 +633,7 @@ void GSrenderManager::fn_802321DC() {
     mState->_64 |= (1 << 2);
     mState->_0 |= (1 << 6);
 
-    fn_8023AE54();
+    sync();
     prepareCopyDisp();
     fn_8023F4B8();
     fn_802313B0();

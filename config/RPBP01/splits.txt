@@ -867,6 +867,10 @@ src/gs/render/80237794.cpp:
 src/gs/render/802377BC.cpp:
 	.text       start:0x802377BC end:0x8023AF8C
 	.ctors      start:0x803E2180 end:0x803E2184
+	.data       start:0x804246F8 end:0x80424718
+	.bss        start:0x80496760 end:0x804967A0
+	.sbss       start:0x8063F718 end:0x8063F720
+	.sdata2     start:0x806423A8 end:0x806423B8
 
 src/gs/render/8023AF8C.cpp:
 	.text       start:0x8023AF8C end:0x8023B64C

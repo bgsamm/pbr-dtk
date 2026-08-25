@@ -1,17 +1,17 @@
 #pragma once
 
-#include <revolution/types.h>
-#include <revolution/gx.h>
-#include <revolution/mtx.h>
-
+#include "decomp.h"
 #include "gs/GSfile.hpp"
 #include "gs/GSvideo.hpp"
 #include "gs/render/GSrenderLight.hpp"
 
-#define GS_RENDER_INVALIDATE_CACHE (1 << 0)
+#include <revolution.h>
 
-#define GS_VERTEX_UPDATE_FORMAT    (1 << 1)
-#define GS_VERTEX_UPDATE_ARRAYS    (1 << 2)
+#define GS_RENDER_INVALIDATE_CACHE (1 << 0)
+#define GS_RENDER_INVALIDATE_TEXTURE_CACHE (1 << 1)
+
+#define GS_VERTEX_UPDATE_FORMAT (1 << 1)
+#define GS_VERTEX_UPDATE_ARRAYS (1 << 2)
 #define GS_VERTEX_INVALIDATE_CACHE (1 << 3)
 
 typedef void (*UnkFunc1)(void *);
@@ -65,20 +65,44 @@ struct GSrenderStruct3 {
 };
 
 // size: 0xac
-struct GSrenderStruct4 {
-    u8 unk1[0x84];
+struct GSgraphicsFifo {
+    u8 unk1[0x80];
+    /* 0x80 */ GXFifoObj *mFifoObj;
     /* 0x84 */ u32 _84;
     /* 0x88 */ void *_88;
-    u8 unk2[0x14];
+    /* 0x8c */ void *mReadPtr;
+    /* 0x90 */ void *mWritePtr;
+    /* 0x94 */ GXBool mOverhi;
+    /* 0x95 */ GXBool mUnderlow;
+    /* 0x96 */ GXBool mReadIdle;
+    /* 0x97 */ GXBool mCmdIdle;
+    /* 0x98 */ GXBool mBrkpt;
+    /* 0x9c */ u8 _pad_9c[4];
     /* 0xa0 */ GSrenderStruct2 *_a0;
     /* 0xa4 */ GSrenderStruct2 *_a4;
     /* 0xa8 */ GSrenderStruct2 *_a8;
 };
 
-struct GSrenderStruct7;
+struct GStexture {
+    u8 _0[0x7];
+    /* 0x7 */ u8 mFlags;
+    /* 0x8 */ u8 _pad_8[64];
+    // Used to determine whether to load the TlutObj
+    /* 0x48 */ u32 _48;
+    /* 0x4c */ u8 _pad_4c[8];
+    /* 0x54 */ GXTexObj mTexObj;
+    /* 0x74 */ GXTlutObj mTlutObj;
+};
+
+struct GSrenderStruct8 {
+    /* 0x0 */ u32 mFlags;
+    /* 0x4 */ Mtx mPosMtx;
+    /* 0x34 */ u8 _pad_34[48];
+    /* 0x64 */ Mtx mNrmMtx;
+};
 
 // size: 0xc
-struct GSVtxAttrArray {
+struct GSvtxAttrArray {
     /* 0x0 */ bool mDirty;
     /* 0x1 */ u8 _1;
     /* 0x2 */ u8 mStride;
@@ -93,7 +117,7 @@ struct GSvertexFormat {
     /* 0x4 */ GXVtxFmt mVtxFmt;
     /* 0x8 */ GXVtxAttrFmtList mVtxAttrFmtList[GX_VA_MAX_ATTR + 1];
     /* 0x1b8 */ GXVtxDescList mVtxDescList[GX_VA_MAX_ATTR + 1];
-    /* 0x290 */ GSVtxAttrArray mAttrArrayList[GX_VA_MAX_ATTR + 1];
+    /* 0x290 */ GSvtxAttrArray mAttrArrayList[GX_VA_MAX_ATTR + 1];
 };
 
 // size: 0x18
@@ -209,7 +233,7 @@ struct GSindTexStage {
             /* 0x20 */ GXBool mAddPrev;
             /* 0x21 */ GXBool mUtcLod;
         } indirect;
-        
+
         struct {
             /* 0x8 */ GXBool mSignedOffsets;
             /* 0x9 */ GXBool mReplaceMode;
@@ -372,25 +396,28 @@ struct GSrenderState {
     /* 0x14cc */ GSscissor _14cc[3];
     /* 0x14e4 */ GSvertexFormat *mVertexFormats[GX_MAX_VTXFMT];
     /* 0x1504 */ GSvertexFormat *mActiveFormat;
-    u8 _1508[0xc];
+    /* 0x1508 */ GSrenderStruct8 *_1508;
+    /* 0x150c */ bool _150c;
+    /* 0x150d */ u8 _pad_150d[7];
     /* 0x1514 */ u8 mNumLights;
     /* 0x1518 */ GSlight *mLights[8];
-    /* 0x1538 */ u32 _1538;
-    /* 0x153c */ GSrenderStruct7 *_153c;
-};
-
-struct GSrenderStruct7 {
-    u8 _0[0x7];
-    /* 0x7 */ u8 _7;
+    /* 0x1538 */ u32 mTextureFlags;
+    /* 0x153c */ GStexture *mTextures[8];
 };
 
 // size: 0xc
 class GSrenderClass1 {
 public:
-    u8 unk1[0xc];
+    /* 0x0 */ u8 _pad_0[4];
+    /* 0x4 */ GSrenderStruct8 *_4;
+    /* 0x8 */ u8 _pad_8[4];
 
     GSrenderClass1(u32 param1);
     ~GSrenderClass1();
+
+    GSrenderStruct8 *get_4() const {
+        return _4;
+    }
 };
 
 class GSrenderClass2 {
@@ -420,17 +447,16 @@ public:
 };
 
 class GSrenderManager : public GSvideoManager {
-public:
+private:
     /* 0xdc */ GSrenderState _dc;
-    u8 unk5[0x1c];
     /* 0x1638 */ GSrenderState *mState;
-    /* 0x163c */ GSrenderStruct4 _163c;
+    /* 0x163c */ GSgraphicsFifo mGraphicsFifo;
     /* 0x16e8 */ GSrenderClass1 *_16e8;
     /* 0x16ec */ GSlightStruct1 *_16ec;
     /* 0x16f0 */ u32 _16f0;
     /* 0x16f4 */ u32 _16f4;
     /* 0x16f8 */ bool _16f8;
-    /* 0x16f9 */ u8 _16f9;
+    /* 0x16f9 */ bool _16f9;
     /* 0x16fa */ u8 _16fa;
     /* 0x16fb */ u8 _16fb;
     /* 0x16fc */ bool _16fc;
@@ -441,7 +467,7 @@ public:
     /* 0x1708 */ GSColor mFillColor;
     /* 0x170c */ MEMHeapHandle _170c;
     /* 0x1710 */ void *_1710;
-    /* 0x1714 */ GSrenderStruct7 *_1714;
+    /* 0x1714 */ GStexture *_1714;
     /* 0x1718 */ bool _1718;
     /* 0x1719 */ bool _1719;
     u8 _171a;
@@ -455,9 +481,42 @@ public:
     /* 0x1734 */ GSrenderFunc2 _1734;
     /* 0x1738 */ u32 mPrimitiveType;
     /* 0x173c */ GSvertexFormat *mVertexFormat;
-    
+
+    static GSrenderManager *sInstance;
+
+public:
     GSrenderManager(GSrenderStruct1 *param1);
     ~GSrenderManager();
+
+    void invalidateTextureCache() {
+        mFlags |= GS_RENDER_INVALIDATE_TEXTURE_CACHE;
+    }
+
+    // TODO(samm) Name these
+
+    void set_16f4(u32 value) {
+        _16f4 = value;
+    }
+
+    void set_16f8(bool value) {
+        _16f8 = value;
+    }
+
+    bool get_16f9() {
+        return _16f9;
+    }
+
+    void set_16f9(bool value) {
+        _16f9 = value;
+    }
+
+    bool get_1718() {
+        return _1718;
+    }
+
+    bool get_1719() {
+        return _1719;
+    }
 
     void fn_802310C0();
     void fn_802311AC(GSrenderStruct3 *);
@@ -489,13 +548,14 @@ public:
     void fn_80235204(u32, f32, f32, f32, f32);
     void fn_80237798(u32);
 
-    // 802377BC
-    void loadLights();
-    void fn_802384BC();
-    void setVertexFormat(GSvertexFormat *param1);
+    void loadLights() NO_INLINE;
+    void setVertexFormat(GSvertexFormat *format);
+    void loadModelViewMatrix();
+    void loadTextures();
+    void syncRenderSettings();
     void fn_80239E58();
     void fn_8023A95C();
-    void fn_8023AE54();
+    void sync();
 
     void fn_8023B6B0();
     void fn_8023B6BC();
@@ -503,19 +563,21 @@ public:
     u32 fn_8023B864(u32);
     u32 fn_8023B948(void *);
 
-    static GSrenderManager *sInstance;
+    static GSrenderManager *getInstance() {
+        return sInstance;
+    }
 };
 
 namespace GSrender {
-    // TODO can this work as a class method?
-    void fn_80231374(void *param1);
+// TODO can this work as a class method?
+void fn_80231374(void *param1);
 
-    void fn_8023234C();
-    void fn_80232394();
+void fn_8023234C();
+void fn_80232394();
 
-    GSvertexFormat *fn_8023CF1C(u32 param1);
-    GSrenderStruct7 *fn_8023D6CC(void *param1);
-    void fn_8023E2D0(void *param1);
-    u16 fn_8023E540(void *param1);
-    u16 fn_8023E548(void *param1);
-};
+GSvertexFormat *fn_8023CF1C(u32 param1);
+GStexture *fn_8023D6CC(void *param1);
+void fn_8023E2D0(void *param1);
+u16 fn_8023E540(void *param1);
+u16 fn_8023E548(void *param1);
+}; // namespace GSrender

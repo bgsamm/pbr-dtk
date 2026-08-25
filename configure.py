@@ -256,7 +256,7 @@ cflags_sdk = [
 cflags_game = [
     *cflags_base,
     "-ipa file",
-    "-inline all",
+    "-inline on",
     "-fp_contract off",
 ]
 

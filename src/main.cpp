@@ -1,9 +1,5 @@
-#include "version.hpp"
-
-#include <revolution/types.h>
-#include <revolution/os.h>
-#include <revolution/vi.h>
-
+#include ".unsorted/80249BA0.hpp"
+#include ".unsorted/80249BF0.hpp"
 #include "gs/GScache.hpp"
 #include "gs/GSfsys.hpp"
 #include "gs/GSinput.hpp"
@@ -13,8 +9,10 @@
 #include "gs/GSthread.hpp"
 #include "gs/GStimeline.hpp"
 #include "gs/GSvideo.hpp"
-#include ".unsorted/80249BA0.hpp"
-#include ".unsorted/80249BF0.hpp"
+#include "version.hpp"
+#include <revolution/os.h>
+#include <revolution/types.h>
+#include <revolution/vi.h>
 
 void fn_80006980(u32, void *);
 void fn_80006A00(u32, void *);
@@ -90,10 +88,10 @@ void fn_80006980(void) {
     u8 refreshRate;
     f32 var2;
 
-    refreshRate = GSvideoManager::sInstance->mRefreshRate;
-    var2 = GSvideoManager::sInstance->fn_8023FFEC() / refreshRate;
+    refreshRate = GSvideoManager::getInstance()->getRefreshRate();
+    var2 = GSvideoManager::getInstance()->fn_8023FFEC() / refreshRate;
 
-    fn_80231490(lbl_8063F698, var2 > 0f ? var2 : 0f);
+    fn_80231490(lbl_8063F698, var2 > 0.f ? var2 : 0.f);
     fn_80231544(lbl_8063F698);
 
     if (lbl_8063E8FC) {
@@ -108,7 +106,7 @@ void fn_80006A84(void) {
 
 void *fn_80006A88(void *param1) {
     OSInitFastCast();
-    
+
     GSfile::setErrorCallbacks(fn_80007090, fn_80007164);
     GSfsys::init(0x40, 0, 0, 0);
     GSfsys::setFileTypeHandlers(lbl_8044E828);
@@ -130,31 +128,24 @@ void *fn_80006A88(void *param1) {
     // lbl_8063F698->_172C = fn_80058178;
     fn_8000AC94();
     fn_8000748C();
-    GSthreadManager::sInstance->createThread(
-        100,
-        fn_80006FD4,
-        NULL,
-        0x4000,
-        8,
-        OS_THREAD_ATTR_DETACH
-    );
-    
+    GSthreadManager::sInstance->createThread(100, fn_80006FD4, NULL, 0x4000, 8, OS_THREAD_ATTR_DETACH);
+
     return 0;
 }
 
-void main(void) {
+int main(void) {
     u8 *var1, *var2;
     u32 var3, var4;
     struct UnkStruct1 var5;
     u32 var6, taskID;
-    
+
     lbl_8063E8FC = 0;
-    
+
     GSmath::init();
     GSmem::init();
     GSfsys::initFsysDataHeap();
     GSfsys::initFsysCacheHeap();
-    
+
     // TODO consider inline function(s)
     var1 = (u8 *)OSGetMEM1ArenaLo();
     var2 = (u8 *)OSGetMEM1ArenaHi();
@@ -207,7 +198,7 @@ void main(void) {
     GScache::fn_801DB978(0);
 
     GStask::init(32, 4);
-    
+
     GScache::initFileCache(400);
 
     var5._16 = 1;
@@ -244,17 +235,10 @@ void main(void) {
 
     fn_8005925C(0);
 
-    GSthreadManager::sInstance->createThread(
-        1,
-        fn_80006A88,
-        NULL,
-        0x4000,
-        0,
-        OS_THREAD_ATTR_DETACH
-    );
+    GSthreadManager::sInstance->createThread(1, fn_80006A88, NULL, 0x4000, 0, OS_THREAD_ATTR_DETACH);
 
     fn_80059208();
-    
+
     while (1) {
         if (lbl_8063E8FF) {
             lbl_8063E8FF = 0;

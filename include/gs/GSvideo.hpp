@@ -1,9 +1,9 @@
 #pragma once
 
-#include <revolution/types.h>
 #include <revolution/gx.h>
 #include <revolution/os.h>
 #include <revolution/sc.h>
+#include <revolution/types.h>
 #include <revolution/vi.h>
 
 #define MAX_XFBS 3
@@ -42,7 +42,7 @@ union U32F32 {
 };
 
 class GSvideoManager {
-public:
+protected:
     /* 0x0 */ GXRenderModeObj mRenderMode;
     /* 0x3c */ GSxfbHandle mXfbs[MAX_XFBS];
     /* 0x54 */ GSxfbHandle *mActiveXfb;
@@ -60,7 +60,7 @@ public:
     /* 0x74 */ VIRetraceCallback mRetraceCallback;
     u8 _78;
     u8 _79;
-    u8 _7a;
+    /* 0x7a */ bool _7a;
     u32 _7c;
     u8 _80;
     u8 _81;
@@ -98,8 +98,35 @@ public:
     /* 0xd4 */ u32 mClearZ;
     void **_d8;
 
+    static GSvideoManager *sInstance;
+
+public:
     GSvideoManager(u8, u16, VideoFormat);
     ~GSvideoManager();
+
+    bool get_7a() {
+        return _7a;
+    }
+
+    u8 getRefreshRate() {
+        return mRefreshRate;
+    }
+
+    u32 getRetraceCount() {
+        return mRetraceCount;
+    }
+
+    VIRetraceCallback getRetraceCallback() {
+        return mRetraceCallback;
+    }
+
+    void setRetraceCallback(VIRetraceCallback callback) {
+        mRetraceCallback = callback;
+    }
+
+    static GSvideoManager *getInstance() {
+        return sInstance;
+    }
 
     static void preRetraceCallback(u32 retraceCount);
     static void postRetraceCallback(u32 retraceCount);
@@ -122,9 +149,7 @@ public:
     void setScissor(u32, u32, u32, u32);
     void setScissorBoxOffset(s32, s32);
     f32 fn_8023FFEC();
-    
+
     void fn_8024041C();
     void fn_80240440();
-
-    static GSvideoManager *sInstance;
 };

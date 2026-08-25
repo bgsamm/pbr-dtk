@@ -1,10 +1,9 @@
-#include "version.hpp"
+#include "gs/render/GSrenderLight.hpp"
 
-#include <cmath>
+#include "common.hpp"
+#include "version.hpp"
 #include <revolution/gx.h>
 #include <revolution/mtx.h>
-
-#include "gs/GSrender.hpp"
 
 GSlight::GSlight() {
     mColor.r = 255;
@@ -12,12 +11,12 @@ GSlight::GSlight() {
     mColor.b = 255;
     mColor.a = 255;
 
-    mPosition.x = 0f;
-    mPosition.y = 0f;
-    mPosition.z = 0f;
+    mPosition.x = 0.f;
+    mPosition.y = 0.f;
+    mPosition.z = 0.f;
 
     GXInitLightColor(&mLightObj, mColor);
-    GXInitLightPos(&mLightObj, 0f, 0f, 0f);
+    GXInitLightPos(&mLightObj, 0.f, 0.f, 0.f);
 
     mType = GS_LIGHT_POINT;
     _1 = 0;
@@ -25,13 +24,7 @@ GSlight::GSlight() {
     mIndex = 0;
 }
 
-void GSlight::initPointLight(
-    GXColor color,
-    Vec position,
-    GXDistAttnFn distAttnFn,
-    f32 refDistance,
-    f32 refBrightness
-) {
+void GSlight::initPointLight(GXColor color, Vec position, GXDistAttnFn distAttnFn, f32 refDistance, f32 refBrightness) {
     _1 = 0;
     _0 = 0;
     mType = GS_LIGHT_POINT;
@@ -49,7 +42,7 @@ void GSlight::initPointLight(
 
     if (mSpotFn != GX_SP_OFF) {
         mSpotFn = GX_SP_OFF;
-        mCutoff = 90f;
+        mCutoff = 90.f;
         _1 |= (1 << 5);
     }
 
@@ -61,14 +54,8 @@ void GSlight::initPointLight(
 }
 
 void GSlight::initSpotLight(
-    GXColor color,
-    Vec position,
-    Vec direction,
-    GXDistAttnFn distAttnFn,
-    f32 refDistance,
-    f32 refBrightness,
-    GXSpotFn spotFn,
-    f32 cutoff
+    GXColor color, Vec position, Vec direction, GXDistAttnFn distAttnFn, f32 refDistance, f32 refBrightness,
+    GXSpotFn spotFn, f32 cutoff
 ) {
     _1 = 0;
     _0 = 0;
@@ -146,7 +133,7 @@ void GSlight::load(u8 index, GSlightStruct1 *param2) {
             f32 sqMag = PSVECSquareMag(&dir);
             if (sqMag > EPSILON) {
                 f32 mag = safe_sqrt(sqMag);
-                PSVECScale(&dir, &dir, 1f / ensure_nonzero(mag));
+                PSVECScale(&dir, &dir, 1.f / ensure_nonzero(mag));
             }
             _1 |= (1 << 2);
             _1 &= ~(1 << 6);
@@ -159,93 +146,60 @@ void GSlight::load(u8 index, GSlightStruct1 *param2) {
     }
 
     switch (mType) {
-    case GS_LIGHT_SPEC:
-        if ((_1 & (1 << 6)) != 0) {
-            GXInitSpecularDirHA(
-                &mLightObj,
-                dir.x,
-                dir.y,
-                dir.z,
-                mHalfAngle.x,
-                mHalfAngle.y,
-                mHalfAngle.z
-            );
-        }
-        else if ((_1 & (1 << 2)) != 0) {
-            GXInitSpecularDir(&mLightObj, dir.x, dir.y, dir.z);
-        }
-
-        if ((_1 & (1 << 7)) != 0) {
-            GXInitLightShininess(&mLightObj, mShininess);
-        }
-        else if ((_1 & (1 << 3)) != 0) {
-            GXInitLightAttn(
-                &mLightObj,
-                mAngleAtten0,
-                mAngleAtten1,
-                mAngleAtten2,
-                mDistAtten0,
-                mDistAtten1,
-                mDistAtten2
-            );
-        }
-        break;
-    
-    case GS_LIGHT_SPOT:
-        if ((_1 & (1 << 1)) != 0) {
-            GXInitLightPos(&mLightObj, pos.x, pos.y, pos.z);
-        }
-
-        if ((_1 & (1 << 2)) != 0) {
-            GXInitLightDir(&mLightObj, dir.x, dir.y, dir.z);
-        }
-        
-        if ((_1 & (1 << 3)) != 0) {
-            GXInitLightAttn(
-                &mLightObj,
-                mAngleAtten0,
-                mAngleAtten1,
-                mAngleAtten2,
-                mDistAtten0,
-                mDistAtten1,
-                mDistAtten2
-            );
-        }
-        else {
-            if ((_1 & (1 << 4)) != 0) {
-                GXInitLightDistAttn(
-                    &mLightObj,
-                    mRefDistance,
-                    mRefBrightness,
-                    mDistAttnFn
-                );
+        case GS_LIGHT_SPEC:
+            if ((_1 & (1 << 6)) != 0) {
+                GXInitSpecularDirHA(&mLightObj, dir.x, dir.y, dir.z, mHalfAngle.x, mHalfAngle.y, mHalfAngle.z);
+            } else if ((_1 & (1 << 2)) != 0) {
+                GXInitSpecularDir(&mLightObj, dir.x, dir.y, dir.z);
             }
 
+            if ((_1 & (1 << 7)) != 0) {
+                GXInitLightShininess(&mLightObj, mShininess);
+            } else if ((_1 & (1 << 3)) != 0) {
+                GXInitLightAttn(
+                    &mLightObj, mAngleAtten0, mAngleAtten1, mAngleAtten2, mDistAtten0, mDistAtten1, mDistAtten2
+                );
+            }
+            break;
+
+        case GS_LIGHT_SPOT:
+            if ((_1 & (1 << 1)) != 0) {
+                GXInitLightPos(&mLightObj, pos.x, pos.y, pos.z);
+            }
+
+            if ((_1 & (1 << 2)) != 0) {
+                GXInitLightDir(&mLightObj, dir.x, dir.y, dir.z);
+            }
+
+            if ((_1 & (1 << 3)) != 0) {
+                GXInitLightAttn(
+                    &mLightObj, mAngleAtten0, mAngleAtten1, mAngleAtten2, mDistAtten0, mDistAtten1, mDistAtten2
+                );
+            } else {
+                if ((_1 & (1 << 4)) != 0) {
+                    GXInitLightDistAttn(&mLightObj, mRefDistance, mRefBrightness, mDistAttnFn);
+                }
+
+                if ((_1 & (1 << 5)) != 0) {
+                    GXInitLightSpot(&mLightObj, mCutoff, mSpotFn);
+                }
+            }
+            break;
+
+        case GS_LIGHT_POINT:
+            if ((_1 & (1 << 1)) != 0) {
+                GXInitLightPos(&mLightObj, pos.x, pos.y, pos.z);
+            }
+
+            if ((_1 & (1 << 4)) != 0) {
+                GXInitLightDistAttn(&mLightObj, mRefDistance, mRefBrightness, mDistAttnFn);
+            }
+
+            // Why would a point light use GXInitLightSpot?
             if ((_1 & (1 << 5)) != 0) {
                 GXInitLightSpot(&mLightObj, mCutoff, mSpotFn);
             }
-        }
-        break;
-    
-    case GS_LIGHT_POINT:
-        if ((_1 & (1 << 1)) != 0) {
-            GXInitLightPos(&mLightObj, pos.x, pos.y, pos.z);
-        }
-
-        if ((_1 & (1 << 4)) != 0) {
-            GXInitLightDistAttn(
-                &mLightObj,
-                mRefDistance,
-                mRefBrightness,
-                mDistAttnFn
-            );
-        }
-
-        // Why would a point light use GXInitLightSpot?
-        if ((_1 & (1 << 5)) != 0) {
-            GXInitLightSpot(&mLightObj, mCutoff, mSpotFn);
-        }
-        break;
+            break;
     }
 
     _1 = 0;

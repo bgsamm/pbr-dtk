@@ -1,9 +1,10 @@
-#include "version.hpp"
-#include <cstring>
+#include "gs/GSvideo.hpp"
 
 #include "gs/GSmem.hpp"
 #include "gs/GSrender.hpp"
-#include "gs/GSvideo.hpp"
+#include "version.hpp"
+
+#include <cstring>
 
 extern void fn_8025B6B4(u32);
 extern void fn_8025B6B8(f32 *, f32 *);
@@ -51,10 +52,10 @@ void GSvideoManager::postRetraceCallback(u32 retraceCount) {
     sInstance->mRetraceCount++;
 
     if (sInstance->mRetraceCallback != NULL) {
-        u8 var1 = GSrenderManager::sInstance->_16f9;
-        GSrenderManager::sInstance->_16f9 = 0;
+        u8 var1 = GSrenderManager::getInstance()->get_16f9();
+        GSrenderManager::getInstance()->set_16f9(false);
         sInstance->mRetraceCallback(retraceCount);
-        GSrenderManager::sInstance->_16f9 = var1;
+        GSrenderManager::getInstance()->set_16f9(var1);
     }
 }
 
@@ -75,7 +76,7 @@ GSvideoManager::GSvideoManager(u8 numBuffers, u16 efbHeight, VideoFormat videoFm
     mRetraceCallback = NULL;
     _78 = 0xa;
     _79 = 0;
-    _7a = 0;
+    _7a = false;
     _7c = 0;
     _80 = 0;
     _81 = 1;
@@ -128,21 +129,17 @@ GSvideoManager::GSvideoManager(u8 numBuffers, u16 efbHeight, VideoFormat videoFm
         VIGetScanMode();
         if (VIGetTvFormat() == VI_NTSC) {
             fmt = VID_FMT_NTSC;
-        }
-        else {
+        } else {
             fmt = VID_FMT_EURGB60;
         }
         var2 = 1;
-    }
-    else {
+    } else {
         if (VIGetTvFormat() == VI_NTSC) {
             fmt = VID_FMT_NTSC;
-        }
-        else if (SCGetEuRgb60Mode() == SC_EURGB60_MODE_ON) {
+        } else if (SCGetEuRgb60Mode() == SC_EURGB60_MODE_ON) {
             VIGetTvFormat();
             fmt = VID_FMT_EURGB60;
-        }
-        else {
+        } else {
             VIGetTvFormat();
             fmt = VID_FMT_PAL;
             mRefreshRate = 50;
@@ -155,9 +152,7 @@ GSvideoManager::GSvideoManager(u8 numBuffers, u16 efbHeight, VideoFormat videoFm
     fn_8023F858(fmt, var2, 1, aspectRatio);
 
     switch (fmt) {
-        case VID_FMT_NTSC:
-            mXfbHeight = 480;
-            break;
+        case VID_FMT_NTSC: mXfbHeight = 480; break;
         case VID_FMT_PAL:
         case VID_FMT_EURGB60:
             if (fmt == VID_FMT_PAL && var2 != 1) {
@@ -165,9 +160,7 @@ GSvideoManager::GSvideoManager(u8 numBuffers, u16 efbHeight, VideoFormat videoFm
                 mXfbHeight = GXGetNumXfbLines(mRenderMode.efbHeight, mYScale);
             }
             break;
-        case VID_FMT_MPAL:
-            mXfbHeight = 480;
-            break;
+        case VID_FMT_MPAL: mXfbHeight = 480; break;
     }
 
     u32 xfbWidth = (mRenderMode.fbWidth + 0xf) & 0xfff0;
@@ -177,8 +170,7 @@ GSvideoManager::GSvideoManager(u8 numBuffers, u16 efbHeight, VideoFormat videoFm
             mXfbs[i].mBuffer = GSmem::alloc(size);
             mXfbs[i].mState = XFB_STATE_3;
             fn_8023FBA0(&mXfbs[i], size);
-        }
-        else {
+        } else {
             mXfbs[i].mBuffer = NULL;
             mXfbs[i].mState = XFB_STATE_UNUSED;
         }
@@ -296,49 +288,29 @@ bool GSvideoManager::fn_8023F858(VideoFormat vidFmt, u32 param2, u32 param3, u32
         case 2:
             switch (param3) {
                 case 0:
-                case 1:
-                    var1 = 1;
-                    break;
-                case 2:
-                    var1 = 2;
-                    break;
+                case 1: var1 = 1; break;
+                case 2: var1 = 2; break;
             }
             break;
         case 0:
             switch (param3) {
-                case 0:
-                    var1 = 5;
-                    break;
-                case 1:
-                    var1 = 6;
-                    break;
-                case 2:
-                    var1 = 7;
-                    break;
+                case 0: var1 = 5; break;
+                case 1: var1 = 6; break;
+                case 2: var1 = 7; break;
             }
             break;
         case 1:
             switch (param3) {
-                case 0:
-                    var1 = 8;
-                    break;
-                case 1:
-                    var1 = 9;
-                    break;
-                case 2:
-                    var1 = 10;
-                    break;
+                case 0: var1 = 8; break;
+                case 1: var1 = 9; break;
+                case 2: var1 = 10; break;
             }
             break;
         case 3:
             switch (param3) {
                 case 0:
-                case 1:
-                    var1 = 3;
-                    break;
-                case 2:
-                    var1 = 4;
-                    break;
+                case 1: var1 = 3; break;
+                case 2: var1 = 4; break;
             }
             break;
     }
@@ -346,7 +318,6 @@ bool GSvideoManager::fn_8023F858(VideoFormat vidFmt, u32 param2, u32 param3, u32
     if (var1 == 0) {
         return false;
     }
-
 
     UnkStruct7 *ptr = lbl_80424840;
     GXRenderModeObj *rmode = NULL;
@@ -387,13 +358,12 @@ bool GSvideoManager::fn_8023F858(VideoFormat vidFmt, u32 param2, u32 param3, u32
     }
 
     _7a = param4;
-    if (param4 != 0) {
+    if (param4) {
         mRenderMode.viWidth = var3;
         if (vidFmt == VID_FMT_PAL) {
             mRenderMode.viWidth = var3 - 40;
         }
-    }
-    else {
+    } else {
         if (vidFmt != VID_FMT_PAL) {
             mRenderMode.viWidth += 20;
         }
@@ -403,12 +373,11 @@ bool GSvideoManager::fn_8023F858(VideoFormat vidFmt, u32 param2, u32 param3, u32
     }
 
     mRenderMode.viXOrigin = (var3 - mRenderMode.viWidth) >> 1; // dividing by 2 does not match
-    
+
     mVideoFmt = vidFmt;
     if (vidFmt == VID_FMT_PAL) {
         mRefreshRate = 50;
-    }
-    else {
+    } else {
         mRefreshRate = 60;
     }
     lbl_8063D988 = mRefreshRate / 60.0f;
@@ -451,40 +420,39 @@ GSxfbHandle *GSvideoManager::fn_8023FC0C(XfbState param1) {
 }
 
 GSxfbHandle *GSvideoManager::fn_8023FC54(u32 param1) {
-    if (GSrenderManager::sInstance->_1718) {
+    if (GSrenderManager::getInstance()->get_1718()) {
         return NULL;
     }
 
     GSrenderStruct3 var1;
-    GSrenderManager::sInstance->fn_802311AC(&var1);
+    GSrenderManager::getInstance()->fn_802311AC(&var1);
 
     GSxfbHandle *var2;
     u32 var3 = param1;
     while (true) {
         BOOL intEnabled = OSDisableInterrupts();
-        
-        if (GSrenderManager::sInstance->_1718 || GSrenderManager::sInstance->_1719) {
+
+        if (GSrenderManager::getInstance()->get_1718() || GSrenderManager::getInstance()->get_1719()) {
             var2 = NULL;
             var3 = 0;
-        }
-        else {
+        } else {
             var2 = fn_8023FC0C(XFB_STATE_3);
         }
 
         OSRestoreInterrupts(intEnabled);
 
         if (var3 == 0 || var2 != NULL) {
-            GSrenderManager::sInstance->fn_8023125C(&var1);
+            GSrenderManager::getInstance()->fn_8023125C(&var1);
             return var2;
         }
 
-        GSrenderManager::sInstance->fn_802311BC(&var1);
+        GSrenderManager::getInstance()->fn_802311BC(&var1);
 
         GXBool readIdle, dummy;
         GXGetGPStatus(&dummy, &dummy, &readIdle, &dummy, &dummy);
 
         if (readIdle == GX_TRUE) {
-            GSrender::fn_80231374(GSrenderManager::sInstance);
+            GSrender::fn_80231374(GSrenderManager::getInstance());
         }
     }
 }
@@ -504,8 +472,7 @@ void GSvideoManager::fn_8023FD64() {
 
     if (mRenderMode.aa == GX_TRUE) {
         GXSetPixelFmt(GX_PF_RGB565_Z16, GX_ZC_LINEAR);
-    }
-    else {
+    } else {
         GXSetPixelFmt(mPixelFmt, GX_ZC_LINEAR);
     }
 
@@ -518,32 +485,17 @@ void GSvideoManager::fn_8023FE30(bool param1) {
 
     if (param1) {
         fn_8025B6B8(&var1, &var2);
-    }
-    else {
+    } else {
         var1 = 0.0f;
         var2 = 0.0f;
     }
 
     if (mRenderMode.field_rendering) {
         GXSetViewportJitter(
-            _a8.fval + var1,
-            _ac.fval + var2,
-            mViewportWidth.fval,
-            mViewportHeight.fval,
-            _b8.fval,
-            _bc.fval,
-            mNextField
+            _a8.fval + var1, _ac.fval + var2, mViewportWidth.fval, mViewportHeight.fval, _b8.fval, _bc.fval, mNextField
         );
-    }
-    else {
-        GXSetViewport(
-            _a8.fval + var1,
-            _ac.fval + var2,
-            mViewportWidth.fval,
-            mViewportHeight.fval,
-            _b8.fval,
-            _bc.fval
-        );
+    } else {
+        GXSetViewport(_a8.fval + var1, _ac.fval + var2, mViewportWidth.fval, mViewportHeight.fval, _b8.fval, _bc.fval);
     }
 }
 
@@ -590,7 +542,7 @@ void GSvideoManager::setScissor(u32 xOrig, u32 yOrig, u32 width, u32 height) {
     if ((int)((u16)yOrig + height) > yMax) {
         height = (u16)(yMax - yOrig);
     }
-    
+
     GXSetScissor((u16)xOrig, (u16)yOrig, width, height);
 }
 

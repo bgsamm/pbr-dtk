@@ -1,12 +1,11 @@
-#include "version.hpp"
-#include <cstring>
-
-#include <revolution/os.h>
-#include <revolution/vi.h>
+#include "gs/GStask.hpp"
 
 #include "gs/GSmem.hpp"
-#include "gs/GStask.hpp"
 #include "gs/GSvideo.hpp"
+#include "version.hpp"
+
+#include <cstring>
+#include <revolution.h>
 
 #define STACK_SIZE 0x2000
 
@@ -52,7 +51,7 @@ void GStask::idleCallback(void *param) {
 
     while (true) {
         runTasksOfType(TASK_TYPE_IDLE);
-    
+
         BOOL intEnabled = OSDisableInterrupts();
 
         node = sIdleTaskListHead;
@@ -62,7 +61,7 @@ void GStask::idleCallback(void *param) {
             node = next;
         }
         sIdleTaskListHead = NULL;
-    
+
         OSRestoreInterrupts(intEnabled);
     }
 }
@@ -70,12 +69,11 @@ void GStask::idleCallback(void *param) {
 GStaskHandle *GStask::getFreeTaskHandle(GStaskType taskType) {
     GStaskHandle *node;
     int count;
-    
+
     if (taskType == TASK_TYPE_IDLE) {
         node = sTaskPool + sActiveTaskHandleCount;
         count = sIdleTaskHandleCount;
-    }
-    else {
+    } else {
         node = sTaskPool;
         count = sActiveTaskHandleCount;
     }
@@ -129,8 +127,7 @@ void GStask::enqueueTask(GStaskHandle *taskHandle) {
     BOOL intEnabled = OSDisableInterrupts();
     if (taskHandle->mType == TASK_TYPE_IDLE) {
         pushIdleTask(taskHandle);
-    }
-    else {
+    } else {
         insertTaskByPriority(taskHandle);
     }
     OSRestoreInterrupts(intEnabled);
@@ -147,7 +144,7 @@ void GStask::init(u32 activeCount, u32 idleCount) {
     if (sTaskPool == NULL) {
         return;
     }
-    
+
     for (u32 i = 0; i < sTotalTaskHandleCount; i++) {
         sTaskPool[i].mType = TASK_TYPE_NULL;
     }
@@ -155,19 +152,14 @@ void GStask::init(u32 activeCount, u32 idleCount) {
     sIdleStack = (u8 *)GSmem::alloc(STACK_SIZE);
     OSSetIdleFunction(idleCallback, NULL, sIdleStack + STACK_SIZE - 4, STACK_SIZE - 4);
 
-    if (GSvideoManager::sInstance) {
-        VIRetraceCallback temp = GSvideoManager::sInstance->mRetraceCallback;
-        GSvideoManager::sInstance->mRetraceCallback = retraceCallback;
+    if (GSvideoManager::getInstance()) {
+        VIRetraceCallback temp = GSvideoManager::getInstance()->getRetraceCallback();
+        GSvideoManager::getInstance()->setRetraceCallback(retraceCallback);
         sRetraceCallback = temp;
     }
 }
 
-u32 GStask::createTask(
-    GStaskType taskType,
-    u8 priority,
-    void *userParam,
-    GStaskCallback callback
-) {
+u32 GStask::createTask(GStaskType taskType, u8 priority, void *userParam, GStaskCallback callback) {
     GStaskHandle *node = getFreeTaskHandle(taskType);
 
     if (node == NULL) {
@@ -204,7 +196,7 @@ GStaskHandle *GStask::fn_80224074(u32 param1) {
 
 void GStask::setTaskName(u32 taskID, char *name) {
     GStaskHandle *node;
-    
+
     if (name != NULL && taskID != 0) {
         node = &sTaskPool[taskID - 1];
         memcpy(node->mName, name, sizeof(node->mName) - 1);

@@ -1,8 +1,8 @@
+#include "gs/GSrender.hpp"
+#include "gs/render/8023B9F4.hpp"
 #include "version.hpp"
 
-#include <revolution/base/PPCArch.h>
-
-#include "gs/GSrender.hpp"
+#include <revolution.h>
 
 /* lbl_80496760 */ static f32 sProjectionMatrix[4][4];
 
@@ -29,14 +29,12 @@ void GSrenderManager::loadLights() {
 }
 
 void GSrenderManager::setVertexFormat(GSvertexFormat *format) {
-    GSVtxAttrArray *array;
+    GSvtxAttrArray *array;
 
     GXClearVtxDesc();
     GXSetVtxDescv(format->mVtxDescList);
 
-    if (mState->mActiveFormat != format
-        || (format->mFlags & GS_VERTEX_UPDATE_ARRAYS) == GS_VERTEX_UPDATE_ARRAYS
-    ) {
+    if (mState->mActiveFormat != format || (format->mFlags & GS_VERTEX_UPDATE_ARRAYS) == GS_VERTEX_UPDATE_ARRAYS) {
         array = format->mAttrArrayList;
         while (array->mAttr != GX_VA_NULL) {
             GXSetArray((GXAttr)array->mAttr, array->mBasePtr, array->mStride);
@@ -47,9 +45,8 @@ void GSrenderManager::setVertexFormat(GSvertexFormat *format) {
     }
 
     GXVtxFmt vtxFmt = format->mVtxFmt;
-    if (mState->mVertexFormats[vtxFmt] != format
-        || (format->mFlags & GS_VERTEX_UPDATE_FORMAT) == GS_VERTEX_UPDATE_FORMAT
-    ) {
+    if (mState->mVertexFormats[vtxFmt] != format ||
+        (format->mFlags & GS_VERTEX_UPDATE_FORMAT) == GS_VERTEX_UPDATE_FORMAT) {
         GXSetVtxAttrFmtv(vtxFmt, format->mVtxAttrFmtList);
         mState->mVertexFormats[vtxFmt] = format;
     }
@@ -70,9 +67,8 @@ void GSrenderManager::setVertexFormat(GSvertexFormat *format) {
         PPCSync();
     }
 
-    if ((mFlags & GS_RENDER_INVALIDATE_CACHE) != 0
-        || (format->mFlags & GS_VERTEX_INVALIDATE_CACHE) == GS_VERTEX_INVALIDATE_CACHE
-    ) {
+    if ((mFlags & GS_RENDER_INVALIDATE_CACHE) != 0 ||
+        (format->mFlags & GS_VERTEX_INVALIDATE_CACHE) == GS_VERTEX_INVALIDATE_CACHE) {
         GXInvalidateVtxCache();
         mFlags &= ~GS_RENDER_INVALIDATE_CACHE;
     }
@@ -80,8 +76,68 @@ void GSrenderManager::setVertexFormat(GSvertexFormat *format) {
     format->mFlags &= ~(GS_VERTEX_UPDATE_ARRAYS | GS_VERTEX_UPDATE_FORMAT);
 }
 
-void GSrenderManager::fn_802384BC() {
+// TODO(samm) Name local variables
+void GSrenderManager::loadModelViewMatrix() {
+    GSrenderStruct8 *_unk1 = _16e8->_4;
+    if ((_unk1->mFlags & (1 << 2)) || _unk1 != mState->_1508) {
+        GXLoadPosMtxImm(_16e8->get_4()->mPosMtx, GX_PNMTX9);
+
+        GSrenderClass1 *_unk2 = _16e8;
+        if ((_unk2->_4->mFlags & (1 << 1))) {
+            Mtx nrmMtx;
+            MTXInvXpose(_unk2->_4->mPosMtx, nrmMtx);
+            MTXCopy(nrmMtx, _unk2->_4->mNrmMtx);
+            _unk2->_4->mFlags &= ~(1 << 1);
+        }
+
+        GXLoadNrmMtxImm(_unk2->_4->mNrmMtx, GX_PNMTX9);
+
+        mState->_1508 = _unk1;
+        _unk1->mFlags &= ~(1 << 2);
+    }
+
+    if (!mState->_150c) {
+        GXSetCurrentMtx(GX_PNMTX9);
+        mState->_150c = true;
+    }
+}
+
+void GSrenderManager::loadTextures() {
+    GStexture *texture;
+    GStexture **textureList;
     s32 i;
+    u32 textureFlags;
+
+    textureFlags = mState->mTextureFlags;
+
+    if (!textureFlags || mState->mCurr.mNumTexGens == 0) {
+        return;
+    }
+
+    i = 0;
+    textureList = mState->mTextures;
+
+    for (; i < 8; i++, textureList++) {
+        if (textureFlags & (1 << i)) {
+            texture = *textureList;
+            if (texture->_48) {
+                GXInitTexObjTlut(&texture->mTexObj, (u8)i);
+                GXLoadTlut(&texture->mTlutObj, (u8)i);
+            }
+            GXLoadTexObj(&texture->mTexObj, (GXTexMapID)(u8)i);
+            texture->mFlags &= ~(1 << 0);
+        }
+    }
+
+    mState->mTextureFlags = 0;
+}
+
+void GSrenderManager::syncRenderSettings() {
+    // Having all these up here is almost certainly a false match, but at this point, idc :)
+    s32 i;
+    bool zCompEnable;
+    GXCompare zCompFunc;
+    u32 chanMatColorFlags;
 
     GSrenderState *state = mState;
 
@@ -93,7 +149,7 @@ void GSrenderManager::fn_802384BC() {
         u32 texGenFlags;
         u32 texOffsetFlags;
         u8 nTexGens;
-        
+
         nTexGens = state->mCurr.mNumTexGens;
         if ((mState->_4 & (1 << 0)) != 0) {
             if (state->mPrev.mNumTexGens != nTexGens) {
@@ -115,18 +171,11 @@ void GSrenderManager::fn_802384BC() {
                     curr->mTexGenFunc = (GXTexGenType)(GX_TG_BUMP0 + curr->mLight->mIndex);
                 }
 
-                if (prev->mTexGenFunc != curr->mTexGenFunc
-                    || prev->mTexGenSrc != curr->mTexGenSrc
-                    || prev->mTexMtx != curr->mTexMtx
-                    || prev->mNormalize != curr->mNormalize
-                    || prev->mPostMtx != curr->mPostMtx
-                ) {
+                if (prev->mTexGenFunc != curr->mTexGenFunc || prev->mTexGenSrc != curr->mTexGenSrc ||
+                    prev->mTexMtx != curr->mTexMtx || prev->mNormalize != curr->mNormalize ||
+                    prev->mPostMtx != curr->mPostMtx) {
                     GXSetTexCoordGen2(
-                        (GXTexCoordID)i,
-                        curr->mTexGenFunc,
-                        curr->mTexGenSrc,
-                        curr->mTexMtx,
-                        curr->mNormalize,
+                        (GXTexCoordID)i, curr->mTexGenFunc, curr->mTexGenSrc, curr->mTexMtx, curr->mNormalize,
                         curr->mPostMtx
                     );
 
@@ -142,9 +191,8 @@ void GSrenderManager::fn_802384BC() {
         }
 
         if ((mState->_4 & (1 << 2)) != 0) {
-            if (state->mPrev.mLineWidth != state->mCurr.mLineWidth
-                || state->mPrev.mLineTexOffsets != state->mCurr.mLineTexOffsets
-            ) {
+            if (state->mPrev.mLineWidth != state->mCurr.mLineWidth ||
+                state->mPrev.mLineTexOffsets != state->mCurr.mLineTexOffsets) {
                 GXSetLineWidth(state->mCurr.mLineWidth, state->mCurr.mLineTexOffsets);
                 state->mPrev.mLineWidth = state->mCurr.mLineWidth;
                 state->mPrev.mLineTexOffsets = state->mCurr.mLineTexOffsets;
@@ -152,9 +200,8 @@ void GSrenderManager::fn_802384BC() {
         }
 
         if ((mState->_4 & (1 << 3)) != 0) {
-            if (state->mPrev.mPointSize != state->mCurr.mPointSize
-                || state->mPrev.mPointTexOffsets != state->mCurr.mPointTexOffsets
-            ) {
+            if (state->mPrev.mPointSize != state->mCurr.mPointSize ||
+                state->mPrev.mPointTexOffsets != state->mCurr.mPointTexOffsets) {
                 GXSetPointSize(state->mCurr.mPointSize, state->mCurr.mPointTexOffsets);
                 state->mPrev.mPointSize = state->mCurr.mPointSize;
                 state->mPrev.mPointTexOffsets = state->mCurr.mPointTexOffsets;
@@ -163,21 +210,16 @@ void GSrenderManager::fn_802384BC() {
 
         texOffsetFlags = mState->mTexOffsetFlags;
         if (texOffsetFlags != 0) {
+            s32 i = 0;
             GStexOffsetEnable *curr = state->mCurr.mTexOffsetsEnabled;
             GStexOffsetEnable *prev = state->mPrev.mTexOffsetsEnabled;
-            for (i = 0; i < nTexGens; i++, curr++, prev++) {
+            for (; i < nTexGens; i++, curr++, prev++) {
                 if ((texOffsetFlags & (1 << i)) == 0) {
                     continue;
                 }
 
-                if (prev->mLineEnable != curr->mLineEnable
-                    || prev->mPointEnable != curr->mPointEnable
-                ) {
-                    GXEnableTexOffsets(
-                        (GXTexCoordID)i,
-                        curr->mLineEnable,
-                        curr->mPointEnable
-                    );
+                if (prev->mLineEnable != curr->mLineEnable || prev->mPointEnable != curr->mPointEnable) {
+                    GXEnableTexOffsets((GXTexCoordID)i, curr->mLineEnable, curr->mPointEnable);
                     prev->mLineEnable = curr->mLineEnable;
                     prev->mPointEnable = curr->mPointEnable;
                 }
@@ -216,17 +258,14 @@ void GSrenderManager::fn_802384BC() {
                 state->mPrev.mClipMode = state->mCurr.mClipMode;
             }
         }
-        
+
         if ((mState->_10 & (1 << 0)) != 0) {
-            if (state->mPrev.mScissor.mOrigX != state->mCurr.mScissor.mOrigX
-                || state->mPrev.mScissor.mOrigY != state->mCurr.mScissor.mOrigY
-                || state->mPrev.mScissor.mWidth != state->mCurr.mScissor.mWidth
-                || state->mPrev.mScissor.mHeight != state->mCurr.mScissor.mHeight
-            ) {
+            if (state->mPrev.mScissor.mOrigX != state->mCurr.mScissor.mOrigX ||
+                state->mPrev.mScissor.mOrigY != state->mCurr.mScissor.mOrigY ||
+                state->mPrev.mScissor.mWidth != state->mCurr.mScissor.mWidth ||
+                state->mPrev.mScissor.mHeight != state->mCurr.mScissor.mHeight) {
                 setScissor(
-                    state->mCurr.mScissor.mOrigX,
-                    state->mCurr.mScissor.mOrigY,
-                    state->mCurr.mScissor.mWidth,
+                    state->mCurr.mScissor.mOrigX, state->mCurr.mScissor.mOrigY, state->mCurr.mScissor.mWidth,
                     state->mCurr.mScissor.mHeight
                 );
                 state->mPrev.mScissor.mOrigX = state->mCurr.mScissor.mOrigX;
@@ -241,20 +280,15 @@ void GSrenderManager::fn_802384BC() {
                 scissor->mHeight = state->mCurr.mScissor.mHeight;
             }
         }
-        
+
         if ((mState->_10 & (1 << 4)) != 0) {
-            if (state->mPrev.mViewport.mOrigX != state->mCurr.mViewport.mOrigX
-                || state->mPrev.mViewport.mOrigY != state->mCurr.mViewport.mOrigY
-                || state->mPrev.mViewport.mWidth != state->mCurr.mViewport.mWidth
-                || state->mPrev.mViewport.mHeight != state->mCurr.mViewport.mHeight
-            ) {
+            if (state->mPrev.mViewport.mOrigX != state->mCurr.mViewport.mOrigX ||
+                state->mPrev.mViewport.mOrigY != state->mCurr.mViewport.mOrigY ||
+                state->mPrev.mViewport.mWidth != state->mCurr.mViewport.mWidth ||
+                state->mPrev.mViewport.mHeight != state->mCurr.mViewport.mHeight) {
                 setViewport(
-                    state->mCurr.mViewport.mOrigX,
-                    state->mCurr.mViewport.mOrigY,
-                    state->mCurr.mViewport.mWidth,
-                    state->mCurr.mViewport.mHeight,
-                    0f,
-                    1f
+                    state->mCurr.mViewport.mOrigX, state->mCurr.mViewport.mOrigY, state->mCurr.mViewport.mWidth,
+                    state->mCurr.mViewport.mHeight, 0.f, 1.f
                 );
                 state->mPrev.mViewport.mOrigX = state->mCurr.mViewport.mOrigX;
                 state->mPrev.mViewport.mOrigY = state->mCurr.mViewport.mOrigY;
@@ -306,25 +340,15 @@ void GSrenderManager::fn_802384BC() {
                         }
                     }
                     curr->mLightMask = (GXLightID)lightMask;
-                }
-                else {
+                } else {
                     curr->mLightMask = GX_LIGHT_NULL;
                 }
 
-                if (prev->mEnable != enable
-                    || prev->mAmbSrc != curr->mAmbSrc
-                    || prev->mMatSrc != curr->mMatSrc
-                    || prev->mLightMask != curr->mLightMask
-                    || prev->mDiffFn != curr->mDiffFn
-                    || prev->mAttnFn != curr->mAttnFn
-                ) {
+                if (prev->mEnable != enable || prev->mAmbSrc != curr->mAmbSrc || prev->mMatSrc != curr->mMatSrc ||
+                    prev->mLightMask != curr->mLightMask || prev->mDiffFn != curr->mDiffFn ||
+                    prev->mAttnFn != curr->mAttnFn) {
                     GXSetChanCtrl(
-                        (GXChannelID)i,
-                        enable,
-                        curr->mAmbSrc,
-                        curr->mMatSrc,
-                        curr->mLightMask,
-                        curr->mDiffFn,
+                        (GXChannelID)i, enable, curr->mAmbSrc, curr->mMatSrc, curr->mLightMask, curr->mDiffFn,
                         curr->mAttnFn
                     );
                     prev->mEnable = enable;
@@ -361,7 +385,7 @@ void GSrenderManager::fn_802384BC() {
             mState->mChanAmbColorFlags = 0;
         }
 
-        u32 chanMatColorFlags = mState->mChanMatColorFlags;
+        chanMatColorFlags = mState->mChanMatColorFlags;
         if (chanMatColorFlags != 0) {
             GXColor *curr = state->mCurr.mChanMatColors;
             GXColor *prev = state->mPrev.mChanMatColors;
@@ -406,16 +430,9 @@ void GSrenderManager::fn_802384BC() {
                     continue;
                 }
 
-                if (prev->mTexCoord != curr->mTexCoord
-                    || prev->mTexMap != curr->mTexMap
-                    || prev->mChannel != curr->mChannel
-                ) {
-                    GXSetTevOrder(
-                        (GXTevStageID)i,
-                        curr->mTexCoord,
-                        curr->mTexMap,
-                        curr->mChannel
-                    );
+                if (prev->mTexCoord != curr->mTexCoord || prev->mTexMap != curr->mTexMap ||
+                    prev->mChannel != curr->mChannel) {
+                    GXSetTevOrder((GXTevStageID)i, curr->mTexCoord, curr->mTexMap, curr->mChannel);
                     prev->mTexCoord = curr->mTexCoord;
                     prev->mTexMap = curr->mTexMap;
                     prev->mChannel = curr->mChannel;
@@ -424,7 +441,7 @@ void GSrenderManager::fn_802384BC() {
 
             mState->mTevStageFlags = 0;
         }
-        
+
         u32 tevColorInFlags = mState->mTevColorInFlags;
         if (tevColorInFlags != 0) {
             GStevColorIn *curr = state->mCurr.mTevColorIns;
@@ -435,18 +452,9 @@ void GSrenderManager::fn_802384BC() {
                     continue;
                 }
 
-                if (prev->mArgA != curr->mArgA
-                    || prev->mArgB != curr->mArgB
-                    || prev->mArgC != curr->mArgC
-                    || prev->mArgD != curr->mArgD
-                ) {
-                    GXSetTevColorIn(
-                        (GXTevStageID)i,
-                        curr->mArgA,
-                        curr->mArgB,
-                        curr->mArgC,
-                        curr->mArgD
-                    );
+                if (prev->mArgA != curr->mArgA || prev->mArgB != curr->mArgB || prev->mArgC != curr->mArgC ||
+                    prev->mArgD != curr->mArgD) {
+                    GXSetTevColorIn((GXTevStageID)i, curr->mArgA, curr->mArgB, curr->mArgC, curr->mArgD);
                     prev->mArgA = curr->mArgA;
                     prev->mArgB = curr->mArgB;
                     prev->mArgC = curr->mArgC;
@@ -456,7 +464,7 @@ void GSrenderManager::fn_802384BC() {
 
             mState->mTevColorInFlags = 0;
         }
-        
+
         u32 tevAlphaInFlags = mState->mTevAlphaInFlags;
         if (tevAlphaInFlags != 0) {
             GStevAlphaIn *curr = state->mCurr.mTevAlphaIns;
@@ -467,18 +475,9 @@ void GSrenderManager::fn_802384BC() {
                     continue;
                 }
 
-                if (prev->mArgA != curr->mArgA
-                    || prev->mArgB != curr->mArgB
-                    || prev->mArgC != curr->mArgC
-                    || prev->mArgD != curr->mArgD
-                ) {
-                    GXSetTevAlphaIn(
-                        (GXTevStageID)i,
-                        curr->mArgA,
-                        curr->mArgB,
-                        curr->mArgC,
-                        curr->mArgD
-                    );
+                if (prev->mArgA != curr->mArgA || prev->mArgB != curr->mArgB || prev->mArgC != curr->mArgC ||
+                    prev->mArgD != curr->mArgD) {
+                    GXSetTevAlphaIn((GXTevStageID)i, curr->mArgA, curr->mArgB, curr->mArgC, curr->mArgD);
                     prev->mArgA = curr->mArgA;
                     prev->mArgB = curr->mArgB;
                     prev->mArgC = curr->mArgC;
@@ -488,7 +487,7 @@ void GSrenderManager::fn_802384BC() {
 
             mState->mTevAlphaInFlags = 0;
         }
-        
+
         u32 tevColorOpFlags = mState->mTevColorOpFlags;
         if (tevColorOpFlags != 0) {
             GStevOp *curr = state->mCurr.mTevColorOps;
@@ -503,20 +502,9 @@ void GSrenderManager::fn_802384BC() {
                     curr->mClamp = GX_TRUE;
                 }
 
-                if (prev->mOp != curr->mOp
-                    || prev->mBias != curr->mBias
-                    || prev->mScale != curr->mScale
-                    || prev->mClamp != curr->mClamp
-                    || prev->mReg != curr->mReg
-                ) {
-                    GXSetTevColorOp(
-                        (GXTevStageID)i,
-                        curr->mOp,
-                        curr->mBias,
-                        curr->mScale,
-                        curr->mClamp,
-                        curr->mReg
-                    );
+                if (prev->mOp != curr->mOp || prev->mBias != curr->mBias || prev->mScale != curr->mScale ||
+                    prev->mClamp != curr->mClamp || prev->mReg != curr->mReg) {
+                    GXSetTevColorOp((GXTevStageID)i, curr->mOp, curr->mBias, curr->mScale, curr->mClamp, curr->mReg);
                     prev->mOp = curr->mOp;
                     prev->mBias = curr->mBias;
                     prev->mScale = curr->mScale;
@@ -527,7 +515,7 @@ void GSrenderManager::fn_802384BC() {
 
             mState->mTevColorOpFlags = 0;
         }
-        
+
         u32 tevAlphaOpFlags = mState->mTevAlphaOpFlags;
         if (tevAlphaOpFlags != 0) {
             GStevOp *curr = state->mCurr.mTevAlphaOps;
@@ -542,20 +530,9 @@ void GSrenderManager::fn_802384BC() {
                     curr->mClamp = GX_TRUE;
                 }
 
-                if (prev->mOp != curr->mOp
-                    || prev->mBias != curr->mBias
-                    || prev->mScale != curr->mScale
-                    || prev->mClamp != curr->mClamp
-                    || prev->mReg != curr->mReg
-                ) {
-                    GXSetTevAlphaOp(
-                        (GXTevStageID)i,
-                        curr->mOp,
-                        curr->mBias,
-                        curr->mScale,
-                        curr->mClamp,
-                        curr->mReg
-                    );
+                if (prev->mOp != curr->mOp || prev->mBias != curr->mBias || prev->mScale != curr->mScale ||
+                    prev->mClamp != curr->mClamp || prev->mReg != curr->mReg) {
+                    GXSetTevAlphaOp((GXTevStageID)i, curr->mOp, curr->mBias, curr->mScale, curr->mClamp, curr->mReg);
                     prev->mOp = curr->mOp;
                     prev->mBias = curr->mBias;
                     prev->mScale = curr->mScale;
@@ -578,8 +555,7 @@ void GSrenderManager::fn_802384BC() {
 
                 if (curr->mType == TEV_COLOR_U8) {
                     GXSetTevColor((GXTevRegID)i, curr->mColor);
-                }
-                else {
+                } else {
                     GXSetTevColorS10((GXTevRegID)i, curr->mColorS10);
                 }
             }
@@ -598,79 +574,53 @@ void GSrenderManager::fn_802384BC() {
                 }
 
                 switch (curr->mType) {
-                case TEV_DIRECT:
-                    if (prev->mType != curr->mType) {
-                        GXSetTevDirect((GXTevStageID)i);
-                    }
-                    break;
-                
-                case TEV_INDIRECT:
-                    GXSetTevIndirect(
-                        (GXTevStageID)i,
-                        curr->mIndStage,
-                        curr->indirect.mFormat,
-                        curr->indirect.mBiasSel,
-                        curr->indirect.mMatrixSel,
-                        curr->indirect.mWrapS,
-                        curr->indirect.mWrapT,
-                        curr->indirect.mAddPrev,
-                        curr->indirect.mUtcLod,
-                        curr->indirect.mAlphaSel
-                    );
-                    break;
-                
-                case TEV_IND_WARP:
-                    GXSetTevIndWarp(
-                        (GXTevStageID)i,
-                        curr->mIndStage,
-                        curr->warp.mSignedOffsets,
-                        curr->warp.mReplaceMode,
-                        curr->warp.mMatrixSel
-                    );
-                    break;
-                
-                case TEV_IND_TILE:
-                    GXSetTevIndTile(
-                        (GXTevStageID)i,
-                        curr->mIndStage,
-                        curr->tile.mTileSizeS,
-                        curr->tile.mTileSizeT,
-                        curr->tile.mTileSpacingS,
-                        curr->tile.mTileSpacingT,
-                        curr->tile.mFormat,
-                        curr->tile.mMatrixSel,
-                        curr->tile.mBiasSel,
-                        curr->tile.mAlphaSel
-                    );
-                    break;
-                
-                case TEV_IND_BUMP_ST:
-                    GXSetTevIndBumpST(
-                        (GXTevStageID)i,
-                        curr->mIndStage,
-                        curr->bump.mMatrixSel
-                    );
-                    break;
-                
-                case TEV_IND_BUMP_XYZ:
-                    GXSetTevIndBumpXYZ(
-                        (GXTevStageID)i,
-                        curr->mIndStage,
-                        curr->bump.mMatrixSel
-                    );
-                    break;
-                
-                case TEV_IND_REPEAT:
-                    if (prev->mType != curr->mType) {
-                        GXSetTevIndRepeat((GXTevStageID)i);
-                    }
-                    break;
-                
-                case TEV_NULL:
-                default:
-                    break;
+                    case TEV_DIRECT:
+                        if (prev->mType != curr->mType) {
+                            GXSetTevDirect((GXTevStageID)i);
+                        }
+                        break;
+
+                    case TEV_INDIRECT:
+                        GXSetTevIndirect(
+                            (GXTevStageID)i, curr->mIndStage, curr->indirect.mFormat, curr->indirect.mBiasSel,
+                            curr->indirect.mMatrixSel, curr->indirect.mWrapS, curr->indirect.mWrapT,
+                            curr->indirect.mAddPrev, curr->indirect.mUtcLod, curr->indirect.mAlphaSel
+                        );
+                        break;
+
+                    case TEV_IND_WARP:
+                        GXSetTevIndWarp(
+                            (GXTevStageID)i, curr->mIndStage, curr->warp.mSignedOffsets, curr->warp.mReplaceMode,
+                            curr->warp.mMatrixSel
+                        );
+                        break;
+
+                    case TEV_IND_TILE:
+                        GXSetTevIndTile(
+                            (GXTevStageID)i, curr->mIndStage, curr->tile.mTileSizeS, curr->tile.mTileSizeT,
+                            curr->tile.mTileSpacingS, curr->tile.mTileSpacingT, curr->tile.mFormat,
+                            curr->tile.mMatrixSel, curr->tile.mBiasSel, curr->tile.mAlphaSel
+                        );
+                        break;
+
+                    case TEV_IND_BUMP_ST:
+                        GXSetTevIndBumpST((GXTevStageID)i, curr->mIndStage, curr->bump.mMatrixSel);
+                        break;
+
+                    case TEV_IND_BUMP_XYZ:
+                        GXSetTevIndBumpXYZ((GXTevStageID)i, curr->mIndStage, curr->bump.mMatrixSel);
+                        break;
+
+                    case TEV_IND_REPEAT:
+                        if (prev->mType != curr->mType) {
+                            GXSetTevIndRepeat((GXTevStageID)i);
+                        }
+                        break;
+
+                    case TEV_NULL:
+                    default:       break;
                 }
-                
+
                 prev->mType = curr->mType;
             }
 
@@ -678,15 +628,9 @@ void GSrenderManager::fn_802384BC() {
         }
 
         if ((mState->_24 & (1 << 8)) != 0) {
-            if (state->mPrev.mZTexOp != state->mCurr.mZTexOp
-                || state->mPrev.mZTexFmt != state->mCurr.mZTexFmt
-                || state->mPrev.mZTexBias != state->mCurr.mZTexBias
-            ) {
-                GXSetZTexture(
-                    state->mCurr.mZTexOp,
-                    state->mCurr.mZTexFmt,
-                    state->mCurr.mZTexBias
-                );
+            if (state->mPrev.mZTexOp != state->mCurr.mZTexOp || state->mPrev.mZTexFmt != state->mCurr.mZTexFmt ||
+                state->mPrev.mZTexBias != state->mCurr.mZTexBias) {
+                GXSetZTexture(state->mCurr.mZTexOp, state->mCurr.mZTexFmt, state->mCurr.mZTexBias);
                 state->mPrev.mZTexOp = state->mCurr.mZTexOp;
                 state->mPrev.mZTexFmt = state->mCurr.mZTexFmt;
                 state->mPrev.mZTexBias = state->mCurr.mZTexBias;
@@ -715,14 +659,8 @@ void GSrenderManager::fn_802384BC() {
                     continue;
                 }
 
-                if (prev->mTexCoord != curr->mTexCoord
-                    || prev->mTexMap != curr->mTexMap
-                ) {
-                    GXSetIndTexOrder(
-                        (GXIndTexStageID)i,
-                        curr->mTexCoord,
-                        curr->mTexMap
-                    );
+                if (prev->mTexCoord != curr->mTexCoord || prev->mTexMap != curr->mTexMap) {
+                    GXSetIndTexOrder((GXIndTexStageID)i, curr->mTexCoord, curr->mTexMap);
                     prev->mTexCoord = curr->mTexCoord;
                     prev->mTexMap = curr->mTexMap;
                 }
@@ -741,14 +679,8 @@ void GSrenderManager::fn_802384BC() {
                     continue;
                 }
 
-                if (prev->mScaleS != curr->mScaleS
-                    || prev->mScaleT != curr->mScaleT
-                ) {
-                    GXSetIndTexCoordScale(
-                        (GXIndTexStageID)i,
-                        curr->mScaleS,
-                        curr->mScaleT
-                    );
+                if (prev->mScaleS != curr->mScaleS || prev->mScaleT != curr->mScaleT) {
+                    GXSetIndTexCoordScale((GXIndTexStageID)i, curr->mScaleS, curr->mScaleT);
                     prev->mScaleS = curr->mScaleS;
                     prev->mScaleT = curr->mScaleT;
                 }
@@ -834,14 +766,8 @@ void GSrenderManager::fn_802384BC() {
                     continue;
                 }
 
-                if (prev->mRasSel != curr->mRasSel
-                    || prev->mTexSel != curr->mTexSel
-                ) {
-                    GXSetTevSwapMode(
-                        (GXTevStageID)i,
-                        curr->mRasSel,
-                        curr->mTexSel
-                    );
+                if (prev->mRasSel != curr->mRasSel || prev->mTexSel != curr->mTexSel) {
+                    GXSetTevSwapMode((GXTevStageID)i, curr->mRasSel, curr->mTexSel);
                     prev->mRasSel = curr->mRasSel;
                     prev->mTexSel = curr->mTexSel;
                 }
@@ -849,7 +775,7 @@ void GSrenderManager::fn_802384BC() {
 
             mState->mTevSwapModeFlags = 0;
         }
-        
+
         u32 tevSwapModeTableFlags = mState->mTevSwapModeTableFlags;
         if (tevSwapModeTableFlags != 0) {
             GStevSwapModeTable *curr = state->mCurr.mTevSwapModeTables;
@@ -860,18 +786,9 @@ void GSrenderManager::fn_802384BC() {
                     continue;
                 }
 
-                if (prev->mRed != curr->mRed
-                    || prev->mGreen != curr->mGreen
-                    || prev->mBlue != curr->mBlue
-                    || prev->mAlpha != curr->mAlpha
-                ) {
-                    GXSetTevSwapModeTable(
-                        (GXTevSwapSel)i,
-                        curr->mRed,
-                        curr->mGreen,
-                        curr->mBlue,
-                        curr->mAlpha
-                    );
+                if (prev->mRed != curr->mRed || prev->mGreen != curr->mGreen || prev->mBlue != curr->mBlue ||
+                    prev->mAlpha != curr->mAlpha) {
+                    GXSetTevSwapModeTable((GXTevSwapSel)i, curr->mRed, curr->mGreen, curr->mBlue, curr->mAlpha);
                     prev->mRed = curr->mRed;
                     prev->mGreen = curr->mGreen;
                     prev->mBlue = curr->mBlue;
@@ -884,23 +801,20 @@ void GSrenderManager::fn_802384BC() {
     }
 
     if ((mState->_0 & (1 << 6)) != 0) {
-        bool zCompEnable = (state->mCurr.mZCompareEnable != GX_FALSE);
-        GXCompare zCompFunc = state->mCurr.mZCompareFunc;
+        zCompEnable = (state->mCurr.mZCompareEnable != GX_FALSE);
+        zCompFunc = state->mCurr.mZCompareFunc;
         if (state->mCurr.mZUpdateEnable == GX_TRUE && !zCompEnable) {
             zCompEnable = true;
             zCompFunc = GX_ALWAYS;
         }
 
         if ((mState->_64 & (1 << 0)) != 0) {
-            if (state->mPrev.mBlendMode != state->mCurr.mBlendMode
-                || state->mPrev.mBlendSrcFactor != state->mCurr.mBlendSrcFactor
-                || state->mPrev.mBlendDstFactor != state->mCurr.mBlendDstFactor
-                || state->mPrev.mBlendOp != state->mCurr.mBlendOp
-            ) {
+            if (state->mPrev.mBlendMode != state->mCurr.mBlendMode ||
+                state->mPrev.mBlendSrcFactor != state->mCurr.mBlendSrcFactor ||
+                state->mPrev.mBlendDstFactor != state->mCurr.mBlendDstFactor ||
+                state->mPrev.mBlendOp != state->mCurr.mBlendOp) {
                 GXSetBlendMode(
-                    state->mCurr.mBlendMode,
-                    state->mCurr.mBlendSrcFactor,
-                    state->mCurr.mBlendDstFactor,
+                    state->mCurr.mBlendMode, state->mCurr.mBlendSrcFactor, state->mCurr.mBlendDstFactor,
                     state->mCurr.mBlendOp
                 );
                 state->mPrev.mBlendMode = state->mCurr.mBlendMode;
@@ -911,9 +825,8 @@ void GSrenderManager::fn_802384BC() {
         }
 
         if ((mState->_64 & (1 << 1)) != 0) {
-            if (state->mPrev.mDstAlphaEnable != state->mCurr.mDstAlphaEnable
-                || state->mPrev.mDstAlpha != state->mCurr.mDstAlpha
-            ) {
+            if (state->mPrev.mDstAlphaEnable != state->mCurr.mDstAlphaEnable ||
+                state->mPrev.mDstAlpha != state->mCurr.mDstAlpha) {
                 GXSetDstAlpha(state->mCurr.mDstAlphaEnable, state->mCurr.mDstAlpha);
                 state->mPrev.mDstAlphaEnable = state->mCurr.mDstAlphaEnable;
                 state->mPrev.mDstAlpha = state->mCurr.mDstAlpha;
@@ -933,10 +846,8 @@ void GSrenderManager::fn_802384BC() {
         }
 
         if ((mState->_64 & ((1 << 2) | (1 << 3))) != 0) {
-            if (state->mPrev.mZCompareEnable != zCompEnable
-                || state->mPrev.mZCompareFunc != zCompFunc
-                || state->mPrev.mZUpdateEnable != state->mCurr.mZUpdateEnable
-            ) {
+            if (state->mPrev.mZCompareEnable != zCompEnable || state->mPrev.mZCompareFunc != zCompFunc ||
+                state->mPrev.mZUpdateEnable != state->mCurr.mZUpdateEnable) {
                 GXSetZMode(zCompEnable, zCompFunc, state->mCurr.mZUpdateEnable);
                 state->mPrev.mZCompareEnable = zCompEnable;
                 state->mPrev.mZCompareFunc = zCompFunc;
@@ -945,17 +856,12 @@ void GSrenderManager::fn_802384BC() {
         }
 
         if ((mState->_64 & (1 << 4)) != 0) {
-            if (state->mPrev.mAlphaComp0 != state->mCurr.mAlphaComp0
-                || state->mPrev.mAlphaRef0 != state->mCurr.mAlphaRef0
-                || state->mPrev.mAlphaOp != state->mCurr.mAlphaOp
-                || state->mPrev.mAlphaComp1 != state->mCurr.mAlphaComp1
-                || state->mPrev.mAlphaRef1 != state->mCurr.mAlphaRef1
-            ) {
+            if (state->mPrev.mAlphaComp0 != state->mCurr.mAlphaComp0 ||
+                state->mPrev.mAlphaRef0 != state->mCurr.mAlphaRef0 || state->mPrev.mAlphaOp != state->mCurr.mAlphaOp ||
+                state->mPrev.mAlphaComp1 != state->mCurr.mAlphaComp1 ||
+                state->mPrev.mAlphaRef1 != state->mCurr.mAlphaRef1) {
                 GXSetAlphaCompare(
-                    state->mCurr.mAlphaComp0,
-                    state->mCurr.mAlphaRef0,
-                    state->mCurr.mAlphaOp,
-                    state->mCurr.mAlphaComp1,
+                    state->mCurr.mAlphaComp0, state->mCurr.mAlphaRef0, state->mCurr.mAlphaOp, state->mCurr.mAlphaComp1,
                     state->mCurr.mAlphaRef1
                 );
                 state->mPrev.mAlphaComp0 = state->mCurr.mAlphaComp0;
@@ -980,37 +886,29 @@ void GSrenderManager::fn_802384BC() {
 
         if ((mState->_64 & (1 << 6)) != 0) {
             GXFogType fogType;
-            
+
             if (state->mCurr.mFogEnable) {
                 fogType = state->mCurr.mFogType;
 
                 if (fogType == GX_FOG_NONE) {
                     state->mCurr.mFogEnable = false;
-                }
-                else if (state->mCurr.mProjectionType == GX_ORTHOGRAPHIC) {
+                } else if (state->mCurr.mProjectionType == GX_ORTHOGRAPHIC) {
                     fogType = (GXFogType)(fogType + (GX_FOG_ORTHO_LIN - GX_FOG_PERSP_LIN));
                 }
-            }
-            else {
+            } else {
                 fogType = GX_FOG_NONE;
             }
-            
-            if (state->mPrev.mFogType != fogType
-                || fogType != GX_FOG_NONE
-                && (state->mPrev.mFogStartZ != state->mCurr.mFogStartZ
-                    || state->mPrev.mFogEndZ != state->mCurr.mFogEndZ
-                    || state->mPrev.mFogNearZ != state->mCurr.mFogNearZ
-                    || state->mPrev.mFogFarZ != state->mCurr.mFogFarZ
-                    // TODO revisit this casting (GSColor?)
-                    || *(s32 *)(&state->mPrev.mFogColor) != *(s32 *)(&state->mCurr.mFogColor))
-            ) {
+
+            if (state->mPrev.mFogType != fogType ||
+                fogType != GX_FOG_NONE && (state->mPrev.mFogStartZ != state->mCurr.mFogStartZ ||
+                                           state->mPrev.mFogEndZ != state->mCurr.mFogEndZ ||
+                                           state->mPrev.mFogNearZ != state->mCurr.mFogNearZ ||
+                                           state->mPrev.mFogFarZ != state->mCurr.mFogFarZ
+                                           // TODO revisit this casting (GSColor?)
+                                           || *(s32 *)(&state->mPrev.mFogColor) != *(s32 *)(&state->mCurr.mFogColor))) {
                 GXSetFog(
-                    fogType,
-                    state->mCurr.mFogStartZ,
-                    state->mCurr.mFogEndZ,
-                    state->mCurr.mFogNearZ,
-                    state->mCurr.mFogFarZ,
-                    state->mCurr.mFogColor
+                    fogType, state->mCurr.mFogStartZ, state->mCurr.mFogEndZ, state->mCurr.mFogNearZ,
+                    state->mCurr.mFogFarZ, state->mCurr.mFogColor
                 );
                 state->mPrev.mFogType = fogType;
                 state->mPrev.mFogStartZ = state->mCurr.mFogStartZ;
@@ -1022,8 +920,7 @@ void GSrenderManager::fn_802384BC() {
                 state->mPrev.mFogColor.b = state->mCurr.mFogColor.b;
                 state->mPrev.mFogColor.a = state->mCurr.mFogColor.a;
             }
-        }
-        else if ((mState->_64 & (1 << 7)) != 0) {
+        } else if ((mState->_64 & (1 << 7)) != 0) {
             // TODO revisit this casting (GSColor?)
             if (*(s32 *)(&state->mPrev.mFogColor) != *(s32 *)(&state->mCurr.mFogColor)) {
                 GXSetFogColor(state->mCurr.mFogColor);
@@ -1043,19 +940,18 @@ void GSrenderManager::fn_802384BC() {
 
             if (state->mCurr.mProjectionType == GX_PERSPECTIVE) {
                 sProjectionMatrix[0][2] = state->mCurr.mProjectionParams[2];
-                sProjectionMatrix[0][3] = 0f;
+                sProjectionMatrix[0][3] = 0.f;
                 sProjectionMatrix[1][2] = state->mCurr.mProjectionParams[4];
-                sProjectionMatrix[1][3] = 0f;
-                sProjectionMatrix[3][2] = -1f;
-                sProjectionMatrix[3][3] = 0f;
-            }
-            else {
-                sProjectionMatrix[0][2] = 0f;
+                sProjectionMatrix[1][3] = 0.f;
+                sProjectionMatrix[3][2] = -1.f;
+                sProjectionMatrix[3][3] = 0.f;
+            } else {
+                sProjectionMatrix[0][2] = 0.f;
                 sProjectionMatrix[0][3] = state->mCurr.mProjectionParams[2];
-                sProjectionMatrix[1][2] = 0f;
+                sProjectionMatrix[1][2] = 0.f;
                 sProjectionMatrix[1][3] = state->mCurr.mProjectionParams[4];
-                sProjectionMatrix[3][2] = 0f;
-                sProjectionMatrix[3][3] = 1f;
+                sProjectionMatrix[3][2] = 0.f;
+                sProjectionMatrix[3][3] = 1.f;
             }
 
             u16 width;
@@ -1065,31 +961,69 @@ void GSrenderManager::fn_802384BC() {
             doFogRangeAdj = (state->mCurr.mFogRangeAdjEnable != GX_FALSE);
         }
 
-        if (doFogRangeAdj || (mState->_64 & (1 << 9)) != 0) {
-            if (state->mPrev.mFogRangeAdjEnable != state->mCurr.mFogRangeAdjEnable
-                || state->mPrev.mFogRangeAdjCenter != state->mCurr.mFogRangeAdjCenter
-            ) {
-                u16 center;
-                if (mState->mCurr.mFogRangeAdjCenter == 0xffff) {
-                    f32 w = 0.5f * mViewportWidth.fval + 0.5f;
-                    OSf32tou16(&w, &center);
-                }
-                else {
-                    center = state->mCurr.mFogRangeAdjCenter;
-                }
-
-                GXSetFogRangeAdj(
-                    state->mCurr.mFogRangeAdjEnable,
-                    center,
-                    &state->mCurr.mFogAdjTable
-                );
-                state->mPrev.mFogRangeAdjCenter = center;
-                state->mPrev.mFogRangeAdjEnable = state->mCurr.mFogRangeAdjEnable;
+        if (doFogRangeAdj ||
+            (mState->_64 & (1 << 9)) && (state->mPrev.mFogRangeAdjEnable != state->mCurr.mFogRangeAdjEnable ||
+                                         state->mPrev.mFogRangeAdjCenter != state->mCurr.mFogRangeAdjCenter)) {
+            u16 center;
+            if (mState->mCurr.mFogRangeAdjCenter == 0xffff) {
+                f32 w = 0.5f * mViewportWidth.fval + 0.5f;
+                OSf32tou16(&w, &center);
+            } else {
+                center = state->mCurr.mFogRangeAdjCenter;
             }
+
+            GXSetFogRangeAdj(state->mCurr.mFogRangeAdjEnable, center, &state->mCurr.mFogAdjTable);
+            state->mPrev.mFogRangeAdjCenter = center;
+            state->mPrev.mFogRangeAdjEnable = state->mCurr.mFogRangeAdjEnable;
         }
 
         mState->_64 = 0;
     }
 
     mState->_0 = 0;
+}
+
+void GSrenderManager::sync() {
+    GXGetFifoPtrs(mGraphicsFifo.mFifoObj, &mGraphicsFifo.mReadPtr, &mGraphicsFifo.mWritePtr);
+    GXGetGPStatus(
+        &mGraphicsFifo.mOverhi, &mGraphicsFifo.mUnderlow, &mGraphicsFifo.mReadIdle, &mGraphicsFifo.mCmdIdle,
+        &mGraphicsFifo.mBrkpt
+    );
+
+    _16fc = false;
+
+    if (mFlags & (1 << 4)) {
+        mFlags &= ~(1 << 4);
+    }
+
+    if (mFlags & (1 << 2)) {
+        GXPixModeSync();
+        mFlags &= ~(1 << 2);
+    }
+
+    if (mFlags & (1 << 1)) {
+        GXInvalidateTexAll();
+        mFlags &= ~(1 << 1);
+    }
+
+    if (mFlags & (1 << 3)) {
+        GXTexModeSync();
+        mFlags &= ~(1 << 3);
+    }
+
+    loadLights();
+    syncRenderSettings();
+    loadTextures();
+
+    if (mVertexFormat) {
+        setVertexFormat(mVertexFormat);
+
+        if (!fn_8023CAA8(mVertexFormat, 0)) {
+            loadModelViewMatrix();
+        }
+    } else {
+        loadModelViewMatrix();
+    }
+
+    GXFlush();
 }

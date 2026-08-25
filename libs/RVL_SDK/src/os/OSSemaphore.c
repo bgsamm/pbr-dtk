@@ -1,7 +1,8 @@
-#include "revolution/os/OSInterrupt.h"
 #include <revolution/os.h>
+#include <revolution/os/OSInterrupt.h>
 
-void OSInitSemaphore(OSSemaphore* sem, s32 count) {
+
+void OSInitSemaphore(OSSemaphore *sem, s32 count) {
     BOOL enabled = OSDisableInterrupts();
 
     OSInitThreadQueue(&sem->queue);
@@ -10,11 +11,11 @@ void OSInitSemaphore(OSSemaphore* sem, s32 count) {
     OSRestoreInterrupts(enabled);
 }
 
-s32 OSWaitSemaphore(OSSemaphore* sem) {
+s32 OSWaitSemaphore(OSSemaphore *sem) {
     BOOL enabled = OSDisableInterrupts();
     s32 count;
 
-    while ((count = ((volatile OSSemaphore*)sem)->count) <= 0) {
+    while ((count = ((volatile OSSemaphore *)sem)->count) <= 0) {
         OSSleepThread(&sem->queue);
     }
     sem->count--;
@@ -24,7 +25,7 @@ s32 OSWaitSemaphore(OSSemaphore* sem) {
     return count;
 }
 
-s32 OSTryWaitSemaphore(OSSemaphore* sem) {
+s32 OSTryWaitSemaphore(OSSemaphore *sem) {
     BOOL enabled = OSDisableInterrupts();
 
     s32 count = sem->count;
@@ -37,7 +38,7 @@ s32 OSTryWaitSemaphore(OSSemaphore* sem) {
     return count;
 }
 
-s32 OSSignalSemaphore(OSSemaphore* sem) {
+s32 OSSignalSemaphore(OSSemaphore *sem) {
     BOOL enabled = OSDisableInterrupts();
     s32 count;
 
