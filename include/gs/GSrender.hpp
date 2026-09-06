@@ -18,6 +18,7 @@ typedef void (*UnkFunc1)(void *);
 typedef void (*GSrenderFunc2)();
 typedef void (*GSrenderFunc3)(f32);
 
+// TODO(samm) Move elsewhere
 struct GSColor {
     union {
         struct {
@@ -84,12 +85,25 @@ struct GSgraphicsFifo {
 };
 
 struct GStexture {
-    u8 _0[0x7];
-    /* 0x7 */ u8 mFlags;
-    /* 0x8 */ u8 _pad_8[64];
-    // Used to determine whether to load the TlutObj
-    /* 0x48 */ u32 _48;
-    /* 0x4c */ u8 _pad_4c[8];
+    /* 0x00 */ u16 mWidth;
+    /* 0x02 */ u16 mHeight;
+    /* 0x04 */ u8 mBitsPerPixel;
+    /* 0x05 */ u8 mMipmapCount;
+    /* 0x06 */ u8 _pad_06[1];
+    /* 0x07 */ u8 mFlags;
+    /* 0x08 */ u32 mImageFormat;
+    /* 0x0c */ u32 mPaletteFormat;
+    /* 0x10 */ u32 mWrapS;
+    /* 0x14 */ u32 mWrapT;
+    /* 0x18 */ GXTexFilter mMinFilter;
+    /* 0x1c */ GXTexFilter mMagFilter;
+    /* 0x20 */ u32 mFilterFlags;
+    /* 0x24 */ u32 _24;
+    /* 0x28 */ u32 mImageData;
+    /* 0x2c */ u8 _pad_2c[28];
+    /* 0x48 */ u32 mTlutData;
+    /* 0x4c */ u32 mDataSize;
+    /* 0x50 */ u32 _50;
     /* 0x54 */ GXTexObj mTexObj;
     /* 0x74 */ GXTlutObj mTlutObj;
 };
@@ -569,16 +583,18 @@ public:
     }
 };
 
+// TODO(samm) Something other than namespace?
 namespace GSrender {
-// TODO can this work as a class method?
-void fn_80231374(void *param1);
+// TODO(samm) Can this work as a class method?
+void fn_80231374(void *arg0);
 
 void fn_8023234C();
 void fn_80232394();
 
-GSvertexFormat *fn_8023CF1C(u32 param1);
-GStexture *fn_8023D6CC(void *param1);
-void fn_8023E2D0(void *param1);
-u16 fn_8023E540(void *param1);
-u16 fn_8023E548(void *param1);
+GSvertexFormat *fn_8023CF1C(u32 arg0);
+GStexture *fn_8023D6CC(void *arg0);
+void fn_8023E2D0(void *arg0);
+void fn_8023E3C8(GStexture *texture, GXTexFilter minFilter, GXTexFilter magFilter, u32 flags);
+u16 fn_8023E540(void *arg0);
+u16 fn_8023E548(void *arg0);
 }; // namespace GSrender

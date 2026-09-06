@@ -1,9 +1,12 @@
 #include "gs/render/GSrenderLight.hpp"
 
 #include "common.hpp"
-#include "version.hpp"
+
 #include <revolution/gx.h>
 #include <revolution/mtx.h>
+
+#include "version.hpp"
+
 
 GSlight::GSlight() {
     mColor.r = 255;
@@ -129,18 +132,18 @@ void GSlight::load(u8 index, GSlightStruct1 *param2) {
         MtxPtr mtx1 = param2->_1d4;
         MtxPtr mtx2 = param2->_234;
         if ((_0 & (1 << 1)) != 0) {
-            PSMTXMultVec(mtx2, &dir, &dir);
-            f32 sqMag = PSVECSquareMag(&dir);
+            MTXMultVec(mtx2, &dir, &dir);
+            f32 sqMag = VECSquareMag(&dir);
             if (sqMag > EPSILON) {
                 f32 mag = safe_sqrt(sqMag);
-                PSVECScale(&dir, &dir, 1.f / ensure_nonzero(mag));
+                VECScale(&dir, &dir, 1.f / ensure_nonzero(mag));
             }
             _1 |= (1 << 2);
             _1 &= ~(1 << 6);
         }
 
         if ((_0 & (1 << 0)) != 0) {
-            PSMTXMultVec(mtx1, &pos, &pos);
+            MTXMultVec(mtx1, &pos, &pos);
             _1 |= (1 << 1);
         }
     }

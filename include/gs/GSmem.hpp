@@ -1,9 +1,16 @@
 #pragma once
 
-#include <revolution/types.h>
 #include <revolution/mem.h>
+#include <revolution/types.h>
 
 #define MAX_HEAPS 16
+
+// TODO(samm) Name the heaps
+extern MEMHeapHandle gUnkHeap1;
+extern MEMHeapHandle gUnkHeap2;
+extern MEMHeapHandle gSoundHeap;
+extern MEMHeapHandle gUnkHeap4;
+extern MEMHeapHandle gGameHeap;
 
 struct HeapSlot {
     /* 0x0 */ bool isUsed;
@@ -14,11 +21,11 @@ struct HeapSlot {
 struct HeapVisitorContext {
     /* 0x0 */ MEMHeapHandle heap;
     /* 0x4 */ u16 groupID;
-    // TODO name this field
+    // TODO(samm) name this field
     /* 0x8 */ u32 _8;
 };
 
-// TODO improve function names
+// TODO(samm) improve function names
 class GSmem {
 public:
     static HeapSlot *getFreeHeapSlot() NO_INLINE;

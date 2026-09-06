@@ -1,13 +1,16 @@
-#include "version.hpp"
+#include "gs/GSfsys.hpp"
+
+#include "gs/GSfile.hpp"
+#include "gs/GSmem.hpp"
+#include "gs/GStask.hpp"
+#include "gs/GSthread.hpp"
 
 #include <cstdio>
 #include <cstring>
 #include <revolution/os.h>
 
-#include "gs/GSfile.hpp"
-#include "gs/GSfsys.hpp"
-#include "gs/GStask.hpp"
-#include "gs/GSthread.hpp"
+#include "version.hpp"
+
 
 extern void *fn_8025999C(u32, u32);
 extern void fn_802599D0(u32, u32);
@@ -84,8 +87,7 @@ GSfsysHandle *GSfsys::getAssociatedFsysHandle(GSfileHandle *fileHandle) {
             case FSYS_STATE_CRITICAL_ERROR:
             case FSYS_STATE_FREE:
             case FSYS_STATE_INVALID:
-            case FSYS_STATE_FINISHED:
-                continue;
+            case FSYS_STATE_FINISHED:       continue;
         }
 
         if (fsysHandle->mFileHandle == fileHandle) {
@@ -116,11 +118,9 @@ GSfsysHandle *GSfsys::getFsysHandleById(u32 fsysId, bool activeOnly) {
             switch (sFsysHandlePool[i].mState) {
                 case FSYS_STATE_CRITICAL_ERROR:
                 case FSYS_STATE_FREE:
-                case FSYS_STATE_FINISHED:
-                    continue;
+                case FSYS_STATE_FINISHED:       continue;
             }
-        }
-        else if (sFsysHandlePool[i].mState == FSYS_STATE_FREE) {
+        } else if (sFsysHandlePool[i].mState == FSYS_STATE_FREE) {
             continue;
         }
 
@@ -188,8 +188,7 @@ void GSfsys::appendNodeToList(GSfsysNode *node, GSfsysNode **list) {
 
     if (*list == NULL) {
         *list = node;
-    }
-    else {
+    } else {
         GSfsysNode *end = *list;
         while (end->mNext != NULL) {
             end = end->mNext;
@@ -325,25 +324,17 @@ bool GSfsys::openFsys(GSfsysHandle *fsysHandle) {
 
     if (fsysHandle->mTocEntry->mSize == 0) {
         fsysHandle->setNextState(FSYS_STATE_READ_SIZE);
-    }
-    else {
+    } else {
         fsysHandle->setNextState(FSYS_STATE_BEGIN_REQUEST);
     }
     return true;
 }
 
 bool GSfsys::closeFsys(GSfsysHandle *fsysHandle, bool skipCallback) {
-    if (!skipCallback
-        && fsysHandle->mUserCallback != NULL
-        && fsysHandle->mRequestType != FSYS_REQUEST_STREAM
-    ) {
-        fsysHandle->mUserCallback(
-            fsysHandle->mRequestType,
-            fsysHandle->_34,
-            fsysHandle->_38
-        );
+    if (!skipCallback && fsysHandle->mUserCallback != NULL && fsysHandle->mRequestType != FSYS_REQUEST_STREAM) {
+        fsysHandle->mUserCallback(fsysHandle->mRequestType, fsysHandle->_34, fsysHandle->_38);
     }
-    
+
     BOOL intEnabled = OSDisableInterrupts();
     setFsysCacheEntriesPinned(fsysHandle->mFsysId, false);
     freeStreamedFsysBuffers(fsysHandle);
@@ -361,8 +352,7 @@ u32 GSfsys::countActiveRequestsOfType(GSfsysRequestType requestType) {
             case FSYS_STATE_CRITICAL_ERROR:
             case FSYS_STATE_FREE:
             case FSYS_STATE_INVALID:
-            case FSYS_STATE_FINISHED:
-                continue;
+            case FSYS_STATE_FINISHED:       continue;
         }
 
         if (requestType == sFsysHandlePool[i].mRequestType) {
@@ -377,7 +367,7 @@ bool GSfsys::doFsysEntryState(GSfsysHandle *fsysHandle, u32 entryIndex) {
     if (fsysEntry == NULL) {
         return false;
     }
-    
+
     BOOL intEnabled = OSDisableInterrupts();
     if (fsysEntry->mNextState != FSYS_ENTRY_STATE_NULL) {
         fsysEntry->mState = fsysEntry->mNextState;
@@ -388,51 +378,47 @@ bool GSfsys::doFsysEntryState(GSfsysHandle *fsysHandle, u32 entryIndex) {
     bool finished;
     if (!(fsysEntry->mFlags & FSYS_ENTRY_FLAG_FINISHED)) {
         switch (fsysEntry->mState) {
-            case FSYS_ENTRY_STATE_READ_ERROR:
-                readNextFsysEntryChunk(fsysHandle, fsysEntry);
-                break;
-            
+            case FSYS_ENTRY_STATE_READ_ERROR: readNextFsysEntryChunk(fsysHandle, fsysEntry); break;
+
             case FSYS_ENTRY_STATE_QUEUE_ERROR:
                 if (queueFsysEntryForCopying(fsysHandle, fsysEntry) == true) {
                     readNextFsysEntryChunk(fsysHandle, fsysEntry);
                 }
                 break;
-            
+
             case FSYS_ENTRY_STATE_YIELD:
                 if (fsysHandle->mCancelRequested == true) {
                     setFsysNextState(fsysHandle, FSYS_STATE_READ_COMPLETE);
                     setFsysEntryNextState(fsysEntry, FSYS_ENTRY_STATE_READY);
-                }
-                else if (countActiveRequestsOfType(FSYS_REQUEST_LOAD) + countActiveRequestsOfType(FSYS_REQUEST_CACHE) == 0) {
+                } else if (
+                    countActiveRequestsOfType(FSYS_REQUEST_LOAD) + countActiveRequestsOfType(FSYS_REQUEST_CACHE) == 0
+                ) {
                     if (fsysEntry->mRingBufFill <= getHalfStreamBufferSize()) {
                         readNextFsysEntryChunk(fsysHandle, fsysEntry);
                     }
-                }
-                else {
+                } else {
                     if (fsysEntry->mRingBufFill <= getStreamChunkSize()) {
                         readNextFsysEntryChunk(fsysHandle, fsysEntry);
                     }
                 }
                 break;
-            
+
             case FSYS_ENTRY_STATE_STANDBY:
                 if (fsysHandle->mCancelRequested == true) {
                     setFsysNextState(fsysHandle, FSYS_STATE_READ_COMPLETE);
                     setFsysEntryNextState(fsysEntry, FSYS_ENTRY_STATE_READY);
                 }
                 break;
-            
+
             // NOTE these cases required explicitly to match
             case FSYS_ENTRY_STATE_BEGIN:
-            case FSYS_ENTRY_STATE_READY:
-                break;
+            case FSYS_ENTRY_STATE_READY: break;
         }
         finished = false;
-    }
-    else {
+    } else {
         finished = true;
     }
-    
+
     intEnabled = OSDisableInterrupts();
     if (fsysEntry->mNextState != FSYS_ENTRY_STATE_NULL) {
         fsysEntry->mState = fsysEntry->mNextState;
@@ -491,13 +477,11 @@ bool GSfsys::checkAllFsysEntriesReady(GSfsysHandle *fsysHandle) {
                 }
                 nextId++;
             }
-        }
-        else {
+        } else {
             index = getFsysEntryIndex(fsysHandle, fsysHandle->mNextFileId);
             return doFsysEntryState(fsysHandle, index);
         }
-    }
-    else {
+    } else {
         for (u32 i = 0; i < fsys->mFileCount; i++) {
             if (!doFsysEntryState(fsysHandle, i)) {
                 finished = false;
@@ -542,7 +526,7 @@ void GSfsys::readFsysSizeCallback(s32 result, GSfileHandle *fileHandle) {
         }
         return;
     }
-    
+
     fsysHandle->mTocEntry->mSize = sCurrentFsysHeader->mSize;
     sCurrentFsysHeader = NULL;
     setFsysNextState(fsysHandle, FSYS_STATE_BEGIN_REQUEST);
@@ -564,11 +548,7 @@ void GSfsys::doFsysState(GSfsysHandle *fsysHandle) {
                 setFsysNextState(fsysHandle, FSYS_STATE_READING);
 
                 bool success = GSfile::readFileAsync(
-                    fsysHandle->mFileHandle,
-                    sCurrentFsysHeader,
-                    sizeof(GSfsysHeader),
-                    0,
-                    readFsysSizeCallback
+                    fsysHandle->mFileHandle, sCurrentFsysHeader, sizeof(GSfsysHeader), 0, readFsysSizeCallback
                 );
                 if (!success) {
                     sCurrentFsysHeader = NULL;
@@ -576,41 +556,37 @@ void GSfsys::doFsysState(GSfsysHandle *fsysHandle) {
                 }
             }
             break;
-        
+
         case FSYS_STATE_BEGIN_REQUEST:
             switch (fsysHandle->mRequestType) {
                 case FSYS_REQUEST_LOAD:
                     setFsysNextState(fsysHandle, FSYS_STATE_6);
                     readFsysData(fsysHandle);
                     break;
-                
+
                 case FSYS_REQUEST_STREAM:
                     setFsysNextState(fsysHandle, FSYS_STATE_9);
                     readFsysData(fsysHandle);
                     break;
-                
+
                 case FSYS_REQUEST_CACHE:
                     setFsysNextState(fsysHandle, FSYS_STATE_7);
                     readFsysData(fsysHandle);
                     break;
-                
+
                 case FSYS_REQUEST_SEEK_START:
                     setFsysNextState(fsysHandle, FSYS_STATE_SEEK_TO_START);
                     seekFsysToStart(fsysHandle);
                     break;
-                
-                default:
-                    setFsysNextState(fsysHandle, FSYS_STATE_ERROR_INVALIDSTATE);
-                    break;
+
+                default: setFsysNextState(fsysHandle, FSYS_STATE_ERROR_INVALIDSTATE); break;
             }
             break;
-        
+
         case FSYS_STATE_6:
         case FSYS_STATE_7:
-        case FSYS_STATE_9:
-            checkAllFsysEntriesReady(fsysHandle);
-            break;
-        
+        case FSYS_STATE_9: checkAllFsysEntriesReady(fsysHandle); break;
+
         case FSYS_STATE_READ_COMPLETE:
             switch (fsysHandle->mRequestType) {
                 case FSYS_REQUEST_LOAD:
@@ -619,17 +595,13 @@ void GSfsys::doFsysState(GSfsysHandle *fsysHandle) {
                     }
                     // fallthrough
                 case FSYS_REQUEST_CACHE:
-                case FSYS_REQUEST_STREAM:
-                    setFsysNextState(fsysHandle, FSYS_STATE_REQUEST_COMPLETE);
-                    break;
-                
+                case FSYS_REQUEST_STREAM:     setFsysNextState(fsysHandle, FSYS_STATE_REQUEST_COMPLETE); break;
+
                 case FSYS_REQUEST_SEEK_START:
-                default:
-                    setFsysNextState(fsysHandle, FSYS_STATE_ERROR_INVALIDSTATE);
-                    break;
+                default:                      setFsysNextState(fsysHandle, FSYS_STATE_ERROR_INVALIDSTATE); break;
             }
             break;
-        
+
         case FSYS_STATE_ERROR_INVALIDSTATE:
         case FSYS_STATE_ERROR_FILEREAD:
         case FSYS_STATE_NEG_995:
@@ -644,12 +616,12 @@ void GSfsys::doFsysState(GSfsysHandle *fsysHandle) {
             OSReport("_fsysForegroundTask:ERROR_FILEOPEN:%d\n", fsysHandle->mFsysId);
             openFsys(fsysHandle);
             break;
-        
+
         case FSYS_STATE_ERROR_FILECLOSE:
             OSReport("_fsysForegroundTask:ERROR_FILECLOSE:%d\n", fsysHandle->mFsysId);
             setFsysNextState(fsysHandle, FSYS_STATE_CRITICAL_ERROR);
             break;
-        
+
         case FSYS_STATE_REQUEST_COMPLETE:
             if (!closeFsys(fsysHandle, false)) {
                 setFsysNextState(fsysHandle, FSYS_STATE_ERROR_FILECLOSE);
@@ -663,12 +635,11 @@ void GSfsys::doFsysState(GSfsysHandle *fsysHandle) {
 
             setFsysNextState(fsysHandle, FSYS_STATE_FINISHED);
             break;
-        
+
         // NOTE these cases required explicitly to match
         case FSYS_STATE_FREE:
         case FSYS_STATE_INVALID:
-        case FSYS_STATE_FINISHED:
-            break;
+        case FSYS_STATE_FINISHED: break;
     }
 
     intEnabled = OSDisableInterrupts();
@@ -693,21 +664,17 @@ void GSfsys::foregroundTaskCallback(u32 taskId, void *userParam) {
             GSfsysEntry *prevEntry;
             if (index != 0) {
                 prevEntry = getFsysEntry(fsysHandle, index - 1);
-            }
-            else {
+            } else {
                 prevEntry = NULL;
             }
 
-            if (getFsysEntryIndex(fsysHandle, fsysHandle->mNextFileId) != 0xffff
-                || prevEntry == NULL
-                || (prevEntry->mFlags & FSYS_ENTRY_FLAG_FINISHED)
-            ) {
+            if (getFsysEntryIndex(fsysHandle, fsysHandle->mNextFileId) != 0xffff || prevEntry == NULL ||
+                (prevEntry->mFlags & FSYS_ENTRY_FLAG_FINISHED)) {
                 GSfsysFileTypeHandler *handler = getHandlerForFileType(fsysEntry->mFileType);
                 if (!fsysHandle->mCancelRequested && handler->_C != NULL) {
                     if ((fsysEntry->mFlags & FSYS_ENTRY_FLAG_COMPRESSED)) {
                         handler->_C(fsysHandle->mFsysId, fsysEntry->mFileId, fsysEntry->mUnpackedSize);
-                    }
-                    else {
+                    } else {
                         handler->_C(fsysHandle->mFsysId, fsysEntry->mFileId, fsysEntry->mPackedSize);
                     }
                 }
@@ -719,12 +686,10 @@ void GSfsys::foregroundTaskCallback(u32 taskId, void *userParam) {
                 fsysEntry->mFlags |= FSYS_ENTRY_FLAG_FINISHED;
                 index = getFsysEntryIndex(fsysHandle, fsysEntry->mFileId);
                 setFsysCacheEntryPinned(fsysHandle->mFsysId, index, false);
-            }
-            else if (prevEntry != NULL && !(prevEntry->mFlags & FSYS_ENTRY_FLAG_FINISHED)) {
+            } else if (prevEntry != NULL && !(prevEntry->mFlags & FSYS_ENTRY_FLAG_FINISHED)) {
                 index = getFsysEntryIndex(fsysHandle, fsysEntry->mFileId);
                 OSReport("<1>-----fsysBGwork:Wait Prev ResFinish Index=%d:%d\n", fsysHandle->mFsysId, index);
-            }
-            else {
+            } else {
                 index = getFsysEntryIndex(fsysHandle, fsysEntry->mFileId);
                 OSReport("<2>-----fsysBGwork:Wait Prev ResFinish Index=%d:%d\n", fsysHandle->mFsysId, index);
             }
@@ -766,15 +731,15 @@ void GSfsys::decompressLzss(GSfsysEntryHandle *fsysEntryHandle) {
     u32 resumeFrom;
 
     GSfsysChunk *nextChunk;
-    
+
     u32 copyPos;
     u32 ringBufIdx;
     u32 flags;
     u32 iterCount;
-    
+
     u32 srcPos;
     u32 writeIdx;
-    
+
     int copyLen;
     u32 readIdx;
     int i;
@@ -810,8 +775,7 @@ void GSfsys::decompressLzss(GSfsysEntryHandle *fsysEntryHandle) {
         fsysEntryHandle->mResumeFrom = 0;
 
         readIdx = sizeof(GSlzssHeader);
-    }
-    else {
+    } else {
         readIdx = 0;
     }
 
@@ -829,26 +793,21 @@ void GSfsys::decompressLzss(GSfsysEntryHandle *fsysEntryHandle) {
     while (true) {
         readBuf = (u8 *)nextChunk->mBuffer;
         switch (resumeFrom) {
-            case 0:
-                break;
-            
-            case 1:
-                goto fsysEntry_read_flags;
-            
-            case 2:
-                goto fsysEntry_read_literal;
-            
-            case 3:
-                goto fsysEntry_read_lookup_1;
-            
-            case 4:
-                goto fsysEntry_read_lookup_2;
+            case 0: break;
+
+            case 1: goto fsysEntry_read_flags;
+
+            case 2: goto fsysEntry_read_literal;
+
+            case 3: goto fsysEntry_read_lookup_1;
+
+            case 4: goto fsysEntry_read_lookup_2;
         }
 
         while (true) {
             flags >>= 1;
             if (!(flags & 0x100)) {
-fsysEntry_read_flags:
+            fsysEntry_read_flags:
                 srcPos++;
                 u8 c = readBuf[readIdx++];
 
@@ -864,9 +823,9 @@ fsysEntry_read_flags:
 
                 flags = 0xff00 | c;
             }
-            
+
             if ((flags & 1)) {
-fsysEntry_read_literal:
+            fsysEntry_read_literal:
                 srcPos++;
                 u8 c = readBuf[readIdx++];
 
@@ -883,9 +842,8 @@ fsysEntry_read_literal:
                 writeBuf[writeIdx++] = c;
                 ringBuf[ringBufIdx++] = c;
                 ringBufIdx %= LZSS_RING_BUF_LEN;
-            }
-            else {
-fsysEntry_read_lookup_1:
+            } else {
+            fsysEntry_read_lookup_1:
                 srcPos++;
                 copyPos = readBuf[readIdx++];
 
@@ -898,7 +856,7 @@ fsysEntry_read_lookup_1:
                     srcPos--;
                     break;
                 }
-fsysEntry_read_lookup_2:
+            fsysEntry_read_lookup_2:
                 srcPos++;
                 u8 c = readBuf[readIdx++];
 
@@ -992,15 +950,12 @@ void GSfsys::backgroundTaskCallback(u32 taskId, void *userParam) {
             void *outBuf;
             if (handler->_8 != NULL) {
                 outBuf = handler->_8(
-                    fsysEntryHandle->mFsysHandle->mFsysId,
-                    fsysEntryHandle->mInfo->mFileId,
+                    fsysEntryHandle->mFsysHandle->mFsysId, fsysEntryHandle->mInfo->mFileId,
                     fsysEntryHandle->mInfo->mUnpackedSize
                 );
-            }
-            else {
+            } else {
                 outBuf = allocBufferInFileCache(
-                    (fsysEntryHandle->mInfo->mUnpackedSize + 0x1f) / 0x20 * 0x20,
-                    fsysEntryHandle->mFsysHandle->mFsysId,
+                    (fsysEntryHandle->mInfo->mUnpackedSize + 0x1f) / 0x20 * 0x20, fsysEntryHandle->mFsysHandle->mFsysId,
                     fsysEntryHandle->mInfo->mFileId
                 );
             }
@@ -1009,11 +964,9 @@ void GSfsys::backgroundTaskCallback(u32 taskId, void *userParam) {
 
         if (fsysEntryHandle->mInfo->mOutputBuffer == NULL) {
             readUncompressedFile(fsysEntryHandle, false);
-        }
-        else if (fsysEntryHandle->mCompressed == true) {
+        } else if (fsysEntryHandle->mCompressed == true) {
             decompressLzss(fsysEntryHandle);
-        }
-        else {
+        } else {
             readUncompressedFile(fsysEntryHandle, true);
         }
 
@@ -1045,7 +998,7 @@ bool GSfsys::initSubroutine(u32 chunkHeapSize, u32 cacheHeapSize, u32 nCacheEntr
     sFsysHandlePoolCount = 4;
     sFsysEntryHandlePoolCount = 32;
     sLoadRequestPoolCount = 24;
-    
+
     sFsysHandlePool = (GSfsysHandle *)allocAligned32(sizeof(GSfsysHandle) * sFsysHandlePoolCount);
     if (sFsysHandlePool == NULL) {
         return false;
@@ -1112,8 +1065,7 @@ s32 GSfsys::getFsysLoadStatus(u32 fsysId) {
     GStocEntry *tocEntry = getTocEntry(fsysId);
     if (tocEntry == NULL) {
         return FSYS_LOAD_INVALID;
-    }
-    else if ((tocEntry->mFlags & TOC_ENTRY_FLAG_LOADED)) {
+    } else if ((tocEntry->mFlags & TOC_ENTRY_FLAG_LOADED)) {
         return FSYS_LOAD_COMPLETE;
     }
 
@@ -1123,17 +1075,13 @@ s32 GSfsys::getFsysLoadStatus(u32 fsysId) {
     }
 
     switch (fsysHandle->mState) {
-        case FSYS_STATE_FINISHED:
-            return FSYS_LOAD_COMPLETE;
-        
-        case FSYS_STATE_INVALID:
-            return FSYS_LOAD_INVALID;
-        
-        case FSYS_STATE_CRITICAL_ERROR:
-            return FSYS_LOAD_CRITICAL_ERROR;
-        
-        default:
-            return FSYS_LOAD_IN_PROGRESS;
+        case FSYS_STATE_FINISHED:       return FSYS_LOAD_COMPLETE;
+
+        case FSYS_STATE_INVALID:        return FSYS_LOAD_INVALID;
+
+        case FSYS_STATE_CRITICAL_ERROR: return FSYS_LOAD_CRITICAL_ERROR;
+
+        default:                        return FSYS_LOAD_IN_PROGRESS;
     }
 }
 
@@ -1147,14 +1095,8 @@ void GSfsys::invalidateFsysHandle(u32 fsysId) {
 }
 
 bool GSfsys::beginLoadFsys(
-    u32 fsysId,
-    u32 fileId,
-    GSfsysRequestType requestType,
-    bool persistent,
-    GSfsysCallback userCallback,
-    u32 userParam1,
-    u32 userParam2,
-    u32 *fileIds
+    u32 fsysId, u32 fileId, GSfsysRequestType requestType, bool persistent, GSfsysCallback userCallback, u32 userParam1,
+    u32 userParam2, u32 *fileIds
 ) {
     GSfsysHandle *fsysHandle;
 
@@ -1198,14 +1140,8 @@ bool GSfsys::beginLoadFsys(
 }
 
 GSfsysRequest *GSfsys::createFsysRequest(
-    GSfsysRequestType requestType,
-    u32 fsysId,
-    u32 fileId,
-    bool persistent,
-    GSfsysCallback callback,
-    u32 param6,
-    u32 param7,
-    u32 *fileIds
+    GSfsysRequestType requestType, u32 fsysId, u32 fileId, bool persistent, GSfsysCallback callback, u32 param6,
+    u32 param7, u32 *fileIds
 ) {
     GSfsysRequest *request = NULL;
     for (u32 i = 0; i < sLoadRequestPoolCount; i++) {
@@ -1249,8 +1185,7 @@ bool GSfsys::enqueueFsysRequest(GSfsysRequest *request, u32 priority) {
     if (sFsysRequestQueues[priority] == NULL) {
         sFsysRequestQueues[priority] = request;
         result = true;
-    }
-    else {
+    } else {
         GSfsysRequest *end = sFsysRequestQueues[priority];
         while (end->mNext != NULL) {
             end = end->mNext;
@@ -1287,32 +1222,21 @@ bool GSfsys::processFsysRequest(GSfsysRequest *request) {
     if (!request->mProcessed) {
         request->mProcessed = true;
         switch (request->mRequestType) {
-            case FSYS_REQUEST_CANCEL:
-                cancelFsysLoad(request->mFsysId);
-                return false;
-            
-            default:
-                dequeueFsysRequest(request);
-                return true;
-            
+            case FSYS_REQUEST_CANCEL: cancelFsysLoad(request->mFsysId); return false;
+
+            default:                  dequeueFsysRequest(request); return true;
+
             case FSYS_REQUEST_LOAD:
             case FSYS_REQUEST_CACHE:
             case FSYS_REQUEST_SEEK_START:
             case FSYS_REQUEST_STREAM:
                 beginLoadFsys(
-                    request->mFsysId,
-                    request->mFileId,
-                    request->mRequestType,
-                    request->mPersistent,
-                    request->mCallback,
-                    request->_18,
-                    request->_1c,
-                    request->mFileIds
+                    request->mFsysId, request->mFileId, request->mRequestType, request->mPersistent, request->mCallback,
+                    request->_18, request->_1c, request->mFileIds
                 );
                 return false;
         }
-    }
-    else if (getFsysLoadStatus(request->mFsysId) <= 0) {
+    } else if (getFsysLoadStatus(request->mFsysId) <= 0) {
         dequeueFsysRequest(request);
         return true;
     }
@@ -1343,15 +1267,8 @@ void GSfsys::processNextFsysRequest() {
 }
 
 bool GSfsys::submitFsysRequest(
-    GSfsysRequestType requestType,
-    u32 fsysId,
-    u32 fileId,
-    bool persistent,
-    GSfsysCallback callback,
-    u32 param6,
-    u32 param7,
-    s32 priority,
-    u32 *fileIds
+    GSfsysRequestType requestType, u32 fsysId, u32 fileId, bool persistent, GSfsysCallback callback, u32 param6,
+    u32 param7, s32 priority, u32 *fileIds
 ) {
     if (!sInitialized) {
         return false;
@@ -1365,25 +1282,15 @@ bool GSfsys::submitFsysRequest(
     if (priority < 0 || priority >= FSYS_REQUEST_PRIORITY_LEVELS) {
         return false;
     }
-    
+
     GSfsysRequest *oldRequest = findFsysRequest(fsysId, fileId);
-    if (oldRequest != NULL
-        && !oldRequest->mProcessed
-        && (requestType == FSYS_REQUEST_CACHE || requestType == FSYS_REQUEST_SEEK_START)
-    ) {
+    if (oldRequest != NULL && !oldRequest->mProcessed &&
+        (requestType == FSYS_REQUEST_CACHE || requestType == FSYS_REQUEST_SEEK_START)) {
         dequeueFsysRequest(oldRequest);
     }
 
-    GSfsysRequest *newRequest = createFsysRequest(
-        requestType,
-        fsysId,
-        fileId,
-        persistent,
-        callback,
-        param6,
-        param7,
-        fileIds
-    );
+    GSfsysRequest *newRequest =
+        createFsysRequest(requestType, fsysId, fileId, persistent, callback, param6, param7, fileIds);
     if (newRequest == NULL) {
         return false;
     }
@@ -1396,17 +1303,7 @@ bool GSfsys::submitFsysRequest(
 }
 
 bool GSfsys::requestLoadFsys(u32 fsysId) {
-    return submitFsysRequest(
-        FSYS_REQUEST_LOAD,
-        fsysId,
-        0xffff,
-        false,
-        NULL,
-        0,
-        0,
-        1,
-        NULL
-    );
+    return submitFsysRequest(FSYS_REQUEST_LOAD, fsysId, 0xffff, false, NULL, 0, 0, 1, NULL);
 }
 
 bool GSfsys::startOrResetFsysStream(u32 fsysId, u32 fileId, u32 param3) {
@@ -1415,29 +1312,10 @@ bool GSfsys::startOrResetFsysStream(u32 fsysId, u32 fileId, u32 param3) {
     }
 
     if (getFsysLoadStatus(fsysId) <= 0) {
-        return beginLoadFsys(
-            fsysId,
-            fileId,
-            FSYS_REQUEST_STREAM,
-            false,
-            NULL,
-            0,
-            param3,
-            NULL
-        );
-    }
-    else {
+        return beginLoadFsys(fsysId, fileId, FSYS_REQUEST_STREAM, false, NULL, 0, param3, NULL);
+    } else {
         cancelFsysLoadBlocking(fsysId);
-        return beginLoadFsys(
-            fsysId,
-            fileId,
-            FSYS_REQUEST_STREAM,
-            false,
-            NULL,
-            0,
-            param3,
-            NULL
-        );
+        return beginLoadFsys(fsysId, fileId, FSYS_REQUEST_STREAM, false, NULL, 0, param3, NULL);
     }
 }
 
@@ -1454,13 +1332,11 @@ bool GSfsys::waitForFsysLoad(u32 fsysId, bool allowInvalidAsSuccess) {
         s32 loadStatus = getFsysLoadStatus(fsysId);
         if (loadStatus == FSYS_LOAD_COMPLETE) {
             return true;
-        }
-        else if (loadStatus == FSYS_LOAD_INVALID) {
+        } else if (loadStatus == FSYS_LOAD_INVALID) {
             if (allowInvalidAsSuccess == true) {
                 return true;
             }
-        }
-        else if (loadStatus <= FSYS_LOAD_CRITICAL_ERROR) {
+        } else if (loadStatus <= FSYS_LOAD_CRITICAL_ERROR) {
             return false;
         }
         GSthreadManager::sInstance->sleepCurrentThread();
@@ -1514,60 +1390,18 @@ bool GSfsys::cancelFsysLoadBlocking(u32 fsysId) {
 }
 
 bool GSfsys::requestLoadFsysEntry(u32 fsysId, u32 fileId) {
-    return submitFsysRequest(
-        FSYS_REQUEST_LOAD,
-        fsysId,
-        fileId,
-        false,
-        NULL,
-        0,
-        0,
-        1,
-        NULL
-    );
+    return submitFsysRequest(FSYS_REQUEST_LOAD, fsysId, fileId, false, NULL, 0, 0, 1, NULL);
 }
 
-bool GSfsys::requestLoadFsysEntryEx(
-    u32 fsysId,
-    u32 fileId,
-    GSfsysCallback param3,
-    u32 param4,
-    u32 param5
-) {
-    return submitFsysRequest(
-        FSYS_REQUEST_LOAD,
-        fsysId,
-        fileId,
-        false,
-        param3,
-        param4,
-        param5,
-        1,
-        NULL
-    );
+bool GSfsys::requestLoadFsysEntryEx(u32 fsysId, u32 fileId, GSfsysCallback param3, u32 param4, u32 param5) {
+    return submitFsysRequest(FSYS_REQUEST_LOAD, fsysId, fileId, false, param3, param4, param5, 1, NULL);
 }
 
-bool GSfsys::requestLoadFsysEntries(
-    u32 fsysId,
-    u32 *fileIds,
-    GSfsysCallback param3,
-    u32 param4,
-    u32 param5
-) {
+bool GSfsys::requestLoadFsysEntries(u32 fsysId, u32 *fileIds, GSfsysCallback param3, u32 param4, u32 param5) {
     if (fileIds == NULL || *fileIds == 0) {
         return true;
     }
-    return submitFsysRequest(
-        FSYS_REQUEST_LOAD,
-        fsysId,
-        *fileIds,
-        false,
-        param3,
-        param4,
-        param5,
-        1,
-        fileIds
-    );
+    return submitFsysRequest(FSYS_REQUEST_LOAD, fsysId, *fileIds, false, param3, param4, param5, 1, fileIds);
 }
 
 bool GSfsys::loadFsysEntry(u32 fsysId, u32 fileId) {
@@ -1628,12 +1462,7 @@ void GSfsys::releaseAllCacheEntriesForFsys(u32 fsysId) {
     while (releaseFirstCacheEntryForFsys(fsysId)) {}
 }
 
-void GSfsys::init(
-    u32 nFileHandles,
-    u32 chunkHeapSize,
-    u32 cacheHeapSize,
-    u32 nCacheEntries
-) {
+void GSfsys::init(u32 nFileHandles, u32 chunkHeapSize, u32 cacheHeapSize, u32 nCacheEntries) {
     GSfile::init(nFileHandles, false);
     // Were params 2 - 4 supposed to be passed here?
     initSubroutine(0, 0, 0);
@@ -1678,13 +1507,7 @@ u32 GSfsys::fn_80249AA8() {
 }
 
 bool GSfsys::readFsysStream(
-    u32 fsysId,
-    u32 fileId,
-    void *buffer,
-    u32 length,
-    u32 offset,
-    GSfsysCallback userCallback,
-    u32 userParam1,
+    u32 fsysId, u32 fileId, void *buffer, u32 length, u32 offset, GSfsysCallback userCallback, u32 userParam1,
     u32 userParam2
 ) {
     if (!sInitialized) {
@@ -1696,17 +1519,8 @@ bool GSfsys::readFsysStream(
         fillAndFlushBuffer(buffer, 0, length);
         return false;
     }
-    
-    return readFsysEntryStream(
-        fsysHandle,
-        fileId,
-        buffer,
-        length,
-        offset,
-        userCallback,
-        userParam1,
-        userParam2
-    );
+
+    return readFsysEntryStream(fsysHandle, fileId, buffer, length, offset, userCallback, userParam1, userParam2);
 }
 
 /*

@@ -1,13 +1,12 @@
-#include "version.hpp"
+#include "gs/GSinput.hpp"
+
+#include "gs/GSmem.hpp"
 
 #include <cstring>
 #include <revolution/kpad.h>
 #include <revolution/wpad.h>
 
-#include "gs/GSinput.hpp"
-#include "gs/GSmem.hpp"
-
-extern MEMHeapHandle lbl_8063E8EC;
+#include "version.hpp"
 
 /* lbl_8063F7B0 */ GSinputManager *GSinputManager::sInstance;
 
@@ -31,16 +30,14 @@ void GSinput::fn_80243820(GSinputUnkStruct2 *param1, u32 buttons, u32 buttonsDow
     if (param1->_4) {
         if (var1 == 0) {
             param1->_4 = false;
-        }
-        else {
+        } else {
             param1->_14 -= param4;
             if (param1->_14 < 0.0f) {
                 param1->_14 = param1->_1c;
                 param1->_C = var1;
             }
         }
-    }
-    else if (var1 != 0) {
+    } else if (var1 != 0) {
         param1->_4 = true;
         param1->_14 = param1->_18;
         param1->_C = var1;
@@ -68,30 +65,28 @@ void GSinput::fn_802438AC(GSinputUnkStruct3 *param1, u32 buttons, u32 buttonsDow
                 param1->mState = 1;
             }
             break;
-        
+
         case 1:
             param1->_4 -= param4;
             if (param1->_4 <= 0.0f) {
                 param1->mState = 0;
-            }
-            else if ((buttons & buttonsDown) == 0) {
+            } else if ((buttons & buttonsDown) == 0) {
                 param1->mState = 2;
             }
             break;
-        
+
         case 2:
             param1->_4 -= param4;
             if (param1->_4 <= 0.0f) {
                 param1->mState = 0;
-            }
-            else if (param1->_10 == (buttons & buttonsDown)) {
+            } else if (param1->_10 == (buttons & buttonsDown)) {
                 param1->mState = 3;
                 param1->_4 = param1->_18;
                 param1->_8 = param1->_10;
                 param1->_C = param1->_10;
             }
             break;
-        
+
         case 3:
             if (param1->_4 < (param1->_18 - 2.0f)) {
                 param1->_C = 0;
@@ -99,18 +94,15 @@ void GSinput::fn_802438AC(GSinputUnkStruct3 *param1, u32 buttons, u32 buttonsDow
 
             if (param1->_10 != (buttons & buttonsDown)) {
                 param1->mState = 0;
-            }
-            else {
+            } else {
                 param1->_4 -= param4;
                 if (param1->_4 == 0.0f) {
                     param1->_8 = param1->_10 | (buttons & ~buttonsDown);
                 }
             }
             break;
-        
-        default:
-            param1->mState = 0;
-            break;
+
+        default: param1->mState = 0; break;
     }
 }
 
@@ -154,8 +146,7 @@ void GSinput::fn_80243A7C(GScontrolStick *param1, Vec2 *targetPos) {
         f32 nSteps = ensure_nonzero(param1->mNumSteps);
         param1->mPosDelta.x *= 1.0f / nSteps;
         param1->mPosDelta.y *= 1.0f / nSteps;
-    }
-    else if (param1->_4 == 1) {
+    } else if (param1->_4 == 1) {
         f32 nSteps = ensure_nonzero(param1->mNumSteps * 0.25f);
         param1->mPosDelta.x *= 1.0f / nSteps;
         param1->mPosDelta.y *= 1.0f / nSteps;
@@ -166,7 +157,7 @@ void GSinput::fn_80243A7C(GScontrolStick *param1, Vec2 *targetPos) {
     param1->mTargetPos.y = targetPos->y;
     param1->mCurrentPos.x += param1->mPosDelta.x;
     param1->mCurrentPos.y += param1->mPosDelta.y;
-    
+
     if (param1->_4 == 1 && (param1->_8 = 1) < param1->mNumSteps) {
         f32 nSteps = ensure_nonzero(2.0f);
         param1->mPosDelta.x *= 1.0f / nSteps;
@@ -185,8 +176,7 @@ void GSinput::fn_80243A7C(GScontrolStick *param1, Vec2 *targetPos) {
         if (param1->mCurrentPos.x < param1->mTargetPos.x) {
             param1->mCurrentPos.x = param1->mTargetPos.x;
         }
-    }
-    else {
+    } else {
         if (param1->mCurrentPos.x > param1->mTargetPos.x) {
             param1->mCurrentPos.x = param1->mTargetPos.x;
         }
@@ -196,8 +186,7 @@ void GSinput::fn_80243A7C(GScontrolStick *param1, Vec2 *targetPos) {
         if (param1->mCurrentPos.y < param1->mTargetPos.y) {
             param1->mCurrentPos.y = param1->mTargetPos.y;
         }
-    }
-    else {
+    } else {
         if (param1->mCurrentPos.y > param1->mTargetPos.y) {
             param1->mCurrentPos.y = param1->mTargetPos.y;
         }
@@ -234,19 +223,17 @@ void GSinputDevice::read() {
             mSamplingBufs[0].dev_type = dev_type;
             mSamplingBufs[0].wpad_err = wpad_err;
             break;
-        
+
         // NOTE these cases required explicitly to match
         case WPAD_ERR_NONE:
-        case WPAD_ERR_TRANSFER:
-            break;
+        case WPAD_ERR_TRANSFER: break;
     }
 
     if (WPADIsDpdEnabled(mChannel)) {
         if (!mEnabled) {
             disable();
         }
-    }
-    else {
+    } else {
         if (mEnabled) {
             enable();
         }
@@ -254,12 +241,9 @@ void GSinputDevice::read() {
 }
 
 void GSinputDevice::updateWiimote(s32 channel, bool param3) {
-    if (mDataSetsRead == 0
-        || mSamplingBufs[0].wpad_err != WPAD_ERR_NONE
-    ) {
+    if (mDataSetsRead == 0 || mSamplingBufs[0].wpad_err != WPAD_ERR_NONE) {
         resetData();
-    }
-    else {
+    } else {
         mButtonsLast = mButtons;
         mButtons = mSamplingBufs[0].hold;
         // NOTE does not match using WPADButtonDown
@@ -271,18 +255,15 @@ void GSinputDevice::updateNunchuk(s32 channel, bool param3) {
     // TODO keep this variable from getting inlined
     KPADEXStatus *exStatus = &mSamplingBufs[0].ex_status;
 
-    if (mDataSetsRead == 0
-        || mSamplingBufs[0].wpad_err != WPAD_ERR_NONE
-    ) {
+    if (mDataSetsRead == 0 || mSamplingBufs[0].wpad_err != WPAD_ERR_NONE) {
         resetData();
-    }
-    else {
+    } else {
         mStick1PosRaw.x = exStatus->fs.stick.x;
         mStick1PosRaw.y = exStatus->fs.stick.y;
         GSinput::fn_80243A7C(&mStick1, &mStick1PosRaw);
         mStick1Pos.x = mStick1.mCurrentPos.x;
         mStick1Pos.y = mStick1.mCurrentPos.y;
-        
+
         mButtonsLast = mButtons;
         mButtons = mSamplingBufs[0].hold;
         // NOTE does not match using WPADButtonDown
@@ -295,7 +276,6 @@ void GSinputDevice::fn_80243FAC(f32 param2) {
     GSinput::fn_802438AC(&_8a4, mButtons, mButtonsDown, param2);
     GSinput::fn_80244904(&_918, param2);
 }
-
 
 void GSinputDevice::fn_80244010(GSinputUnkStruct7 **param2, f32 param3) {
     u32 buttonsDown = mButtonsDown;
@@ -316,7 +296,7 @@ void GSinputDevice::fn_80244010(GSinputUnkStruct7 **param2, f32 param3) {
             if (var4 != var1->_0) {
                 var4 = 0;
             }
-            
+
             if (var3 != var1->_0) {
                 var3 = 0;
             }
@@ -368,20 +348,15 @@ void GSinputDevice::fn_80244010(GSinputUnkStruct7 **param2, f32 param3) {
 
 f32 GSinputDevice::fn_80244168(s32 param2) {
     switch (param2) {
-        case 1:
-            return _2c;
-        
-        case 2:
-            return _28;
-        
-        case 0x800:
-            return _30;
-        
-        case 0x400:
-            return _34;
-        
-        default:
-            return 0.0f;
+        case 1:     return _2c;
+
+        case 2:     return _28;
+
+        case 0x800: return _30;
+
+        case 0x400: return _34;
+
+        default:    return 0.0f;
     }
 }
 
@@ -434,7 +409,7 @@ GSinputManager::GSinputManager(s32 maxDevices) {
     memset(&_24e8, 0, sizeof(_24e8));
 
     _253c = NULL;
-    
+
     mDeviceInfo[0].mDeviceType = DEV_TYPE_INVALID;
     mDeviceInfo[0].mChannel = WPAD_CHAN0;
     mDevices[0].mChannel = WPAD_CHAN0;
@@ -472,32 +447,32 @@ void GSinputManager::fn_80244390(f32 param1) {
             device->mDeviceType = mDeviceTypes[chan];
             device->read();
 
-            switch(mDeviceTypes[chan]) {
+            switch (mDeviceTypes[chan]) {
                 case DEV_TYPE_20:
                     device->resetData();
                     var3 = true;
                     break;
-                
+
                 case DEV_TYPE_30:
                     device->resetData();
                     var3 = true;
                     break;
-                
+
                 case DEV_TYPE_CLASSIC:
                     device->updateWiimote(chan, false);
                     var3 = true;
                     break;
-                
+
                 case DEV_TYPE_WIIMOTE:
                     device->updateWiimote(chan, false);
                     var3 = true;
                     break;
-                
+
                 case DEV_TYPE_NUNCHUK:
                     device->updateNunchuk(chan, false);
                     var3 = true;
                     break;
-                
+
                 default:
                     // TODO fix regswap here
                     lastErr = device->mLastError;
@@ -526,8 +501,7 @@ void GSinputManager::fn_80244390(f32 param1) {
 
                 device->resetData();
                 deviceInfo->_8 = true;
-            }
-            else {
+            } else {
                 if (deviceInfo->_8 && _2538 != NULL) {
                     _2538->func1(chan);
                 }
@@ -544,21 +518,16 @@ void GSinputManager::fn_80244390(f32 param1) {
 
                 deviceInfo->_8 = false;
             }
-        }
-        else {
+        } else {
             u32 type;
-            if (WPADProbe(chan, &type) == WPAD_ERR_NONE
-                && type != WPAD_DEV_NOT_FOUND
-            ) {
+            if (WPADProbe(chan, &type) == WPAD_ERR_NONE && type != WPAD_DEV_NOT_FOUND) {
                 WPADDisconnect(chan);
             }
         }
     }
 }
 
-void GSinputManager::onDataReceived(s32 channel) {
-
-}
+void GSinputManager::onDataReceived(s32 channel) {}
 
 void GSinputManager::probeDeviceTypes() {
     _0 = 0;
@@ -572,24 +541,16 @@ void GSinputManager::probeDeviceTypes() {
 
         switch (type) {
             case WPAD_DEV_CORE:
-            case WPAD_DEV_FUTURE:
-                mDeviceTypes[chan] = DEV_TYPE_WIIMOTE;
-                break;
-            
-            case WPAD_DEV_FREESTYLE:
-                mDeviceTypes[chan] = DEV_TYPE_NUNCHUK;
-                break;
-            
-            case WPAD_DEV_CLASSIC:
-                mDeviceTypes[chan] = DEV_TYPE_CLASSIC;
-                break;
-            
+            case WPAD_DEV_FUTURE:        mDeviceTypes[chan] = DEV_TYPE_WIIMOTE; break;
+
+            case WPAD_DEV_FREESTYLE:     mDeviceTypes[chan] = DEV_TYPE_NUNCHUK; break;
+
+            case WPAD_DEV_CLASSIC:       mDeviceTypes[chan] = DEV_TYPE_CLASSIC; break;
+
             case WPAD_DEV_NOT_SUPPORTED:
             case WPAD_DEV_NOT_FOUND:
             case WPAD_DEV_UNKNOWN:
-            default:
-                mDeviceTypes[chan] = DEV_TYPE_INVALID;
-                break;
+            default:                     mDeviceTypes[chan] = DEV_TYPE_INVALID; break;
         }
     }
 }
@@ -611,9 +572,7 @@ GSinputManager *GSinput::getInputManager() {
 }
 
 GSinputDevice *GSinput::getDevice(s32 channel) {
-    if (GSinputManager::sInstance != NULL
-        && channel < GSinputManager::sInstance->mMaxDevices
-    ) {
+    if (GSinputManager::sInstance != NULL && channel < GSinputManager::sInstance->mMaxDevices) {
         return &GSinputManager::sInstance->mDevices[channel];
     }
     return NULL;
@@ -634,11 +593,11 @@ void GSinput::samplingCallback(s32 chan) {
 }
 
 void *GSinput::wpadAlloc(u32 size) {
-    return GSmem::allocFromHeap(lbl_8063E8EC, size);
+    return GSmem::allocFromHeap(gUnkHeap2, size);
 }
 
 u8 GSinput::wpadFree(void *ptr) {
-    GSmem::freeToHeap(lbl_8063E8EC, ptr);
+    GSmem::freeToHeap(gUnkHeap2, ptr);
     // Should this be returning 1 for success?
     return 0;
 }

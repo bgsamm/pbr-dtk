@@ -1,18 +1,20 @@
 #include ".unsorted/80249BA0.hpp"
-#include ".unsorted/80249BF0.hpp"
 #include "gs/GScache.hpp"
 #include "gs/GSfsys.hpp"
 #include "gs/GSinput.hpp"
+#include "gs/GSlinkedList.hpp"
 #include "gs/GSmath.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GStask.hpp"
 #include "gs/GSthread.hpp"
 #include "gs/GStimeline.hpp"
 #include "gs/GSvideo.hpp"
-#include "version.hpp"
+
 #include <revolution/os.h>
 #include <revolution/types.h>
 #include <revolution/vi.h>
+
+#include "version.hpp"
 
 void fn_80006980(u32, void *);
 void fn_80006A00(u32, void *);
@@ -70,11 +72,12 @@ public:
 
 extern GSfsysFileTypeHandler *lbl_8044E828;
 
-MEMHeapHandle lbl_8063E8E8;
-MEMHeapHandle lbl_8063E8EC;
-MEMHeapHandle lbl_8063E8F0;
-MEMHeapHandle lbl_8063E8F4;
-MEMHeapHandle lbl_8063E8F8;
+// TODO(samm) Name the heaps
+MEMHeapHandle gUnkHeap1;
+MEMHeapHandle gUnkHeap2;
+MEMHeapHandle gSoundHeap;
+MEMHeapHandle gUnkHeap4;
+MEMHeapHandle gGameHeap;
 u8 lbl_8063E8FC;
 u8 lbl_8063E8FE;
 u8 lbl_8063E8FF;
@@ -116,9 +119,9 @@ void *fn_80006A88(void *param1) {
         GSthreadManager::sInstance->sleepCurrentThread();
     }
 
-    fn_80162F48(lbl_8063E8F4);
+    fn_80162F48(gUnkHeap4);
     fn_8021C274(0x20);
-    fn_8000ADC0("sound/pbr_sound.brsar", lbl_8063E8F0);
+    fn_8000ADC0("sound/pbr_sound.brsar", gSoundHeap);
     fn_8000AEB0(fn_80058B10(0));
     fn_8000C7E8();
     fn_8000C764();
@@ -146,14 +149,14 @@ int main(void) {
     GSfsys::initFsysDataHeap();
     GSfsys::initFsysCacheHeap();
 
-    // TODO consider inline function(s)
+    // TODO(samm) Consider inline function(s)
     var1 = (u8 *)OSGetMEM1ArenaLo();
     var2 = (u8 *)OSGetMEM1ArenaHi();
     var3 = var2 - var1 - 0x100000;
     if (var3 > 0x1500000) {
         var3 = 0x1500000;
     }
-    lbl_8063E8E8 = GSmem::createHeap(var1, var3, MEM_HEAP_OPT_THREAD_SAFE);
+    gUnkHeap1 = GSmem::createHeap(var1, var3, MEM_HEAP_OPT_THREAD_SAFE);
     OSSetMEM1ArenaLo(var1 + var3);
 
     var1 = (u8 *)OSGetMEM1ArenaLo();
@@ -162,7 +165,7 @@ int main(void) {
     if (var3 > 0x100000) {
         var3 = 0x100000;
     }
-    lbl_8063E8F8 = GSmem::createHeap(var1, var3, MEM_HEAP_OPT_THREAD_SAFE);
+    gGameHeap = GSmem::createHeap(var1, var3, MEM_HEAP_OPT_THREAD_SAFE);
     OSSetMEM1ArenaLo(var1 + var3);
 
     var1 = (u8 *)OSGetMEM2ArenaLo();
@@ -171,7 +174,7 @@ int main(void) {
     if (var3 > 0xc00000) {
         var3 = 0xc00000;
     }
-    lbl_8063E8F0 = GSmem::createHeap(var1, var3, MEM_HEAP_OPT_THREAD_SAFE);
+    gSoundHeap = GSmem::createHeap(var1, var3, MEM_HEAP_OPT_THREAD_SAFE);
     OSSetMEM2ArenaLo(var1 + var3);
 
     var1 = (u8 *)OSGetMEM2ArenaLo();
@@ -180,19 +183,19 @@ int main(void) {
     if (var3 > 0x100000) {
         var3 = 0x100000;
     }
-    lbl_8063E8F4 = GSmem::createHeap(var1, var3, MEM_HEAP_OPT_THREAD_SAFE);
+    gUnkHeap4 = GSmem::createHeap(var1, var3, MEM_HEAP_OPT_THREAD_SAFE);
     OSSetMEM2ArenaLo(var1 + var3);
 
     var1 = (u8 *)OSGetMEM2ArenaLo();
     var2 = (u8 *)OSGetMEM2ArenaHi();
     var3 = var2 - var1;
-    lbl_8063E8EC = GSmem::createHeap(var1, var3, MEM_HEAP_OPT_THREAD_SAFE);
+    gUnkHeap2 = GSmem::createHeap(var1, var3, MEM_HEAP_OPT_THREAD_SAFE);
     OSSetMEM2ArenaLo(var1 + var3);
 
-    GSmem::setDefaultHeap(lbl_8063E8E8);
+    GSmem::setDefaultHeap(gUnkHeap1);
 
     var4 = 0xC000;
-    GSunk::fn_80249BF0(var4);
+    GSlinkedList::init(var4);
     GSunk::fn_80249BA0(var4 - 0x4000, 2);
 
     GScache::fn_801DB978(0);

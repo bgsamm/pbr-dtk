@@ -1,13 +1,13 @@
-#include "version.hpp"
+#include "gs/GSnand.hpp"
+
+#include "gs/GSfile.hpp"
+#include "gs/GSmem.hpp"
+#include "gs/GSthread.hpp"
 
 #include <cstring>
 #include <revolution/nand.h>
 
-#include "gs/GSfile.hpp"
-#include "gs/GSnand.hpp"
-#include "gs/GSthread.hpp"
-
-extern MEMHeapHandle lbl_8063E8EC;
+#include "version.hpp"
 
 char *GSnand::getFileName(GSnandFileHandle *nandHandle) {
     return nandHandle->mName;
@@ -111,13 +111,9 @@ void GSnand::seekAsyncCallback(s32 result, NANDCommandBlock *block) {
         fileHandle->mCallback(-1, fileHandle);
         return;
     }
-    
+
     s32 readResult = NANDReadAsync(
-        &nandHandle->mFileInfo,
-        fileHandle->mBuffer,
-        fileHandle->mBufSize,
-        readAsyncCallback,
-        &nandHandle->mCommandBlock
+        &nandHandle->mFileInfo, fileHandle->mBuffer, fileHandle->mBufSize, readAsyncCallback, &nandHandle->mCommandBlock
     );
 
     if (readResult != NAND_RESULT_OK) {
@@ -129,15 +125,12 @@ bool GSnandManager::readFileAsync(GSfileHandle *fileHandle, void *buffer, u32 le
     if (!fileHandle->mIsNandFile) {
         return false;
     }
-    
+
     GSnandFileHandle *nandHandle = fileHandle->mNandFileHandle;
     NANDSetUserData(&nandHandle->mCommandBlock, fileHandle);
 
     s32 result = NANDSeekAsync(
-        &nandHandle->mFileInfo,
-        offset, NAND_SEEK_SET,
-        GSnand::seekAsyncCallback,
-        &nandHandle->mCommandBlock
+        &nandHandle->mFileInfo, offset, NAND_SEEK_SET, GSnand::seekAsyncCallback, &nandHandle->mCommandBlock
     );
 
     return result == NAND_RESULT_OK;
@@ -175,7 +168,7 @@ bool GSnandManager::copyFile(char *fileName, bool unusedParam) {
         return false;
     }
 
-    void *buffer = GSmem::allocFromHeap(lbl_8063E8EC, 0x200000);
+    void *buffer = GSmem::allocFromHeap(gUnkHeap2, 0x200000);
     if (buffer == NULL) {
         return false;
     }
@@ -188,11 +181,7 @@ bool GSnandManager::copyFile(char *fileName, bool unusedParam) {
 
     bool success = false;
 
-    s32 result = NANDCreate(
-        nandHandle->mPath,
-        NAND_PERM_RUSR | NAND_PERM_WUSR,
-        0
-    );
+    s32 result = NANDCreate(nandHandle->mPath, NAND_PERM_RUSR | NAND_PERM_WUSR, 0);
 
     if (result == NAND_RESULT_OK || result == NAND_RESULT_EXISTS) {
         NANDFileInfo info;
@@ -210,7 +199,7 @@ bool GSnandManager::copyFile(char *fileName, bool unusedParam) {
                             GSthreadManager::sInstance->sleepCurrentThread();
                         }
                     }
-                    GSmem::freeToHeap(lbl_8063E8EC, buffer);
+                    GSmem::freeToHeap(gUnkHeap2, buffer);
                     GSfile::closeFile(fileHandle);
                     return false;
                 }
@@ -234,7 +223,7 @@ bool GSnandManager::copyFile(char *fileName, bool unusedParam) {
     }
 
     if (buffer != NULL) {
-        GSmem::freeToHeap(lbl_8063E8EC, buffer);
+        GSmem::freeToHeap(gUnkHeap2, buffer);
     }
     GSfile::closeFile(fileHandle);
 

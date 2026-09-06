@@ -14,8 +14,8 @@ SYMBOLS_PATH = Path("config/RPBP01/symbols.txt")
 OUTPUT_PATH = Path("analysis/")
 
 
-def _integer_literal(string: str) -> int:
-    return int(string, 0)
+def _hex_literal(string: str) -> int:
+    return int(string, 16)
 
 
 def _open_in_code(*paths: Path):
@@ -41,7 +41,7 @@ def _parse_boundaries_file(path: Path) -> list[tuple[int, int]]:
     with open(path) as f:
         for line in f:
             if not line.startswith("#"):
-                start, end = map(_integer_literal, line.split())
+                start, end = map(_hex_literal, line.split())
                 boundaries.append((start, end))
 
     return boundaries
@@ -106,6 +106,13 @@ def exec_call_graph(args):
     function = symbol_map.require_symbol_at(func_addr)
     graph = callgraph.gen_call_graph(dol, function, symbol_map, max_depth, boundaries)
 
+    # Every node is guaranteed to be a target of at least one call, except for the starting function
+    nodes = {target for _, target in graph}
+    nodes.add(function)
+
+    splits = SplitMap.from_file(SPLITS_PATH)
+    split = splits.find_split_by_address(func_addr)
+
     outfile = OUTPUT_PATH / f"callgraph_{func_addr:X}.dot"
     if not _prompt_exists_ok(outfile):
         return
@@ -114,10 +121,14 @@ def exec_call_graph(args):
     with open(outfile, "w") as f:
         f.write("digraph CallGraph {\n")
         f.write('  rankdir="LR"\n')
+        if split:
+            for func in sorted(nodes, key=lambda func: func.address):
+                color = "blue" if split.contains_address(func.address) else "red"
+                f.write(f'  "{func}" [color={color}]\n')
         for source, target in sorted(
             graph, key=lambda call: (call[0].address, call[1].address)
         ):
-            f.write(f'  "{source}" -> "{target}";\n')
+            f.write(f'  "{source}" -> "{target}"\n')
         f.write("}")
 
     print(f"Results have been written to {outfile}")
@@ -125,6 +136,8 @@ def exec_call_graph(args):
     infile = outfile
     outfile = OUTPUT_PATH / f"callgraph_{func_addr:X}.png"
     _call_graphviz(infile, outfile)
+
+    print(f"Graph rendered to {outfile}")
 
 
 def exec_find_split(args):
@@ -153,19 +166,19 @@ def main():
     subparsers = parser.add_subparsers(required=True)
 
     parser_analyze = subparsers.add_parser("analyze")
-    parser_analyze.add_argument("address", type=_integer_literal)
-    parser_analyze.add_argument("--breakpoint", type=_integer_literal)
-    parser_analyze.add_argument("--depth", type=_integer_literal, default=0)
+    parser_analyze.add_argument("address", type=_hex_literal)
+    parser_analyze.add_argument("--breakpoint", type=_hex_literal)
+    parser_analyze.add_argument("--depth", type=int, default=0)
     parser_analyze.set_defaults(func=exec_analyze)
 
     parser_call_graph = subparsers.add_parser("call-graph")
-    parser_call_graph.add_argument("address", type=_integer_literal)
-    parser_call_graph.add_argument("--depth", type=_integer_literal, default=0)
+    parser_call_graph.add_argument("address", type=_hex_literal)
+    parser_call_graph.add_argument("--depth", type=int, default=0)
     parser_call_graph.add_argument("--boundaries", type=Path)
     parser_call_graph.set_defaults(func=exec_call_graph)
 
     parser_find_split = subparsers.add_parser("find-split")
-    parser_find_split.add_argument("address", type=_integer_literal)
+    parser_find_split.add_argument("address", type=_hex_literal)
     parser_find_split.add_argument("-o", "--open", action="store_true")
     parser_find_split.set_defaults(func=exec_find_split)
 

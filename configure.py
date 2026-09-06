@@ -258,6 +258,7 @@ cflags_game = [
     "-ipa file",
     "-inline on",
     "-fp_contract off",
+    "-RTTI on",
 ]
 
 config.linker_version = "GC/3.0a5.2"
@@ -344,8 +345,14 @@ config.libs = [
             Object(Matching, "gs/cache/GScacheScratchpad.cpp"),
             Object(Matching, "gs/cache/GScachePool.cpp"),
             Object(Matching, "gs/GSfile.cpp"),
-            Object(NonMatching, "gs/GSnand.cpp"),
-            Object(Matching, "gs/math/GSrand.cpp"),
+            Object(NonMatching, "gs/GSnand.cpp"),  # 801DCE6C
+            Object(Matching, "gs/scene/GSanimationPlayer.cpp"),  # 801DD5C8
+            Object(Matching, "gs/scene/GSanimationObject.cpp"),  # 801DD8C0
+            Object(NonMatching, "gs/GSsceneData.cpp"),  # 801E0A54
+            Object(NonMatching, "gs/GSobject.cpp"),  # 801F40E0
+            Object(Matching, "gs/GSscene.cpp"),  # 801FA094
+            Object(NonMatching, "gs/GSsceneManager.cpp"),  # 802000BC
+            Object(Matching, "gs/math/GSrand.cpp"),  # 80223830
             Object(Matching, "gs/math/GStrig.cpp"),
             Object(Matching, "gs/math/GSquat.cpp"),
             Object(Matching, "gs/math/GSmathInit.cpp"),
@@ -383,7 +390,7 @@ config.libs = [
             Object(NonMatching, ".unsorted/80249B7C.cpp"),
             Object(NonMatching, ".unsorted/80249BA0.cpp"),
             Object(Matching, "gs/debug/regionOverride.cpp"),
-            Object(NonMatching, ".unsorted/80249BF0.cpp"),
+            Object(Matching, "gs/GSlinkedList.cpp"),  # 80249BF0
             Object(NonMatching, ".unsorted/8025B6AC.cpp"),
         ],
     },
@@ -509,27 +516,21 @@ config.libs = [
             Object(NonMatching, ".unsorted/8018777C.cpp"),
             Object(NonMatching, ".unsorted/8019BEC4.cpp"),
             Object(NonMatching, ".unsorted/801C7830.cpp"),
-            Object(NonMatching, ".unsorted/801DD5C8.cpp"),
-            Object(NonMatching, ".unsorted/801DD8C0.cpp"),
-            Object(NonMatching, ".unsorted/801DDF78.cpp"),
-            Object(NonMatching, ".unsorted/801DF040.cpp"),
+            Object(NonMatching, "gs/scene/GScameraNode.cpp"),
+            Object(NonMatching, "gs/scene/GSvolumeNode.cpp"),
             Object(NonMatching, ".unsorted/801E07E8.cpp"),
             Object(NonMatching, ".unsorted/801E0810.cpp"),
-            Object(NonMatching, ".unsorted/801E0A54.cpp"),
-            Object(NonMatching, ".unsorted/801E4360.cpp"),
+            Object(NonMatching, "gs/scene/GSjointNode.cpp"),
             Object(NonMatching, ".unsorted/801E474C.cpp"),
-            Object(NonMatching, ".unsorted/801E5F7C.cpp"),
+            Object(NonMatching, "gs/scene/GSlightNode.cpp"),
             Object(NonMatching, ".unsorted/801E6BF8.cpp"),
             Object(NonMatching, ".unsorted/801ED3F0.cpp"),
-            Object(NonMatching, ".unsorted/801EE044.cpp"),
-            Object(NonMatching, ".unsorted/801F1AE8.cpp"),
-            Object(NonMatching, ".unsorted/801F40E0.cpp"),
-            Object(NonMatching, ".unsorted/801F98EC.cpp"),
-            Object(NonMatching, ".unsorted/801FA094.cpp"),
+            Object(NonMatching, "gs/scene/GSmeshNode.cpp"),
+            Object(NonMatching, "gs/scene/GSnull.cpp"),
+            Object(NonMatching, "gs/scene/GSparticleNode.cpp"),
             Object(NonMatching, ".unsorted/801FA38C.cpp"),
             Object(NonMatching, ".unsorted/801FB42C.cpp"),
             Object(NonMatching, ".unsorted/801FF308.cpp"),
-            Object(NonMatching, ".unsorted/802000BC.cpp"),
             Object(NonMatching, ".unsorted/80202E54.cpp"),
             Object(NonMatching, ".unsorted/80204058.cpp"),
             Object(NonMatching, ".unsorted/80205954.cpp"),

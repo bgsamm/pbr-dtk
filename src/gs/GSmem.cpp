@@ -1,15 +1,13 @@
-#include "version.hpp"
-
-#include <cstring>
 #include "gs/GSmem.hpp"
 
-extern MEMHeapHandle lbl_8063E8E8;
-extern MEMHeapHandle lbl_8063E8EC;
+#include <cstring>
+
+#include "version.hpp"
 
 /* lbl_804912B0 */ static HeapSlot sHeapPool[MAX_HEAPS];
 
-/* lbl_8063F2D6 */ static bool sInitialized; 
-/* lbl_8063F2D7 */ static bool sUnusedFlag; 
+/* lbl_8063F2D6 */ static bool sInitialized;
+/* lbl_8063F2D7 */ static bool sUnusedFlag;
 /* lbl_8063F2D8 */ static MEMHeapHandle sDefaultHeap;
 /* lbl_8063F2DC */ static u16 sDefaultGroupID;
 
@@ -38,15 +36,15 @@ MEMHeapHandle GSmem::createHeap(void *startAddress, u32 size, u16 optFlag) {
     if (!isInitialized()) {
         return NULL;
     }
-    
+
     HeapSlot *slot = getFreeHeapSlot();
-    
+
     if (!slot) {
         return NULL;
     }
-    
+
     MEMHeapHandle heap = MEMCreateExpHeapEx(startAddress, size, optFlag);
-    
+
     slot->isUsed = true;
     slot->heap = heap;
     slot->size = size;
@@ -65,12 +63,12 @@ MEMHeapHandle GSmem::setDefaultHeap(MEMHeapHandle heap) {
     return oldHeap;
 }
 
-// TODO revisit once more info about specific heaps is known
+// TODO(samm) revisit once more info about specific heaps is known
 u16 GSmem::setDefaultGroupID(u16 groupID) {
     u16 oldID = sDefaultGroupID;
     sDefaultGroupID = groupID;
-    MEMSetGroupIDForExpHeap(lbl_8063E8E8, (u8)sDefaultGroupID);
-    MEMSetGroupIDForExpHeap(lbl_8063E8EC, (u8)sDefaultGroupID);
+    MEMSetGroupIDForExpHeap(gUnkHeap1, (u8)sDefaultGroupID);
+    MEMSetGroupIDForExpHeap(gUnkHeap2, (u8)sDefaultGroupID);
 
     return oldID;
 }
@@ -184,7 +182,9 @@ void GSmem::freeAllInGroup(MEMHeapHandle heap, u16 groupID) {
     MEMVisitAllocatedForExpHeap(heap, freeAllInGroupVisitor, (u32)&context);
 }
 
+// TODO(samm) Is there any way to do this w/o assembly?
 asm void GSmem::copyMem(register void *dst, register const void *src, register u32 size) {
+    // clang-format off
     clrlwi. r0, dst, 27
     bne     use_memcpy
     clrlwi. r0, src, 27
@@ -218,4 +218,5 @@ loop:
     stwu    r10, 0x4(dst)
     stwu    r11, 0x4(dst)
     bdnz    loop
+    // clang-format: on
 }

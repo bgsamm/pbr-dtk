@@ -1,7 +1,7 @@
-#include ".unsorted/801E0A54.hpp"
+#include "gs/GSsceneData.hpp"
 
 #include "gs/GSrender.hpp"
-#include "gs/render/8023D008.hpp"
+
 #include <revolution/gx/GXEnum.h>
 
 // TODO(samm) #define the start of logical memory somewhere
@@ -11,8 +11,6 @@
             *(u32 *)&(pointer) += (u32)(baseAddr);                                                                     \
         }                                                                                                              \
     } while (0)
-
-namespace gs {
 
 void fn_801E1714(_UnkSceneData_1 *arg0, GSsceneData *sceneData, u32 baseAddr) {
     FIX_POINTER(arg0->_18, baseAddr);
@@ -30,7 +28,7 @@ void fn_801E18F8(GSmaterialData *materialData, GSsceneData *sceneData, u32 baseA
     FIX_POINTER(materialData->mName, baseAddr);
     FIX_POINTER(materialData->_50, baseAddr);
 
-    GStextureData **texSlots = materialData->mTextureSlots;
+    GStexture **texSlots = materialData->mTextureSlots;
     for (u32 i = 0; i < MATERIAL_MAX_TEXTURE_SLOTS; i++, texSlots++) {
         FIX_POINTER(*texSlots, baseAddr);
     }
@@ -65,7 +63,7 @@ void fn_801E18F8(GSmaterialData *materialData, GSsceneData *sceneData, u32 baseA
 }
 
 inline void initSceneTextures(GSsceneData *sceneData, u32 baseAddr) {
-    GStextureData **texList;
+    GStexture **texList;
     u16 texCount;
     u16 texIndex;
 
@@ -78,7 +76,7 @@ inline void initSceneTextures(GSsceneData *sceneData, u32 baseAddr) {
         }
 
         FIX_POINTER(*texList, baseAddr);
-        *texList = fn_8023D6CC(*texList);
+        *texList = GSrender::fn_8023D6CC(*texList);
 
         if (GSrenderManager::getInstance()->get_7a()) {
             GXTexFilter magFilter = (*texList)->mMagFilter;
@@ -92,7 +90,7 @@ inline void initSceneTextures(GSsceneData *sceneData, u32 baseAddr) {
             }
 
             u32 filterFlags = (*texList)->mFilterFlags;
-            fn_8023E3C8(*texList, minFilter, magFilter, filterFlags);
+            GSrender::fn_8023E3C8(*texList, minFilter, magFilter, filterFlags);
         }
     }
 
@@ -135,26 +133,26 @@ inline void initSceneMaterials(GSsceneData *sceneData, u32 baseAddr) {
     }
 }
 
-inline void initSceneModels(GSsceneData *sceneData, u32 baseAddr) {
-    u16 mdlCount;
-    u16 mdlIndex;
-    GSmodelData **mdlList;
+inline void initSceneObjects(GSsceneData *sceneData, u32 baseAddr) {
+    u16 objCount;
+    u16 objIndex;
+    GSobjectData **objList;
 
-    mdlCount = sceneData->mModelCount;
-    mdlList = sceneData->mModelList;
+    objCount = sceneData->mObjectCount;
+    objList = sceneData->mObjectList;
 
-    for (mdlIndex = 0; mdlIndex < mdlCount; mdlIndex++, mdlList++) {
-        if (!*mdlList) {
+    for (objIndex = 0; objIndex < objCount; objIndex++, objList++) {
+        if (!*objList) {
             continue;
         }
 
-        FIX_POINTER(*mdlList, baseAddr);
-        fn_801E2F60(*mdlList, sceneData, baseAddr, (bool)sceneData->_24);
+        FIX_POINTER(*objList, baseAddr);
+        fn_801E2F60(*objList, sceneData, baseAddr, (bool)sceneData->_24);
     }
 }
 
 void fn_801E34DC(GSsceneData *sceneData, u32 baseAddr) {
-    FIX_POINTER(sceneData->mModelList, baseAddr);
+    FIX_POINTER(sceneData->mObjectList, baseAddr);
     FIX_POINTER(sceneData->mTextureList, baseAddr);
     FIX_POINTER(sceneData->_10, baseAddr);
     FIX_POINTER(sceneData->mMaterialList, baseAddr);
@@ -170,7 +168,5 @@ void fn_801E34DC(GSsceneData *sceneData, u32 baseAddr) {
 
     initSceneUnknown(sceneData, baseAddr);
     initSceneMaterials(sceneData, baseAddr);
-    initSceneModels(sceneData, baseAddr);
+    initSceneObjects(sceneData, baseAddr);
 }
-
-} // namespace gs

@@ -1,8 +1,8 @@
-#include "version.hpp"
+#include "gs/GScache.hpp"
 
 #include <revolution/os.h>
 
-#include "gs/GScache.hpp"
+#include "version.hpp"
 
 // TODO clean up this module
 
@@ -54,8 +54,7 @@ void GScache::fn_801DB92C(u8 start, u8 count, bool param3) {
     while (count-- > 0) {
         if (param3 == true) {
             sActiveBuffers |= bufFlag;
-        }
-        else {
+        } else {
             sActiveBuffers &= ~bufFlag;
         }
         bufFlag >>= 1;
@@ -64,17 +63,19 @@ void GScache::fn_801DB92C(u8 start, u8 count, bool param3) {
 
 // TODO(samm) Move asm blocks into their own functions
 bool GScache::fn_801DB978(u8 param1) {
+    // clang-format off
     asm {
         mflr    r3
         stw     r3, lbl_8063F300
     }
+    // clang-format on
 
     fn_801DB81C(param1);
 
     if (param1 == 0) {
         return true;
-    }
-    else {
+    } else {
+        // clang-format off
         asm {
             lwz     r3, sScratchpadBase
             lwz     r5, lbl_8063F2F8
@@ -86,6 +87,7 @@ bool GScache::fn_801DB978(u8 param1) {
             mtlr    r3
             blr
         }
+        // clang-format on
     }
 
     return true;
@@ -98,7 +100,7 @@ void GScache::fn_801DB9FC() {
 
     u32 i;
     GSscratchpadBuffer *buf = sBufferPool;
-    // This is funky but it matches
+    // TODO(samm) This is funky but it matches
     for (i = NUM_BUFFERS; i-- > 0; buf++) {
         if (buf->mBufIdx == 0xff) {
             continue;
@@ -119,7 +121,7 @@ void GScache::fn_801DBA8C() {
 
     u32 i;
     GSscratchpadBuffer *buf = sBufferPool;
-    // This is funky but it matches
+    // TODO(samm) This is funky but it matches
     for (i = NUM_BUFFERS; i-- > 0; buf++) {
         if (buf->mBufIdx == 0xff) {
             continue;

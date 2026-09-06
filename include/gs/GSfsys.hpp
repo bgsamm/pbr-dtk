@@ -1,23 +1,23 @@
 #pragma once
 
-#include <revolution/types.h>
-
 #include "gs/GSfile.hpp"
+
+#include <revolution/types.h>
 
 #define TOC_ENTRY_FLAG_LOADED (1 << 0)
 
 #define FSYS_FLAG_PERSISTENT (1 << 30)
-#define FSYS_FLAG_DEBUG      (1 <<  0)
+#define FSYS_FLAG_DEBUG (1 << 0)
 
-#define FSYS_ENTRY_FLAG_COMPRESSED       (1 << 31)
-#define FSYS_ENTRY_FLAG_27               (1 << 27)
-#define FSYS_ENTRY_FLAG_23               (1 << 23)
-#define FSYS_ENTRY_FLAG_19               (1 << 19)
-#define FSYS_ENTRY_FLAG_18               (1 << 18)
-#define FSYS_ENTRY_FLAG_CACHED           (1 << 17)
+#define FSYS_ENTRY_FLAG_COMPRESSED (1 << 31)
+#define FSYS_ENTRY_FLAG_27 (1 << 27)
+#define FSYS_ENTRY_FLAG_23 (1 << 23)
+#define FSYS_ENTRY_FLAG_19 (1 << 19)
+#define FSYS_ENTRY_FLAG_18 (1 << 18)
+#define FSYS_ENTRY_FLAG_CACHED (1 << 17)
 #define FSYS_ENTRY_FLAG_BUFFER_ALLOCATED (1 << 16)
-#define FSYS_ENTRY_FLAG_11               (1 << 11)
-#define FSYS_ENTRY_FLAG_FINISHED         (1 <<  3)
+#define FSYS_ENTRY_FLAG_11 (1 << 11)
+#define FSYS_ENTRY_FLAG_FINISHED (1 << 3)
 
 struct GSfsysCacheRequest;
 struct GSfsysChunk;
@@ -28,19 +28,19 @@ typedef void (*GSfsysCallback)(u32, u32, u32);
 typedef void (*GSfsysCacheCallback)(GSfsysCacheRequest *);
 
 enum GSfsysRequestType {
-    FSYS_REQUEST_NULL       = 0,
-    FSYS_REQUEST_LOAD       = 1,
-    FSYS_REQUEST_CACHE      = 2, // Appears unused
+    FSYS_REQUEST_NULL = 0,
+    FSYS_REQUEST_LOAD = 1,
+    FSYS_REQUEST_CACHE = 2,      // Appears unused
     FSYS_REQUEST_SEEK_START = 3, // Appears unused
-    FSYS_REQUEST_STREAM     = 4,
-    FSYS_REQUEST_CANCEL     = 5
+    FSYS_REQUEST_STREAM = 4,
+    FSYS_REQUEST_CANCEL = 5
 };
 
 enum GSfsysLoadStatus {
     FSYS_LOAD_CRITICAL_ERROR = -2,
-    FSYS_LOAD_INVALID        = -1,
-    FSYS_LOAD_COMPLETE       =  0,
-    FSYS_LOAD_IN_PROGRESS    =  1
+    FSYS_LOAD_INVALID = -1,
+    FSYS_LOAD_COMPLETE = 0,
+    FSYS_LOAD_IN_PROGRESS = 1
 };
 
 // TODO give these proper names
@@ -69,13 +69,13 @@ enum GSfsysState {
 };
 
 enum GSfsysEntryState {
-    FSYS_ENTRY_STATE_BEGIN       = 0,
-    FSYS_ENTRY_STATE_READY       = 1,
-    FSYS_ENTRY_STATE_STANDBY     = 2,
-    FSYS_ENTRY_STATE_READ_ERROR  = 3,
+    FSYS_ENTRY_STATE_BEGIN = 0,
+    FSYS_ENTRY_STATE_READY = 1,
+    FSYS_ENTRY_STATE_STANDBY = 2,
+    FSYS_ENTRY_STATE_READ_ERROR = 3,
     FSYS_ENTRY_STATE_QUEUE_ERROR = 4,
-    FSYS_ENTRY_STATE_YIELD       = 5,
-    FSYS_ENTRY_STATE_NULL        = 0xffff
+    FSYS_ENTRY_STATE_YIELD = 5,
+    FSYS_ENTRY_STATE_NULL = 0xffff
 };
 
 struct GStocHeader {
@@ -178,7 +178,7 @@ struct GSfsysHandle {
     /* 0x3c */ u32 mCacheIndex;
     /* 0x40 */ u32 *_40;
     /* 0x44 */ u32 *mFileIdQueue;
-    
+
     u32 getEntryIndex(u32 fileId);
     void setNextState(GSfsysState state);
 };
@@ -273,155 +273,184 @@ struct GSfsysChunk {
     /* 0xc */ u32 mOffset;
 };
 
+// TODO(samm) Something other than namespace?
 namespace GSfsys {
-    extern u32 gFsysChunkSize;
-    extern GSfsysFileTypeHandler *gFileTypeHandlerList;
-    extern u32 gFileTypeHandlerCount;
+extern u32 gFsysChunkSize;
+extern GSfsysFileTypeHandler *gFileTypeHandlerList;
+extern u32 gFileTypeHandlerCount;
 
-    // GSfsysMem.cpp
-    void *allocFromFsysDataHeap(u32 size);
-    bool freeToFsysDataHeap(void *ptr);
-    bool initFsysDataHeap();
-    bool initFsysDataBuffer(GSfsysHandle *fsysHandle);
-    bool freeFsysDataBuffer(GSfsysHandle *fsysHandle);
-    void *getOrCreateCachedBuffer(GSfsysHandle *fsysHandle, u32 entryIndex, u32 size, u32 fsysCacheIndex);
-    bool releaseFsysCacheEntry(GSfsysCacheEntry *cacheEntry);
-    bool releaseFsysCacheEntryByBuffer(void *buffer);
-    bool makeSpaceForCachedBuffer(u32 fsysId, u32 size);
-    bool batchEvictFsysCacheEntries(u32 fsysId);
-    void *allocCachedBuffer(GSfsysHandle *fsysHandle, u32 entryIndex, u32 length, u32 fsysCacheIndex);
-    bool freeCachedBuffer(void *buffer);
-    bool releaseFirstCacheEntryForFsys(u32 fsysId);
-    void *allocBufferInFileCache(u32 size, u32 fsysId, u32 fileId);
+// GSfsysMem.cpp
+void *allocFromFsysDataHeap(u32 size);
+bool freeToFsysDataHeap(void *ptr);
+bool initFsysDataHeap();
+bool initFsysDataBuffer(GSfsysHandle *fsysHandle);
+bool freeFsysDataBuffer(GSfsysHandle *fsysHandle);
+void *getOrCreateCachedBuffer(GSfsysHandle *fsysHandle, u32 entryIndex, u32 size, u32 fsysCacheIndex);
+bool releaseFsysCacheEntry(GSfsysCacheEntry *cacheEntry);
+bool releaseFsysCacheEntryByBuffer(void *buffer);
+bool makeSpaceForCachedBuffer(u32 fsysId, u32 size);
+bool batchEvictFsysCacheEntries(u32 fsysId);
+void *allocCachedBuffer(GSfsysHandle *fsysHandle, u32 entryIndex, u32 length, u32 fsysCacheIndex);
+bool freeCachedBuffer(void *buffer);
+bool releaseFirstCacheEntryForFsys(u32 fsysId);
+void *allocBufferInFileCache(u32 size, u32 fsysId, u32 fileId);
 
-    // GSfsysChunk.cpp
-    bool initFsysChunkSystem(u32 heapSize);
-    GSfsysChunk *getFreeFsysChunk();
-    bool popChunkFromList(GSfsysChunk **list, bool fromFront);
-    void clearChunkList(GSfsysChunk **list);
-    void prependToChunkList(GSfsysChunk **list, GSfsysChunk *chunk);
-    void transferChunkListTail(GSfsysChunk **srcList, GSfsysChunk **dstList);
+// GSfsysChunk.cpp
+bool initFsysChunkSystem(u32 heapSize);
+GSfsysChunk *getFreeFsysChunk();
+bool popChunkFromList(GSfsysChunk **list, bool fromFront);
+void clearChunkList(GSfsysChunk **list);
+void prependToChunkList(GSfsysChunk **list, GSfsysChunk *chunk);
+void transferChunkListTail(GSfsysChunk **srcList, GSfsysChunk **dstList);
 
-    // GSfsysCache.cpp
-    void addToCacheRequestList(GSfsysCacheRequest *cacheRequest);
-    GSfsysCacheRequest *getFreeCacheRequest();
-    void removeFromCacheRequestList(GSfsysCacheRequest *cacheRequest);
-    void addToCacheEntryList(GSfsysCacheEntry *cacheEntry);
-    GSfsysCacheEntry *createFsysCacheEntry(u32 fsysId, u32 entryIndex, bool persistent, bool pinned, u32 fsysCacheIndex);
-    void removeFromCacheEntryList(GSfsysCacheEntry *cacheEntry);
-    GSfsysCacheEntry *findFsysCacheEntry(u32 fsysId, u32 entryIndex);
-    GSfsysCacheEntry *findFirstCacheEntryForFsys(u32 fsysId);
-    GSfsysCacheEntry *findFsysCacheEntryByBuffer(void *buffer);
-    GSfsysCacheEntry *selectCacheEvictionVictim(u32 fsysId, bool ignoreCacheOrder);
-    void setFsysCacheEntryPinned(u32 fsysId, u32 entryIndex, bool pinned);
-    void setFsysCacheEntriesPinned(u32 fsysId, bool pinned);
-    bool initFsysCacheHeap();
-    bool isLessThanEqualToCacheHeapSize(u32 size);
-    void *allocFromFsysCacheHeap(u32 size);
-    void freeToFsysCacheHeap(void *ptr, u32 size);
-    u32 getFsysCacheHeapFreeSize();
-    bool initFsysCacheSystem(u32 heapSize, u32 nCacheEntries);
-    u32 getNextCacheFsysIndex();
-    bool isFsysEntryCached(u32 fsysId, u32 entryIndex);
-    bool doFsysCacheRead(GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry, void *buffer, u32 length, u32 offset, GSfsysCacheCallback callback, GSfsysCallback param7, u32 param8, u32 param9);
-    bool fsysCacheRead(GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry, void *buffer, u32 length, u32 offset, GSfsysCacheCallback callback);
-    bool fsysCacheReadEx(GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry, void *buffer, u32 length, u32 offset, GSfsysCacheCallback callback, GSfsysCallback userCallback, u32 userParam1, u32 userParam2);
-    void copyToCachedBuffer(GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry, void *src, void *dst, u32 length, u32 offset, GSfsysCacheCallback callback);
+// GSfsysCache.cpp
+void addToCacheRequestList(GSfsysCacheRequest *cacheRequest);
+GSfsysCacheRequest *getFreeCacheRequest();
+void removeFromCacheRequestList(GSfsysCacheRequest *cacheRequest);
+void addToCacheEntryList(GSfsysCacheEntry *cacheEntry);
+GSfsysCacheEntry *createFsysCacheEntry(u32 fsysId, u32 entryIndex, bool persistent, bool pinned, u32 fsysCacheIndex);
+void removeFromCacheEntryList(GSfsysCacheEntry *cacheEntry);
+GSfsysCacheEntry *findFsysCacheEntry(u32 fsysId, u32 entryIndex);
+GSfsysCacheEntry *findFirstCacheEntryForFsys(u32 fsysId);
+GSfsysCacheEntry *findFsysCacheEntryByBuffer(void *buffer);
+GSfsysCacheEntry *selectCacheEvictionVictim(u32 fsysId, bool ignoreCacheOrder);
+void setFsysCacheEntryPinned(u32 fsysId, u32 entryIndex, bool pinned);
+void setFsysCacheEntriesPinned(u32 fsysId, bool pinned);
+bool initFsysCacheHeap();
+bool isLessThanEqualToCacheHeapSize(u32 size);
+void *allocFromFsysCacheHeap(u32 size);
+void freeToFsysCacheHeap(void *ptr, u32 size);
+u32 getFsysCacheHeapFreeSize();
+bool initFsysCacheSystem(u32 heapSize, u32 nCacheEntries);
+u32 getNextCacheFsysIndex();
+bool isFsysEntryCached(u32 fsysId, u32 entryIndex);
+bool doFsysCacheRead(
+    GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry, void *buffer, u32 length, u32 offset,
+    GSfsysCacheCallback callback, GSfsysCallback param7, u32 param8, u32 param9
+);
+bool fsysCacheRead(
+    GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry, void *buffer, u32 length, u32 offset, GSfsysCacheCallback callback
+);
+bool fsysCacheReadEx(
+    GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry, void *buffer, u32 length, u32 offset,
+    GSfsysCacheCallback callback, GSfsysCallback userCallback, u32 userParam1, u32 userParam2
+);
+void copyToCachedBuffer(
+    GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry, void *src, void *dst, u32 length, u32 offset,
+    GSfsysCacheCallback callback
+);
 
-    // GSfsysRead.cpp
-    void seekFsysCallback(s32 result, GSfileHandle *fileHandle);
-    GSfsysFileTypeHandler *getHandlerForFileType(u32 fileType);
-    bool queueFsysEntryForCopying(GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry);
-    bool queueNextFsysEntryForCopying(GSfsysHandle *fsysHandle);
-    bool findFirstUnchachedFsysEntry(GSfsysHandle *fsysHandle);
-    GSfsysHeaderEx *getFsysData(GSfsysHandle *fsysHandle);
-    GSfsysEntry *getFsysEntry(GSfsysHandle *fsysHandle, u32 index);
-    void handleFsysChunkReady(GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry);
-    void finalizeFsysChunk(GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry);
-    void fsysChunkCopyCallback(GSfsysCacheRequest *cacheRequest);
-    u32 getChunkSize(u32 totalSize, u32 currentPos);
-    void directFsysEntryReadCallback(s32 result, GSfileHandle *fileHandle);
-    void cachedFsysEntryReadCallback(GSfsysCacheRequest *cacheRequest);
-    bool readNextFsysEntryChunk(GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry);
-    bool beginReadNextFsysEntry(GSfsysHandle *fsysHandle);
-    void handleFsysDataReady(GSfsysHandle *fsysHandle);
-    void directFsysReadCallback(s32 result, GSfileHandle *fileHandle);
-    void cachedFsysReadCallback(GSfsysCacheRequest *param1);
-    bool readFsys(GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry, bool buffered, u32 param4, void *buffer, u32 length, u32 offset, GSdvdCallback callback, GSfsysCacheCallback param9);
-    void readFsysData(GSfsysHandle *fsysHandle);
-    void seekFsysToStart(GSfsysHandle *fsysHandle);
+// GSfsysRead.cpp
+void seekFsysCallback(s32 result, GSfileHandle *fileHandle);
+GSfsysFileTypeHandler *getHandlerForFileType(u32 fileType);
+bool queueFsysEntryForCopying(GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry);
+bool queueNextFsysEntryForCopying(GSfsysHandle *fsysHandle);
+bool findFirstUnchachedFsysEntry(GSfsysHandle *fsysHandle);
+GSfsysHeaderEx *getFsysData(GSfsysHandle *fsysHandle);
+GSfsysEntry *getFsysEntry(GSfsysHandle *fsysHandle, u32 index);
+void handleFsysChunkReady(GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry);
+void finalizeFsysChunk(GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry);
+void fsysChunkCopyCallback(GSfsysCacheRequest *cacheRequest);
+u32 getChunkSize(u32 totalSize, u32 currentPos);
+void directFsysEntryReadCallback(s32 result, GSfileHandle *fileHandle);
+void cachedFsysEntryReadCallback(GSfsysCacheRequest *cacheRequest);
+bool readNextFsysEntryChunk(GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry);
+bool beginReadNextFsysEntry(GSfsysHandle *fsysHandle);
+void handleFsysDataReady(GSfsysHandle *fsysHandle);
+void directFsysReadCallback(s32 result, GSfileHandle *fileHandle);
+void cachedFsysReadCallback(GSfsysCacheRequest *param1);
+bool readFsys(
+    GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry, bool buffered, u32 param4, void *buffer, u32 length, u32 offset,
+    GSdvdCallback callback, GSfsysCacheCallback param9
+);
+void readFsysData(GSfsysHandle *fsysHandle);
+void seekFsysToStart(GSfsysHandle *fsysHandle);
 
-    // GSfsysStream.cpp
-    u32 getStreamBufferSize();
-    u32 getHalfStreamBufferSize();
-    u32 getStreamChunkSize();
-    void freeStreamedFsysBuffers(GSfsysHandle *fsysHandle);
-    void streamedFsysReadCallback(GSfsysCacheRequest *cacheRequest);
-    bool readFsysEntryStream(GSfsysHandle *fsysHandle, u32 fileId, void *buffer, u32 length, u32 offset, GSfsysCallback userCallback, u32 userParam1, u32 userParam2);
-    u32 getStreamChunkFlag(u32 offset);
+// GSfsysStream.cpp
+u32 getStreamBufferSize();
+u32 getHalfStreamBufferSize();
+u32 getStreamChunkSize();
+void freeStreamedFsysBuffers(GSfsysHandle *fsysHandle);
+void streamedFsysReadCallback(GSfsysCacheRequest *cacheRequest);
+bool readFsysEntryStream(
+    GSfsysHandle *fsysHandle, u32 fileId, void *buffer, u32 length, u32 offset, GSfsysCallback userCallback,
+    u32 userParam1, u32 userParam2
+);
+u32 getStreamChunkFlag(u32 offset);
 
-    // GSfsys.cpp
-    void *allocAligned32(u32 size);
-    bool loadToc();
-    GSfsysHandle *getAssociatedFsysHandle(GSfileHandle *fileHandle);
-    GSfsysHandle *getFsysHandleById(u32 fsysId, bool param2);
-    GSfsysHandle *getAvailableFsysHandle(bool ignoreLoaded);
-    GSfsysHandle *getOrStealFsysHandle();
-    void appendNodeToList(GSfsysNode *node, GSfsysNode **list);
-    void removeNodeFromList(GSfsysNode *node, GSfsysNode **list);
-    GSfsysEntryHandle *getFreeFsysEntryHandle();
-    void enqueueFsysEntry(GSfsysEntryHandle *fsysEntryHandle);
-    void dequeueFsysEntry(GSfsysEntryHandle *fsysEntryHandle);
-    GStocEntry *getTocEntry(u32 fsysId);
-    void setFsysNextState(GSfsysHandle *fsysHandle, GSfsysState state);
-    void setFsysEntryNextState(GSfsysEntry *fsysEntry, GSfsysEntryState state);
-    bool getFsysPath(GSfsysHandle *fsysHandle, char *outPath);
-    bool openFsys(GSfsysHandle *fsysHandle);
-    bool closeFsys(GSfsysHandle *fsysHandle, bool skipCallback);
-    u32 countActiveRequestsOfType(GSfsysRequestType requestType);
-    bool doFsysEntryState(GSfsysHandle *fsysHandle, u32 entryIndex);
-    u32 getFsysEntryIndex(GSfsysHandle *fsysHandle, u32 fileId);
-    bool checkAllFsysEntriesReady(GSfsysHandle *fsysHandle);
-    void setTocEntryFlags(u32 fsysId, u32 flags);
-    void clearTocEntryFlags(u32 fsysId, u32 flags);
-    void readFsysSizeCallback(s32 result, GSfileHandle *fileHandle);
-    void doFsysState(GSfsysHandle *fsysHandle);
-    void foregroundTaskCallback(u32 taskId, void *userParam);
-    bool processMidCopyCancel(GSfsysEntryHandle *fsysEntryHandle);
-    void fillAndFlushBuffer(void *buffer, u8 value, u32 length);
-    void decompressLzss(GSfsysEntryHandle *fsysEntryHandle);
-    void readUncompressedFile(GSfsysEntryHandle *fsysEntryHandle, bool param2);
-    void backgroundTaskCallback(u32 taskId, void *userParam);
-    bool initSubroutine(u32 chunkHeapSize, u32 cacheHeapSize, u32 nCacheEntries);
-    void setFileTypeHandlers(GSfsysFileTypeHandler *param1);
-    s32 getFsysLoadStatus(u32 fsysId);
-    void invalidateFsysHandle(u32 fsysId);
-    bool beginLoadFsys(u32 fsysId, u32 fileId, GSfsysRequestType requestType, bool param4, GSfsysCallback onCloseCallback, u32 param6, u32 param7, u32 *param8);
-    GSfsysRequest *createFsysRequest(GSfsysRequestType requestType, u32 fsysId, u32 param3, bool param4, GSfsysCallback param5, u32 param6, u32 param7, u32 *param8);
-    GSfsysRequest *findFsysRequest(u32 fsysId, u32 param2);
-    bool enqueueFsysRequest(GSfsysRequest *request, u32 param2);
-    void dequeueFsysRequest(GSfsysRequest *request);
-    bool processFsysRequest(GSfsysRequest *request);
-    void processNextFsysRequest();
-    bool submitFsysRequest(GSfsysRequestType requestType, u32 fsysId, u32 param3, bool param4, GSfsysCallback param5, u32 param6, u32 param7, s32 param8, u32 *param9);
-    bool requestLoadFsys(u32 fsysId);
-    bool startOrResetFsysStream(u32 fsysId, u32 param2, u32 param3);
-    bool streamFsys(u32 fsysId);
-    bool waitForFsysLoad(u32 fsysId, bool param2);
-    bool loadFsys(u32 fsysId);
-    bool cancelFsysLoad(u32 fsysId);
-    bool cancelFsysLoadBlocking(u32 fsysId);
-    bool requestLoadFsysEntry(u32 fsysId, u32 param2);
-    bool requestLoadFsysEntryEx(u32 fsysId, u32 param2, GSfsysCallback param3, u32 param4, u32 param5);
-    bool requestLoadFsysEntries(u32 fsysId, u32 *param2, GSfsysCallback param3, u32 param4, u32 param5);
-    bool loadFsysEntry(u32 fsysId, u32 param2);
-    void fn_80249890(u32 fsysId);
-    void releaseAllCacheEntriesForFsys(u32 fsysId);
-    void init(u32 nFileHandles, u32 chunkHeapSize, u32 cacheHeapSize, u32 nCacheEntries);
-    bool fn_802499E4();
-    bool fn_802499EC(u32 fsysId);
-    void *fn_80249A28(u32 fsysId, u32 fileId, u32 size);
-    void *fn_80249A44(u32 fsysId, u32 fileId, u32 size);
-    u32 fn_80249AA8();
-    bool readFsysStream(u32 fsysId, u32 param2, void *param3, u32 param4, u32 param5, GSfsysCallback param6, u32 param7, u32 param8);
-};
+// GSfsys.cpp
+void *allocAligned32(u32 size);
+bool loadToc();
+GSfsysHandle *getAssociatedFsysHandle(GSfileHandle *fileHandle);
+GSfsysHandle *getFsysHandleById(u32 fsysId, bool param2);
+GSfsysHandle *getAvailableFsysHandle(bool ignoreLoaded);
+GSfsysHandle *getOrStealFsysHandle();
+void appendNodeToList(GSfsysNode *node, GSfsysNode **list);
+void removeNodeFromList(GSfsysNode *node, GSfsysNode **list);
+GSfsysEntryHandle *getFreeFsysEntryHandle();
+void enqueueFsysEntry(GSfsysEntryHandle *fsysEntryHandle);
+void dequeueFsysEntry(GSfsysEntryHandle *fsysEntryHandle);
+GStocEntry *getTocEntry(u32 fsysId);
+void setFsysNextState(GSfsysHandle *fsysHandle, GSfsysState state);
+void setFsysEntryNextState(GSfsysEntry *fsysEntry, GSfsysEntryState state);
+bool getFsysPath(GSfsysHandle *fsysHandle, char *outPath);
+bool openFsys(GSfsysHandle *fsysHandle);
+bool closeFsys(GSfsysHandle *fsysHandle, bool skipCallback);
+u32 countActiveRequestsOfType(GSfsysRequestType requestType);
+bool doFsysEntryState(GSfsysHandle *fsysHandle, u32 entryIndex);
+u32 getFsysEntryIndex(GSfsysHandle *fsysHandle, u32 fileId);
+bool checkAllFsysEntriesReady(GSfsysHandle *fsysHandle);
+void setTocEntryFlags(u32 fsysId, u32 flags);
+void clearTocEntryFlags(u32 fsysId, u32 flags);
+void readFsysSizeCallback(s32 result, GSfileHandle *fileHandle);
+void doFsysState(GSfsysHandle *fsysHandle);
+void foregroundTaskCallback(u32 taskId, void *userParam);
+bool processMidCopyCancel(GSfsysEntryHandle *fsysEntryHandle);
+void fillAndFlushBuffer(void *buffer, u8 value, u32 length);
+void decompressLzss(GSfsysEntryHandle *fsysEntryHandle);
+void readUncompressedFile(GSfsysEntryHandle *fsysEntryHandle, bool param2);
+void backgroundTaskCallback(u32 taskId, void *userParam);
+bool initSubroutine(u32 chunkHeapSize, u32 cacheHeapSize, u32 nCacheEntries);
+void setFileTypeHandlers(GSfsysFileTypeHandler *param1);
+s32 getFsysLoadStatus(u32 fsysId);
+void invalidateFsysHandle(u32 fsysId);
+bool beginLoadFsys(
+    u32 fsysId, u32 fileId, GSfsysRequestType requestType, bool param4, GSfsysCallback onCloseCallback, u32 param6,
+    u32 param7, u32 *param8
+);
+GSfsysRequest *createFsysRequest(
+    GSfsysRequestType requestType, u32 fsysId, u32 param3, bool param4, GSfsysCallback param5, u32 param6, u32 param7,
+    u32 *param8
+);
+GSfsysRequest *findFsysRequest(u32 fsysId, u32 param2);
+bool enqueueFsysRequest(GSfsysRequest *request, u32 param2);
+void dequeueFsysRequest(GSfsysRequest *request);
+bool processFsysRequest(GSfsysRequest *request);
+void processNextFsysRequest();
+bool submitFsysRequest(
+    GSfsysRequestType requestType, u32 fsysId, u32 param3, bool param4, GSfsysCallback param5, u32 param6, u32 param7,
+    s32 param8, u32 *param9
+);
+bool requestLoadFsys(u32 fsysId);
+bool startOrResetFsysStream(u32 fsysId, u32 param2, u32 param3);
+bool streamFsys(u32 fsysId);
+bool waitForFsysLoad(u32 fsysId, bool param2);
+bool loadFsys(u32 fsysId);
+bool cancelFsysLoad(u32 fsysId);
+bool cancelFsysLoadBlocking(u32 fsysId);
+bool requestLoadFsysEntry(u32 fsysId, u32 param2);
+bool requestLoadFsysEntryEx(u32 fsysId, u32 param2, GSfsysCallback param3, u32 param4, u32 param5);
+bool requestLoadFsysEntries(u32 fsysId, u32 *param2, GSfsysCallback param3, u32 param4, u32 param5);
+bool loadFsysEntry(u32 fsysId, u32 param2);
+void fn_80249890(u32 fsysId);
+void releaseAllCacheEntriesForFsys(u32 fsysId);
+void init(u32 nFileHandles, u32 chunkHeapSize, u32 cacheHeapSize, u32 nCacheEntries);
+bool fn_802499E4();
+bool fn_802499EC(u32 fsysId);
+void *fn_80249A28(u32 fsysId, u32 fileId, u32 size);
+void *fn_80249A44(u32 fsysId, u32 fileId, u32 size);
+u32 fn_80249AA8();
+bool readFsysStream(
+    u32 fsysId, u32 param2, void *param3, u32 param4, u32 param5, GSfsysCallback param6, u32 param7, u32 param8
+);
+}; // namespace GSfsys

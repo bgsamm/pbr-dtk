@@ -548,19 +548,23 @@ src/gs/GSnand.cpp:
 	.sdata      start:0x8063D6F8 end:0x8063D700
 	.sbss       start:0x8063F340 end:0x8063F348
 
-src/.unsorted/801DD5C8.cpp:
+src/gs/scene/GSanimationPlayer.cpp:
 	.text       start:0x801DD5C8 end:0x801DD8C0
 	.ctors      start:0x803E2058 end:0x803E205C
+	.sbss       start:0x8063F348 end:0x8063F350
+	.sdata2     start:0x80641BE0 end:0x80641BF0
 
-src/.unsorted/801DD8C0.cpp:
+src/gs/scene/GSanimationObject.cpp:
 	.text       start:0x801DD8C0 end:0x801DDF78
 	.ctors      start:0x803E205C end:0x803E2060
+	.sbss       start:0x8063F350 end:0x8063F358
+	.sdata2     start:0x80641BF0 end:0x80641BF8
 
-src/.unsorted/801DDF78.cpp:
+src/gs/scene/GScameraNode.cpp:
 	.text       start:0x801DDF78 end:0x801DF040
 	.ctors      start:0x803E2060 end:0x803E2064
 
-src/.unsorted/801DF040.cpp:
+src/gs/scene/GSvolumeNode.cpp:
 	.text       start:0x801DF040 end:0x801E07E8
 	.ctors      start:0x803E2064 end:0x803E2068
 
@@ -572,11 +576,11 @@ src/.unsorted/801E0810.cpp:
 	.text       start:0x801E0810 end:0x801E0A54
 	.ctors      start:0x803E206C end:0x803E2070
 
-src/.unsorted/801E0A54.cpp:
+src/gs/GSsceneData.cpp:
 	.text       start:0x801E0A54 end:0x801E4360
 	.ctors      start:0x803E2070 end:0x803E2074
 
-src/.unsorted/801E4360.cpp:
+src/gs/scene/GSjointNode.cpp:
 	.text       start:0x801E4360 end:0x801E474C
 	.ctors      start:0x803E2074 end:0x803E2078
 
@@ -584,7 +588,7 @@ src/.unsorted/801E474C.cpp:
 	.text       start:0x801E474C end:0x801E5F7C
 	.ctors      start:0x803E2078 end:0x803E207C
 
-src/.unsorted/801E5F7C.cpp:
+src/gs/scene/GSlightNode.cpp:
 	.text       start:0x801E5F7C end:0x801E6BF8
 	.ctors      start:0x803E207C end:0x803E2080
 
@@ -596,25 +600,32 @@ src/.unsorted/801ED3F0.cpp:
 	.text       start:0x801ED3F0 end:0x801EE044
 	.ctors      start:0x803E2084 end:0x803E2088
 
-src/.unsorted/801EE044.cpp:
+src/gs/scene/GSmeshNode.cpp:
 	.text       start:0x801EE044 end:0x801F1AE8
 	.ctors      start:0x803E2088 end:0x803E208C
 
-src/.unsorted/801F1AE8.cpp:
+src/gs/scene/GSnull.cpp:
 	.text       start:0x801F1AE8 end:0x801F40E0
 	.ctors      start:0x803E208C end:0x803E2090
+	.data       start:0x804236A8 end:0x804236E0
+	.sdata      start:0x8063D708 end:0x8063D730
+	.sbss       start:0x8063F3C8 end:0x8063F3DC
+	.sdata2     start:0x80641DF0 end:0x80641E00
 
-src/.unsorted/801F40E0.cpp:
+src/gs/GSobject.cpp:
 	.text       start:0x801F40E0 end:0x801F98EC
 	.ctors      start:0x803E2090 end:0x803E2094
+	.data       start:0x804236E0 end:0x80423700
+	.sdata2     start:0x80641E00 end:0x80641E10
 
-src/.unsorted/801F98EC.cpp:
+src/gs/scene/GSparticleNode.cpp:
 	.text       start:0x801F98EC end:0x801FA094
 	.ctors      start:0x803E2094 end:0x803E2098
 
-src/.unsorted/801FA094.cpp:
+src/gs/GSscene.cpp:
 	.text       start:0x801FA094 end:0x801FA38C
 	.ctors      start:0x803E2098 end:0x803E209C
+	.sbss       start:0x8063F3F0 end:0x8063F3F8
 
 src/.unsorted/801FA38C.cpp:
 	.text       start:0x801FA38C end:0x801FB42C
@@ -628,7 +639,7 @@ src/.unsorted/801FF308.cpp:
 	.text       start:0x801FF308 end:0x802000BC
 	.ctors      start:0x803E20A4 end:0x803E20A8
 
-src/.unsorted/802000BC.cpp:
+src/gs/GSsceneManager.cpp:
 	.text       start:0x802000BC end:0x80202E54
 	.ctors      start:0x803E20A8 end:0x803E20AC
 
@@ -973,7 +984,7 @@ src/gs/debug/regionOverride.cpp:
 	.ctors      start:0x803E21D0 end:0x803E21D4
 	.sbss       start:0x8063F8A8 end:0x8063F8B8
 
-src/.unsorted/80249BF0.cpp:
+src/gs/GSlinkedList.cpp:
 	.text       start:0x80249BF0 end:0x80249D38
 	.ctors      start:0x803E21D4 end:0x803E21D8
 	.sbss       start:0x8063F8B8 end:0x8063F8C8

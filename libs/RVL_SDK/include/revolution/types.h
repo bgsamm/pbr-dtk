@@ -27,7 +27,7 @@ typedef double f64;
 typedef volatile f32 vf32;
 typedef volatile f64 vf64;
 
-typedef char* Ptr;
+typedef char *Ptr;
 
 typedef int BOOL;
 typedef unsigned int uBOOL;
@@ -41,8 +41,8 @@ typedef volatile uBOOL vuBOOL;
 #ifdef __cplusplus
 #define NULL 0
 #else
-#define NULL ((void*)0)
-#endif  // __cplusplus
+#define NULL ((void *)0)
+#endif // __cplusplus
 #endif
 
 #define ATTRIBUTE_ALIGN(num) __attribute__((aligned(num)))
@@ -52,4 +52,4 @@ typedef volatile uBOOL vuBOOL;
 #define ALIGN32 ATTRIBUTE_ALIGN(DEFAULT_ALIGN)
 #define ALIGN64 ATTRIBUTE_ALIGN(64)
 
-#endif  // REVOLUTION_TYPES_H
+#endif // REVOLUTION_TYPES_H

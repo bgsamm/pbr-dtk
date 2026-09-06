@@ -1,7 +1,7 @@
 #pragma once
 
-#include <revolution/types.h>
 #include <revolution/nand.h>
+#include <revolution/types.h>
 
 // TODO introduce #define's for various array sizes
 
@@ -35,9 +35,10 @@ public:
     bool copyFile(char *fileName, bool unusedParam);
 };
 
+// TODO(samm) Something other than namespace?
 namespace GSnand {
-    static char *getFileName(GSnandFileHandle *nandHandle);
-    static char *getFilePath(GSnandFileHandle *nandHandle);
-    static void readAsyncCallback(s32 result, NANDCommandBlock *block);
-    static void seekAsyncCallback(s32 result, NANDCommandBlock *block);
-};
+static char *getFileName(GSnandFileHandle *nandHandle);
+static char *getFilePath(GSnandFileHandle *nandHandle);
+static void readAsyncCallback(s32 result, NANDCommandBlock *block);
+static void seekAsyncCallback(s32 result, NANDCommandBlock *block);
+}; // namespace GSnand

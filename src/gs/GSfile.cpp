@@ -1,19 +1,17 @@
-#include "version.hpp"
-
-#include <cstring>
-
-#include <revolution/dvd.h>
-#include <revolution/nand.h>
-#include <revolution/os.h>
+#include "gs/GSfile.hpp"
 
 #include "gs/GSdebug.hpp"
-#include "gs/GSfile.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GSnand.hpp"
 #include "gs/GStask.hpp"
 #include "gs/GSthread.hpp"
 
-extern MEMHeapHandle lbl_8063E8EC;
+#include <cstring>
+#include <revolution/dvd.h>
+#include <revolution/nand.h>
+#include <revolution/os.h>
+
+#include "version.hpp"
 
 /* lbl_804917F0 */ static u8 sUnused[0x40];
 /* lbl_80491830 */ static OSSemaphore sDvdSemaphore;
@@ -35,7 +33,7 @@ extern MEMHeapHandle lbl_8063E8EC;
 /* lbl_8063F338 */ static GSnandManager *sNandManager;
 
 void *GSfile::allocAligned32(u32 size) {
-    return GSmem::allocFromHeapAligned(lbl_8063E8EC, size, 0x20);
+    return GSmem::allocFromHeapAligned(gUnkHeap2, size, 0x20);
 }
 
 void GSfile::initFileHandles() {
@@ -142,17 +140,11 @@ bool GSfile::init(u32 nFileHandles, bool patchDiskID) {
 
     if (patchDiskID) {
         switch (GSdebug::getRegionOverride()) {
-            case REGION_OVERRIDE_DEFAULT:
-                sGameID = "RPBE";
-                break;
-            
-            case REGION_OVERRIDE_USA:
-                sGameID = "RPBE";
-                break;
-            
-            case REGION_OVERRIDE_PAL:
-                sGameID = "RPBP";
-                break;
+            case REGION_OVERRIDE_DEFAULT: sGameID = "RPBE"; break;
+
+            case REGION_OVERRIDE_USA:     sGameID = "RPBE"; break;
+
+            case REGION_OVERRIDE_PAL:     sGameID = "RPBP"; break;
         }
 
         DVDDiskID *diskID = DVDGetCurrentDiskID();
@@ -243,12 +235,7 @@ bool GSfile::fileExists(char *fileName) {
     return true;
 }
 
-s32 GSfile::readFile(
-    GSfileHandle *fileHandle,
-    void *buffer,
-    u32 length,
-    u32 offset
-) {
+s32 GSfile::readFile(GSfileHandle *fileHandle, void *buffer, u32 length, u32 offset) {
     if (sInitialized == false) {
         return -1;
     }
@@ -279,13 +266,7 @@ s32 GSfile::readFile(
 }
 
 // read file async
-bool GSfile::readFileAsync(
-    GSfileHandle *fileHandle,
-    void *buffer,
-    u32 length,
-    u32 offset,
-    GSdvdCallback callback
-) {
+bool GSfile::readFileAsync(GSfileHandle *fileHandle, void *buffer, u32 length, u32 offset, GSdvdCallback callback) {
     if (sInitialized == false) {
         return false;
     }
@@ -320,13 +301,7 @@ bool GSfile::readFileAsync(
     return DVDReadAsyncPrio(&fileHandle->mFileInfo, buffer, length, offset, readAsyncCallback, 2);
 }
 
-s32 GSfile::readFilePrio(
-    GSfileHandle *fileHandle,
-    void *buffer,
-    u32 length,
-    u32 offset,
-    s32 priority
-) {
+s32 GSfile::readFilePrio(GSfileHandle *fileHandle, void *buffer, u32 length, u32 offset, s32 priority) {
     if (sInitialized == false) {
         return -1;
     }
@@ -362,7 +337,7 @@ u32 GSfile::closeFile(GSfileHandle *fileHandle) {
     if (fileHandle == NULL) {
         return false;
     }
-    
+
     if (sNandManager != NULL) {
         if (sNandManager->closeFile(fileHandle)) {
             releaseFileHandle(fileHandle);
@@ -423,28 +398,17 @@ bool GSfile::seekAsync(GSfileHandle *fileHandle, s32 offset, GSdvdCallback callb
 
 void GSfile::updateErrorState(s32 dvdState) {
     switch (dvdState) {
-        case DVD_STATE_FATAL:
-            sDvdErrorState = DVD_ERROR_STATE_FATAL_ERROR;
-            break;
-        
-        case DVD_STATE_COVER_OPEN:
-            sDvdErrorState = DVD_ERROR_STATE_COVER_OPEN;
-            break;
-        
-        case DVD_STATE_NO_DISK:
-            sDvdErrorState = DVD_ERROR_STATE_NO_DISK;
-            break;
-        
-        case DVD_STATE_WRONG_DISK:
-            sDvdErrorState = DVD_ERROR_STATE_WRONG_DISK;
-            break;
-        
-        case DVD_STATE_RETRY:
-            sDvdErrorState = DVD_ERROR_STATE_RETRY;
-            break;
-        
-        default:
-            break;
+        case DVD_STATE_FATAL:      sDvdErrorState = DVD_ERROR_STATE_FATAL_ERROR; break;
+
+        case DVD_STATE_COVER_OPEN: sDvdErrorState = DVD_ERROR_STATE_COVER_OPEN; break;
+
+        case DVD_STATE_NO_DISK:    sDvdErrorState = DVD_ERROR_STATE_NO_DISK; break;
+
+        case DVD_STATE_WRONG_DISK: sDvdErrorState = DVD_ERROR_STATE_WRONG_DISK; break;
+
+        case DVD_STATE_RETRY:      sDvdErrorState = DVD_ERROR_STATE_RETRY; break;
+
+        default:                   break;
     }
 }
 
@@ -495,91 +459,87 @@ void GSfile::errorTaskCallback(u32 taskID, void *userParam) {
     s32 dvdState = getDriveStatus();
 
     switch (sDvdErrorState) {
-        case DVD_ERROR_STATE_OK:
-            updateErrorState(dvdState);
-            break;
-        
+        case DVD_ERROR_STATE_OK: updateErrorState(dvdState); break;
+
         case DVD_ERROR_STATE_COVER_OPEN:
             notifyError(DVD_ERROR_COVER_OPEN);
             sDvdErrorState = DVD_ERROR_STATE_WAIT_COVER_CLOSE;
             break;
-        
+
         case DVD_ERROR_STATE_WAIT_COVER_CLOSE:
             if (dvdState == DVD_STATE_RETRY) {
                 notifyErrorHandled();
                 notifyError(DVD_ERROR_RETRY);
                 sDvdErrorState = DVD_ERROR_STATE_WAIT_RETRY;
-            }
-            else if (dvdState != DVD_STATE_COVER_OPEN && checkDisk()) {
+            } else if (dvdState != DVD_STATE_COVER_OPEN && checkDisk()) {
                 notifyErrorHandled();
                 sDvdErrorState = DVD_ERROR_STATE_OK;
             }
             break;
-        
+
         case DVD_ERROR_STATE_NO_DISK:
             notifyError(DVD_ERROR_NO_DISK);
             sDvdErrorState = DVD_ERROR_STATE_WAIT_DISK_INSERT;
             break;
-        
+
         case DVD_ERROR_STATE_WAIT_DISK_INSERT:
             if (dvdState == DVD_STATE_RETRY) {
                 notifyErrorHandled();
                 notifyError(DVD_ERROR_RETRY);
                 sDvdErrorState = DVD_ERROR_STATE_WAIT_RETRY;
-            }
-            else if (dvdState != DVD_STATE_NO_DISK && checkDisk()) {
+            } else if (dvdState != DVD_STATE_NO_DISK && checkDisk()) {
                 notifyErrorHandled();
                 sDvdErrorState = DVD_ERROR_STATE_OK;
             }
             break;
-        
+
         case DVD_ERROR_STATE_WRONG_DISK:
             notifyError(DVD_ERROR_WRONG_DISK);
             sDvdErrorState = DVD_ERROR_STATE_WAIT_CORRECT_DISK;
             break;
-        
+
         case DVD_ERROR_STATE_WAIT_CORRECT_DISK:
             if (dvdState == DVD_STATE_RETRY) {
                 notifyErrorHandled();
                 notifyError(DVD_ERROR_RETRY);
                 sDvdErrorState = DVD_ERROR_STATE_WAIT_RETRY;
-            }
-            else if (dvdState != DVD_STATE_WRONG_DISK && checkDisk()) {
+            } else if (dvdState != DVD_STATE_WRONG_DISK && checkDisk()) {
                 notifyErrorHandled();
                 sDvdErrorState = DVD_ERROR_STATE_OK;
             }
             break;
-        
+
         case DVD_ERROR_STATE_RETRY:
             notifyError(DVD_ERROR_RETRY);
             sDvdErrorState = DVD_ERROR_STATE_WAIT_RETRY;
             break;
-        
+
         case DVD_ERROR_STATE_WAIT_RETRY:
             if (dvdState == DVD_STATE_COVER_OPEN) {
                 notifyErrorHandled();
                 notifyError(DVD_ERROR_COVER_OPEN);
                 sDvdErrorState = DVD_ERROR_STATE_WAIT_COVER_CLOSE;
-            }
-            else if (dvdState == DVD_STATE_NO_DISK) {
+            } else if (dvdState == DVD_STATE_NO_DISK) {
                 notifyErrorHandled();
                 notifyError(DVD_ERROR_NO_DISK);
                 sDvdErrorState = DVD_ERROR_STATE_WAIT_DISK_INSERT;
             }
             // Not sure why DVD_STATE_NO_DISK and DVD_STATE_COVER_OPEN are checked here
-            else if ((dvdState != DVD_STATE_RETRY && checkDisk()) || (dvdState == DVD_STATE_NO_DISK || dvdState == DVD_STATE_COVER_OPEN)) {
+            else if (
+                (dvdState != DVD_STATE_RETRY && checkDisk()) ||
+                (dvdState == DVD_STATE_NO_DISK || dvdState == DVD_STATE_COVER_OPEN)
+            ) {
                 notifyErrorHandled();
                 sDvdErrorState = DVD_ERROR_STATE_OK;
             }
             break;
-        
+
         case DVD_ERROR_STATE_FATAL_ERROR:
             notifyError(DVD_ERROR_FATAL);
             sDvdErrorState = DVD_ERROR_STATE_FATAL_ERROR_DONE;
             break;
-        
-        case DVD_ERROR_STATE_FATAL_ERROR_DONE:
-            break;
+
+        case DVD_ERROR_STATE_FATAL_ERROR_DONE: break;
     }
 }
 
@@ -660,10 +620,7 @@ bool GSfile::copyFileToNand(char *fileName) {
     return false;
 }
 
-void GSfile::setErrorCallbacks(
-    GSdvdErrorCallback errorCallback,
-    GSdvdErrorHandledCallback errorHandledCallback
-) {
+void GSfile::setErrorCallbacks(GSdvdErrorCallback errorCallback, GSdvdErrorHandledCallback errorHandledCallback) {
     sDvdErrorCallback = errorCallback;
     sDvdErrorHandledCallback = errorHandledCallback;
 }
@@ -671,28 +628,22 @@ void GSfile::setErrorCallbacks(
 GSdvdError GSfile::getCurrentError() {
     switch (sDvdErrorState) {
         case DVD_ERROR_STATE_COVER_OPEN:
-        case DVD_ERROR_STATE_WAIT_COVER_CLOSE:
-            return DVD_ERROR_COVER_OPEN;
-        
+        case DVD_ERROR_STATE_WAIT_COVER_CLOSE:  return DVD_ERROR_COVER_OPEN;
+
         case DVD_ERROR_STATE_NO_DISK:
-        case DVD_ERROR_STATE_WAIT_DISK_INSERT:
-            return DVD_ERROR_NO_DISK;
-        
+        case DVD_ERROR_STATE_WAIT_DISK_INSERT:  return DVD_ERROR_NO_DISK;
+
         case DVD_ERROR_STATE_WRONG_DISK:
-        case DVD_ERROR_STATE_WAIT_CORRECT_DISK:
-            return DVD_ERROR_WRONG_DISK;
-        
+        case DVD_ERROR_STATE_WAIT_CORRECT_DISK: return DVD_ERROR_WRONG_DISK;
+
         case DVD_ERROR_STATE_RETRY:
-        case DVD_ERROR_STATE_WAIT_RETRY:
-            return DVD_ERROR_RETRY;
-        
+        case DVD_ERROR_STATE_WAIT_RETRY:        return DVD_ERROR_RETRY;
+
         case DVD_ERROR_STATE_FATAL_ERROR:
-        case DVD_ERROR_STATE_FATAL_ERROR_DONE:
-            return DVD_ERROR_FATAL;
+        case DVD_ERROR_STATE_FATAL_ERROR_DONE:  return DVD_ERROR_FATAL;
 
         case DVD_ERROR_STATE_OK:
-        default:
-            return DVD_ERROR_OK;
+        default:                                return DVD_ERROR_OK;
     }
 }
 

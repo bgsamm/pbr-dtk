@@ -1,11 +1,9 @@
-#include "version.hpp"
-
-#include <revolution/os.h>
-
 #include "gs/GSfsys.hpp"
 #include "gs/GSmem.hpp"
 
-extern MEMHeapHandle lbl_8063E8EC;
+#include <revolution/os.h>
+
+#include "version.hpp"
 
 #define CHUNK_SIZE 0x8000
 #define CHUNK_HEAP_DEFAULT_SIZE 0x80000
@@ -31,7 +29,7 @@ bool GSfsys::initFsysChunkSystem(u32 heapSize) {
         return false;
     }
 
-    sFsysChunkHeap = GSmem::allocFromHeap(lbl_8063E8EC, sFsysChunkPoolCount * gFsysChunkSize);
+    sFsysChunkHeap = GSmem::allocFromHeap(gUnkHeap2, sFsysChunkPoolCount * gFsysChunkSize);
     if (sFsysChunkHeap == NULL) {
         return false;
     }
@@ -55,7 +53,7 @@ GSfsysChunk *GSfsys::getFreeFsysChunk() {
     GSfsysChunk *chunk = NULL;
 
     BOOL intEnabled = OSDisableInterrupts();
-    
+
     u32 i = sFsysChunkPoolLastIndex;
     while (chunk == NULL) {
         if (sFsysChunkPool[i].mBuffer == NULL) {
@@ -102,8 +100,7 @@ bool GSfsys::popChunkFromList(GSfsysChunk **list, bool fromFront) {
             }
 
             chunk->mBuffer = NULL;
-        }
-        else {
+        } else {
             if (chunk->mPrev != NULL) {
                 chunk->mPrev->mNext = chunk->mNext;
             }
@@ -143,8 +140,7 @@ void GSfsys::prependToChunkList(GSfsysChunk **list, GSfsysChunk *chunk) {
             }
             end->mNext = head;
             head->mPrev = end;
-        }
-        else {
+        } else {
             chunk->mNext = head;
             head->mPrev = chunk;
         }
@@ -163,7 +159,7 @@ void GSfsys::transferChunkListTail(GSfsysChunk **srcList, GSfsysChunk **dstList)
         while (chunk->mNext != NULL) {
             chunk = chunk->mNext;
         }
-        
+
         if (chunk->mPrev != NULL) {
             chunk->mPrev->mNext = NULL;
         }
@@ -182,8 +178,7 @@ void GSfsys::transferChunkListTail(GSfsysChunk **srcList, GSfsysChunk **dstList)
             }
             end->mNext = chunk;
             chunk->mPrev = end;
-        }
-        else {
+        } else {
             *dstList = chunk;
         }
     }

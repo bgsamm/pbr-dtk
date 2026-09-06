@@ -105,6 +105,15 @@ public:
     GSvideoManager(u8, u16, VideoFormat);
     ~GSvideoManager();
 
+    void getRenderDimensions(u16 *width, u16 *height) const {
+        if (width) {
+            *width = mRenderMode.fbWidth;
+        }
+        if (height) {
+            *height = mRenderMode.efbHeight;
+        }
+    }
+
     u8 get_7a() {
         return _7a;
     }

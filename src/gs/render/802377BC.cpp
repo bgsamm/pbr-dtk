@@ -1,8 +1,10 @@
 #include "gs/GSrender.hpp"
 #include "gs/render/8023B9F4.hpp"
-#include "version.hpp"
 
 #include <revolution.h>
+
+#include "version.hpp"
+
 
 /* lbl_80496760 */ static f32 sProjectionMatrix[4][4];
 
@@ -120,7 +122,7 @@ void GSrenderManager::loadTextures() {
     for (; i < 8; i++, textureList++) {
         if (textureFlags & (1 << i)) {
             texture = *textureList;
-            if (texture->_48) {
+            if (texture->mTlutData) {
                 GXInitTexObjTlut(&texture->mTexObj, (u8)i);
                 GXLoadTlut(&texture->mTlutObj, (u8)i);
             }

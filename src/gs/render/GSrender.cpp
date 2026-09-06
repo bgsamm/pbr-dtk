@@ -9,9 +9,6 @@
 
 #include "version.hpp"
 
-extern MEMHeapHandle lbl_8063E8E8;
-extern MEMHeapHandle lbl_8063E8EC;
-
 extern GSrenderClass3 *lbl_8063F6F0;
 extern GSrenderClass5 *lbl_8063F728;
 
@@ -357,15 +354,15 @@ void GSrenderManager::fn_8023177C(GSdvdError error, u32 param2, GSColor color) {
 
         u32 size = CXGetUncompressedSize(src);
 
-        _1710 = GSmem::allocFromHeapAligned(lbl_8063E8E8, size, 0x20);
-        _170c = lbl_8063E8E8;
+        _1710 = GSmem::allocFromHeapAligned(gUnkHeap1, size, 0x20);
+        _170c = gUnkHeap1;
 
-        if (_1710 == NULL) {
-            _1710 = GSmem::allocFromHeapAligned(lbl_8063E8EC, size, 0x20);
-            _170c = lbl_8063E8EC;
+        if (!_1710) {
+            _1710 = GSmem::allocFromHeapAligned(gUnkHeap2, size, 0x20);
+            _170c = gUnkHeap2;
         }
 
-        if (_1710 != NULL) {
+        if (_1710) {
             CXUncompressLZ(src, _1710);
             DCFlushRange(_1710, size);
             _1714 = GSrender::fn_8023D6CC(_1710);
