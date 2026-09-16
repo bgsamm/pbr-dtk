@@ -1,13 +1,14 @@
 #include "gs/GSscene.hpp"
 
+#include "gs/GShierarchyModule.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GSobject.hpp"
 #include "gs/GSsceneData.hpp"
-#include "gs/GSsceneManager.hpp"
 
 #include <cstring>
 
 #include "version.hpp"
+
 
 GSscene::GSscene(GSsceneData *sceneData) : mData(sceneData), mObjects(NULL), _8(0), _c(0), _10(0) {
     u16 objectCount = mData->mObjectCount;
@@ -63,8 +64,8 @@ GSscene::GSscene(GSsceneData *sceneData) : mData(sceneData), mObjects(NULL), _8(
 }
 
 GSscene::~GSscene() {
-    if (GSsceneManager::isCurrentScene(this)) {
-        GSsceneManager::setCurrentScene(NULL);
+    if (GShierarchyModule::isCurrentScene(this)) {
+        GShierarchyModule::setCurrentScene(NULL);
     }
 
     if (!mObjects) {

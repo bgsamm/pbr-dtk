@@ -1,7 +1,10 @@
 #include "gs/GSrender.hpp"
 
+#include ".unsorted/8025B6AC.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GSvideo.hpp"
+#include "gs/render/GSrenderModule.hpp"
+#include "gs/render/GSrenderTarget.hpp"
 
 #include <cstring>
 #include <revolution.h>
@@ -9,27 +12,18 @@
 
 #include "version.hpp"
 
-extern GSrenderClass3 *lbl_8063F6F0;
-extern GSrenderClass5 *lbl_8063F728;
-
 extern void *fn_80007940();
 extern void *fn_800079C0();
 extern void *fn_80007A40();
 extern bool fn_8024A410(u32);
 extern void fn_80250134(u32, u32, u32, u32, u32, u32);
-extern void fn_8025B6B0();
 
-// TODO properly fill in this data
-static void *lbl_804245BC[0xc];
+/* lbl_8063F698 */ GSrender *GSrender::sInstance;
+/* lbl_8063F69C */ static GScolor CLEAR(0, 0, 0, 0);
+/* lbl_8063F6A0 */ static GScolor BLACK(0, 0, 0, 255);
+/* lbl_8063F6A4 */ static GScolor WHITE(255, 255, 255, 255);
 
-/* lbl_8063F698 */ GSrenderManager *GSrenderManager::sInstance;
-/* lbl_8063F69C */ GSColor CLEAR(0, 0, 0, 0);
-/* lbl_8063F6A0 */ GSColor BLACK(0, 0, 0, 255);
-/* lbl_8063F6A4 */ GSColor WHITE(255, 255, 255, 255);
-
-GSrenderManager::GSrenderManager(GSrenderStruct1 *param1)
-    : GSvideoManager(param1->mNumBuffers, param1->mEfbHeight, param1->mVidFmt) {
-    _d8 = lbl_804245BC;
+GSrender::GSrender(GSrenderStruct1 *param1) : GSvideo(param1->mNumBuffers, param1->mEfbHeight, param1->mVidFmt) {
     mState = NULL;
     _16e8 = 0;
     _16ec = NULL;
@@ -70,8 +64,8 @@ GSrenderManager::GSrenderManager(GSrenderStruct1 *param1)
     fn_8023255C(param1->_8, param1->_10);
     sInstance = this;
     fn_80239E58();
-    GXSetDrawDoneCallback(GSrender::fn_80232394);
-    GXSetBreakPtCallback(GSrender::fn_8023234C);
+    GXSetDrawDoneCallback(fn_80232394);
+    GXSetBreakPtCallback(fn_8023234C);
     GXSetMisc(GX_MT_XF_FLUSH, GX_XF_FLUSH_SAFE);
     fn_8023B704();
     fn_80237798(4);
@@ -84,9 +78,7 @@ GSrenderManager::GSrenderManager(GSrenderStruct1 *param1)
     _16f9 = false;
 }
 
-GSrenderManager::~GSrenderManager() {
-    _d8 = lbl_804245BC;
-
+GSrender::~GSrender() {
     GXSetDrawDoneCallback(NULL);
     GXSetDrawSyncCallback(NULL);
     GXSetBreakPtCallback(NULL);
@@ -101,7 +93,7 @@ GSrenderManager::~GSrenderManager() {
     sInstance = NULL;
 }
 
-void GSrenderManager::fn_802310C0() {
+void GSrender::fn_802310C0() {
     BOOL intEnabled = OSDisableInterrupts();
 
     _1719 = true;
@@ -136,11 +128,11 @@ void GSrenderManager::fn_802310C0() {
     VIWaitForRetrace();
 }
 
-void GSrenderManager::fn_802311AC(u32 *param1) {
-    *param1 = GSvideoManager::getInstance()->getRetraceCount();
+void GSrender::fn_802311AC(u32 *param1) {
+    *param1 = GSvideo::getInstance()->getRetraceCount();
 }
 
-void GSrenderManager::fn_802311BC(u32 *param1) {
+void GSrender::fn_802311BC(u32 *param1) {
     OSYieldThread();
 
     GXBool readIdle, dummy;
@@ -149,22 +141,22 @@ void GSrenderManager::fn_802311BC(u32 *param1) {
         return;
     }
 
-    s32 var1 = GSvideoManager::sInstance->getRetraceCount() - *param1;
-    u32 var2 = GSvideoManager::sInstance->getRefreshRate() * 3;
+    s32 var1 = GSvideo::sInstance->getRetraceCount() - *param1;
+    u32 var2 = GSvideo::sInstance->getRefreshRate() * 3;
     if (var1 < 0 || _1719) {
-        *param1 = GSvideoManager::sInstance->getRetraceCount();
+        *param1 = GSvideo::sInstance->getRetraceCount();
     } else if (var1 > var2) {
         _1718 = true;
     }
 }
 
-void GSrenderManager::fn_8023125C(u32 *param1) {}
+void GSrender::fn_8023125C(u32 *param1) {}
 
-void GSrenderManager::fn_80231260() {
+void GSrender::fn_80231260() {
     fn_8023B6B0();
 
     GXAbortFrame();
-    GSrender::fn_80232394();
+    fn_80232394();
 
     OSTime time = OSGetTime();
     _8c = (f32)(time - _98) / (OS_TIMER_CLOCK / mRefreshRate);
@@ -194,21 +186,21 @@ void GSrenderManager::fn_80231260() {
     _1718 = false;
 }
 
-void GSrender::fn_80231374(void *param1) {
-    GSrenderManager::getInstance()->fn_8023F778();
+void fn_80231374(void *param1) {
+    GSrender::getInstance()->fn_8023F778();
 
-    GSrenderManager::getInstance()->set_16f8(true);
-    GSrenderManager::getInstance()->set_16f4(0);
+    GSrender::getInstance()->set_16f8(true);
+    GSrender::getInstance()->set_16f4(0);
 }
 
-void GSrenderManager::fn_802313B0() {
+void GSrender::fn_802313B0() {
     if (!_1718) {
-        _16f4 = fn_80232404(GSrender::fn_80231374, this);
+        _16f4 = fn_80232404(fn_80231374, this);
         _16f8 = false;
     }
 }
 
-void GSrenderManager::fn_80231400() {
+void GSrender::fn_80231400() {
     if (_16f8) {
         return;
     }
@@ -225,28 +217,23 @@ void GSrenderManager::fn_80231400() {
     OSRestoreInterrupts(intEnabled);
 }
 
-void GSrenderManager::fn_80231490(f32 param1) {
-    f32 var1;
-    if (_82) {
-        var1 = 0.f;
-    } else {
-        var1 = param1;
-    }
+void GSrender::update(f32 deltaTime) {
+    f32 gameDeltaTime = mHomeMenuActive ? 0.f : deltaTime;
 
     fn_8025B6B0();
 
-    GSrenderClass3 *var2 = lbl_8063F6F0;
-    while (var2 != NULL) {
-        var2->func1(var1);
-        var2 = (GSrenderClass3 *)var2->_8;
+    GSrenderModule *module = GSrenderModule::getModuleList();
+    while (module) {
+        module->update(gameDeltaTime);
+        module = module->getNext();
     }
 
-    if (_1730 != NULL) {
-        _1730(param1);
+    if (_1730) {
+        _1730(deltaTime);
     }
 }
 
-void GSrenderManager::fn_80231544() {
+void GSrender::fn_80231544() {
     _16ec = NULL;
     _16f9 = true;
 
@@ -255,29 +242,29 @@ void GSrenderManager::fn_80231544() {
     fn_80235204(0, 0.f, 0.f, 640.f, 480.f);
     fn_80235178(0, 0, 0, 640, 480);
 
-    GSrenderClass3 *var1 = lbl_8063F6F0;
-    while (var1 != NULL) {
-        var1->func2();
-        var1 = (GSrenderClass3 *)var1->_8;
+    GSrenderModule *module = GSrenderModule::getModuleList();
+    while (module) {
+        module->fn_80236AE0();
+        module = module->getNext();
     }
 
-    GSrenderClass5 *var2 = lbl_8063F728;
-    while (var2 != NULL) {
-        var2->func1();
-        var2 = (GSrenderClass5 *)var2->_18;
+    GSrenderTarget *target = GSrenderTarget::getTargetList();
+    while (target) {
+        target->fn_8023B59C();
+        target = target->getNext();
     }
 
-    var2 = lbl_8063F728;
-    while (var2 != NULL) {
-        var2->func2();
-        var2 = (GSrenderClass5 *)var2->_18;
+    target = GSrenderTarget::getTargetList();
+    while (target) {
+        target->fn_8023B5A0();
+        target = target->getNext();
     }
 
     mState->mCurr.mFogEnable = false;
     mState->_64 |= (1 << 6);
     mState->_0 |= (1 << 6);
 
-    if (_172c != NULL) {
+    if (_172c) {
         _172c();
     }
 
@@ -287,7 +274,7 @@ void GSrenderManager::fn_80231544() {
         fn_80231918();
     }
 
-    if (_1734 != NULL) {
+    if (_1734) {
         _1734();
     }
 
@@ -315,7 +302,7 @@ void GSrenderManager::fn_80231544() {
     _16f9 = false;
 }
 
-void GSrenderManager::fn_8023177C(GSdvdError error, u32 param2, GSColor color) {
+void GSrender::fn_8023177C(GSdvdError error, u32 param2, GScolor color) {
     mDvdError = error;
     _1704 = param2;
     mFillColor.r = color.r;
@@ -325,7 +312,7 @@ void GSrenderManager::fn_8023177C(GSdvdError error, u32 param2, GSColor color) {
 
     if (error == DVD_ERROR_OK) {
         if (_1714 != NULL) {
-            GSrender::fn_8023E2D0(_1714);
+            fn_8023E2D0(_1714);
             _1714 = NULL;
         }
 
@@ -365,7 +352,7 @@ void GSrenderManager::fn_8023177C(GSdvdError error, u32 param2, GSColor color) {
         if (_1710) {
             CXUncompressLZ(src, _1710);
             DCFlushRange(_1710, size);
-            _1714 = GSrender::fn_8023D6CC(_1710);
+            _1714 = fn_8023D6CC(_1710);
         }
     }
 
@@ -374,7 +361,7 @@ void GSrenderManager::fn_8023177C(GSdvdError error, u32 param2, GSColor color) {
     }
 }
 
-void GSrenderManager::fn_80231918() {
+void GSrender::fn_80231918() {
     GSrenderState *state;
 
     if (mDvdError == DVD_ERROR_OK) {
@@ -454,10 +441,10 @@ void GSrenderManager::fn_80231918() {
         mState->_44 |= (1 << 0);
         mState->_0 |= (1 << 7);
 
-        fn_8023378C(0, 3, 1, 1, 0, 0, 2, 0);
+        configureColorChannel(0, (1 << 0) | (1 << 1), GX_SRC_VTX, GX_SRC_VTX, 0, NULL, GX_AF_NONE, GX_DF_NONE);
 
-        if (mState->mCurr.mIndTexStages[0].mType != TEV_NULL) {
-            mState->mCurr.mIndTexStages[0].mType = TEV_DIRECT;
+        if (mState->mCurr.mIndTexStages[0].mType != GS_TEV_NULL) {
+            mState->mCurr.mIndTexStages[0].mType = GS_TEV_DIRECT;
         }
         mState->mIndTexStageFlags |= (1 << 0);
         mState->_0 |= (1 << 3);
@@ -469,7 +456,7 @@ void GSrenderManager::fn_80231918() {
         mState->mTevStageFlags |= (1 << 0);
         mState->_0 |= (1 << 3);
 
-        fn_80233B88(0, 4);
+        configureTevStage(0, GS_TEV_MODE_PASSCLR);
 
         state = mState;
         state->mCurr.mTevSwapModes[0].mRasSel = GX_TEV_SWAP0;
@@ -477,31 +464,31 @@ void GSrenderManager::fn_80231918() {
         mState->mTevSwapModeFlags |= (1 << 0);
         mState->_0 |= (1 << 5);
 
-        mVertexFormat = GSrender::fn_8023CF1C(2);
+        mVertexFormat = fn_8023CF1C(2);
         mPrimitiveType = GX_TRIANGLESTRIP;
 
         fn_8023352C(4);
         // vert 1
         GXPosition2f32(0.f, 0.f);
-        GXColor1u32(mFillColor.rgba);
+        GXColor1u32(mFillColor);
         // vert 2
         GXPosition2f32(0.f, 480.f);
-        GXColor1u32(mFillColor.rgba);
+        GXColor1u32(mFillColor);
         // vert 3
         GXPosition2f32(640.f, 0.f);
-        GXColor1u32(mFillColor.rgba);
+        GXColor1u32(mFillColor);
         // vert 4
         GXPosition2f32(640.f, 480.f);
-        GXColor1u32(mFillColor.rgba);
+        GXColor1u32(mFillColor);
         fn_80233580();
         fn_80250134(_1704, 100, 200, 0, 0, -1);
     } else if (_1714) {
-        u16 w = GSrender::fn_8023E540(_1714);
+        u16 w = fn_8023E540(_1714);
         f32 width;
         OSu16tof32(&w, &width);
         f32 centerX = 0.5f * width;
 
-        u16 h = GSrender::fn_8023E548(_1714);
+        u16 h = fn_8023E548(_1714);
         f32 height;
         OSu16tof32(&h, &height);
         f32 centerY = 0.5f * height;
@@ -529,7 +516,7 @@ void GSrenderManager::fn_80231918() {
         mState->_44 |= (1 << 0);
         mState->_0 |= (1 << 7);
 
-        mVertexFormat = GSrender::fn_8023CF1C(2);
+        mVertexFormat = fn_8023CF1C(2);
         mPrimitiveType = GX_TRIANGLESTRIP;
 
         fn_8023352C(4);
@@ -563,15 +550,15 @@ void GSrenderManager::fn_80231918() {
         mState->_44 |= (1 << 0);
         mState->_0 |= (1 << 7);
 
-        fn_80234474(0, 1, 4, 0, 0, 0);
+        configureTexCoordGen(0, GX_TG_MTX2x4, GX_TG_TEX0, NULL, GX_FALSE, NULL);
 
         if (mState->mTextures[0] != _1714 || (_1714->mFlags & (1 << 0)) == (1 << 0)) {
             mState->mTextures[0] = _1714;
             mState->mTextureFlags |= (1 << 0);
         }
 
-        if (mState->mCurr.mIndTexStages[0].mType != TEV_NULL) {
-            mState->mCurr.mIndTexStages[0].mType = TEV_DIRECT;
+        if (mState->mCurr.mIndTexStages[0].mType != GS_TEV_NULL) {
+            mState->mCurr.mIndTexStages[0].mType = GS_TEV_DIRECT;
         }
         mState->mIndTexStageFlags |= (1 << 0);
         mState->_0 |= (1 << 3);
@@ -583,7 +570,7 @@ void GSrenderManager::fn_80231918() {
         mState->mTevStageFlags |= (1 << 0);
         mState->_0 |= (1 << 3);
 
-        fn_80233B88(0, 3);
+        configureTevStage(0, GS_TEV_MODE_REPLACE);
 
         state = mState;
         state->mCurr.mTevSwapModes[0].mRasSel = GX_TEV_SWAP0;
@@ -591,7 +578,7 @@ void GSrenderManager::fn_80231918() {
         mState->mTevSwapModeFlags |= (1 << 0);
         mState->_0 |= (1 << 5);
 
-        mVertexFormat = GSrender::fn_8023CF1C(5);
+        mVertexFormat = fn_8023CF1C(5);
         mPrimitiveType = GX_TRIANGLESTRIP;
 
         fn_8023352C(4);
@@ -611,7 +598,7 @@ void GSrenderManager::fn_80231918() {
     }
 }
 
-void GSrenderManager::fn_802321DC() {
+void GSrender::fn_802321DC() {
     _16ec = NULL;
     _16f9 = true;
     mFillColor.r = 0;

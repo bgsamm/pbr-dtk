@@ -4,20 +4,106 @@
 
 #include <revolution.h>
 
+// TODO(samm) Keeping all the data structs here for ease of reference
+
 struct GSanimationObject;
 struct GSnodeAnimChannel;
-struct GSobjectData;
 struct GStexture;
 
 #define MATERIAL_MAX_TEXTURE_SLOTS 5
 
 typedef void (*GSanimationCallback)(GSanimationObject *node, GSnodeAnimChannel *channel, f32 cursor, bool blend);
 
-// TODO(samm) Name? Move?
+// TODO(samm) Name? Move? Vec vs. GSvec3?
 struct _TransformPivots {
     /* 0x00 */ GSvec3 mScalePivot;
     /* 0x0C */ GSvec3 mScaleToRot;
     /* 0x18 */ GSvec3 mRotToTrans;
+};
+
+enum GSnodeType {
+    GS_NODE_NULL = 0,
+    GS_NODE_JOINT = 2,
+    GS_NODE_MODEL = 3,
+    GS_NODE_CAMERA = 4,
+    GS_NODE_LIGHT = 5,
+    GS_NODE_VOLUME = 6,
+    GS_NODE_PARTICLE = 7
+};
+
+struct GSnodeAnimChannel {
+    /* 0x0 */ u8 _0;
+    /* 0x1 */ u8 mChannel;
+    /* 0x2 */ u8 mComponent;
+    /* 0x3 */ u8 _3;
+    /* 0x4 */ u8 _4;
+    /* 0x5 */ u8 _5;
+    /* 0x6 */ u8 mDataType;
+    /* 0x7 */ u8 mScaleExp;
+    /* 0x8 */ void *mKeyframes;
+    /* 0xC */ GSanimationCallback mStepCallback;
+};
+
+struct GSnodeAnimData {
+    /* 0x0 */ u16 mAnimId;
+    /* 0x2 */ u16 mChannelCount;
+    /* 0x4 */ GSnodeAnimChannel *mChannels;
+    /* 0x8 */ f32 mAnimLength;
+    /* 0xc */ GSnodeAnimData *mNext;
+};
+
+struct GSnodeData {
+    /* 0x00 */ GSnodeType mNodeType;
+    /* 0x04 */ char *mName;
+    /* 0x08 */ u16 mIndex;
+    /* 0x0A */ u16 mFlags;
+    /* 0x0C */ Vec *mTranslation;
+    /* 0x10 */ Vec *mRotation;
+    /* 0x14 */ Vec *mScale;
+    /* 0x18 */ _TransformPivots *mTransformPivots;
+    /* 0x1C */ f32 _1c;
+    /* 0x20 */ GSnodeAnimData *mAnimData;
+    /* 0x24 */ GSnodeData *mFirstChild;
+    /* 0x28 */ GSnodeData *mNextSibling;
+    /* 0x2C */ void *_2c;
+};
+
+struct _UnkAnimData_1 {
+    /* 0x0 */ f32 _0;
+    /* 0x4 */ u16 _4;
+};
+
+// Size: 0x30
+struct GSanimationData {
+    /* 0x00 */ char *mName;
+    /* 0x04 */ f32 _4;
+    /* 0x08 */ f32 _8;
+    /* 0x0C */ f32 mLength;
+    /* 0x10 */ u16 *_10;
+    /* 0x14 */ u16 *_14;
+    /* 0x18 */ u16 _18;
+    /* 0x1A */ u16 _1a;
+    /* 0x1C */ _UnkAnimData_1 *_1c;
+    /* 0x20 */ _UnkAnimData_1 *_20;
+    /* 0x24 */ u16 _24;
+    /* 0x26 */ u16 _26;
+    /* 0x28 */ u8 _28;
+    /* 0x29 */ bool _29;
+    /* 0x2A */ bool _2a;
+    /* 0x2B */ bool _2b;
+    /* 0x2C */ void *_2c;
+};
+
+struct GSobjectData {
+    /* 0x00 */ char *mName;
+    /* 0x04 */ u16 mId;
+    /* 0x06 */ u16 mNodeCount;
+    /* 0x08 */ u16 mAnimCount;
+    /* 0x0C */ GSanimationData *mAnimList;
+    /* 0x10 */ GSnodeData *mRootNode;
+    // TODO(samm) Confirm type (does data incl. possible matrix ptr?)
+    /* 0x14 */ GSboundingBox *mBoundingBox;
+    /* 0x18 */ void *_18;
 };
 
 struct _UnkMaterialData_1 {
@@ -38,56 +124,6 @@ struct GSmaterialData {
     /* 0x54 */ u8 _54;
     /* 0x55 */ u8 _pad_55[0x2f];
     /* 0x84 */ _UnkMaterialData_2 *_84;
-};
-
-enum GSnodeType {
-    GS_NODE_NULL = 0,
-    GS_NODE_JOINT = 2,
-    GS_NODE_MESH = 3,
-    GS_NODE_CAMERA = 4,
-    GS_NODE_LIGHT = 5,
-    GS_NODE_VOLUME = 6,
-    GS_NODE_PARTICLE = 7
-};
-
-// TODO(samm) Move elsewhere?
-struct GSnodeAnimChannel {
-    /* 0x0 */ u8 _0;
-    /* 0x1 */ u8 mChannel;
-    /* 0x2 */ u8 mComponent;
-    /* 0x3 */ u8 _3;
-    /* 0x4 */ u8 _4;
-    /* 0x5 */ u8 _5;
-    /* 0x6 */ u8 mDataType;
-    /* 0x7 */ u8 mScaleExp;
-    /* 0x8 */ void *mKeyframes;
-    /* 0xC */ GSanimationCallback mStepCallback;
-};
-
-// TODO(samm) Move elsewhere?
-struct GSnodeAnimData {
-    /* 0x0 */ u16 mAnimId;
-    /* 0x2 */ u16 mChannelCount;
-    /* 0x4 */ GSnodeAnimChannel *mChannels;
-    /* 0x8 */ f32 mAnimLength;
-    /* 0xc */ GSnodeAnimData *mNext;
-};
-
-// TODO(samm) Move elsewhere?
-struct GSnodeData {
-    /* 0x00 */ GSnodeType mNodeType;
-    /* 0x04 */ char *mName;
-    /* 0x08 */ u16 mId;
-    /* 0x0A */ u16 mFlags;
-    /* 0x0C */ Vec *mTranslation;
-    /* 0x10 */ Vec *mRotation;
-    /* 0x14 */ Vec *mScale;
-    /* 0x18 */ _TransformPivots *mTransformPivots;
-    /* 0x1C */ u32 _1c;
-    /* 0x20 */ GSnodeAnimData *mAnimData;
-    /* 0x24 */ GSnodeData *mFirstChild;
-    /* 0x28 */ GSnodeData *mNextSibling;
-    /* 0x2C */ u32 _2c;
 };
 
 struct _UnkSceneData_1 {

@@ -1,1 +1,1 @@
-#include "gs/GSrender.hpp"
+#include "gs/render/GStexture.hpp"

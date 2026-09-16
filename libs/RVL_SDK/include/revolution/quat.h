@@ -13,12 +13,14 @@ extern "C" {
 #define QUATNormalize PSQUATNormalize
 #define QUATMtx C_QUATMtx
 #define QUATSlerp C_QUATSlerp
+#define QUATRotAxisRad C_QUATRotAxisRad
 
 void PSQUATInverse(const Quaternion *, Quaternion *);
 void PSQUATMultiply(const Quaternion *, const Quaternion *, Quaternion *);
 void PSQUATNormalize(const Quaternion *, Quaternion *);
 void C_QUATMtx(Quaternion *, const Mtx);
 void C_QUATSlerp(const Quaternion *, const Quaternion *, Quaternion *, f32);
+void C_QUATRotAxisRad(Quaternion *, const Vec *, f32);
 
 #ifdef __cplusplus
 }

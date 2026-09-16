@@ -48,7 +48,7 @@ protected:
     /* 0x0C4 */ GSnull *mNext;
     /* 0x0C8 */ GSnull *mPrev;
     /* 0x0CC */ GSnull *mFirstChild;
-    /* 0x0D0 */ Mtx mTransform;
+    /* 0x0D0 */ GSmatrix mTransform;
 
     static GSnull *sRootNodeList;
     static GSnull *sRootNode;
@@ -78,7 +78,6 @@ protected:
         MTXTransApply(mTransform, mTransform, mParentTranslation.x, mParentTranslation.y, mParentTranslation.z);
     }
 
-    GSnull *nextInObject() const;
     GSnull *nextPreorder() const;
     void registerAsRoot();
     void unregisterAsRoot();
@@ -88,7 +87,6 @@ protected:
     void applyBlending(f32 blendFactor);
     void updateChildren(f32 deltaTime);
     bool fn_801F3C7C();
-    bool fn_801F3CE0();
 
 public:
     GSnull(GSnodeType type);
@@ -99,6 +97,17 @@ public:
     /* 0x10 */ virtual void initTransform(bool recursive);
     /* 0x14 */ virtual void updateTransform();
 
+    GSnull *nextInObject() const;
+    bool attachChild(u32 inheritFlags, GSnull *child, GSnull *refNode, u32 where);
+    void unattachChild(GSnull *child);
+    bool attachChild(u32 inheritFlags, GSobject *child, GSnull *refNode, u32 where);
+    void unattachChild(GSobject *child);
+    // TODO(samm) Name
+    void markNeedsUpdate(bool recursive);
+    bool fn_801F3CE0();
+
+    static void fn_801F3D44(GSnull *node, GSnodeAnimChannel *channel, f32 cursor, bool blend);
+
     bool checkFlag(u16 flag) const {
         return (mFlags & flag) == flag;
     }
@@ -107,16 +116,23 @@ public:
         return mRoot == this;
     }
 
-    Mtx *getTransform() {
+    u16 getIndex() const {
+        return mNodeData ? mNodeData->mIndex : 0;
+    }
+
+    GSnodeType getNodeType() const {
+        return (GSnodeType)mNodeType;
+    }
+
+    GSmatrix *getTransform() {
         return &mTransform;
     }
 
-    bool attachChild(u32 inheritFlags, GSnull *child, GSnull *refNode, u32 where);
-    void unattachChild(GSnull *child);
-    bool attachChild(u32 inheritFlags, GSobject *child, GSnull *refNode, u32 where);
-    void unattachChild(GSobject *child);
-    // TODO(samm) Name
-    void markNeedsUpdate(bool recursive);
-
-    static void fn_801F3D44(GSnull *node, GSnodeAnimChannel *channel, f32 cursor, bool blend);
+    static void updateAllTrees(f32 deltaTime) {
+        GSnull *node = sRootNodeList;
+        while (node) {
+            node->update(deltaTime);
+            node = node->mNext;
+        }
+    }
 };

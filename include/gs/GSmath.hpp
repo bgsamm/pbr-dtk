@@ -36,6 +36,24 @@ struct GSvec3 : public Vec {
         this->y = y;
         this->z = z;
     }
+
+    GSvec3 operator+(const GSvec3 &other) const {
+        GSvec3 result;
+        VECAdd(this, &other, &result);
+        return result;
+    }
+
+    GSvec3 operator*(f32 scale) const {
+        GSvec3 result;
+        VECScale(this, &result, scale);
+        return result;
+    }
+
+    GSvec3 cross(const GSvec3 *other) const {
+        GSvec3 result;
+        VECCrossProduct(this, other, &result);
+        return result;
+    }
 };
 
 struct GSquat : public Quaternion {
@@ -71,18 +89,61 @@ struct GSquat : public Quaternion {
     }
 };
 
+struct GSmatrix {
+private:
+    Mtx mMatrix;
+
+public:
+    operator Mtx &() {
+        return mMatrix;
+    }
+
+    operator const Mtx &() const {
+        return mMatrix;
+    }
+
+    GSvec3 operator*(const GSvec3 &vec) const {
+        GSvec3 result;
+        MTXMultVec(mMatrix, &vec, &result);
+        return result;
+    }
+};
+
+// TODO(samm) Name? Move? Vec vs. GSvec3?
+struct GSboundingBox {
+    /* 0x00 */ GSvec3 mMin;
+    /* 0x0C */ GSvec3 mMax;
+    /* 0x18 */ GSmatrix *mTransform;
+
+    GSboundingBox(f32 x0, f32 y0, f32 z0, f32 x1, f32 y1, f32 z1) : mMin(x0, y0, z0), mMax(x1, y1, z1), mTransform() {}
+};
+
 namespace GSmath {
-// GSeuler
+
+extern GSvec3 sXAxis;
+extern GSvec3 sYAxis;
+extern GSvec3 sZAxis;
+
+// GSboundingBox.cpp
+void calcBoundingBoxCenter(GSvec3 *dst, const GSboundingBox *aabb);
+void expandBoundingBox(GSboundingBox *dst, const GSboundingBox *src);
+
+// GSeuler.cpp
 void eulerToQuat(GSquat *quat, GSvec3 *euler);
-// GSrand
+
+// GSrand.cpp
 u32 *getRandSeed();
 void initRand();
-// GStrig
+
+// GStrig.cpp
 void initCosTable();
 f32 cos(f32 x);
 f32 sin(f32 x);
-// GSquat
+
+// GSquat.cpp
 void rotateVec3ByQuat(GSvec3 *p, GSquat *r);
-// GSmathInit
+
+// GSmathInit.cpp
 void init();
+
 }; // namespace GSmath

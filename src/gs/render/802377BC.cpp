@@ -5,10 +5,119 @@
 
 #include "version.hpp"
 
-
 /* lbl_80496760 */ static f32 sProjectionMatrix[4][4];
 
-void GSrenderManager::loadLights() {
+void GSrender::setupFlatTranslucentTexture() {
+    GScolor translucentGray(128, 128, 128, 128);
+
+    setNumChannels(1);
+    setNumTexGens(0);
+    setNumTevStages(1);
+    setNumIndStages(0);
+
+    // TODO(samm) Inline this
+    mState->mCurr.mChanAmbColors[0] = translucentGray;
+    mState->mCurr.mChanMatColors[0] = translucentGray;
+    mState->mChanAmbColorFlags |= (1 << 0);
+    mState->mChanMatColorFlags |= (1 << 0);
+    mState->_0 |= (1 << 2);
+
+    configureColorChannel(0, (1 << 0) | (1 << 1), GX_SRC_REG, GX_SRC_REG, 0, NULL, GX_AF_NONE, GX_DF_NONE);
+
+    setIndTexStage(0, GS_TEV_DIRECT);
+
+    // TODO(samm) I feel like these names are too similar to each other
+    setTevStage(0, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+    configureTevStage(0, GS_TEV_MODE_PASSCLR);
+
+    setTevSwapMode(0, GX_TEV_SWAP0, GX_TEV_SWAP0);
+}
+
+void GSrender::setupAdditiveMultiTexture(u8 textureCount) {
+    setNumChannels(0);
+    setNumTexGens(textureCount);
+    setNumTevStages(textureCount);
+    setNumIndStages(0);
+
+    u8 i;
+    for (i = 0; i < textureCount; i++) {
+        configureTexCoordGen(i, GX_TG_MTX2x4, (GXTexGenSrc)(GX_TG_TEX0 + i), NULL, GX_FALSE, NULL);
+    }
+    for (i = 0; i < textureCount; i++) {
+        setIndTexStage(i, GS_TEV_DIRECT);
+
+        setTevStage(i, (GXTexCoordID)i, (GXTexMapID)i, GX_COLOR_NULL);
+
+        if (i == 0) {
+            configureTevStage(i, GS_TEV_MODE_REPLACE);
+        } else {
+            configureTevStage(i, GS_TEV_MODE_ADD_TEX);
+        }
+
+        setTevSwapMode(i, GX_TEV_SWAP0, GX_TEV_SWAP0);
+    }
+}
+
+void GSrender::setupVertexColoring() {
+    setNumChannels(1);
+    setNumTexGens(0);
+    setNumTevStages(1);
+    setNumIndStages(0);
+
+    configureColorChannel(0, (1 << 0) | (1 << 1), GX_SRC_REG, GX_SRC_VTX, 0, NULL, GX_AF_NONE, GX_DF_NONE);
+
+    setIndTexStage(0, GS_TEV_DIRECT);
+
+    setTevStage(0, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+    configureTevStage(0, GS_TEV_MODE_PASSCLR);
+
+    setTevSwapMode(0, GX_TEV_SWAP0, GX_TEV_SWAP0);
+}
+
+void GSrender::setupMultiplicativeMultiTexture(u8 textureCount) {
+    setNumChannels(1);
+    setNumTexGens(textureCount);
+    setNumTevStages(textureCount);
+    setNumIndStages(0);
+
+    configureColorChannel(0, (1 << 0) | (1 << 1), GX_SRC_REG, GX_SRC_VTX, 0, NULL, GX_AF_NONE, GX_DF_NONE);
+
+    u8 i;
+    for (i = 0; i < textureCount; i++) {
+        configureTexCoordGen(i, GX_TG_MTX2x4, (GXTexGenSrc)(GX_TG_TEX0 + i), NULL, GX_FALSE, NULL);
+    }
+    for (i = 0; i < textureCount; i++) {
+        setIndTexStage(i, GS_TEV_DIRECT);
+
+        setTevStage(i, (GXTexCoordID)i, (GXTexMapID)i, GX_COLOR0A0);
+
+        if (i == 0) {
+            configureTevStage(i, GS_TEV_MODE_MODULATE);
+        } else {
+            configureTevStage(i, GS_TEV_MODE_ADD_MODULATE);
+        }
+
+        setTevSwapMode(i, GX_TEV_SWAP0, GX_TEV_SWAP0);
+    }
+}
+
+void GSrender::fn_80237FA4() {
+    setupFlatTranslucentTexture();
+}
+
+void GSrender::fn_80237FA8(u8 textureCount) {
+    setupAdditiveMultiTexture(textureCount);
+}
+
+void GSrender::fn_80237FAC() {
+    setupVertexColoring();
+}
+
+void GSrender::fn_80237FB0(u8 textureCount) {
+    setupMultiplicativeMultiTexture(textureCount);
+}
+
+void GSrender::loadLights() {
     GSlight **light;
     u32 i;
     u8 nLights;
@@ -30,7 +139,7 @@ void GSrenderManager::loadLights() {
     mState->_14 &= ~(1 << 4);
 }
 
-void GSrenderManager::setVertexFormat(GSvertexFormat *format) {
+void GSrender::setVertexFormat(GSvertexFormat *format) {
     GSvtxAttrArray *array;
 
     GXClearVtxDesc();
@@ -79,7 +188,7 @@ void GSrenderManager::setVertexFormat(GSvertexFormat *format) {
 }
 
 // TODO(samm) Name local variables
-void GSrenderManager::loadModelViewMatrix() {
+void GSrender::loadModelViewMatrix() {
     GSrenderStruct8 *_unk1 = _16e8->_4;
     if ((_unk1->mFlags & (1 << 2)) || _unk1 != mState->_1508) {
         GXLoadPosMtxImm(_16e8->get_4()->mPosMtx, GX_PNMTX9);
@@ -104,7 +213,7 @@ void GSrenderManager::loadModelViewMatrix() {
     }
 }
 
-void GSrenderManager::loadTextures() {
+void GSrender::loadTextures() {
     GStexture *texture;
     GStexture **textureList;
     s32 i;
@@ -134,7 +243,7 @@ void GSrenderManager::loadTextures() {
     mState->mTextureFlags = 0;
 }
 
-void GSrenderManager::syncRenderSettings() {
+void GSrender::syncRenderSettings() {
     // Having all these up here is almost certainly a false match, but at this point, idc :)
     s32 i;
     bool zCompEnable;
@@ -162,27 +271,25 @@ void GSrenderManager::syncRenderSettings() {
 
         texGenFlags = mState->mTexGenFlags;
         if (texGenFlags != 0) {
-            GStexGen *curr = state->mCurr.mTexGens;
-            GStexGen *prev = state->mPrev.mTexGens;
+            GStexGen *curr = state->mCurr.mTexCoordGens;
+            GStexGen *prev = state->mPrev.mTexCoordGens;
             for (i = 0; i < nTexGens; i++, curr++, prev++) {
                 if ((texGenFlags & (1 << i)) == 0) {
                     continue;
                 }
 
                 if (curr->mLight != NULL) {
-                    curr->mTexGenFunc = (GXTexGenType)(GX_TG_BUMP0 + curr->mLight->mIndex);
+                    curr->mType = (GXTexGenType)(GX_TG_BUMP0 + curr->mLight->mIndex);
                 }
 
-                if (prev->mTexGenFunc != curr->mTexGenFunc || prev->mTexGenSrc != curr->mTexGenSrc ||
-                    prev->mTexMtx != curr->mTexMtx || prev->mNormalize != curr->mNormalize ||
-                    prev->mPostMtx != curr->mPostMtx) {
+                if (prev->mType != curr->mType || prev->mSrc != curr->mSrc || prev->mTexMtx != curr->mTexMtx ||
+                    prev->mNormalize != curr->mNormalize || prev->mPostMtx != curr->mPostMtx) {
                     GXSetTexCoordGen2(
-                        (GXTexCoordID)i, curr->mTexGenFunc, curr->mTexGenSrc, curr->mTexMtx, curr->mNormalize,
-                        curr->mPostMtx
+                        (GXTexCoordID)i, curr->mType, curr->mSrc, curr->mTexMtx, curr->mNormalize, curr->mPostMtx
                     );
 
-                    prev->mTexGenFunc = curr->mTexGenFunc;
-                    prev->mTexGenSrc = curr->mTexGenSrc;
+                    prev->mType = curr->mType;
+                    prev->mSrc = curr->mSrc;
                     prev->mTexMtx = curr->mTexMtx;
                     prev->mNormalize = curr->mNormalize;
                     prev->mPostMtx = curr->mPostMtx;
@@ -375,6 +482,7 @@ void GSrenderManager::syncRenderSettings() {
                     continue;
                 }
 
+                // TODO(samm) Revisit this
                 if (*(s32 *)prev != *(s32 *)curr) {
                     GXSetChanAmbColor((GXChannelID)(GX_COLOR0A0 + i), *curr);
                     prev->r = curr->r;
@@ -397,7 +505,7 @@ void GSrenderManager::syncRenderSettings() {
                     continue;
                 }
 
-                // TODO revisit this casting (GSColor?)
+                // TODO revisit this casting (GScolor?)
                 if (*(s32 *)prev != *(s32 *)curr) {
                     GXSetChanMatColor((GXChannelID)(GX_COLOR0A0 + i), *curr);
                     prev->r = curr->r;
@@ -576,13 +684,13 @@ void GSrenderManager::syncRenderSettings() {
                 }
 
                 switch (curr->mType) {
-                    case TEV_DIRECT:
+                    case GS_TEV_DIRECT:
                         if (prev->mType != curr->mType) {
                             GXSetTevDirect((GXTevStageID)i);
                         }
                         break;
 
-                    case TEV_INDIRECT:
+                    case GS_TEV_INDIRECT:
                         GXSetTevIndirect(
                             (GXTevStageID)i, curr->mIndStage, curr->indirect.mFormat, curr->indirect.mBiasSel,
                             curr->indirect.mMatrixSel, curr->indirect.mWrapS, curr->indirect.mWrapT,
@@ -590,14 +698,14 @@ void GSrenderManager::syncRenderSettings() {
                         );
                         break;
 
-                    case TEV_IND_WARP:
+                    case GS_TEV_IND_WARP:
                         GXSetTevIndWarp(
                             (GXTevStageID)i, curr->mIndStage, curr->warp.mSignedOffsets, curr->warp.mReplaceMode,
                             curr->warp.mMatrixSel
                         );
                         break;
 
-                    case TEV_IND_TILE:
+                    case GS_TEV_IND_TILE:
                         GXSetTevIndTile(
                             (GXTevStageID)i, curr->mIndStage, curr->tile.mTileSizeS, curr->tile.mTileSizeT,
                             curr->tile.mTileSpacingS, curr->tile.mTileSpacingT, curr->tile.mFormat,
@@ -605,22 +713,22 @@ void GSrenderManager::syncRenderSettings() {
                         );
                         break;
 
-                    case TEV_IND_BUMP_ST:
+                    case GS_TEV_IND_BUMP_ST:
                         GXSetTevIndBumpST((GXTevStageID)i, curr->mIndStage, curr->bump.mMatrixSel);
                         break;
 
-                    case TEV_IND_BUMP_XYZ:
+                    case GS_TEV_IND_BUMP_XYZ:
                         GXSetTevIndBumpXYZ((GXTevStageID)i, curr->mIndStage, curr->bump.mMatrixSel);
                         break;
 
-                    case TEV_IND_REPEAT:
+                    case GS_TEV_IND_REPEAT:
                         if (prev->mType != curr->mType) {
                             GXSetTevIndRepeat((GXTevStageID)i);
                         }
                         break;
 
-                    case TEV_NULL:
-                    default:       break;
+                    case GS_TEV_NULL:
+                    default:          break;
                 }
 
                 prev->mType = curr->mType;
@@ -705,7 +813,7 @@ void GSrenderManager::syncRenderSettings() {
                     continue;
                 }
 
-                // TODO revisit this casting (GSColor?)
+                // TODO revisit this casting (GScolor?)
                 if (*(s32 *)prev != *(s32 *)curr) {
                     GXSetTevKColor((GXTevKColorID)i, *curr);
                     (*prev).r = (*curr).r;
@@ -906,7 +1014,7 @@ void GSrenderManager::syncRenderSettings() {
                                            state->mPrev.mFogEndZ != state->mCurr.mFogEndZ ||
                                            state->mPrev.mFogNearZ != state->mCurr.mFogNearZ ||
                                            state->mPrev.mFogFarZ != state->mCurr.mFogFarZ
-                                           // TODO revisit this casting (GSColor?)
+                                           // TODO revisit this casting (GScolor?)
                                            || *(s32 *)(&state->mPrev.mFogColor) != *(s32 *)(&state->mCurr.mFogColor))) {
                 GXSetFog(
                     fogType, state->mCurr.mFogStartZ, state->mCurr.mFogEndZ, state->mCurr.mFogNearZ,
@@ -923,7 +1031,7 @@ void GSrenderManager::syncRenderSettings() {
                 state->mPrev.mFogColor.a = state->mCurr.mFogColor.a;
             }
         } else if ((mState->_64 & (1 << 7)) != 0) {
-            // TODO revisit this casting (GSColor?)
+            // TODO revisit this casting (GScolor?)
             if (*(s32 *)(&state->mPrev.mFogColor) != *(s32 *)(&state->mCurr.mFogColor)) {
                 GXSetFogColor(state->mCurr.mFogColor);
                 state->mPrev.mFogColor.r = state->mCurr.mFogColor.r;
@@ -985,7 +1093,7 @@ void GSrenderManager::syncRenderSettings() {
     mState->_0 = 0;
 }
 
-void GSrenderManager::sync() {
+void GSrender::sync() {
     GXGetFifoPtrs(mGraphicsFifo.mFifoObj, &mGraphicsFifo.mReadPtr, &mGraphicsFifo.mWritePtr);
     GXGetGPStatus(
         &mGraphicsFifo.mOverhi, &mGraphicsFifo.mUnderlow, &mGraphicsFifo.mReadIdle, &mGraphicsFifo.mCmdIdle,

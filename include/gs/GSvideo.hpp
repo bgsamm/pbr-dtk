@@ -41,7 +41,8 @@ union U32F32 {
     f32 fval;
 };
 
-class GSvideoManager {
+// NOTE(samm) Name known from RTTI
+class GSvideo {
 protected:
     /* 0x0 */ GXRenderModeObj mRenderMode;
     /* 0x3c */ GSxfbHandle mXfbs[MAX_XFBS];
@@ -65,7 +66,7 @@ protected:
     u32 _7c;
     u8 _80;
     u8 _81;
-    /* 0x82 */ bool _82;
+    /* 0x82 */ bool mHomeMenuActive;
     /* 0x83 */ bool _83;
     u32 _84;
     u32 _88;
@@ -97,13 +98,12 @@ protected:
     s32 _cc;
     /* 0xd0 */ GXColor mClearColor;
     /* 0xd4 */ u32 mClearZ;
-    void **_d8;
 
-    static GSvideoManager *sInstance;
+    static GSvideo *sInstance;
 
 public:
-    GSvideoManager(u8, u16, VideoFormat);
-    ~GSvideoManager();
+    GSvideo(u8, u16, VideoFormat);
+    virtual ~GSvideo();
 
     void getRenderDimensions(u16 *width, u16 *height) const {
         if (width) {
@@ -116,6 +116,10 @@ public:
 
     u8 get_7a() {
         return _7a;
+    }
+
+    bool _unkCondition1() {
+        return mHomeMenuActive || _83;
     }
 
     u8 getRefreshRate() {
@@ -134,7 +138,7 @@ public:
         mRetraceCallback = callback;
     }
 
-    static GSvideoManager *getInstance() {
+    static GSvideo *getInstance() {
         return sInstance;
     }
 
@@ -158,7 +162,7 @@ public:
     void setViewport(f32, f32, f32, f32, f32, f32);
     void setScissor(u32, u32, u32, u32);
     void setScissorBoxOffset(s32, s32);
-    f32 fn_8023FFEC();
+    f32 fn_8023FFEC() const;
 
     void fn_8024041C();
     void fn_80240440();

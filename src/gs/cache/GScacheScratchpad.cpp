@@ -12,7 +12,7 @@
 struct GSscratchpadBuffer {
     /* 0x0 */ u8 mBufIdx;
     /* 0x1 */ u8 mChunkLen;
-    /* 0x4 */ UnkFunc2 mCallback;
+    /* 0x4 */ _UnkCacheFunc_2 mCallback;
 };
 
 /* lbl_80491370 */ static GSscratchpadBuffer sBufferPool[NUM_BUFFERS];

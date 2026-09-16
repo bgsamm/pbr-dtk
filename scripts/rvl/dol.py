@@ -81,20 +81,20 @@ class Dol(BytesReader):
 
     @cached_property
     def bss_address(self) -> int:
-        return self.read(self.BSS_ADDRESS_OFFSET, u32)
+        return self.read(u32, self.BSS_ADDRESS_OFFSET)
 
     @cached_property
     def bss_size(self) -> int:
-        return self.read(self.BSS_SIZE_OFFSET, u32)
+        return self.read(u32, self.BSS_SIZE_OFFSET)
 
     @cached_property
     def entry_point(self) -> int:
-        return self.read(self.ENTRY_POINT_OFFSET, u32)
+        return self.read(u32, self.ENTRY_POINT_OFFSET)
 
     def _init_sections(self) -> None:
-        section_offsets = self.read_many(0x0, u32, self.MAX_SECTIONS)
-        section_addresses = self.read_many(0x48, u32, self.MAX_SECTIONS)
-        section_sizes = self.read_many(0x90, u32, self.MAX_SECTIONS)
+        section_offsets = self.read_many(u32, 0x0, self.MAX_SECTIONS)
+        section_addresses = self.read_many(u32, 0x48, self.MAX_SECTIONS)
+        section_sizes = self.read_many(u32, 0x90, self.MAX_SECTIONS)
 
         self._sections = []
         self._n_text_sections = 0
@@ -119,7 +119,7 @@ class Dol(BytesReader):
 
         self._n_sections = self._n_text_sections + self._n_data_sections
 
-    def read(self, addr_or_off: int, type: ctype) -> int:
+    def read(self, type: ctype, addr_or_off: int) -> int:
         offset = (
             addr_or_off
             if addr_or_off < WII_MEM1_START
@@ -127,7 +127,7 @@ class Dol(BytesReader):
         )
         return super().read(type, offset)
 
-    def read_many(self, addr_or_off: int, type: ctype, n: int) -> tuple[int, ...]:
+    def read_many(self, type: ctype, addr_or_off: int, n: int) -> tuple[int, ...]:
         offset = (
             addr_or_off
             if addr_or_off < WII_MEM1_START

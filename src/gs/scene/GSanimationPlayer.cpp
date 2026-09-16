@@ -14,12 +14,12 @@ void GSanimationPlayer::updateCursor(f32 deltaTime) {
         mFlags |= ANIM_FLAG_LOOPED;
 
         switch (mAnimType) {
-            case ANIM_TYPE_CYCLE:
+            case GS_ANIM_TYPE_CYCLE:
                 while (mCursor < 0.f) {
                     mCursor += mAnimData->mAnimLength;
                 }
                 break;
-            case ANIM_TYPE_OSCILLATE:
+            case GS_ANIM_TYPE_OSCILLATE:
                 mCursor = -mCursor;
                 if (mCursor > mAnimData->mAnimLength) {
                     f32 pos = mCursor / mAnimData->mAnimLength;
@@ -45,12 +45,12 @@ void GSanimationPlayer::updateCursor(f32 deltaTime) {
         mFlags |= ANIM_FLAG_LOOPED;
 
         switch (mAnimType) {
-            case ANIM_TYPE_CYCLE:
+            case GS_ANIM_TYPE_CYCLE:
                 while (mCursor > mAnimData->mAnimLength) {
                     mCursor -= mAnimData->mAnimLength;
                 }
                 break;
-            case ANIM_TYPE_OSCILLATE: {
+            case GS_ANIM_TYPE_OSCILLATE: {
                 f32 pos = mCursor / mAnimData->mAnimLength;
                 s32 nLoops = pos;
                 pos -= nLoops;

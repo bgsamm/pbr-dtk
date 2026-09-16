@@ -600,7 +600,7 @@ src/.unsorted/801ED3F0.cpp:
 	.text       start:0x801ED3F0 end:0x801EE044
 	.ctors      start:0x803E2084 end:0x803E2088
 
-src/gs/scene/GSmeshNode.cpp:
+src/gs/scene/GSmodel.cpp:
 	.text       start:0x801EE044 end:0x801F1AE8
 	.ctors      start:0x803E2088 end:0x803E208C
 
@@ -616,9 +616,9 @@ src/gs/GSobject.cpp:
 	.text       start:0x801F40E0 end:0x801F98EC
 	.ctors      start:0x803E2090 end:0x803E2094
 	.data       start:0x804236E0 end:0x80423700
-	.sdata2     start:0x80641E00 end:0x80641E10
+	.sdata2     start:0x80641E00 end:0x80641E20
 
-src/gs/scene/GSparticleNode.cpp:
+src/gs/scene/GSparticle.cpp:
 	.text       start:0x801F98EC end:0x801FA094
 	.ctors      start:0x803E2094 end:0x803E2098
 
@@ -639,9 +639,11 @@ src/.unsorted/801FF308.cpp:
 	.text       start:0x801FF308 end:0x802000BC
 	.ctors      start:0x803E20A4 end:0x803E20A8
 
-src/gs/GSsceneManager.cpp:
+src/gs/GShierarchyModule.cpp:
 	.text       start:0x802000BC end:0x80202E54
 	.ctors      start:0x803E20A8 end:0x803E20AC
+	.sbss       start:0x8063F460 end:0x8063F468
+	.sdata2     start:0x80641F00 end:0x80641F08
 
 src/.unsorted/80202E54.cpp:
 	.text       start:0x80202E54 end:0x80204058
@@ -723,9 +725,12 @@ src/.unsorted/8021FB44.cpp:
 	.text       start:0x8021FB44 end:0x8022063C
 	.ctors      start:0x803E20F8 end:0x803E20FC
 
-src/.unsorted/8022063C.cpp:
+src/gs/math/GSboundingBox.cpp:
 	.text       start:0x8022063C end:0x80220DC4
 	.ctors      start:0x803E20FC end:0x803E2100
+	.bss        start:0x80493250 end:0x804932B0
+	.sbss       start:0x8063F570 end:0x8063F578
+	.sdata2     start:0x806421F0 end:0x806421F8
 
 src/.unsorted/80220DC4.cpp:
 	.text       start:0x80220DC4 end:0x802233C8
@@ -844,6 +849,8 @@ src/gs/render/8023283C.cpp:
 src/gs/render/80232D24.cpp:
 	.text       start:0x80232D24 end:0x802353F8
 	.ctors      start:0x803E2160 end:0x803E2164
+	.data       start:0x804245E0 end:0x80424600
+	.sbss       start:0x8063F6C0 end:0x8063F6C8
 
 src/gs/render/802353F8.cpp:
 	.text       start:0x802353F8 end:0x80235474
@@ -863,9 +870,12 @@ src/gs/render/80236704.cpp:
 	.text       start:0x80236704 end:0x8023694C
 	.ctors      start:0x803E2170 end:0x803E2174
 
-src/gs/render/8023694C.cpp:
+src/gs/render/GSrenderModule.cpp:
 	.text       start:0x8023694C end:0x80236B08
 	.ctors      start:0x803E2174 end:0x803E2178
+	.data       start:0x80424658 end:0x80424670
+	.sdata      start:0x8063D950 end:0x8063D958
+	.sbss       start:0x8063F6E8 end:0x8063F6F8
 
 src/gs/render/80236B08.cpp:
 	.text       start:0x80236B08 end:0x80237794
@@ -883,9 +893,10 @@ src/gs/render/802377BC.cpp:
 	.sbss       start:0x8063F718 end:0x8063F720
 	.sdata2     start:0x806423A8 end:0x806423B8
 
-src/gs/render/8023AF8C.cpp:
+src/gs/render/GSrenderTarget.cpp:
 	.text       start:0x8023AF8C end:0x8023B64C
 	.ctors      start:0x803E2184 end:0x803E2188
+	.sbss       start:0x8063F720 end:0x8063F730
 
 src/gs/render/8023B64C.cpp:
 	.text       start:0x8023B64C end:0x8023B9F4
@@ -895,7 +906,7 @@ src/gs/render/8023B9F4.cpp:
 	.text       start:0x8023B9F4 end:0x8023D008
 	.ctors      start:0x803E218C end:0x803E2190
 
-src/gs/render/8023D008.cpp:
+src/gs/render/GStexture.cpp:
 	.text       start:0x8023D008 end:0x8023EA44
 	.ctors      start:0x803E2190 end:0x803E2194
 

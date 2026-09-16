@@ -1,8 +1,11 @@
 #include "gs/GSsceneData.hpp"
 
 #include "gs/GSrender.hpp"
+#include "gs/render/GStexture.hpp"
 
 #include <revolution/gx/GXEnum.h>
+
+#include "version.hpp"
 
 // TODO(samm) #define the start of logical memory somewhere
 #define FIX_POINTER(pointer, baseAddr)                                                                                 \
@@ -76,9 +79,9 @@ inline void initSceneTextures(GSsceneData *sceneData, u32 baseAddr) {
         }
 
         FIX_POINTER(*texList, baseAddr);
-        *texList = GSrender::fn_8023D6CC(*texList);
+        *texList = fn_8023D6CC(*texList);
 
-        if (GSrenderManager::getInstance()->get_7a()) {
+        if (GSrender::getInstance()->get_7a()) {
             GXTexFilter magFilter = (*texList)->mMagFilter;
             if (magFilter < GX_NEAR_MIP_NEAR) {
                 magFilter = GX_NEAR_MIP_NEAR;
@@ -90,11 +93,11 @@ inline void initSceneTextures(GSsceneData *sceneData, u32 baseAddr) {
             }
 
             u32 filterFlags = (*texList)->mFilterFlags;
-            GSrender::fn_8023E3C8(*texList, minFilter, magFilter, filterFlags);
+            fn_8023E3C8(*texList, minFilter, magFilter, filterFlags);
         }
     }
 
-    GSrenderManager::getInstance()->invalidateTextureCache();
+    GSrender::getInstance()->invalidateTextureCache();
 }
 
 inline void initSceneUnknown(GSsceneData *sceneData, u32 baseAddr) {

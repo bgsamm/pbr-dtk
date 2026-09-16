@@ -8,8 +8,8 @@
 #include "gs/scene/GScameraNode.hpp"
 #include "gs/scene/GSjointNode.hpp"
 #include "gs/scene/GSlightNode.hpp"
-#include "gs/scene/GSmeshNode.hpp"
-#include "gs/scene/GSparticleNode.hpp"
+#include "gs/scene/GSmodel.hpp"
+#include "gs/scene/GSparticle.hpp"
 #include "gs/scene/GSvolumeNode.hpp"
 
 #include "version.hpp"
@@ -211,11 +211,11 @@ GSnull::GSnull(GSobject *parentObject, GSnodeData *data)
     GSnodeData *childData = data->mFirstChild;
     while (childData) {
         switch (childData->mNodeType) {
-            case GS_NODE_MESH:     childNode = new GSmeshNode(parentObject, childData); break;
+            case GS_NODE_MODEL:    childNode = new GSmodel(parentObject, childData); break;
             case GS_NODE_CAMERA:   childNode = new GScameraNode(parentObject, childData); break;
             case GS_NODE_JOINT:    childNode = new GSjointNode(parentObject, childData); break;
             case GS_NODE_LIGHT:    childNode = new GSlightNode(parentObject, childData); break;
-            case GS_NODE_PARTICLE: childNode = new GSparticleNode(parentObject, childData); break;
+            case GS_NODE_PARTICLE: childNode = new GSparticle(parentObject, childData); break;
             case GS_NODE_VOLUME:   childNode = new GSvolumeNode(parentObject, childData); break;
             case GS_NODE_NULL:
             default:               childNode = new GSnull(parentObject, childData); break;

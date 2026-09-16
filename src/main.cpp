@@ -5,6 +5,7 @@
 #include "gs/GSlinkedList.hpp"
 #include "gs/GSmath.hpp"
 #include "gs/GSmem.hpp"
+#include "gs/GSrender.hpp"
 #include "gs/GStask.hpp"
 #include "gs/GSthread.hpp"
 #include "gs/GStimeline.hpp"
@@ -46,8 +47,6 @@ void fn_8005925C(u32);
 void fn_8015D3D0();
 void fn_80162F48(MEMHeapHandle);
 void fn_8021C274(u32);
-void fn_80231490(void *, f32);
-void fn_80231544(void *);
 void fn_802353F8(void *);
 void fn_80237794(void *, u32);
 
@@ -72,7 +71,7 @@ public:
 
 extern GSfsysFileTypeHandler *lbl_8044E828;
 
-// TODO(samm) Name the heaps
+// TODO(samm) Name all the heaps
 MEMHeapHandle gUnkHeap1;
 MEMHeapHandle gUnkHeap2;
 MEMHeapHandle gSoundHeap;
@@ -84,18 +83,15 @@ u8 lbl_8063E8FF;
 u8 lbl_8063E900;
 
 u32 lbl_8063F600;
-void *lbl_8063F698;
 
 // "main render"
 void fn_80006980(void) {
-    u8 refreshRate;
-    f32 var2;
+    // TODO(samm) Single inline?
+    u8 refreshRate = GSvideo::getInstance()->getRefreshRate();
+    f32 deltaTime = GSvideo::getInstance()->fn_8023FFEC() / refreshRate;
 
-    refreshRate = GSvideoManager::getInstance()->getRefreshRate();
-    var2 = GSvideoManager::getInstance()->fn_8023FFEC() / refreshRate;
-
-    fn_80231490(lbl_8063F698, var2 > 0.f ? var2 : 0.f);
-    fn_80231544(lbl_8063F698);
+    GSrender::getInstance()->update(deltaTime > 0.f ? deltaTime : 0.f);
+    GSrender::getInstance()->fn_80231544();
 
     if (lbl_8063E8FC) {
         fn_8000AE8C();
@@ -204,6 +200,7 @@ int main(void) {
 
     GScache::initFileCache(400);
 
+    // TODO(samm) ???
     var5._16 = 1;
     var5._17 = 1;
     var5._8 = 0x100000;
@@ -216,7 +213,7 @@ int main(void) {
     new UnkClass1(0x20);
     fn_802353F8(&var5);
 
-    fn_80237794(lbl_8063F698, 0);
+    GSrender::getInstance()->fn_80237794(0);
 
     VIEnableDimming(TRUE);
     VISetTimeToDimming(VI_DM_10M);

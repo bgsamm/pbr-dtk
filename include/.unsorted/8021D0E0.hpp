@@ -1,3 +1,5 @@
 #pragma once
 
-#include "common.hpp"
+#include <revolution.h>
+
+void fn_8021D1D0(f32 deltaTime);

@@ -7,38 +7,37 @@
 
 #include "version.hpp"
 
-
 // BreakPtCallback
 void fn_8023234C() {
-    if (GSrenderManager::getInstance() == NULL) {
+    if (GSrender::getInstance() == NULL) {
         return;
     }
 
-    u8 var1 = GSrenderManager::getInstance()->get_16f9();
-    GSrenderManager::getInstance()->set_16f9(false);
+    u8 var1 = GSrender::getInstance()->get_16f9();
+    GSrender::getInstance()->set_16f9(false);
     GXDisableBreakPt();
-    GSrenderManager::getInstance()->set_16f9(var1);
+    GSrender::getInstance()->set_16f9(var1);
 }
 
 // DrawDoneCallback
 void fn_80232394() {
-    if (GSrenderManager::getInstance() == NULL) {
+    if (GSrender::getInstance() == NULL) {
         return;
     }
 
-    u8 var1 = GSrenderManager::getInstance()->get_16f9();
-    GSrenderManager::getInstance()->set_16f9(false);
+    u8 var1 = GSrender::getInstance()->get_16f9();
+    GSrender::getInstance()->set_16f9(false);
 
     GSrenderStruct2 *var2;
-    while ((var2 = GSrenderManager::getInstance()->fn_802324F0()) != 0) {
+    while ((var2 = GSrender::getInstance()->fn_802324F0()) != 0) {
         if (var2->_0 != NULL) {
             var2->_0(var2->_4);
         }
     }
-    GSrenderManager::getInstance()->set_16f9(var1);
+    GSrender::getInstance()->set_16f9(var1);
 }
 
-u32 GSrenderManager::fn_80232404(UnkFunc1 param1, void *param2) {
+u32 GSrender::fn_80232404(_UnkRenderFunc_1 param1, void *param2) {
     GSrenderStruct2 *var1 = fn_8023246C();
     var1->_0 = param1;
     var1->_4 = param2;
@@ -49,7 +48,7 @@ u32 GSrenderManager::fn_80232404(UnkFunc1 param1, void *param2) {
     return var1->_8;
 }
 
-GSrenderStruct2 *GSrenderManager::fn_8023246C() {
+GSrenderStruct2 *GSrender::fn_8023246C() {
     BOOL intEnabled = OSDisableInterrupts();
 
     GSrenderStruct2 *var1 = mGraphicsFifo._a4;
@@ -72,7 +71,7 @@ GSrenderStruct2 *GSrenderManager::fn_8023246C() {
     return var1;
 }
 
-GSrenderStruct2 *GSrenderManager::fn_802324F0() {
+GSrenderStruct2 *GSrender::fn_802324F0() {
     GSrenderStruct2 *var1 = mGraphicsFifo._a0;
     if (var1 == NULL || fn_8023B864(var1->_8) == 0) {
         return NULL;
@@ -85,7 +84,7 @@ GSrenderStruct2 *GSrenderManager::fn_802324F0() {
     return var1;
 }
 
-void GSrenderManager::fn_80232770() {
+void GSrender::fn_80232770() {
     GXSetCPUFifo(NULL);
     GXSetGPFifo(NULL);
 
@@ -100,7 +99,7 @@ void GSrenderManager::fn_80232770() {
     memset(&mGraphicsFifo, 0, 0xac);
 }
 
-void GSrenderManager::fn_802327E8() {
+void GSrender::fn_802327E8() {
     fn_8023B6BC();
     fn_8023FD64();
 }

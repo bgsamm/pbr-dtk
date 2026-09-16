@@ -2,11 +2,10 @@
 
 #include "version.hpp"
 
-
 // TODO name these variables
-GSvec3 lbl_80493608(1.f, 0.f, 0.f);
-GSvec3 lbl_80493614(0.f, 1.f, 0.f);
-GSvec3 lbl_80493620(0.f, 0.f, 1.f);
+GSvec3 sXAxis(1.f, 0.f, 0.f);
+GSvec3 sYAxis(0.f, 1.f, 0.f);
+GSvec3 sZAxis(0.f, 0.f, 1.f);
 GSvec3 lbl_8049362C(0.f, 0.f, 0.f);
 GSvec3 lbl_80493638(1.f, 1.f, 1.f);
 

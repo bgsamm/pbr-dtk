@@ -2,9 +2,11 @@
 
 #include "gs/scene/GShierMemObject.hpp"
 
-#define ANIM_TYPE_ONESHOT 0
-#define ANIM_TYPE_CYCLE 1
-#define ANIM_TYPE_OSCILLATE 2
+#define GS_ANIM_NULL 0xffff
+
+#define GS_ANIM_TYPE_ONESHOT 0
+#define GS_ANIM_TYPE_CYCLE 1
+#define GS_ANIM_TYPE_OSCILLATE 2
 
 #define ANIM_FLAG_PLAYING (1 << 0)
 #define ANIM_FLAG_STEPPED (1 << 1)
@@ -34,6 +36,16 @@ public:
 
     bool isFinished() const {
         return (mFlags & ANIM_FLAG_FINISHED) || !isPlaying();
+    }
+
+    void lock() {
+        mFlags |= ANIM_FLAG_LOCKED;
+    }
+
+    void reset() {
+        mFlags &= ~ANIM_FLAG_LOCKED;
+        mFlags |= ANIM_FLAG_STEPPED | ANIM_FLAG_LOOPED | ANIM_FLAG_FINISHED;
+        mCursor = 0.f;
     }
 
     void setFlag(u16 flag) {

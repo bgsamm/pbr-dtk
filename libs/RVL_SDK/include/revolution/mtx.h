@@ -34,7 +34,6 @@ void C_MTXTransApply(const Mtx src, Mtx dst, f32 xT, f32 yT, f32 zT);
 void C_MTXScale(Mtx m, f32 xS, f32 yS, f32 zS);
 void C_MTXScaleApply(const Mtx src, Mtx dst, f32 xS, f32 yS, f32 zS);
 void C_MTXQuat(Mtx, const Quaternion *);
-void C_MTXLookAt(Mtx m, const Point3d *camPos, const Vec *camUp, const Point3d *target);
 
 #ifdef DEBUG
 #define MTXIdentity C_MTXIdentity
@@ -62,19 +61,25 @@ void C_MTXLookAt(Mtx m, const Point3d *camPos, const Vec *camUp, const Point3d *
 #define MTXScale PSMTXScale
 #define MTXScaleApply PSMTXScaleApply
 #define MTXQuat PSMTXQuat
-#endif                        // DEBUG
-#define MTXLookAt C_MTXLookAt /* C only */
+#endif // DEBUG
+
+void MTXLookAt(Mtx m, const Point3d *camPos, const Vec *camUp, const Point3d *target);
+void MTXLightOrtho(Mtx, f32, f32, f32, f32, f32, f32, f32, f32);
 
 // MtxVec
 
 void PSMTXMultVec(const Mtx m, const Vec *src, Vec *dst);
+void PSMTXMultVecSR(const Mtx m, const Vec *src, Vec *dst);
 
 void C_MTXMultVec(const Mtx m, const Vec *src, Vec *dst);
+void C_MTXMultVecSR(const Mtx m, const Vec *src, Vec *dst);
 
 #ifdef DEBUG
 #define MTXMultVec C_MTXMultVec
+#define MTXMultVecSR C_MTXMultVecSR
 #else
 #define MTXMultVec PSMTXMultVec
+#define MTXMultVecSR PSMTXMultVecSR
 #endif // DEBUG
 
 // Mtx44

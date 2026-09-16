@@ -44,7 +44,7 @@ GSnodeAnimData *GSanimationObject::findAnimData(u16 animId) {
     return NULL;
 }
 
-void GSanimationObject::startAnimation(u16 animId, f32 startTime, f32 speed, u16 animType) {
+void GSanimationObject::startAnimation(u16 animId, u32 animType, f32 startTime, f32 speed) {
     if (!mPlayer) {
         return;
     }
@@ -105,7 +105,7 @@ void GSblendObject::update(f32 deltaTime) {
     }
 }
 
-void GSblendObject::startAnimation(u16 animId, f32 startTime, f32 speed, u16 animType) {
+void GSblendObject::startAnimation(u16 animId, u32 animType, f32 startTime, f32 speed) {
     if (mBlendPlayer) {
         mBlendFactor = 0.f;
 
@@ -114,10 +114,10 @@ void GSblendObject::startAnimation(u16 animId, f32 startTime, f32 speed, u16 ani
         }
     }
 
-    GSanimationObject::startAnimation(animId, startTime, speed, animType);
+    GSanimationObject::startAnimation(animId, animType, startTime, speed);
 }
 
-void GSblendObject::blendAnimation(u16 animId, f32 startTime, f32 speed, u16 animType, f32 blendFactor) {
+void GSblendObject::blendAnimation(u16 animId, u32 animType, f32 startTime, f32 speed, f32 blendFactor) {
     if (!mBlendPlayer) {
         return;
     }

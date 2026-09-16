@@ -8,8 +8,16 @@ struct GSlistNode {
         GSlistNode *mNextFree;
         void *mData;
     };
-    /* 0x4 */ GSlistNode *mNext;
-    /* 0x8 */ GSlistNode *_8;
+    // TODO(samm) Something better?
+    /* 0x4 */ union {
+        struct {
+            GSlistNode *mNext;
+        } sll;
+        struct {
+            GSlistNode *mPrev;
+            GSlistNode *mNext;
+        } dll;
+    };
 };
 
 class GSlinkedList {

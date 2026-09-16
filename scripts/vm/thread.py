@@ -52,7 +52,7 @@ class VmThread:
 
     def _read_instruction(self) -> PpcInstr:
         assert self.pc.is_known
-        raw_instr = self._dol.read(self.pc.value, u32)
+        raw_instr = self._dol.read(u32, self.pc.value)
         return PpcInstr(raw_instr)
 
     def _do_callback(self, event_class: type[VmEvent], **kwargs) -> VmSignal:

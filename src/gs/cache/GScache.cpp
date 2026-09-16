@@ -1,9 +1,11 @@
-#include "version.hpp"
+#include "gs/GScache.hpp"
+
+#include "gs/GSmem.hpp"
 
 #include <cstring>
 
-#include "gs/GScache.hpp"
-#include "gs/GSmem.hpp"
+#include "version.hpp"
+
 
 /* lbl_8063F2E8 */ static GScacheEntry *sFileCacheList;
 /* lbl_8063F2EC */ static GScacheObjPool *sFilePool;
@@ -21,13 +23,8 @@ GScacheEntry *GScache::findCacheEntry(u32 fsysId, u32 fileId) {
     return NULL;
 }
 
-GScacheEntry *GScache::releaseCacheEntry(
-    GScacheEntry *cacheEntry,
-    bool removeFromList
-) {
-    if (cacheEntry->_18 != NULL
-        && !cacheEntry->_18(cacheEntry->mBuffer, cacheEntry->mFsysId, cacheEntry->mFileId)
-    ) {
+GScacheEntry *GScache::releaseCacheEntry(GScacheEntry *cacheEntry, bool removeFromList) {
+    if (cacheEntry->_18 != NULL && !cacheEntry->_18(cacheEntry->mBuffer, cacheEntry->mFsysId, cacheEntry->mFileId)) {
         return cacheEntry->mNext;
     }
 
@@ -46,8 +43,7 @@ GScacheEntry *GScache::releaseCacheEntry(
     if (removeFromList) {
         if (cacheEntry->mPrev != NULL) {
             cacheEntry->mPrev->mNext = next;
-        }
-        else {
+        } else {
             sFileCacheList = next;
         }
 
@@ -65,13 +61,7 @@ void GScache::initFileCache(u32 nEntries) {
     sFilePool = createObjectPool(nEntries, sizeof(GScacheEntry));
 }
 
-void *GScache::createCacheEntryOnHeap(
-    MEMHeapHandle heap,
-    u32 size,
-    u32 fsysId,
-    u32 fileId,
-    UnkFunc1 param5
-) {
+void *GScache::createCacheEntryOnHeap(MEMHeapHandle heap, u32 size, u32 fsysId, u32 fileId, _UnkCacheFunc_1 param5) {
     if (findCacheEntry(fsysId, fileId) != NULL) {
         return NULL;
     }
@@ -107,12 +97,7 @@ void *GScache::createCacheEntryOnHeap(
 }
 
 void *GScache::createCacheEntryOnHeapAligned(
-    MEMHeapHandle heap,
-    u32 size,
-    u32 align,
-    u32 fsysId,
-    u32 fileId,
-    UnkFunc1 param6
+    MEMHeapHandle heap, u32 size, u32 align, u32 fsysId, u32 fileId, _UnkCacheFunc_1 param6
 ) {
     if (findCacheEntry(fsysId, fileId) != NULL) {
         return NULL;
@@ -147,29 +132,11 @@ void *GScache::createCacheEntryOnHeapAligned(
     return cacheEntry->mBuffer;
 }
 
-void *GScache::createCacheEntryAligned(
-    u32 size,
-    u32 align,
-    u32 fsysId,
-    u32 fileId,
-    UnkFunc1 param5
-) {
-    return createCacheEntryOnHeapAligned(
-        GSmem::getDefaultHeap(),
-        size,
-        align,
-        fsysId,
-        fileId,
-        param5
-    );
+void *GScache::createCacheEntryAligned(u32 size, u32 align, u32 fsysId, u32 fileId, _UnkCacheFunc_1 param5) {
+    return createCacheEntryOnHeapAligned(GSmem::getDefaultHeap(), size, align, fsysId, fileId, param5);
 }
 
-void GScache::setCacheEntryBuffer(
-    void *buffer,
-    u32 fsysId,
-    u32 fileId,
-    UnkFunc1 param4
-) {
+void GScache::setCacheEntryBuffer(void *buffer, u32 fsysId, u32 fileId, _UnkCacheFunc_1 param4) {
     GScacheEntry *cacheEntry = findCacheEntry(fsysId, fileId);
 
     if (buffer == NULL) {
@@ -191,8 +158,7 @@ void GScache::setCacheEntryBuffer(
             cacheEntry->mBuffer = buffer;
         }
         cacheEntry->_18 = param4;
-    }
-    else {
+    } else {
         cacheEntry = (GScacheEntry *)allocFromPool(sFilePool);
         if (cacheEntry == NULL) {
             return;
@@ -290,28 +256,18 @@ void GScache::freeFsysCacheEntries(u32 fsysId) {
     while (cacheEntry != NULL) {
         if (cacheEntry->mFsysId == fsysId) {
             cacheEntry = releaseCacheEntry(cacheEntry, true);
-        }
-        else {
+        } else {
             cacheEntry = cacheEntry->mNext;
         }
     }
 }
 
 bool GScache::copyCacheEntry(
-    u32 srcFsysId,
-    u32 srcFileId,
-    MEMHeapHandle heap,
-    u32 dstFsysId,
-    u32 dstFileId,
-    UnkFunc1 param6
+    u32 srcFsysId, u32 srcFileId, MEMHeapHandle heap, u32 dstFsysId, u32 dstFileId, _UnkCacheFunc_1 param6
 ) {
     GScacheEntry *cacheEntry = findCacheEntry(srcFsysId, srcFileId);
 
-    if (cacheEntry == NULL
-        || cacheEntry->mLocked
-        || cacheEntry->mBuffer == NULL
-        || !cacheEntry->mOwnsBuffer
-    ) {
+    if (cacheEntry == NULL || cacheEntry->mLocked || cacheEntry->mBuffer == NULL || !cacheEntry->mOwnsBuffer) {
         return false;
     }
 

@@ -2,10 +2,12 @@
 
 #include "gs/GSmem.hpp"
 #include "gs/GSvideo.hpp"
-#include "version.hpp"
 
 #include <cstring>
 #include <revolution.h>
+
+#include "version.hpp"
+
 
 #define STACK_SIZE 0x2000
 
@@ -152,9 +154,9 @@ void GStask::init(u32 activeCount, u32 idleCount) {
     sIdleStack = (u8 *)GSmem::alloc(STACK_SIZE);
     OSSetIdleFunction(idleCallback, NULL, sIdleStack + STACK_SIZE - 4, STACK_SIZE - 4);
 
-    if (GSvideoManager::getInstance()) {
-        VIRetraceCallback temp = GSvideoManager::getInstance()->getRetraceCallback();
-        GSvideoManager::getInstance()->setRetraceCallback(retraceCallback);
+    if (GSvideo::getInstance()) {
+        VIRetraceCallback temp = GSvideo::getInstance()->getRetraceCallback();
+        GSvideo::getInstance()->setRetraceCallback(retraceCallback);
         sRetraceCallback = temp;
     }
 }

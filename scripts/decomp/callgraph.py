@@ -51,7 +51,7 @@ def gen_call_graph(
     func_end = function.address + function.size
 
     for address in range(func_start, func_end, 4):
-        instr = PpcInstr(dol.read(address, u32))
+        instr = PpcInstr(dol.read(u32, address))
 
         if instr.op != PpcOp.B:
             continue
