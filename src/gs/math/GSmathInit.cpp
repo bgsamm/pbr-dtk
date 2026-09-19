@@ -1,8 +1,8 @@
-#include "version.hpp"
+#include "common.hpp"
+#include "gs/GSmath.hpp"
 
 #include <revolution/os.h>
 
-#include "gs/GSmath.hpp"
 
 void GSmath::init() {
     OSInitFastCast();

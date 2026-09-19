@@ -1,9 +1,9 @@
-#include "version.hpp"
+#include "common.hpp"
+#include "gs/GScache.hpp"
+#include "gs/GSmem.hpp"
 
 #include <cstring>
 
-#include "gs/GScache.hpp"
-#include "gs/GSmem.hpp"
 
 /* lbl_80491470 */ static GScacheObjPool sObjectPools[32];
 
@@ -11,9 +11,7 @@ bool GScache::fn_801DBB3C() {
     return false;
 }
 
-void GScache::fn_801DBB44(bool param1) {
-
-}
+void GScache::fn_801DBB44(bool param1) {}
 
 void GScache::initObjectPool(GScacheObjPool *pool, u32 count, u32 objSize) {
     objSize = (objSize + sizeof(GScacheObjNode) + 3) / 4 * 4;
@@ -46,8 +44,7 @@ void *GScache::allocFromPool(GScacheObjPool *pool) {
 
     if (node != NULL) {
         pool->mFreeHead = node->mNext;
-    }
-    else {
+    } else {
         fn_801DBB44(var1);
         return NULL;
     }
@@ -57,7 +54,7 @@ void *GScache::allocFromPool(GScacheObjPool *pool) {
     memset(node, 0, pool->mNodeSize);
 
     pool->mUsedNodes++;
-    
+
     if (pool->mUsedNodes > pool->mPeakUsedNodes) {
         pool->mPeakUsedNodes = pool->mUsedNodes;
     }
@@ -81,7 +78,7 @@ void GScache::freeToPool(GScacheObjPool *pool, void *obj) {
     fn_801DBB44(false);
 
     pool->mFreeHead = node;
-    
+
     fn_801DBB44(var1);
 }
 

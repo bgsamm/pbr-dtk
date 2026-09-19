@@ -1,13 +1,45 @@
 #pragma once
 
+#include <cmath>
 #include <revolution.h>
+
+#define EPSILON 0.00001f
+
+#define FLOAT_EQUAL(x, y) ((x) - (y) < EPSILON && (x) - (y) > -EPSILON)
+
+// TODO(samm) Unify these ensure_nonzero funcs?
+
+static inline f32 ensure_nonzero(f32 x) {
+    if (x < EPSILON && x > -EPSILON) {
+        x = (x < 0.f) ? -EPSILON : EPSILON;
+    }
+    return x;
+}
+
+static inline void ensure_nonzero_inplace(f32 *ptr) {
+    f32 x = *ptr;
+    if (x < EPSILON && x > -EPSILON) {
+        *ptr = (x < 0.f) ? -EPSILON : EPSILON;
+    }
+}
+
+#define SAFE_SQRT(x) (((x) <= 0.f) ? 0.f : sqrtf((x)))
+
+static inline f32 safe_sqrt(f32 x) {
+    return (x <= 0.f) ? 0.f : sqrtf(x);
+}
+
+#define SAFE_POW(x, y) ((x) > EPSILON ? powf((x), (y)) : ((x) < -EPSILON ? -powf(-(x), (y)) : 0.f))
+
+static inline f32 abs(f32 x) {
+    return (x > 0.f) ? x : -x;
+}
 
 #define PI 3.14159265f
 #define DEG_TO_RAD (PI / 180f)
 
-struct GSvec2 {
-    /* 0x0 */ f32 x;
-    /* 0x4 */ f32 y;
+struct GSvec2 : Vec2 {
+    GSvec2() {}
 
     GSvec2(f32 x, f32 y) {
         this->x = x;
@@ -35,6 +67,10 @@ struct GSvec3 : public Vec {
         this->x = x;
         this->y = y;
         this->z = z;
+    }
+
+    GSvec3 operator-() const {
+        return GSvec3(-x, -y, -z);
     }
 
     GSvec3 operator+(const GSvec3 &other) const {

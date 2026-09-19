@@ -1,10 +1,10 @@
-#include "version.hpp"
+#include "common.hpp"
+#include "gs/GSfsys.hpp"
+#include "gs/GSmem.hpp"
 
 #include <revolution/mem.h>
 #include <revolution/os.h>
 
-#include "gs/GSfsys.hpp"
-#include "gs/GSmem.hpp"
 
 #define CACHE_HEAP_SIZE 0x800000
 
@@ -75,13 +75,8 @@ void GSfsys::addToCacheEntryList(GSfsysCacheEntry *cacheEntry) {
     appendNodeToList((GSfsysNode *)cacheEntry, (GSfsysNode **)&sCacheEntryList);
 }
 
-GSfsysCacheEntry *GSfsys::createFsysCacheEntry(
-    u32 fsysId,
-    u32 entryIndex,
-    bool persistent,
-    bool pinned,
-    u32 fsysCacheIndex
-) {
+GSfsysCacheEntry *
+GSfsys::createFsysCacheEntry(u32 fsysId, u32 entryIndex, bool persistent, bool pinned, u32 fsysCacheIndex) {
     BOOL intEnabled;
 
     GSfsysCacheEntry *cacheEntry = NULL;
@@ -110,7 +105,7 @@ GSfsysCacheEntry *GSfsys::createFsysCacheEntry(
         if (i >= sCacheEntryPoolCount) {
             i = 0;
         }
-        
+
         // NOTE this matches a repeated bne instruction
         if (i != sCacheEntryPoolLastIndex) {
             continue;
@@ -145,7 +140,7 @@ GSfsysCacheEntry *GSfsys::findFsysCacheEntry(u32 fsysId, u32 entryIndex) {
     }
 
     OSRestoreInterrupts(intEnabled);
-    
+
     return cacheEntry;
 }
 
@@ -161,7 +156,7 @@ GSfsysCacheEntry *GSfsys::findFirstCacheEntryForFsys(u32 fsysId) {
     }
 
     OSRestoreInterrupts(intEnabled);
-    
+
     return cacheEntry;
 }
 
@@ -177,7 +172,7 @@ GSfsysCacheEntry *GSfsys::findFsysCacheEntryByBuffer(void *buffer) {
     }
 
     OSRestoreInterrupts(intEnabled);
-    
+
     return cacheEntry;
 }
 
@@ -186,20 +181,15 @@ GSfsysCacheEntry *GSfsys::selectCacheEvictionVictim(u32 fsysId, bool ignoreCache
     GSfsysCacheEntry *victim = NULL;
 
     while (cacheEntry != NULL) {
-        if (cacheEntry->mPersistent != true
-            && cacheEntry->mPinned != true
-            && cacheEntry->mFsysId != fsysId
-        ) {
+        if (cacheEntry->mPersistent != true && cacheEntry->mPinned != true && cacheEntry->mFsysId != fsysId) {
             if (victim == NULL) {
                 victim = cacheEntry;
-            }
-            else if (victim->mFsysCacheIndex >= cacheEntry->mFsysCacheIndex) {
+            } else if (victim->mFsysCacheIndex >= cacheEntry->mFsysCacheIndex) {
                 if (!ignoreCacheOrder) {
                     if (victim->mEntryCacheIndex < cacheEntry->mEntryCacheIndex) {
                         victim = cacheEntry;
                     }
-                }
-                else {
+                } else {
                     victim = cacheEntry;
                 }
             }
@@ -346,20 +336,10 @@ bool GSfsys::isFsysEntryCached(u32 fsysId, u32 entryIndex) {
 }
 
 bool GSfsys::doFsysCacheRead(
-    GSfsysHandle *fsysHandle,
-    GSfsysEntry *fsysEntry,
-    void *buffer,
-    u32 length,
-    u32 offset,
-    GSfsysCacheCallback callback,
-    GSfsysCallback userCallback,
-    u32 userParam1,
-    u32 userParam2
+    GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry, void *buffer, u32 length, u32 offset,
+    GSfsysCacheCallback callback, GSfsysCallback userCallback, u32 userParam1, u32 userParam2
 ) {
-    GSfsysCacheEntry *cacheEntry = findFsysCacheEntry(
-        fsysHandle->mFsysId,
-        fsysHandle->mCacheEntryIndex
-    );
+    GSfsysCacheEntry *cacheEntry = findFsysCacheEntry(fsysHandle->mFsysId, fsysHandle->mCacheEntryIndex);
     if (cacheEntry == NULL) {
         return false;
     }
@@ -403,57 +383,22 @@ bool GSfsys::doFsysCacheRead(
 }
 
 bool GSfsys::fsysCacheRead(
-    GSfsysHandle *fsysHandle,
-    GSfsysEntry *fsysEntry,
-    void *buffer,
-    u32 length,
-    u32 offset,
-    GSfsysCacheCallback callback
+    GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry, void *buffer, u32 length, u32 offset, GSfsysCacheCallback callback
 ) {
-    return doFsysCacheRead(
-        fsysHandle,
-        fsysEntry,
-        buffer,
-        length,
-        offset,
-        callback,
-        NULL,
-        0,
-        0
-    );
+    return doFsysCacheRead(fsysHandle, fsysEntry, buffer, length, offset, callback, NULL, 0, 0);
 }
 
 bool GSfsys::fsysCacheReadEx(
-    GSfsysHandle *fsysHandle,
-    GSfsysEntry *fsysEntry,
-    void *buffer,
-    u32 length,
-    u32 offset,
-    GSfsysCacheCallback callback,
-    GSfsysCallback userCallback,
-    u32 userParam1,
-    u32 userParam2
+    GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry, void *buffer, u32 length, u32 offset,
+    GSfsysCacheCallback callback, GSfsysCallback userCallback, u32 userParam1, u32 userParam2
 ) {
     return doFsysCacheRead(
-        fsysHandle,
-        fsysEntry,
-        buffer,
-        length,
-        offset,
-        callback,
-        userCallback,
-        userParam1,
-        userParam2
+        fsysHandle, fsysEntry, buffer, length, offset, callback, userCallback, userParam1, userParam2
     );
 }
 
 void GSfsys::copyToCachedBuffer(
-    GSfsysHandle *fsysHandle,
-    GSfsysEntry *fsysEntry,
-    void *src,
-    void *dst,
-    u32 length,
-    u32 offset,
+    GSfsysHandle *fsysHandle, GSfsysEntry *fsysEntry, void *src, void *dst, u32 length, u32 offset,
     GSfsysCacheCallback callback
 ) {
     GSfsysCacheRequest *cacheRequest = getFreeCacheRequest();

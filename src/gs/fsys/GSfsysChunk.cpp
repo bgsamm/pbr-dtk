@@ -1,9 +1,9 @@
+#include "common.hpp"
 #include "gs/GSfsys.hpp"
 #include "gs/GSmem.hpp"
 
 #include <revolution/os.h>
 
-#include "version.hpp"
 
 #define CHUNK_SIZE 0x8000
 #define CHUNK_HEAP_DEFAULT_SIZE 0x80000

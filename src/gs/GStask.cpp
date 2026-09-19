@@ -1,13 +1,11 @@
 #include "gs/GStask.hpp"
 
+#include "common.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GSvideo.hpp"
 
 #include <cstring>
 #include <revolution.h>
-
-#include "version.hpp"
-
 
 #define STACK_SIZE 0x2000
 

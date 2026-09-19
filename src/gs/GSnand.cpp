@@ -1,5 +1,6 @@
 #include "gs/GSnand.hpp"
 
+#include "common.hpp"
 #include "gs/GSfile.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GSthread.hpp"
@@ -7,7 +8,6 @@
 #include <cstring>
 #include <revolution/nand.h>
 
-#include "version.hpp"
 
 char *GSnand::getFileName(GSnandFileHandle *nandHandle) {
     return nandHandle->mName;

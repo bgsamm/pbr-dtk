@@ -1,11 +1,11 @@
-#include "version.hpp"
+#include "common.hpp"
+#include "gs/GScache.hpp"
+#include "gs/GSfsys.hpp"
+#include "gs/GSmem.hpp"
 
 #include <cstring>
 #include <revolution/os.h>
 
-#include "gs/GScache.hpp"
-#include "gs/GSfsys.hpp"
-#include "gs/GSmem.hpp"
 
 #define DATA_HEAP_SIZE 0x50000
 
@@ -67,28 +67,17 @@ bool GSfsys::freeFsysDataBuffer(GSfsysHandle *fsysHandle) {
     return GSfsys::freeToFsysDataHeap(buffer);
 }
 
-void *GSfsys::getOrCreateCachedBuffer(
-    GSfsysHandle *fsysHandle,
-    u32 entryIndex,
-    u32 size,
-    u32 fsysCacheIndex
-) {
+void *GSfsys::getOrCreateCachedBuffer(GSfsysHandle *fsysHandle, u32 entryIndex, u32 size, u32 fsysCacheIndex) {
     GSfsysCacheEntry *cacheEntry = findFsysCacheEntry(fsysHandle->mFsysId, entryIndex);
     if (cacheEntry == NULL) {
         bool persistent = fsysHandle->mPersistent;
-        
+
         GSfsysHeaderEx *fsys = getFsysData(fsysHandle);
         if (fsys != NULL && (fsys->mFlags & FSYS_FLAG_PERSISTENT)) {
             persistent = true;
         }
 
-        cacheEntry = createFsysCacheEntry(
-            fsysHandle->mFsysId,
-            entryIndex,
-            persistent,
-            true,
-            fsysCacheIndex
-        );
+        cacheEntry = createFsysCacheEntry(fsysHandle->mFsysId, entryIndex, persistent, true, fsysCacheIndex);
         if (cacheEntry == NULL) {
             return NULL;
         }
@@ -121,7 +110,7 @@ bool GSfsys::releaseFsysCacheEntryByBuffer(void *buffer) {
 }
 
 bool GSfsys::makeSpaceForCachedBuffer(u32 fsysId, u32 size) {
-    while(true) {
+    while (true) {
         // TODO #define the 0x80000
         if (size < getFsysCacheHeapFreeSize() - 0x80000) {
             break;
@@ -136,7 +125,7 @@ bool GSfsys::makeSpaceForCachedBuffer(u32 fsysId, u32 size) {
             return false;
         }
     }
-    
+
     return true;
 }
 
@@ -144,7 +133,7 @@ bool GSfsys::batchEvictFsysCacheEntries(u32 fsysId) {
     u32 currentFsysCacheIndex;
     bool anyEvicted = false;
 
-    while(true) {
+    while (true) {
         GSfsysCacheEntry *victim = selectCacheEvictionVictim(fsysId, true);
         if (victim == NULL) {
             return anyEvicted;
@@ -153,23 +142,17 @@ bool GSfsys::batchEvictFsysCacheEntries(u32 fsysId) {
         if (anyEvicted != true || currentFsysCacheIndex == victim->mFsysCacheIndex) {
             currentFsysCacheIndex = victim->mFsysCacheIndex;
             anyEvicted = true;
-            
+
             if (!releaseFsysCacheEntry(victim)) {
                 return false;
             }
-        }
-        else {
+        } else {
             return anyEvicted;
         }
     }
 }
 
-void *GSfsys::allocCachedBuffer(
-    GSfsysHandle *fsysHandle,
-    u32 entryIndex,
-    u32 length,
-    u32 fsysCacheIndex
-) {
+void *GSfsys::allocCachedBuffer(GSfsysHandle *fsysHandle, u32 entryIndex, u32 length, u32 fsysCacheIndex) {
     u32 size = (length + 0x1f) / 0x20 * 0x20;
     makeSpaceForCachedBuffer(fsysHandle->mFsysId, size);
 

@@ -1,10 +1,11 @@
-#include "version.hpp"
+#include "gs/GSthread.hpp"
+
+#include "common.hpp"
+#include "gs/GSmem.hpp"
+#include "gs/GStask.hpp"
 
 #include <revolution/os.h>
 
-#include "gs/GSmem.hpp"
-#include "gs/GStask.hpp"
-#include "gs/GSthread.hpp"
 
 /* lbl_8063F600 */ GSthreadManager *GSthreadManager::sInstance;
 
@@ -43,12 +44,7 @@ GSthreadHandle *GSthreadManager::getFreeThreadHandle() {
 }
 
 GSthreadHandle *GSthreadManager::createThread(
-    u32 threadID,
-    void *(*func)(void *),
-    void *param,
-    u32 stackSize,
-    OSPriority priority,
-    u16 attributes
+    u32 threadID, void *(*func)(void *), void *param, u32 stackSize, OSPriority priority, u16 attributes
 ) {
     GSthreadHandle *threadHandle = getFreeThreadHandle();
     if (threadHandle == NULL) {
@@ -74,15 +70,7 @@ GSthreadHandle *GSthreadManager::createThread(
     }
 
     void *stackBase = (u8 *)stack + stackSize;
-    BOOL success = OSCreateThread(
-        &threadHandle->mThread,
-        func,
-        param,
-        stackBase,
-        stackSize,
-        priority,
-        attributes
-    );
+    BOOL success = OSCreateThread(&threadHandle->mThread, func, param, stackBase, stackSize, priority, attributes);
     if (!success) {
         return NULL;
     }
@@ -94,8 +82,7 @@ GSthreadHandle *GSthreadManager::createThread(
 
     if (mThreadStartQueue == NULL) {
         mThreadStartQueue = threadHandle;
-    }
-    else {
+    } else {
         GSthreadHandle *ptr = mThreadStartQueue;
         while (ptr->mNext != NULL) {
             ptr = ptr->mNext;
@@ -108,7 +95,7 @@ GSthreadHandle *GSthreadManager::createThread(
 
 void GSthreadManager::update() {
     GSthreadHandle *threadHandle;
-    
+
     threadHandle = mThreadHandlePool;
     while (threadHandle != (mThreadHandlePool + mThreadHandleCount)) {
         // Was this supposed to be a &&?
@@ -164,9 +151,7 @@ void GSthreadManager::stopThread(u32 threadID) {
 }
 
 // TODO name this function
-void GSthreadManager::fn_80224584(bool param1) {
-
-}
+void GSthreadManager::fn_80224584(bool param1) {}
 
 void GSthreadManager::sleepCurrentThread() {
     if (isCurrentThreadManaged()) {
@@ -244,6 +229,6 @@ bool GSthreadHandle::isThreadStopped() {
     if ((mFlags & 1) == 0) {
         return true;
     }
-     
+
     return OSIsThreadTerminated(&mThread) == TRUE;
 }

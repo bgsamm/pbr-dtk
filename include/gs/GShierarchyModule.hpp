@@ -2,6 +2,7 @@
 
 #include "gs/GSlinkedList.hpp"
 #include "gs/render/GSrenderModule.hpp"
+#include "gs/render/GSrenderTarget.hpp"
 
 #include <revolution.h>
 
@@ -135,6 +136,20 @@ public:
         }
 
         GSlinkedList::freeNode(node);
+    }
+
+    // TODO(samm) Names
+
+    u32 get_138() const {
+        return _138;
+    }
+
+    u32 get_140() const {
+        return _140;
+    }
+
+    u32 get_144() const {
+        return _144;
     }
 
     static GSlistNode *fn_80200594(GSobject *arg0);

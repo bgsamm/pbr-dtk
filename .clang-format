@@ -88,7 +88,7 @@ AttributeMacros: [DECOMP_INLINE, DECOMP_DONT_INLINE]
 
 # Taken from ogws :)
 IncludeCategories:
-  - Regex:           '"version.hpp"'
+  - Regex:           '"common.hpp"'
     Priority:        5
     CaseSensitive:   true
 

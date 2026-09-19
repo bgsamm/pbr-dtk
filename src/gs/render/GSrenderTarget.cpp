@@ -1,6 +1,6 @@
 #include "gs/render/GSrenderTarget.hpp"
 
-#include "version.hpp"
+#include "common.hpp"
 
 GSrenderTarget *GSrenderTarget::sHead;
 GSrenderTarget *GSrenderTarget::sTail;
@@ -62,6 +62,32 @@ void GSrenderTarget::unregisterTarget(GSrenderTarget *target) {
     }
 
     target->mNext = NULL;
+}
+
+void GSrenderTarget::fn_8023B3B8(u32 arg0) {
+    u8 targetId = (arg0 >> 16) & 0xff;
+    if (targetId != mId) {
+        return;
+    }
+
+    s32 _unk1 = (arg0 >> 8) & 0xff;
+    if (!_unk1) {
+        return;
+    }
+
+    u8 _unk2 = arg0 & 0xff;
+    if (!_unk2) {
+        return;
+    }
+
+    _UnkRenderTargetStruct_1 *_unk3 = _10;
+    while (_unk3) {
+        if (_unk1 == _unk3->_0->_0 && _unk2 == _unk3->_4->_4) {
+            _unk3->_8++;
+            return;
+        }
+        _unk3 = _unk3->mNext;
+    }
 }
 
 void GSrenderTarget::fn_8023B59C() {}

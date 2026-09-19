@@ -1,14 +1,12 @@
 #include "gs/render/GSrenderLight.hpp"
 
+#include "gs/GSmath.hpp"
+
+#include <revolution.h>
+
 #include "common.hpp"
 
-#include <revolution/gx.h>
-#include <revolution/mtx.h>
-
-#include "version.hpp"
-
-
-GSlight::GSlight() {
+GSrenderLight::GSrenderLight() {
     mColor.r = 255;
     mColor.g = 255;
     mColor.b = 255;
@@ -27,7 +25,9 @@ GSlight::GSlight() {
     mIndex = 0;
 }
 
-void GSlight::initPointLight(GXColor color, Vec position, GXDistAttnFn distAttnFn, f32 refDistance, f32 refBrightness) {
+void GSrenderLight::initPointLight(
+    GXColor color, Vec position, GXDistAttnFn distAttnFn, f32 refDistance, f32 refBrightness
+) {
     _1 = 0;
     _0 = 0;
     mType = GS_LIGHT_POINT;
@@ -56,7 +56,7 @@ void GSlight::initPointLight(GXColor color, Vec position, GXDistAttnFn distAttnF
     _0 |= (1 << 0);
 }
 
-void GSlight::initSpotLight(
+void GSrenderLight::initSpotLight(
     GXColor color, Vec position, Vec direction, GXDistAttnFn distAttnFn, f32 refDistance, f32 refBrightness,
     GXSpotFn spotFn, f32 cutoff
 ) {
@@ -92,7 +92,7 @@ void GSlight::initSpotLight(
     _1 |= (1 << 5);
 }
 
-void GSlight::initSpecLight(GXColor color, Vec direction, f32 shininess) {
+void GSrenderLight::initSpecLight(GXColor color, Vec direction, f32 shininess) {
     _1 = 0;
     _0 = 0;
     mType = GS_LIGHT_SPEC;
@@ -113,7 +113,7 @@ void GSlight::initSpecLight(GXColor color, Vec direction, f32 shininess) {
     _1 |= (1 << 7);
 }
 
-void GSlight::load(u8 index, GSlightStruct1 *param2) {
+void GSrenderLight::load(u8 index, GSlightStruct1 *param2) {
     if ((_1 & (1 << 0)) != 0) {
         GXInitLightColor(&mLightObj, mColor);
     }

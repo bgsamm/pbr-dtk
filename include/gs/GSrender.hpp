@@ -144,7 +144,7 @@ struct GStexGen {
     /* 0x8 */ u32 mTexMtx;
     /* 0xc */ GXBool mNormalize;
     /* 0x10 */ u32 mPostMtx;
-    /* 0x14 */ GSlight *mLight;
+    /* 0x14 */ GSrenderLight *mLight;
 };
 
 // Size: 0x2
@@ -175,7 +175,7 @@ struct GScolorChannel {
     /* 0xc */ GXLightID mLightMask;
     /* 0x10 */ GXDiffuseFn mDiffFn;
     /* 0x14 */ GXAttnFn mAttnFn;
-    /* 0x18 */ GSlight *mLights[8];
+    /* 0x18 */ GSrenderLight *mLights[8];
 };
 
 // Size: 0xc
@@ -401,7 +401,7 @@ struct GSrenderState {
     /* 0x150c */ bool _150c;
     /* 0x150d */ u8 _pad_150d[7];
     /* 0x1514 */ u8 mNumLights;
-    /* 0x1518 */ GSlight *mLights[8];
+    /* 0x1518 */ GSrenderLight *mLights[8];
     /* 0x1538 */ u32 mTextureFlags;
     /* 0x153c */ GStexture *mTextures[8];
 };
@@ -614,7 +614,7 @@ public:
     void fn_8023352C(u32 nVerts);
     void fn_80233580();
     void configureColorChannel(
-        u32 channel, u32 chanFlags, GXColorSrc ambSrc, GXColorSrc matSrc, u32 lightCount, GSlight **lights,
+        u32 channel, u32 chanFlags, GXColorSrc ambSrc, GXColorSrc matSrc, u32 lightCount, GSrenderLight **lights,
         GXAttnFn attnFn, GXDiffuseFn diffFn
     );
     void configureTevStage(u8 stage, GStevMode mode);

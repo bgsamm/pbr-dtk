@@ -3,7 +3,7 @@
 
 #include <revolution.h>
 
-#include "version.hpp"
+#include "common.hpp"
 
 /* lbl_80496760 */ static f32 sProjectionMatrix[4][4];
 
@@ -118,7 +118,7 @@ void GSrender::fn_80237FB0(u8 textureCount) {
 }
 
 void GSrender::loadLights() {
-    GSlight **light;
+    GSrenderLight **light;
     u32 i;
     u8 nLights;
 
@@ -440,7 +440,7 @@ void GSrender::syncRenderSettings() {
                 }
 
                 if (enable) {
-                    GSlight **lights;
+                    GSrenderLight **lights;
                     u32 lightMask = 0;
                     GXAttnFn attnFn = curr->mAttnFn;
                     for (lights = curr->mLights; *lights != NULL; lights++) {

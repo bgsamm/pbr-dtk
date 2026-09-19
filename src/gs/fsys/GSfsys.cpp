@@ -1,5 +1,6 @@
 #include "gs/GSfsys.hpp"
 
+#include "common.hpp"
 #include "gs/GSfile.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GStask.hpp"
@@ -8,9 +9,6 @@
 #include <cstdio>
 #include <cstring>
 #include <revolution/os.h>
-
-#include "version.hpp"
-
 
 extern void *fn_8025999C(u32, u32);
 extern void fn_802599D0(u32, u32);

@@ -3,6 +3,7 @@
 #include ".unsorted/801FA38C.hpp"
 #include ".unsorted/80204058.hpp"
 #include ".unsorted/8021D0E0.hpp"
+#include "common.hpp"
 #include "gs/GSobject.hpp"
 #include "gs/GSrender.hpp"
 #include "gs/render/80235A74.hpp"
@@ -11,7 +12,6 @@
 
 #include <cstring>
 
-#include "version.hpp"
 
 GShierarchyModule::GShierarchyModule()
     : GSrenderModule("hierarchy"),

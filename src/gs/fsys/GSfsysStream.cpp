@@ -1,8 +1,8 @@
-#include "version.hpp"
+#include "common.hpp"
+#include "gs/GSfsys.hpp"
 
 #include <revolution/os.h>
 
-#include "gs/GSfsys.hpp"
 
 u32 GSfsys::getStreamBufferSize() {
     return gFsysChunkSize * 8;
@@ -24,7 +24,7 @@ void GSfsys::freeStreamedFsysBuffers(GSfsysHandle *fsysHandle) {
     if (fsysHandle->mRequestType != FSYS_REQUEST_STREAM) {
         return;
     }
-    
+
     BOOL intEnabled = OSDisableInterrupts();
 
     GSfsysHeaderEx *fsys = getFsysData(fsysHandle);
@@ -56,25 +56,15 @@ void GSfsys::streamedFsysReadCallback(GSfsysCacheRequest *cacheRequest) {
     cacheRequest->mFsysEntry->mFlags |= FSYS_ENTRY_FLAG_27;
 
     if (cacheRequest->mUserCallback != NULL) {
-        cacheRequest->mUserCallback(
-            fsysHandle->mRequestType,
-            cacheRequest->mUserParam1,
-            cacheRequest->mUserParam2
-        );
+        cacheRequest->mUserCallback(fsysHandle->mRequestType, cacheRequest->mUserParam1, cacheRequest->mUserParam2);
     }
 
     cacheRequest->mUserCallback = NULL;
 }
 
 bool GSfsys::readFsysEntryStream(
-    GSfsysHandle *fsysHandle,
-    u32 fileId,
-    void *buffer,
-    u32 length,
-    u32 offset,
-    GSfsysCallback userCallback,
-    u32 userParam1,
-    u32 userParam2
+    GSfsysHandle *fsysHandle, u32 fileId, void *buffer, u32 length, u32 offset, GSfsysCallback userCallback,
+    u32 userParam1, u32 userParam2
 ) {
     u32 readLen;
 
@@ -83,8 +73,7 @@ bool GSfsys::readFsysEntryStream(
     GSfsysEntry *fsysEntry;
     if (fileId == 0) {
         fsysEntry = getFsysEntry(fsysHandle, 1);
-    }
-    else {
+    } else {
         u32 index = getFsysEntryIndex(fsysHandle, fileId);
         fsysEntry = getFsysEntry(fsysHandle, index);
     }
@@ -94,7 +83,7 @@ bool GSfsys::readFsysEntryStream(
         u32 readChunks = 0;
 
         offset = offset % getStreamBufferSize();
-        
+
         u8 *writeHead = (u8 *)buffer;
         while (toRead != 0) {
             readLen = toRead;
@@ -113,33 +102,15 @@ bool GSfsys::readFsysEntryStream(
             fsysEntry->mFlags &= ~FSYS_ENTRY_FLAG_27;
 
             if (toRead != 0) {
-                bool success = fsysCacheReadEx(
-                    fsysHandle,
-                    fsysEntry,
-                    writeHead,
-                    readLen,
-                    offset,
-                    NULL,
-                    0,
-                    0,
-                    0
-                );
+                bool success = fsysCacheReadEx(fsysHandle, fsysEntry, writeHead, readLen, offset, NULL, 0, 0, 0);
                 if (!success) {
                     // This leaves interrupts disabled!
                     return false;
                 }
-            }
-            else {
+            } else {
                 bool success = fsysCacheReadEx(
-                    fsysHandle,
-                    fsysEntry,
-                    writeHead,
-                    readLen,
-                    offset,
-                    streamedFsysReadCallback,
-                    userCallback,
-                    userParam1,
-                    userParam2
+                    fsysHandle, fsysEntry, writeHead, readLen, offset, streamedFsysReadCallback, userCallback,
+                    userParam1, userParam2
                 );
                 if (!success) {
                     // This leaves interrupts disabled!
@@ -156,8 +127,7 @@ bool GSfsys::readFsysEntryStream(
 
         if ((fsysEntry->mFlags & FSYS_ENTRY_FLAG_23)) {
             fsysEntry->mRingBufFill = fsysEntry->mPackedSize;
-        }
-        else {
+        } else {
             fsysEntry->mRingBufFill -= length;
             fsysEntry->mValidChunks &= ~readChunks;
         }

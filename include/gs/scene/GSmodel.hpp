@@ -37,4 +37,6 @@ public:
 
     GSmesh *getMesh(u16 index) const;
     u16 countMeshes() const;
+
+    static void fn_801F1554(GSanimationObject *animObj, GSchannelData *channel, f32 cursor, bool blend);
 };

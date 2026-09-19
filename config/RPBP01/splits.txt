@@ -560,7 +560,7 @@ src/gs/scene/GSanimationObject.cpp:
 	.sbss       start:0x8063F350 end:0x8063F358
 	.sdata2     start:0x80641BF0 end:0x80641BF8
 
-src/gs/scene/GScameraNode.cpp:
+src/gs/scene/GScamera.cpp:
 	.text       start:0x801DDF78 end:0x801DF040
 	.ctors      start:0x803E2060 end:0x803E2064
 
@@ -588,7 +588,7 @@ src/.unsorted/801E474C.cpp:
 	.text       start:0x801E474C end:0x801E5F7C
 	.ctors      start:0x803E2078 end:0x803E207C
 
-src/gs/scene/GSlightNode.cpp:
+src/gs/scene/GSlight.cpp:
 	.text       start:0x801E5F7C end:0x801E6BF8
 	.ctors      start:0x803E207C end:0x803E2080
 
@@ -645,7 +645,7 @@ src/gs/GShierarchyModule.cpp:
 	.sbss       start:0x8063F460 end:0x8063F468
 	.sdata2     start:0x80641F00 end:0x80641F08
 
-src/.unsorted/80202E54.cpp:
+src/gs/GSmenuModule.cpp:
 	.text       start:0x80202E54 end:0x80204058
 	.ctors      start:0x803E20AC end:0x803E20B0
 
@@ -735,6 +735,7 @@ src/gs/math/GSboundingBox.cpp:
 src/.unsorted/80220DC4.cpp:
 	.text       start:0x80220DC4 end:0x802233C8
 	.ctors      start:0x803E2100 end:0x803E2104
+	.sdata2     start:0x80642200 end:0x80642220
 
 src/.unsorted/802233C8.cpp:
 	.text       start:0x802233C8 end:0x80223694

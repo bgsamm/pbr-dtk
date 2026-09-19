@@ -6,8 +6,8 @@
 
 #include <revolution.h>
 
-struct GSnodeAnimChannel;
-struct GSnodeAnimData;
+struct GSchannelData;
+struct GSkeyframeData;
 class GSobject;
 
 // TODO(samm) Name? Move?
@@ -106,7 +106,7 @@ public:
     void markNeedsUpdate(bool recursive);
     bool fn_801F3CE0();
 
-    static void fn_801F3D44(GSnull *node, GSnodeAnimChannel *channel, f32 cursor, bool blend);
+    static void fn_801F3D44(GSanimationObject *animObj, GSchannelData *channel, f32 cursor, bool blend);
 
     bool checkFlag(u16 flag) const {
         return (mFlags & flag) == flag;

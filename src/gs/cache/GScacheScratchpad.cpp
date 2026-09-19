@@ -1,8 +1,8 @@
+#include "common.hpp"
 #include "gs/GScache.hpp"
 
 #include <revolution/os.h>
 
-#include "version.hpp"
 
 // TODO clean up this module
 

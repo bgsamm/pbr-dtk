@@ -2,11 +2,11 @@
 
 #include <cstring>
 
-#include "version.hpp"
+#include "common.hpp"
 
 void GSrender::configureColorChannel(
-    u32 channel, u32 chanFlags, GXColorSrc ambSrc, GXColorSrc matSrc, u32 lightCount, GSlight **lights, GXAttnFn attnFn,
-    GXDiffuseFn diffFn
+    u32 channel, u32 chanFlags, GXColorSrc ambSrc, GXColorSrc matSrc, u32 lightCount, GSrenderLight **lights,
+    GXAttnFn attnFn, GXDiffuseFn diffFn
 ) {
     u32 colorChan = channel;
     u32 alphaChan = channel + 2;

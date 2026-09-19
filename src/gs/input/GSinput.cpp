@@ -1,12 +1,13 @@
 #include "gs/GSinput.hpp"
 
+#include "gs/GSmath.hpp"
 #include "gs/GSmem.hpp"
 
 #include <cstring>
 #include <revolution/kpad.h>
 #include <revolution/wpad.h>
 
-#include "version.hpp"
+#include "common.hpp"
 
 /* lbl_8063F7B0 */ GSinputManager *GSinputManager::sInstance;
 

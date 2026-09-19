@@ -1,6 +1,6 @@
+#include "common.hpp"
 #include "gs/GSmem.hpp"
 
-#include "version.hpp"
 
 void *operator new(u32 size) {
     if (!GSmem::isInitialized()) {

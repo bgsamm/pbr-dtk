@@ -1,11 +1,11 @@
 #include "gs/GSvideo.hpp"
 
+#include "common.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GSrender.hpp"
 
 #include <cstring>
 
-#include "version.hpp"
 
 extern void fn_8025B6B4(u32);
 extern void fn_8025B6B8(f32 *, f32 *);

@@ -2,7 +2,7 @@
 
 #include "gs/GSsceneData.hpp"
 
-#include "version.hpp"
+#include "common.hpp"
 
 void GSanimationPlayer::updateCursor(f32 deltaTime) {
     if (!mAnimData || !(mFlags & ANIM_FLAG_PLAYING) || (mFlags & ANIM_FLAG_FINISHED)) {
@@ -77,7 +77,7 @@ void GSanimationPlayer::updateChannels(GSanimationObject *object, bool blend) {
         return;
     }
 
-    GSnodeAnimChannel *channel = mAnimData->mChannels;
+    GSchannelData *channel = mAnimData->mChannels;
     u16 channelCount = mAnimData->mChannelCount;
 
     for (s32 i = 0; i < channelCount; i++, channel++) {

@@ -1,4 +1,5 @@
 #include ".unsorted/80249BA0.hpp"
+#include "common.hpp"
 #include "gs/GScache.hpp"
 #include "gs/GSfsys.hpp"
 #include "gs/GSinput.hpp"
@@ -15,7 +16,6 @@
 #include <revolution/types.h>
 #include <revolution/vi.h>
 
-#include "version.hpp"
 
 void fn_80006980(u32, void *);
 void fn_80006A00(u32, void *);

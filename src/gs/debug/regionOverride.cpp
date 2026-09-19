@@ -1,6 +1,6 @@
-#include "version.hpp"
-
+#include "common.hpp"
 #include "gs/GSdebug.hpp"
+
 
 /*
  * My best guess is that this is some leftover debug functionality for
@@ -13,4 +13,4 @@ static GSregionOverride gRegionOverride;
 
 GSregionOverride GSdebug::getRegionOverride() {
     return gRegionOverride;
-} 
+}

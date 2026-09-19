@@ -1,12 +1,10 @@
 #pragma once
-
-#include "common.hpp"
 #include <revolution/kpad.h>
 #include <revolution/wpad.h>
 
 #define DEV_TYPE_INVALID 0x00
-#define DEV_TYPE_20      0x20
-#define DEV_TYPE_30      0x30
+#define DEV_TYPE_20 0x20
+#define DEV_TYPE_30 0x30
 #define DEV_TYPE_WIIMOTE 0x40
 #define DEV_TYPE_NUNCHUK 0x50
 #define DEV_TYPE_CLASSIC 0x60
@@ -133,7 +131,7 @@ public:
     /* 0x2528 */ u32 mDeviceTypes[WPAD_MAX_CONTROLLERS];
     /* 0x2538 */ GSinputUnkClass1 *_2538;
     /* 0x253c */ GSinputUnkStruct7 **_253c;
-    
+
     GSinputManager(s32 maxDevices);
 
     void fn_80244390(f32 param1);
@@ -146,24 +144,24 @@ public:
 };
 
 namespace GSinput {
-    void fn_802437EC(GSinputUnkStruct2 *param1);
-    void fn_80243820(GSinputUnkStruct2 *param1, u32 buttons, u32 buttonsDown, f32 param4);
-    void fn_80243890(GSinputUnkStruct3 *param1);
-    void fn_802438AC(GSinputUnkStruct3 *param1, u32 buttons, u32 buttonsDown, f32 param4);
-    GScontrolStick *fn_80243A18(GScontrolStick *param1);
-    void fn_80243A48(GScontrolStick *param1);
-    void fn_80243A7C(GScontrolStick *param1, Vec2 *param2);
+void fn_802437EC(GSinputUnkStruct2 *param1);
+void fn_80243820(GSinputUnkStruct2 *param1, u32 buttons, u32 buttonsDown, f32 param4);
+void fn_80243890(GSinputUnkStruct3 *param1);
+void fn_802438AC(GSinputUnkStruct3 *param1, u32 buttons, u32 buttonsDown, f32 param4);
+GScontrolStick *fn_80243A18(GScontrolStick *param1);
+void fn_80243A48(GScontrolStick *param1);
+void fn_80243A7C(GScontrolStick *param1, Vec2 *param2);
 
-    GSinputManager *getInputManager();
-    GSinputDevice *getDevice(s32 channel);
-    s32 getMaxDevices();
-    void samplingCallback(s32 chan);
-    void *wpadAlloc(u32 size);
-    u8 wpadFree(void *ptr);
-    void init(s32 maxDevices);
-    void fn_802448BC();
+GSinputManager *getInputManager();
+GSinputDevice *getDevice(s32 channel);
+s32 getMaxDevices();
+void samplingCallback(s32 chan);
+void *wpadAlloc(u32 size);
+u8 wpadFree(void *ptr);
+void init(s32 maxDevices);
+void fn_802448BC();
 
-    // 802448E8
-    void fn_802448E8(GSinputUnkStruct5 *param1);
-    void fn_80244904(GSinputUnkStruct5 *param1, f32 param2);
-};
+// 802448E8
+void fn_802448E8(GSinputUnkStruct5 *param1);
+void fn_80244904(GSinputUnkStruct5 *param1, f32 param2);
+}; // namespace GSinput

@@ -1,16 +1,15 @@
 #include "gs/GSobject.hpp"
 
-#include ".unsorted/80202E54.hpp"
 #include ".unsorted/80205954.hpp"
-#include "common.hpp"
 #include "gs/GShierarchyModule.hpp"
 #include "gs/GSmath.hpp"
+#include "gs/GSmenuModule.hpp"
 #include "gs/GSrender.hpp"
 #include "gs/GSscene.hpp"
 #include "gs/scene/GSanimationPlayer.hpp"
-#include "gs/scene/GScameraNode.hpp"
+#include "gs/scene/GScamera.hpp"
 #include "gs/scene/GSjointNode.hpp"
-#include "gs/scene/GSlightNode.hpp"
+#include "gs/scene/GSlight.hpp"
 #include "gs/scene/GSmesh.hpp"
 #include "gs/scene/GSmodel.hpp"
 #include "gs/scene/GSnull.hpp"
@@ -19,7 +18,7 @@
 
 #include <cstring>
 
-#include "version.hpp"
+#include "common.hpp"
 
 #define _UNK_MAX 1e38f
 #define _UNK_MIN -1e38f
@@ -244,9 +243,9 @@ GSobject::GSobject(GSscene *parentScene, GSobjectData *data)
     GSnull *rootNode;
     switch (data->mRootNode->mNodeType) {
         case GS_NODE_MODEL:    rootNode = new GSmodel(this, data->mRootNode); break;
-        case GS_NODE_CAMERA:   rootNode = new GScameraNode(this, data->mRootNode); break;
+        case GS_NODE_CAMERA:   rootNode = new GScamera(this, data->mRootNode); break;
         case GS_NODE_JOINT:    rootNode = new GSjointNode(this, data->mRootNode); break;
-        case GS_NODE_LIGHT:    rootNode = new GSlightNode(this, data->mRootNode); break;
+        case GS_NODE_LIGHT:    rootNode = new GSlight(this, data->mRootNode); break;
         case GS_NODE_VOLUME:   rootNode = new GSvolumeNode(this, data->mRootNode); break;
         case GS_NODE_PARTICLE: rootNode = new GSparticle(this, data->mRootNode); break;
         case GS_NODE_NULL:
@@ -276,7 +275,7 @@ GSobject::~GSobject() {
     // TODO(samm) Registers allocate incorrectly w/ getInstance()
     GShierarchyModule::sInstance->unregisterObject(this);
     GShierarchyModule::fn_80200858(this);
-    fn_80203950(this);
+    GSmenuModule::fn_80203950(this);
 
     if (_44) {
         fn_8023E2D0(_44);

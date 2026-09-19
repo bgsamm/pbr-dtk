@@ -15,8 +15,9 @@ struct GSlightStruct1 {
     /* 0x234 */ Mtx _234;
 };
 
-// size: 0x80
-class GSlight {
+// TODO(samm) Name? (GSlight taken)
+// Size: 0x80
+class GSrenderLight {
 public:
     /* 0x0 */ u8 _0;
     /* 0x1 */ u8 _1;
@@ -52,7 +53,7 @@ public:
     /* 0x3c */ GXLightObj mLightObj;
     /* 0x7c */ u8 mIndex;
 
-    GSlight();
+    GSrenderLight();
 
     void initPointLight(GXColor color, Vec position, GXDistAttnFn distAttnFn, f32 refDistance, f32 refBrightness);
     void initSpotLight(

@@ -1,8 +1,8 @@
 #include "gs/GSlinkedList.hpp"
 
+#include "common.hpp"
 #include "gs/GSmem.hpp"
 
-#include "version.hpp"
 
 static GSlistNode *sNodePool;
 static GSlistNode *sNextFree;

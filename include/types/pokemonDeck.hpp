@@ -1,7 +1,5 @@
 #pragma once
 
-#include "common.hpp"
-
 // Size: 0x10
 struct PokemonDeckHeader {
     /* 0x00 */ u8 _00[0x10];

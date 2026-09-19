@@ -1,8 +1,8 @@
-#include "version.hpp"
+#include "common.hpp"
+#include "gs/GSmath.hpp"
 
 #include <cmath>
 
-#include "gs/GSmath.hpp"
 
 #define COS_TBL_LEN (1 + 90 * 2)
 
@@ -29,7 +29,7 @@ f32 GSmath::cos(f32 x) {
     // Does not match as a single line (uses fmadds)
     f32 temp = 2f * x;
     u32 tblIdx = 0.5f + temp;
-    
+
     return sign * sCosTable[tblIdx];
 }
 

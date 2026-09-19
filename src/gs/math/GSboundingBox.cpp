@@ -1,6 +1,6 @@
+#include "common.hpp"
 #include "gs/GSmath.hpp"
 
-#include "version.hpp"
 
 static GSvec3 sActiveBox[8];
 

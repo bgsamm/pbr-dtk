@@ -7,7 +7,7 @@
 
 #include <cstring>
 
-#include "version.hpp"
+#include "common.hpp"
 
 
 GSscene::GSscene(GSsceneData *sceneData) : mData(sceneData), mObjects(NULL), _8(0), _c(0), _10(0) {
@@ -40,7 +40,7 @@ GSscene::GSscene(GSsceneData *sceneData) : mData(sceneData), mObjects(NULL), _8(
 
             u16 lightCount = object->getLightCount();
             for (u16 j = 0; j < lightCount; j++) {
-                GSlightNode *lightNode = object->getLightNode(j);
+                GSlight *lightNode = object->getLightNode(j);
 
                 if (lightNode && lightNode->get_10c()) {
                     u32 _unk7 = lightNode->get_10c();

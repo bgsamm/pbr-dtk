@@ -14,13 +14,13 @@
 #define ANIM_FLAG_FINISHED (1 << 3)
 #define ANIM_FLAG_LOCKED (1 << 4)
 
-struct GSnodeAnimData;
+struct GSkeyframeData;
 class GSanimationObject;
 
 // Size: 0x10
 class GSanimationPlayer : public GShierMemObject {
 private:
-    /* 0x0 */ GSnodeAnimData *mAnimData;
+    /* 0x0 */ GSkeyframeData *mAnimData;
     /* 0x4 */ u16 mAnimType;
     /* 0x6 */ u16 mFlags;
     /* 0x8 */ f32 mSpeed;
@@ -52,7 +52,7 @@ public:
         mFlags |= flag;
     }
 
-    void startAnimation(GSnodeAnimData *animData, f32 startTime, f32 speed, u16 animType) {
+    void startAnimation(GSkeyframeData *animData, f32 startTime, f32 speed, u16 animType) {
         if (!(mFlags & ANIM_FLAG_LOCKED)) {
             mAnimData = animData;
             mCursor = startTime;

@@ -1,3 +1,4 @@
+#include "common.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GSrender.hpp"
 
@@ -5,7 +6,6 @@
 #include <revolution/gx.h>
 #include <revolution/os.h>
 
-#include "version.hpp"
 
 // BreakPtCallback
 void fn_8023234C() {

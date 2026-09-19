@@ -1,24 +1,33 @@
 #pragma once
 
 #include "gs/GSmath.hpp"
+#include "version.hpp"
 
 #include <revolution.h>
 
 // TODO(samm) Keeping all the data structs here for ease of reference
 
 struct GSanimationObject;
-struct GSnodeAnimChannel;
+struct GSchannelData;
 struct GStexture;
 
 #define MATERIAL_MAX_TEXTURE_SLOTS 5
 
-typedef void (*GSanimationCallback)(GSanimationObject *node, GSnodeAnimChannel *channel, f32 cursor, bool blend);
+typedef void (*GSanimationCallback)(GSanimationObject *node, GSchannelData *channel, f32 cursor, bool blend);
 
 // TODO(samm) Name? Move? Vec vs. GSvec3?
 struct _TransformPivots {
     /* 0x00 */ GSvec3 mScalePivot;
     /* 0x0C */ GSvec3 mScaleToRot;
     /* 0x18 */ GSvec3 mRotToTrans;
+    /* 0x24 */ union {
+        Vec _24;
+        struct {
+            u32 _24_0;
+            u32 _24_1;
+            u32 _24_2;
+        };
+    };
 };
 
 enum GSnodeType {
@@ -31,8 +40,37 @@ enum GSnodeType {
     GS_NODE_PARTICLE = 7
 };
 
-struct GSnodeAnimChannel {
-    /* 0x0 */ u8 _0;
+// Size: 0xC
+struct GSkeyframe {
+    /* 0x0 */ u16 mInterpType;
+    /* 0x2 */ u16 mValueIdx;
+    /* 0x4 */ u16 mControlIdxL;
+    /* 0x6 */ u16 mControlIdxR;
+    /* 0x8 */ f32 mTime;
+};
+
+// TODO(samm) Name
+struct GSanimTrackData {
+    /* 0x00 */ void *mValues;
+    /* 0x04 */ void *mControls;
+    /* 0x08 */ u16 mValueCount;
+    /* 0x0C */ f32 mDuration;
+    /* 0x10 */ GSkeyframe *mKeyframes;
+    /* 0x14 */ u16 mKeyframCount;
+    /* 0x16 */ u16 mCachedIndex;
+    /* 0x18 */ f32 mCachedTime;
+    /* 0x1c */ union {
+        s8 mCachedByte;
+        s16 mCachedShort;
+        u16 mCachedUShort;
+        Vec mCachedVec3;
+        Quaternion mCachedQuat;
+    };
+};
+
+// TODO(samm) Name
+struct GSchannelData {
+    /* 0x0 */ bool _0;
     /* 0x1 */ u8 mChannel;
     /* 0x2 */ u8 mComponent;
     /* 0x3 */ u8 _3;
@@ -40,16 +78,17 @@ struct GSnodeAnimChannel {
     /* 0x5 */ u8 _5;
     /* 0x6 */ u8 mDataType;
     /* 0x7 */ u8 mScaleExp;
-    /* 0x8 */ void *mKeyframes;
+    /* 0x8 */ GSanimTrackData *mKeyframes;
     /* 0xC */ GSanimationCallback mStepCallback;
 };
 
-struct GSnodeAnimData {
+// TODO(samm) Name
+struct GSkeyframeData {
     /* 0x0 */ u16 mAnimId;
     /* 0x2 */ u16 mChannelCount;
-    /* 0x4 */ GSnodeAnimChannel *mChannels;
+    /* 0x4 */ GSchannelData *mChannels;
     /* 0x8 */ f32 mAnimLength;
-    /* 0xc */ GSnodeAnimData *mNext;
+    /* 0xc */ GSkeyframeData *mNext;
 };
 
 struct GSnodeData {
@@ -62,7 +101,7 @@ struct GSnodeData {
     /* 0x14 */ Vec *mScale;
     /* 0x18 */ _TransformPivots *mTransformPivots;
     /* 0x1C */ f32 _1c;
-    /* 0x20 */ GSnodeAnimData *mAnimData;
+    /* 0x20 */ GSkeyframeData *mAnimData;
     /* 0x24 */ GSnodeData *mFirstChild;
     /* 0x28 */ GSnodeData *mNextSibling;
     /* 0x2C */ void *_2c;
@@ -94,6 +133,12 @@ struct GSanimationData {
     /* 0x2C */ void *_2c;
 };
 
+struct _UnkObjectData_1 {
+    /* 0x0 */ void *_0;
+    /* 0x4 */ u8 _pad_4[0x4];
+    /* 0x8 */ void *_8;
+};
+
 struct GSobjectData {
     /* 0x00 */ char *mName;
     /* 0x04 */ u16 mId;
@@ -103,7 +148,7 @@ struct GSobjectData {
     /* 0x10 */ GSnodeData *mRootNode;
     // TODO(samm) Confirm type (does data incl. possible matrix ptr?)
     /* 0x14 */ GSboundingBox *mBoundingBox;
-    /* 0x18 */ void *_18;
+    /* 0x18 */ _UnkObjectData_1 *_18;
 };
 
 struct _UnkMaterialData_1 {
@@ -111,8 +156,6 @@ struct _UnkMaterialData_1 {
     /* 0x1 */ u8 _pad_1[3];
     /* 0x4 */ u8 _4;
 };
-
-struct _UnkMaterialData_2 {};
 
 struct GSmaterialData {
     /* 0x00 */ char *mName;
@@ -123,7 +166,7 @@ struct GSmaterialData {
     /* 0x50 */ GStexture *_50;
     /* 0x54 */ u8 _54;
     /* 0x55 */ u8 _pad_55[0x2f];
-    /* 0x84 */ _UnkMaterialData_2 *_84;
+    /* 0x84 */ GSkeyframeData *_84;
 };
 
 struct _UnkSceneData_1 {
@@ -140,9 +183,7 @@ struct _UnkSceneData_2 {
 
 // .sdr files
 struct GSsceneData {
-    /* 0x00 */ u8 _00;
-    /* 0x02 */ u16 _02;
-    /* 0x04 */ u8 _04;
+    /* 0x00 */ Version mVersion;
     /* 0x08 */ GSobjectData **mObjectList;
     /* 0x0c */ GStexture **mTextureList;
     /* 0x10 */ _UnkSceneData_1 **_10;
@@ -156,12 +197,23 @@ struct GSsceneData {
     /* 0x28 */ void *_28;
 };
 
-void fn_801E1278(GSnodeAnimChannel *channel, GSvec3 *vec);
-void fn_801E1360(GSnodeAnimChannel *channel, GSquat *quat);
-void fn_801E1504(GSnodeAnimChannel *channel, u8 *arg1);
-void fn_801E1540(_UnkMaterialData_2 *arg0, GSsceneData *sceneData, u32 baseAddr);
+void fn_801E0A60(GSchannelData *channelData, GSsceneData *sceneData, u32 baseAddr);
+void fn_801E10C0(GSchannelData *channelData, f32 cursor, f32 *dst);
+void fn_801E1278(GSchannelData *channelData, f32 cursor, GSvec3 *dst);
+void fn_801E1360(GSchannelData *channelData, f32 cursor, GSquat *dst);
+void fn_801E13B8(GSchannelData *channelData, f32 cursor, GSvec2 *dst);
+void fn_801E1504(GSchannelData *channelData, f32 cursor, u8 *dst);
+void fn_801E1540(GSkeyframeData *arg0, GSsceneData *sceneData, u32 baseAddr);
 void fn_801E1714(_UnkSceneData_1 *arg0, GSsceneData *sceneData, u32 baseAddr);
 void fn_801E18F8(GSmaterialData *materialData, GSsceneData *sceneData, u32 baseAddr);
+void fn_801E1CD0(GSnodeData *nodeData, GSsceneData *sceneData, u32 baseAddr);
+void fn_801E2878(GSnodeData *nodeData, GSsceneData *sceneData, u32 baseAddr);
+void fn_801E2A60(GSnodeData *nodeData, GSsceneData *sceneData, u32 baseAddr);
+void fn_801E2A90(GSnodeData *nodeData, GSsceneData *sceneData, u32 baseAddr);
+void fn_801E2AE8(GSnodeData *nodeData, GSsceneData *sceneData, u32 baseAddr);
+void fn_801E2B40(GSnodeData *nodeData, GSsceneData *sceneData, u32 baseAddr);
+void fn_801E2D88(GSnodeData *nodeData, GSsceneData *sceneData, u32 baseAddr);
+void fn_801E2E34(GSanimationData *animationData, GSsceneData *sceneData, u32 baseAddr);
 void fn_801E2F60(GSobjectData *objectData, GSsceneData *sceneData, u32 baseAddr, bool arg3);
 void fn_801E3380(_UnkSceneData_2 *arg0, GSsceneData *sceneData, u32 baseAddr);
 void fn_801E34DC(GSsceneData *sceneData, u32 baseAddr);

@@ -2,7 +2,7 @@
 
 #include "gs/GSsceneData.hpp"
 #include "gs/scene/GShierMemObject.hpp"
-#include "gs/scene/GSlightNode.hpp"
+#include "gs/scene/GSlight.hpp"
 
 #include <revolution.h>
 
@@ -13,9 +13,9 @@ class GSscene : public GShierMemObject {
 private:
     /* 0x00 */ GSsceneData *mData;
     /* 0x04 */ GSobject **mObjects;
-    /* 0x08 */ GSlightNode *_8;
-    /* 0x0C */ GSlightNode *_c;
-    /* 0x10 */ GSlightNode *_10;
+    /* 0x08 */ GSlight *_8;
+    /* 0x0C */ GSlight *_c;
+    /* 0x10 */ GSlight *_10;
 
 public:
     GSscene(GSsceneData *sceneData);

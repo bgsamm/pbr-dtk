@@ -1,5 +1,6 @@
 #include "gs/GSfile.hpp"
 
+#include "common.hpp"
 #include "gs/GSdebug.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GSnand.hpp"
@@ -11,7 +12,6 @@
 #include <revolution/nand.h>
 #include <revolution/os.h>
 
-#include "version.hpp"
 
 /* lbl_804917F0 */ static u8 sUnused[0x40];
 /* lbl_80491830 */ static OSSemaphore sDvdSemaphore;

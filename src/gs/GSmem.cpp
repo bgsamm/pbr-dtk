@@ -1,8 +1,9 @@
 #include "gs/GSmem.hpp"
 
+#include "common.hpp"
+
 #include <cstring>
 
-#include "version.hpp"
 
 /* lbl_804912B0 */ static HeapSlot sHeapPool[MAX_HEAPS];
 

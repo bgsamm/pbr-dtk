@@ -1,6 +1,9 @@
 #ifndef MSL_CMATH_H
 #define MSL_CMATH_H
 
+// TODO(samm) Remove; needed for __abs
+#include "decomp.h"
+
 #include <math.h>
 
 #ifdef __cplusplus

@@ -1,8 +1,8 @@
 #include "gs/render/GSrenderModule.hpp"
 
+#include "common.hpp"
 #include "gs/render/80235A74.hpp"
 
-#include "version.hpp"
 
 u8 sNextModuleId = 1;
 

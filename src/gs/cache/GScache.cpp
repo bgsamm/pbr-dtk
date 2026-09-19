@@ -1,11 +1,9 @@
 #include "gs/GScache.hpp"
 
+#include "common.hpp"
 #include "gs/GSmem.hpp"
 
 #include <cstring>
-
-#include "version.hpp"
-
 
 /* lbl_8063F2E8 */ static GScacheEntry *sFileCacheList;
 /* lbl_8063F2EC */ static GScacheObjPool *sFilePool;

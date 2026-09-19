@@ -1,6 +1,7 @@
 #include "gs/GSrender.hpp"
 
 #include ".unsorted/8025B6AC.hpp"
+#include "common.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GSvideo.hpp"
 #include "gs/render/GSrenderModule.hpp"
@@ -10,7 +11,6 @@
 #include <revolution.h>
 #include <revolution/cx.h>
 
-#include "version.hpp"
 
 extern void *fn_80007940();
 extern void *fn_800079C0();

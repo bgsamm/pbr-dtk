@@ -1,4 +1,4 @@
-#include "version.hpp"
+#include "common.hpp"
 
 #include <revolution/os.h>
 

@@ -1,6 +1,6 @@
+#include "common.hpp"
 #include "gs/GSmath.hpp"
 
-#include "version.hpp"
 
 // TODO name these variables
 GSvec3 sXAxis(1.f, 0.f, 0.f);

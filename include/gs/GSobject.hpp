@@ -3,7 +3,7 @@
 #include "gs/GSlinkedList.hpp"
 #include "gs/GSsceneData.hpp"
 #include "gs/scene/GShierMemObject.hpp"
-#include "gs/scene/GSlightNode.hpp"
+#include "gs/scene/GSlight.hpp"
 #include "gs/scene/GSmodel.hpp"
 #include "gs/scene/GSnull.hpp"
 
@@ -212,7 +212,7 @@ public:
         return mLightCount;
     }
 
-    GSlightNode *getLightNode(u16 index) const {
+    GSlight *getLightNode(u16 index) const {
         u16 *lightIndices = mLightLookup;
         if (!lightIndices) {
             return NULL;
@@ -229,7 +229,7 @@ public:
             return NULL;
         }
 
-        return static_cast<GSlightNode *>(mNodes[nodeIndex]);
+        return static_cast<GSlight *>(mNodes[nodeIndex]);
     }
 
     GSmodel *getModel(u16 index) const {

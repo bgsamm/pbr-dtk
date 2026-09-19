@@ -2,9 +2,9 @@
 
 #include "gs/GSsceneData.hpp"
 
-#include "version.hpp"
+#include "common.hpp"
 
-GSanimationObject::GSanimationObject(GSnodeAnimData *animData) : mAnimData(animData), mPlayer(NULL) {
+GSanimationObject::GSanimationObject(GSkeyframeData *animData) : mAnimData(animData), mPlayer(NULL) {
     if (animData) {
         mPlayer = new GSanimationPlayer();
     }
@@ -32,8 +32,8 @@ void GSanimationObject::update(f32 deltaTime) {
     }
 }
 
-GSnodeAnimData *GSanimationObject::findAnimData(u16 animId) {
-    GSnodeAnimData *anim = mAnimData;
+GSkeyframeData *GSanimationObject::findAnimData(u16 animId) {
+    GSkeyframeData *anim = mAnimData;
     while (anim) {
         if (anim->mAnimId == animId) {
             return anim;
@@ -51,13 +51,13 @@ void GSanimationObject::startAnimation(u16 animId, u32 animType, f32 startTime, 
 
     mPlayer->stop();
 
-    GSnodeAnimData *animData = findAnimData(animId);
+    GSkeyframeData *animData = findAnimData(animId);
     if (animData) {
         mPlayer->startAnimation(animData, startTime, speed, animType);
     }
 }
 
-GSblendObject::GSblendObject(GSnodeAnimData *anims) : GSanimationObject(anims), mBlendPlayer(NULL), mBlendFactor(0.f) {
+GSblendObject::GSblendObject(GSkeyframeData *anims) : GSanimationObject(anims), mBlendPlayer(NULL), mBlendFactor(0.f) {
     if (mPlayer) {
         mBlendPlayer = new GSanimationPlayer();
     }
@@ -124,7 +124,7 @@ void GSblendObject::blendAnimation(u16 animId, u32 animType, f32 startTime, f32 
 
     mBlendPlayer->stop();
 
-    GSnodeAnimData *animData = findAnimData(animId);
+    GSkeyframeData *animData = findAnimData(animId);
     if (animData) {
         mBlendPlayer->startAnimation(animData, startTime, speed, animType);
     }

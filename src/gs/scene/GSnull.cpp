@@ -1,18 +1,17 @@
 #include "gs/scene/GSnull.hpp"
 
-#include "common.hpp"
 #include "gs/GSmath.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GSobject.hpp"
 #include "gs/GSsceneData.hpp"
-#include "gs/scene/GScameraNode.hpp"
+#include "gs/scene/GScamera.hpp"
 #include "gs/scene/GSjointNode.hpp"
-#include "gs/scene/GSlightNode.hpp"
+#include "gs/scene/GSlight.hpp"
 #include "gs/scene/GSmodel.hpp"
 #include "gs/scene/GSparticle.hpp"
 #include "gs/scene/GSvolumeNode.hpp"
 
-#include "version.hpp"
+#include "common.hpp"
 
 // TODO(samm) Convert to enum?
 #define START 0
@@ -212,9 +211,9 @@ GSnull::GSnull(GSobject *parentObject, GSnodeData *data)
     while (childData) {
         switch (childData->mNodeType) {
             case GS_NODE_MODEL:    childNode = new GSmodel(parentObject, childData); break;
-            case GS_NODE_CAMERA:   childNode = new GScameraNode(parentObject, childData); break;
+            case GS_NODE_CAMERA:   childNode = new GScamera(parentObject, childData); break;
             case GS_NODE_JOINT:    childNode = new GSjointNode(parentObject, childData); break;
-            case GS_NODE_LIGHT:    childNode = new GSlightNode(parentObject, childData); break;
+            case GS_NODE_LIGHT:    childNode = new GSlight(parentObject, childData); break;
             case GS_NODE_PARTICLE: childNode = new GSparticle(parentObject, childData); break;
             case GS_NODE_VOLUME:   childNode = new GSvolumeNode(parentObject, childData); break;
             case GS_NODE_NULL:
@@ -845,14 +844,16 @@ bool GSnull::fn_801F3CE0() {
     return true;
 }
 
-void GSnull::fn_801F3D44(GSnull *node, GSnodeAnimChannel *channel, f32 cursor, bool blend) {
+void GSnull::fn_801F3D44(GSanimationObject *animObj, GSchannelData *channel, f32 cursor, bool blend) {
+    GSnull *node = static_cast<GSnull *>(animObj);
+
     switch (channel->mChannel) {
         case CHANNEL_TRANSLATION:
             if (blend) {
-                fn_801E1278(channel, &node->mBlendTranslation);
+                fn_801E1278(channel, cursor, &node->mBlendTranslation);
                 node->mFlags |= FLAG_UPDATE_BLEND_TRANSLATION;
             } else {
-                fn_801E1278(channel, &node->mLocalTranslation);
+                fn_801E1278(channel, cursor, &node->mLocalTranslation);
                 node->mBlendTranslation = node->mLocalTranslation;
             }
             node->markNeedsUpdate(true);
@@ -860,20 +861,20 @@ void GSnull::fn_801F3D44(GSnull *node, GSnodeAnimChannel *channel, f32 cursor, b
         case CHANNEL_ROTATION:
             if (channel->mDataType == 2) {
                 if (blend) {
-                    fn_801E1360(channel, &node->mBlendRotationQuat);
+                    fn_801E1360(channel, cursor, &node->mBlendRotationQuat);
                     node->mFlags |= FLAG_UPDATE_BLEND_ROTATION;
                     node->mFlags &= ~FLAG_UPDATE_BLEND_ROTATION_QUAT;
                 } else {
-                    fn_801E1360(channel, &node->mLocalRotationQuat);
+                    fn_801E1360(channel, cursor, &node->mLocalRotationQuat);
                     node->mFlags &= ~(FLAG_UPDATE_BLEND_ROTATION_QUAT | FLAG_UPDATE_LOCAL_ROTATION_QUAT);
                     node->mBlendRotationQuat = node->mLocalRotationQuat;
                 }
             } else {
                 if (blend) {
-                    fn_801E1278(channel, &node->mBlendRotationEuler);
+                    fn_801E1278(channel, cursor, &node->mBlendRotationEuler);
                     node->mFlags |= FLAG_UPDATE_BLEND_ROTATION_QUAT | FLAG_UPDATE_BLEND_ROTATION;
                 } else {
-                    fn_801E1278(channel, &node->mLocalRotationEuler);
+                    fn_801E1278(channel, cursor, &node->mLocalRotationEuler);
                     node->mFlags |= FLAG_UPDATE_BLEND_ROTATION_QUAT | FLAG_UPDATE_LOCAL_ROTATION_QUAT;
                     node->mBlendRotationEuler = node->mLocalRotationEuler;
                 }
@@ -882,13 +883,13 @@ void GSnull::fn_801F3D44(GSnull *node, GSnodeAnimChannel *channel, f32 cursor, b
             break;
         case CHANNEL_SCALE:
             if (blend) {
-                fn_801E1278(channel, &node->mBlendScale);
+                fn_801E1278(channel, cursor, &node->mBlendScale);
                 ensure_nonzero_inplace(&node->mBlendScale.x);
                 ensure_nonzero_inplace(&node->mBlendScale.y);
                 ensure_nonzero_inplace(&node->mBlendScale.z);
                 node->mFlags |= FLAG_UPDATE_BLEND_SCALE;
             } else {
-                fn_801E1278(channel, &node->mLocalScale);
+                fn_801E1278(channel, cursor, &node->mLocalScale);
                 ensure_nonzero_inplace(&node->mLocalScale.x);
                 ensure_nonzero_inplace(&node->mLocalScale.y);
                 ensure_nonzero_inplace(&node->mLocalScale.z);
@@ -899,7 +900,7 @@ void GSnull::fn_801F3D44(GSnull *node, GSnodeAnimChannel *channel, f32 cursor, b
         case 3: {
             // TODO(samm) ???
             u8 _unk1;
-            fn_801E1504(channel, &_unk1);
+            fn_801E1504(channel, cursor, &_unk1);
             _unk1 |= blend && node->checkFlag((1 << 1));
             if (_unk1) {
                 node->mFlags |= (1 << 1);

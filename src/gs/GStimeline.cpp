@@ -1,7 +1,8 @@
-#include "version.hpp"
-
-#include "gs/GStask.hpp"
 #include "gs/GStimeline.hpp"
+
+#include "common.hpp"
+#include "gs/GStask.hpp"
+
 
 extern f32 fn_8000739C();
 
@@ -36,8 +37,7 @@ void GStimelineManager::update(f32 dt) {
 
             if (prev == NULL) {
                 mNodes = next;
-            }
-            else {
+            } else {
                 prev->mNext = next;
             }
             node = prev;

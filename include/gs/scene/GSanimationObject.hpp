@@ -3,20 +3,20 @@
 #include "gs/scene/GSanimationPlayer.hpp"
 #include "gs/scene/GShierMemObject.hpp"
 
-struct GSnodeAnimData;
+struct GSkeyframeData;
 
 // NOTE(samm) Name known from RTTI
 class GSanimationObject : public GShierMemObject {
 protected:
-    /* 0x000 */ GSnodeAnimData *mAnimData;
+    /* 0x000 */ GSkeyframeData *mAnimData;
     /* 0x004 */ GSanimationPlayer *mPlayer;
 
 protected:
-    GSnodeAnimData *findAnimData(u16 animId);
+    GSkeyframeData *findAnimData(u16 animId);
     void update(f32 deltaTime);
 
 public:
-    GSanimationObject(GSnodeAnimData *animData);
+    GSanimationObject(GSkeyframeData *animData);
     ~GSanimationObject();
 
     void startAnimation(u16 animId, u32 animType, f32 startTime, f32 speed);
@@ -41,7 +41,7 @@ protected:
     /* 0x00C */ f32 mBlendFactor;
 
 public:
-    GSblendObject(GSnodeAnimData *anims);
+    GSblendObject(GSkeyframeData *anims);
     ~GSblendObject();
 
     void update(f32 deltaTime);
