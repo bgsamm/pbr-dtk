@@ -45,6 +45,7 @@ public:
 
     void fn_8023B2F0();
     void fn_8023B3B8(u32 arg0);
+    void fn_8023B420(u32 arg0);
 
     GSrenderTarget *getNext() const {
         return mNext;
@@ -56,5 +57,19 @@ public:
 
     static GSrenderTarget *getTargetList() {
         return sHead;
+    }
+
+    static void _unkFunc_1(u32 arg0) {
+        GSrenderTarget *target = findTarget((arg0 >> 16) & 0xff);
+        if (target) {
+            target->fn_8023B3B8(arg0);
+        }
+    }
+
+    static void _unkFunc_2(u32 arg0) {
+        GSrenderTarget *target = findTarget((arg0 >> 16) & 0xff);
+        if (target) {
+            target->fn_8023B420(arg0);
+        }
     }
 };

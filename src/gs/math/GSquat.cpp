@@ -1,11 +1,15 @@
-#include "common.hpp"
 #include "gs/GSmath.hpp"
 
+#include "common.hpp"
 
-// TODO name these variables
+// TODO(samm) Is a namespace really appropriate?
+namespace GSmath {
 GSvec3 sXAxis(1.f, 0.f, 0.f);
 GSvec3 sYAxis(0.f, 1.f, 0.f);
 GSvec3 sZAxis(0.f, 0.f, 1.f);
+} // namespace GSmath
+
+// TODO(samm) Name these variables
 GSvec3 lbl_8049362C(0.f, 0.f, 0.f);
 GSvec3 lbl_80493638(1.f, 1.f, 1.f);
 

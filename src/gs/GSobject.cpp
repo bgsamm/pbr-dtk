@@ -158,30 +158,31 @@ bool GSobject::fn_801F40E0(GSnull *rootNode) {
 GSobject::GSobject(GSscene *parentScene, GSobjectData *data)
     : mParentScene(parentScene),
       mData(data),
-      mNodes(NULL),
-      mLookupBuffer(NULL),
-      mCameraLookup(NULL),
-      mJointLookup(NULL),
-      mLightLookup(NULL),
-      mMeshLookup(NULL),
-      mModelLookup(NULL),
-      mParticleLookup(NULL),
-      mVolumeLookup(NULL),
-      _2c(NULL),
-      _30(),
+      mNodes(),
+      mLookupBuffer(),
+      mCameraLookup(),
+      mJointLookup(),
+      mLightLookup(),
+      mMeshLookup(),
+      mModelLookup(),
+      mParticleLookup(),
+      mVolumeLookup(),
+      _2c(),
+      mModelList(),
       _38(),
-      _40(0),
+      _3c(),
+      _40(),
       // TODO(samm) Identify this default flag
       mFlags((1 << 0)),
-      mNodeCount(0),
-      mCameraCount(0),
-      mJointCount(0),
-      mLightCount(0),
-      mMeshCount(0),
-      mModelCount(0),
-      mParticleCount(0),
-      mVolumeCount(0),
-      _ee(0),
+      mNodeCount(),
+      mCameraCount(),
+      mJointCount(),
+      mLightCount(),
+      mMeshCount(),
+      mModelCount(),
+      mParticleCount(),
+      mVolumeCount(),
+      _ee(),
       mAnimBlendFactor(0.f),
       mTransitionLength(1.f),
       // TODO(samm) Possibly defaults rather than args
@@ -213,9 +214,9 @@ GSobject::GSobject(GSscene *parentScene, GSobjectData *data)
     _14c_0 = 0;
     _14c_1 = 0;
 
-    GSrender::getInstance()->getRenderDimensions(&_150_0, &_150_1);
+    GSrender::sInstance->getRenderDimensions(&_150_0, &_150_1);
 
-    if (mParentScene && mParentScene->getUnkSceneData()) {
+    if (mParentScene && mParentScene->getEnvData()) {
         // TODO(samm) #define flag
         mFlags |= (1 << 7);
     }
@@ -242,7 +243,7 @@ GSobject::GSobject(GSscene *parentScene, GSobjectData *data)
 
     GSnull *rootNode;
     switch (data->mRootNode->mNodeType) {
-        case GS_NODE_MODEL:    rootNode = new GSmodel(this, data->mRootNode); break;
+        case GS_NODE_MODEL:    rootNode = new GSmodel(this, static_cast<GSmodelNodeData *>(data->mRootNode)); break;
         case GS_NODE_CAMERA:   rootNode = new GScamera(this, data->mRootNode); break;
         case GS_NODE_JOINT:    rootNode = new GSjointNode(this, data->mRootNode); break;
         case GS_NODE_LIGHT:    rootNode = new GSlight(this, data->mRootNode); break;
@@ -278,10 +279,10 @@ GSobject::~GSobject() {
     GSmenuModule::fn_80203950(this);
 
     if (_44) {
-        fn_8023E2D0(_44);
+        _44->fn_8023E2D0();
     }
     if (_48) {
-        fn_8023E2D0(_48);
+        _48->fn_8023E2D0();
     }
 
     if (mLookupBuffer) {
@@ -298,9 +299,6 @@ GSobject::~GSobject() {
         GSmem::freeToHeap(gGameHeap, mNodes);
         mNodes = NULL;
     }
-
-    freeList1(&_38);
-    freeList2(&_30);
 }
 
 void GSobject::startAnimation(u16 animId, u32 animType, f32 startTime, f32 speed, bool arg2, bool arg3, bool arg4) {
@@ -367,7 +365,7 @@ void GSobject::startAnimation(u16 animId, u32 animType, f32 startTime, f32 speed
                             }
 
                             // TODO(samm) Revisit this
-                            GSmaterial *material = mesh->_14;
+                            GSmaterial *material = mesh->getMaterial();
                             if (!material) {
                                 continue;
                             }
@@ -392,7 +390,7 @@ void GSobject::startAnimation(u16 animId, u32 animType, f32 startTime, f32 speed
                 GSmesh *mesh = mMeshLookup[i];
 
                 // TODO(samm) Revisit this
-                GSmaterial *material = mesh->_14;
+                GSmaterial *material = mesh->getMaterial();
                 if (!material) {
                     continue;
                 }
@@ -407,7 +405,7 @@ void GSobject::startAnimation(u16 animId, u32 animType, f32 startTime, f32 speed
                 GSmesh *mesh = mMeshLookup[_unk2[i]];
 
                 // TODO(samm) Revisit this
-                GSmaterial *material = mesh->_14;
+                GSmaterial *material = mesh->getMaterial();
                 if (!material) {
                     continue;
                 }
@@ -463,15 +461,17 @@ void GSobject::startAnimation(u16 animId, u32 animType, f32 startTime, f32 speed
                     continue;
                 }
 
-                if (particle->_unkCondition1() && fn_80207864(particle->_138)) {
-                    f32 _unk8 = _unk7->_0;
-                    particle->_104 |= (1 << 1);
-                    particle->_104 &= ~(1 << 2);
-                    particle->_10c = _unk8;
-                } else {
-                    f32 _unk9 = _unk7->_0;
-                    particle->_104 |= (1 << 2);
-                    particle->_110 = _unk9;
+                if (particle->_unkCondition1()) {
+                    if (fn_80207864(particle->_138)) {
+                        f32 _unk8 = _unk7->_0;
+                        particle->_104 |= (1 << 1);
+                        particle->_104 &= ~(1 << 2);
+                        particle->_10c = _unk8;
+                    } else {
+                        f32 _unk9 = _unk7->_0;
+                        particle->_104 |= (1 << 2);
+                        particle->_110 = _unk9;
+                    }
                 }
             }
         }
@@ -527,7 +527,7 @@ void GSobject::stepAnimTransition(f32 deltaTime) {
 
 void GSobject::fn_801F6390() {
     for (s32 i = 0; i < mMeshCount; i++) {
-        mMeshLookup[i]->_14 = mMeshLookup[i]->_c;
+        mMeshLookup[i]->_unkFunc_1();
     }
 }
 

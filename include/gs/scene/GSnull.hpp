@@ -20,6 +20,9 @@ struct _BlendRotationCache {
 // NOTE(samm) Name known from RTTI
 // Size: 0x104
 class GSnull : public GSblendObject {
+    // TODO(samm) Revisit this
+    friend class GSmodel;
+
 protected:
     /* 0x010 */ u16 mFlags;
     /* 0x012 */ u8 mNodeType;

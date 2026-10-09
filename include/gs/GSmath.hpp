@@ -35,6 +35,18 @@ static inline f32 abs(f32 x) {
     return (x > 0.f) ? x : -x;
 }
 
+static inline f32 u8tof32(u8 arg) {
+    f32 ret;
+    OSu8tof32(&arg, &ret);
+    return ret;
+}
+
+static inline u8 f32tou8(f32 arg) {
+    u8 ret;
+    OSf32tou8(&arg, &ret);
+    return ret;
+}
+
 #define PI 3.14159265f
 #define DEG_TO_RAD (PI / 180f)
 
@@ -56,6 +68,12 @@ struct GSvec3 : public Vec {
         this->z = z;
     }
 
+    GSvec3(const GSvec3 &other) {
+        x = other.x;
+        y = other.y;
+        z = other.z;
+    }
+
     GSvec3 &operator=(const Vec &vec) {
         x = vec.x;
         y = vec.y;
@@ -68,6 +86,9 @@ struct GSvec3 : public Vec {
         this->y = y;
         this->z = z;
     }
+    void normalize() {
+        VECNormalize(this, this);
+    }
 
     GSvec3 operator-() const {
         return GSvec3(-x, -y, -z);
@@ -76,6 +97,12 @@ struct GSvec3 : public Vec {
     GSvec3 operator+(const GSvec3 &other) const {
         GSvec3 result;
         VECAdd(this, &other, &result);
+        return result;
+    }
+
+    GSvec3 operator-(const GSvec3 &other) const {
+        GSvec3 result;
+        VECSubtract(this, &other, &result);
         return result;
     }
 
@@ -130,6 +157,28 @@ private:
     Mtx mMatrix;
 
 public:
+    GSmatrix() {}
+
+    GSmatrix(
+        f32 x00, f32 x01, f32 x02, f32 x03, f32 x10, f32 x11, f32 x12, f32 x13, f32 x20, f32 x21, f32 x22, f32 x23) {
+        mMatrix[0][0] = x00;
+        mMatrix[0][1] = x01;
+        mMatrix[0][2] = x02;
+        mMatrix[0][3] = x03;
+        mMatrix[1][0] = x10;
+        mMatrix[1][1] = x11;
+        mMatrix[1][2] = x12;
+        mMatrix[1][3] = x13;
+        mMatrix[2][0] = x20;
+        mMatrix[2][1] = x21;
+        mMatrix[2][2] = x22;
+        mMatrix[2][3] = x23;
+    }
+
+    GSmatrix(const GSmatrix &other) {
+        MTXCopy(other, mMatrix);
+    }
+
     operator Mtx &() {
         return mMatrix;
     }
@@ -138,10 +187,39 @@ public:
         return mMatrix;
     }
 
+    f32 operator()(u32 x, u32 y) const {
+        return mMatrix[x][y];
+    }
+
+    f32 &operator()(u32 x, u32 y) {
+        return mMatrix[x][y];
+    }
+
+    GSmatrix &operator=(const GSmatrix &other) {
+        MTXCopy(other, *this);
+        return *this;
+    }
+
+    GSmatrix operator*(const GSmatrix &other) const {
+        GSmatrix result;
+        MTXConcat(mMatrix, other, result);
+        return result;
+    }
+
     GSvec3 operator*(const GSvec3 &vec) const {
         GSvec3 result;
         MTXMultVec(mMatrix, &vec, &result);
         return result;
+    }
+
+    GSmatrix invXpose() const {
+        GSmatrix result;
+        MTXInvXpose(mMatrix, result);
+        return result;
+    }
+
+    void scale(GSvec3 vec) {
+        MTXScaleApply(mMatrix, mMatrix, vec.x, vec.y, vec.z);
     }
 };
 
@@ -151,6 +229,7 @@ struct GSboundingBox {
     /* 0x0C */ GSvec3 mMax;
     /* 0x18 */ GSmatrix *mTransform;
 
+    GSboundingBox() : mMin(EPSILON, EPSILON, EPSILON), mMax(-EPSILON, -EPSILON, -EPSILON), mTransform() {}
     GSboundingBox(f32 x0, f32 y0, f32 z0, f32 x1, f32 y1, f32 z1) : mMin(x0, y0, z0), mMax(x1, y1, z1), mTransform() {}
 };
 
@@ -163,6 +242,7 @@ extern GSvec3 sZAxis;
 // GSboundingBox.cpp
 void calcBoundingBoxCenter(GSvec3 *dst, const GSboundingBox *aabb);
 void expandBoundingBox(GSboundingBox *dst, const GSboundingBox *src);
+u32 fn_80220B18(GSboundingBox *arg0);
 
 // GSeuler.cpp
 void eulerToQuat(GSquat *quat, GSvec3 *euler);

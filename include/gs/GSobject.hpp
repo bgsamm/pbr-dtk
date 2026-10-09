@@ -6,19 +6,12 @@
 #include "gs/scene/GSlight.hpp"
 #include "gs/scene/GSmodel.hpp"
 #include "gs/scene/GSnull.hpp"
+#include "gs/scene/GSparticle.hpp"
 
 #include <revolution.h>
 
 class GSscene;
 class GSmesh;
-
-// TODO(samm) Move to/merge with GSlinkedList
-struct _UnkObjectStruct_1 {
-    /* 0x0 */ GSlistNode *mHead;
-    /* 0x4 */ GSlistNode *mTail;
-
-    _UnkObjectStruct_1() : mHead(NULL), mTail(NULL) {}
-};
 
 struct _UnkObjectStruct_3 {
     /* 0x00 */ u8 _pad_0[0xd8];
@@ -84,11 +77,12 @@ private:
     /* 0x028 */ u16 *mVolumeLookup;
     // TODO(samm) #define the 8
     /* 0x02C */ _UnkObjectStruct_2 (*_2c)[8];
-    /* 0x030 */ _UnkObjectStruct_1 _30;
-    /* 0x038 */ _UnkObjectStruct_1 _38;
+    /* 0x030 */ GSdoublyLinkedList mModelList;
+    /* 0x038 */ GSsinglyLinkedList _38;
+    /* 0x03C */ u32 _3c;
     /* 0x040 */ u32 _40;
-    /* 0x044 */ void *_44;
-    /* 0x048 */ void *_48;
+    /* 0x044 */ GStexture *_44;
+    /* 0x048 */ GStexture *_48;
     /* 0x04C */ Mtx mPositionMtx;
     /* 0x07C */ Mtx mRotationMtx;
     /* 0x0AC */ Mtx mScaleMtx;
@@ -141,36 +135,18 @@ private:
     void calcBoundingBox();
     void init();
 
-    // TODO(samm) Move bulk of body to GSlinkedList
     void registerModel(GSmodel *model) {
-        if (!model) {
-            return;
-        }
+        mModelList.append(model);
+    }
 
-        GSlistNode *tail = _30.mHead;
-        while (tail) {
-            if (tail->mData == model) {
-                return;
-            }
-            tail = tail->dll.mNext;
+    GSnull *getNode(u16 index) const {
+        if (!mNodes) {
+            return NULL;
         }
-
-        GSlistNode *newNode = GSlinkedList::allocNode();
-        if (newNode) {
-            newNode->mData = model;
-            newNode->dll.mPrev = NULL;
-            newNode->dll.mNext = NULL;
+        if (index >= mNodeCount) {
+            return NULL;
         }
-
-        if (_30.mTail) {
-            // TODO(samm) mPrev and mNext are really playing reverse roles here
-            _30.mTail->dll.mNext = newNode;
-            newNode->dll.mPrev = _30.mTail;
-            _30.mTail = newNode;
-        } else {
-            _30.mHead = newNode;
-            _30.mTail = newNode;
-        }
+        return mNodes[index];
     }
 
 public:
@@ -180,7 +156,10 @@ public:
     void fn_801F4C98(bool arg0);
     void startAnimation(u16 animId, u32 animType, f32 startTime, f32 speed, bool arg2, bool arg3, bool arg4);
     void clearAnimation();
+    f32 fn_801F5B44();
+    f32 fn_801F5C60();
     void stepAnimTransition(f32 arg0);
+    bool fn_801F5EBC();
     void fn_801F6390();
     void update(f32 deltaTime, bool updateNodes);
 
@@ -193,164 +172,75 @@ public:
         return _44;
     }
 
+    // TODO(samm) Name
+    void *get_48() const {
+        return _48;
+    }
+
     // TODO(samm) Name?
     bool checkFlag(u16 flag) {
         return (mFlags & flag) == flag;
     }
 
+    u16 getBaseAnimId() const {
+        return mBaseAnimId;
+    }
+
+    u16 getBlendAnimId() const {
+        return mBlendAnimId;
+    }
+
     GSnull *getRootNode() const {
-        if (!mNodes) {
-            return NULL;
-        }
-        if (mNodeCount == 0) {
-            return NULL;
-        }
-        return mNodes[0];
+        return getNode(0);
     }
 
     u16 getLightCount() const {
         return mLightCount;
     }
 
-    GSlight *getLightNode(u16 index) const {
-        u16 *lightIndices = mLightLookup;
-        if (!lightIndices) {
+    GSlight *getLight(u16 index) const {
+        u16 *lookup = mLightLookup;
+        if (!lookup) {
             return NULL;
         }
         if (index >= mLightCount) {
             return NULL;
         }
-
-        u16 nodeIndex = lightIndices[index];
-        if (!mNodes) {
-            return NULL;
-        }
-        if (nodeIndex >= mNodeCount) {
-            return NULL;
-        }
-
-        return static_cast<GSlight *>(mNodes[nodeIndex]);
+        return static_cast<GSlight *>(getNode(lookup[index]));
     }
 
     GSmodel *getModel(u16 index) const {
-        u16 *modelIndices = mModelLookup;
-        if (!modelIndices) {
+        u16 *lookup = mModelLookup;
+        if (!lookup) {
             return NULL;
         }
         if (index >= mModelCount) {
             return NULL;
         }
+        return static_cast<GSmodel *>(getNode(lookup[index]));
+    }
 
-        u16 nodeIndex = modelIndices[index];
-        if (!mNodes) {
+    u16 getParticleCount() const {
+        return mParticleCount;
+    }
+
+    GSparticle *getParticle(u16 index) const {
+        u16 *lookup = mParticleLookup;
+        if (!lookup) {
             return NULL;
         }
-        if (nodeIndex >= mNodeCount) {
+        if (index >= mParticleCount) {
             return NULL;
         }
-
-        return static_cast<GSmodel *>(mNodes[nodeIndex]);
+        return static_cast<GSparticle *>(getNode(lookup[index]));
     }
 
     // TODO(samm) Name?
-    // TODO(samm) Move bulk of body to GSlinkedList
     void addChild(GSobject *child) {
-        if (!child) {
-            return;
-        }
-
-        GSlistNode *tail = _38.mHead;
-        if (tail) {
-            if (tail->mData == child) {
-                return;
-            }
-
-            GSlistNode *node;
-            while ((node = tail->sll.mNext)) {
-                if (node->mData == child) {
-                    return;
-                }
-                tail = node;
-            }
-        }
-
-        GSlistNode *newNode = GSlinkedList::allocNode();
-        if (newNode) {
-            newNode->mData = child;
-            newNode->sll.mNext = NULL;
-        }
-
-        if (tail) {
-            tail->sll.mNext = newNode;
-        } else {
-            _38.mHead = newNode;
-        }
+        _38.append(child);
     }
 
-    // TODO(samm) Move bulk of body to GSlinkedList
     void removeChild(GSobject *child) {
-        if (!child) {
-            return;
-        }
-
-        GSlistNode *node = _38.mHead;
-        GSlistNode *prev = NULL;
-
-        if (!node) {
-            return;
-        }
-
-        while (node) {
-            if (node->mData == child) {
-                break;
-            }
-            prev = node;
-            node = node->sll.mNext;
-        }
-
-        if (!node) {
-            return;
-        }
-
-        GSlistNode *next = node->sll.mNext;
-        if (prev) {
-            prev->sll.mNext = next;
-        } else {
-            _38.mHead = next;
-        }
-
-        GSlinkedList::freeNode(node);
-    }
-
-    // TODO(samm) Name
-    // TODO(samm) Move bulk of body to GSlinkedList
-    static void freeList1(_UnkObjectStruct_1 *list) {
-        if (!list) {
-            return;
-        }
-
-        GSlistNode *curr = list->mHead;
-        while (curr) {
-            GSlistNode *next = curr->sll.mNext;
-            GSlinkedList::freeNode(curr);
-            curr = next;
-        }
-
-        list->mHead = NULL;
-    }
-
-    // TODO(samm) Name
-    // TODO(samm) Move bulk of body to GSlinkedList
-    static void freeList2(_UnkObjectStruct_1 *list) {
-        if (!list) {
-            return;
-        }
-
-        GSlistNode *curr = list->mHead;
-        while (curr) {
-            GSlistNode *prev = curr->dll.mNext;
-            GSlinkedList::freeNode(curr);
-            curr = prev;
-        }
+        _38.remove(child);
     }
 };

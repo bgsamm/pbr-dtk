@@ -1,9 +1,9 @@
 #include "gs/GSrender.hpp"
 
 #include ".unsorted/8025B6AC.hpp"
-#include "common.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GSvideo.hpp"
+#include "gs/render/80236704.hpp"
 #include "gs/render/GSrenderModule.hpp"
 #include "gs/render/GSrenderTarget.hpp"
 
@@ -11,6 +11,7 @@
 #include <revolution.h>
 #include <revolution/cx.h>
 
+#include "common.hpp"
 
 extern void *fn_80007940();
 extern void *fn_800079C0();
@@ -60,7 +61,7 @@ GSrender::GSrender(GSrenderStruct1 *param1) : GSvideo(param1->mNumBuffers, param
     mVertexFormat = NULL;
     memset(&mGraphicsFifo, 0, sizeof(mGraphicsFifo));
     mState = &_dc;
-    _16e8 = new GSrenderClass1(param1->_C);
+    _16e8 = new _UnkClass80236704(param1->_C);
     fn_8023255C(param1->_8, param1->_10);
     sInstance = this;
     fn_80239E58();
@@ -187,10 +188,10 @@ void GSrender::fn_80231260() {
 }
 
 void fn_80231374(void *param1) {
-    GSrender::getInstance()->fn_8023F778();
+    GSrender::sInstance->fn_8023F778();
 
-    GSrender::getInstance()->set_16f8(true);
-    GSrender::getInstance()->set_16f4(0);
+    GSrender::sInstance->set_16f8(true);
+    GSrender::sInstance->set_16f4(0);
 }
 
 void GSrender::fn_802313B0() {
@@ -208,7 +209,7 @@ void GSrender::fn_80231400() {
     BOOL intEnabled = OSEnableInterrupts();
 
     while (!_16f8) {
-        if (fn_8023B864(_16f4) != 0) {
+        if (fn_8023B864(_16f4)) {
             _16f8 = true;
             _16f4 = 0;
         }
@@ -233,7 +234,7 @@ void GSrender::update(f32 deltaTime) {
     }
 }
 
-void GSrender::fn_80231544() {
+void GSrender::draw() {
     _16ec = NULL;
     _16f9 = true;
 
@@ -312,7 +313,7 @@ void GSrender::fn_8023177C(GSdvdError error, u32 param2, GScolor color) {
 
     if (error == DVD_ERROR_OK) {
         if (_1714 != NULL) {
-            fn_8023E2D0(_1714);
+            _1714->fn_8023E2D0();
             _1714 = NULL;
         }
 
@@ -483,12 +484,12 @@ void GSrender::fn_80231918() {
         fn_80233580();
         fn_80250134(_1704, 100, 200, 0, 0, -1);
     } else if (_1714) {
-        u16 w = fn_8023E540(_1714);
+        u16 w = _1714->getWidth();
         f32 width;
         OSu16tof32(&w, &width);
         f32 centerX = 0.5f * width;
 
-        u16 h = fn_8023E548(_1714);
+        u16 h = _1714->getHeight();
         f32 height;
         OSu16tof32(&h, &height);
         f32 centerY = 0.5f * height;

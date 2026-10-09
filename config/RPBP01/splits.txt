@@ -592,17 +592,20 @@ src/gs/scene/GSlight.cpp:
 	.text       start:0x801E5F7C end:0x801E6BF8
 	.ctors      start:0x803E207C end:0x803E2080
 
-src/.unsorted/801E6BF8.cpp:
+src/gs/scene/GSmaterial.cpp:
 	.text       start:0x801E6BF8 end:0x801ED3F0
 	.ctors      start:0x803E2080 end:0x803E2084
 
-src/.unsorted/801ED3F0.cpp:
+src/gs/scene/GSmesh.cpp:
 	.text       start:0x801ED3F0 end:0x801EE044
 	.ctors      start:0x803E2084 end:0x803E2088
+	.data       start:0x80423650 end:0x8042365C
+	.sbss       start:0x8063F3B8 end:0x8063F3C0
 
 src/gs/scene/GSmodel.cpp:
 	.text       start:0x801EE044 end:0x801F1AE8
 	.ctors      start:0x803E2088 end:0x803E208C
+	.sbss       start:0x8063F3C0 end:0x8063F3C8
 
 src/gs/scene/GSnull.cpp:
 	.text       start:0x801F1AE8 end:0x801F40E0
@@ -878,7 +881,7 @@ src/gs/render/GSrenderModule.cpp:
 	.sdata      start:0x8063D950 end:0x8063D958
 	.sbss       start:0x8063F6E8 end:0x8063F6F8
 
-src/gs/render/80236B08.cpp:
+src/gs/render/GSrenderPass.cpp:
 	.text       start:0x80236B08 end:0x80237794
 	.ctors      start:0x803E2178 end:0x803E217C
 
@@ -902,6 +905,7 @@ src/gs/render/GSrenderTarget.cpp:
 src/gs/render/8023B64C.cpp:
 	.text       start:0x8023B64C end:0x8023B9F4
 	.ctors      start:0x803E2188 end:0x803E218C
+	.sbss       start:0x8063F738 end:0x8063F750
 
 src/gs/render/8023B9F4.cpp:
 	.text       start:0x8023B9F4 end:0x8023D008
@@ -910,6 +914,7 @@ src/gs/render/8023B9F4.cpp:
 src/gs/render/GStexture.cpp:
 	.text       start:0x8023D008 end:0x8023EA44
 	.ctors      start:0x803E2190 end:0x803E2194
+	.sbss       start:0x8063F760 end:0x8063F770
 
 src/gs/render/8023EA44.cpp:
 	.text       start:0x8023EA44 end:0x8023EE6C

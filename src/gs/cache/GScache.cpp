@@ -1,9 +1,10 @@
 #include "gs/GScache.hpp"
 
-#include "common.hpp"
 #include "gs/GSmem.hpp"
 
 #include <cstring>
+
+#include "common.hpp"
 
 /* lbl_8063F2E8 */ static GScacheEntry *sFileCacheList;
 /* lbl_8063F2EC */ static GScacheObjPool *sFilePool;
@@ -179,7 +180,7 @@ void GScache::setCacheEntryBuffer(void *buffer, u32 fsysId, u32 fileId, _UnkCach
     }
 }
 
-void *GScache::getCacheEntryBuffer(u32 fsysId, u32 fileId) {
+void *GScache::getCachedFile(u32 fsysId, u32 fileId) {
     GScacheEntry *cacheEntry = findCacheEntry(fsysId, fileId);
 
     if (cacheEntry == NULL || cacheEntry->mLocked) {
@@ -222,7 +223,7 @@ u32 GScache::decrementRefCount(u32 fsysId, u32 fileId) {
     return cacheEntry->mRefCount;
 }
 
-u32 GScache::getCacheEntryBufferSize(u32 fsysId, u32 fileId) {
+u32 GScache::getCachedFileSize(u32 fsysId, u32 fileId) {
     GScacheEntry *cacheEntry = findCacheEntry(fsysId, fileId);
     if (cacheEntry == NULL) {
         return 0;

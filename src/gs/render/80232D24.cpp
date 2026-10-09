@@ -1,13 +1,29 @@
 #include "gs/GSrender.hpp"
+#include "gs/GSsceneData.hpp"
+#include "gs/render/8023283C.hpp"
 
 #include <cstring>
 
 #include "common.hpp"
 
-void GSrender::configureColorChannel(
-    u32 channel, u32 chanFlags, GXColorSrc ambSrc, GXColorSrc matSrc, u32 lightCount, GSrenderLight **lights,
-    GXAttnFn attnFn, GXDiffuseFn diffFn
-) {
+void GSrender::callDisplayList(GSdisplayList *displayList) {
+    GSvertexFormat *prev = mVertexFormat;
+
+    mVertexFormat = displayList->getVertexFormat();
+    sync();
+    displayList->call();
+
+    mVertexFormat = prev;
+}
+
+void GSrender::configureColorChannel(u32 channel,
+                                     u32 chanFlags,
+                                     GXColorSrc ambSrc,
+                                     GXColorSrc matSrc,
+                                     u32 lightCount,
+                                     GSrenderLight **lights,
+                                     GXAttnFn attnFn,
+                                     GXDiffuseFn diffFn) {
     u32 colorChan = channel;
     u32 alphaChan = channel + 2;
     bool enable = lights && lightCount;
@@ -148,13 +164,11 @@ void GSrender::configureTevStage(u8 stage, GStevMode mode) {
     }
 }
 
-void GSrender::configureTexCoordGen(
-    u8 texCoord, GXTexGenType type, GXTexGenSrc src, Mtx texMtx, GXBool normalize, Mtx postMtx
-) {
+void GSrender::configureTexCoordGen(u8 texCoord, u8 type, u8 src, Mtx texMtx, GXBool normalize, Mtx postMtx) {
     bool hasMtx = false;
 
-    mState->mCurr.mTexCoordGens[texCoord].mType = type;
-    mState->mCurr.mTexCoordGens[texCoord].mSrc = src;
+    mState->mCurr.mTexCoordGens[texCoord].mType = (GXTexGenType)type;
+    mState->mCurr.mTexCoordGens[texCoord].mSrc = (GXTexGenSrc)src;
     mState->mCurr.mTexCoordGens[texCoord].mNormalize = normalize;
     mState->mCurr.mTexCoordGens[texCoord].mLight = NULL;
 

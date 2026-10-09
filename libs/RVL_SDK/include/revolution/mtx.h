@@ -64,7 +64,9 @@ void C_MTXQuat(Mtx, const Quaternion *);
 #endif // DEBUG
 
 void MTXLookAt(Mtx m, const Point3d *camPos, const Vec *camUp, const Point3d *target);
+void MTXLightFrustum(Mtx, f32, f32, f32, f32, f32, f32, f32, f32, f32);
 void MTXLightOrtho(Mtx, f32, f32, f32, f32, f32, f32, f32, f32);
+void MTXLightPerspective(Mtx, f32, f32, f32, f32, f32, f32);
 
 // MtxVec
 

@@ -1,7 +1,9 @@
 AccessModifierOffset: -4
-AlignAfterOpenBracket: BlockIndent
+AlignAfterOpenBracket: true
 AlignArrayOfStructures: Right
-AlignConsecutiveAssignments: None
+AlignConsecutiveAssignments:
+  Enabled: false
+  EnumAssignments: true
 AlignConsecutiveBitFields: None
 AlignConsecutiveDeclarations: None
 AlignConsecutiveMacros: None
@@ -13,7 +15,7 @@ AlignConsecutiveShortCaseStatements:
 AlignOperands: AlignAfterOperator
 AlignTrailingComments: Always
 AlignEscapedNewlines: Right
-AllowAllArgumentsOnNextLine: True
+AllowAllArgumentsOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: True
 AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: True
@@ -24,7 +26,6 @@ AllowShortLoopsOnASingleLine: False
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: True
 AlwaysBreakTemplateDeclarations: Yes
-BinPackArguments: True 
 BitFieldColonSpacing: Both
 BreakBeforeBraces: Custom
 BraceWrapping:
@@ -49,7 +50,7 @@ FixNamespaceComments: true
 IncludeBlocks: Regroup
 IndentAccessModifiers: False
 IndentCaseLabels: True
-IndentGotoLabels: True
+IndentGotoLabels: NoIndent
 IndentWidth: 4
 InsertBraces: True
 InsertNewlineAtEOF: true
@@ -57,6 +58,13 @@ KeepEmptyLinesAtTheStartOfBlocks: False
 MaxEmptyLinesToKeep: 1
 Language: Cpp
 Standard: C++03
+PackArguments:
+  BinPack: OnePerLine
+PackConstructorInitializers: CurrentLine
+PackParameters:
+  BinPack: OnePerLine
+PenaltyBreakBeforeFirstCallParameter: 10
+PenaltyBreakBeforeMemberAccess: 1000
 PointerAlignment: Right
 SortIncludes: CaseSensitive
 SpaceAfterCStyleCast: False

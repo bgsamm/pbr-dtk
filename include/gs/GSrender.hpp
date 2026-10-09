@@ -1,6 +1,7 @@
 #pragma once
 
 #include "decomp.h"
+#include "gs/GScolor.hpp"
 #include "gs/GSfile.hpp"
 #include "gs/GSvideo.hpp"
 #include "gs/render/GSrenderLight.hpp"
@@ -14,6 +15,12 @@
 #define GS_VERTEX_UPDATE_FORMAT (1 << 1)
 #define GS_VERTEX_UPDATE_ARRAYS (1 << 2)
 #define GS_VERTEX_INVALIDATE_CACHE (1 << 3)
+
+struct GSrenderStruct8;
+class _UnkClass80236704;
+class GSdisplayList;
+class GSmatrix;
+class GSmesh;
 
 typedef void (*_UnkRenderFunc_1)(void *);
 typedef void (*GSrenderFunc2)();
@@ -31,8 +38,8 @@ enum GStevMode {
 };
 
 enum GStevColorType {
-    TEV_COLOR_U8,
-    TEV_COLOR_S10
+    GS_TEV_COLOR_U8,
+    GS_TEV_COLOR_S10
 };
 
 enum GStevIndType {
@@ -44,27 +51,6 @@ enum GStevIndType {
     GS_TEV_IND_BUMP_XYZ,
     GS_TEV_IND_REPEAT,
     GS_TEV_NULL
-};
-
-// TODO(samm) Move elsewhere
-struct GScolor : public GXColor {
-    GScolor() {}
-
-    GScolor(u8 r, u8 g, u8 b, u8 a) {
-        this->r = r;
-        this->g = g;
-        this->b = b;
-        this->a = a;
-    }
-
-    GScolor &operator=(const GScolor &other) {
-        *reinterpret_cast<u32 *>(this) = other;
-        return *this;
-    }
-
-    operator u32() const {
-        return *reinterpret_cast<const u32 *>(this);
-    }
 };
 
 struct GSrenderStruct1 {
@@ -109,13 +95,6 @@ struct GSgraphicsFifo {
     /* 0xa0 */ GSrenderStruct2 *_a0;
     /* 0xa4 */ GSrenderStruct2 *_a4;
     /* 0xa8 */ GSrenderStruct2 *_a8;
-};
-
-struct GSrenderStruct8 {
-    /* 0x0 */ u32 mFlags;
-    /* 0x4 */ Mtx mPosMtx;
-    /* 0x34 */ u8 _pad_34[48];
-    /* 0x64 */ Mtx mNrmMtx;
 };
 
 // Size: 0xc
@@ -304,7 +283,6 @@ struct GSrenderSettings {
     /* 0x120 */ GXClipMode mClipMode;
     /* 0x124 */ u8 mNumChans;
     /* 0x128 */ GScolorChannel mChannels[4];
-    // TODO use GScolor instead?
     /* 0x208 */ GScolor mChanAmbColors[2];
     /* 0x210 */ GScolor mChanMatColors[2];
     /* 0x218 */ u8 mNumTevStages;
@@ -314,7 +292,7 @@ struct GSrenderSettings {
     /* 0x4dc */ GStevOp mTevColorOps[GX_MAX_TEVSTAGE];
     /* 0x61c */ GStevOp mTevAlphaOps[GX_MAX_TEVSTAGE];
     /* 0x75c */ GStevColor mTevColors[GX_MAX_TEVREG];
-    // I feel as though this should have used GX_MAX_TEVSTAGE
+    // NOTE(samm) I feel as though this should have used GX_MAX_TEVSTAGE
     /* 0x78c */ GSindTexStage mIndTexStages[GX_MAX_INDTEXSTAGE];
     /* 0x81c */ GXZTexOp mZTexOp;
     /* 0x820 */ GXTexFmt mZTexFmt;
@@ -322,8 +300,7 @@ struct GSrenderSettings {
     /* 0x828 */ u8 mNumIndStages;
     /* 0x82c */ GSindTexOrder mIndTexOrders[GX_MAX_INDTEXSTAGE];
     /* 0x84c */ GSindTexScale mIndTexScales[GX_MAX_INDTEXSTAGE];
-    // TODO use GScolor instead?
-    /* 0x86c */ GXColor mTevKColors[GX_MAX_KCOLOR];
+    /* 0x86c */ GScolor mTevKColors[GX_MAX_KCOLOR];
     /* 0x87c */ GXTevKColorSel mTevKColorSels[GX_MAX_TEVSTAGE];
     /* 0x8bc */ GXTevKAlphaSel mTevKAlphaSels[GX_MAX_TEVSTAGE];
     /* 0x8fc */ GStevSwapMode mTevSwapModes[GX_MAX_TEVSTAGE];
@@ -346,19 +323,19 @@ struct GSrenderSettings {
     /* 0x9e8 */ u8 mAlphaRef0;
     /* 0x9e9 */ u8 mAlphaRef1;
     /* 0x9ea */ GXBool mZCompBeforeTex;
-    u8 _9eb[0x1];
+    /* 0x9eb */ u8 _9eb;
     /* 0x9ec */ GXBool mDitherEnable;
     /* 0x9f0 */ GXFogType mFogType;
     /* 0x9f4 */ f32 mFogStartZ;
     /* 0x9f8 */ f32 mFogEndZ;
     /* 0x9fc */ f32 mFogNearZ;
     /* 0xa00 */ f32 mFogFarZ;
-    /* 0xa04 */ GXColor mFogColor;
+    /* 0xa04 */ GScolor mFogColor;
     /* 0xa08 */ GXFogAdjTable mFogAdjTable;
     /* 0xa1c */ u16 mFogRangeAdjCenter;
-    // TODO avoid this use of volatile?
+    // TODO(samm) Avoid this use of volatile?
     /* 0xa1e */ volatile GXBool mFogRangeAdjEnable;
-    /* 0xa1f */ bool mFogEnable;
+    /* 0xa1f */ u8 mFogEnable;
 };
 
 struct GSrenderState {
@@ -393,32 +370,17 @@ struct GSrenderState {
     /* 0x14a8 */ u16 _14a8;
     /* 0x14aa */ u16 _14aa;
     /* 0x14ac */ GSviewport _14ac[2];
-    // TODO confirm array length
+    // TODO(samm) Confirm array length
     /* 0x14cc */ GSscissor _14cc[3];
     /* 0x14e4 */ GSvertexFormat *mVertexFormats[GX_MAX_VTXFMT];
     /* 0x1504 */ GSvertexFormat *mActiveFormat;
     /* 0x1508 */ GSrenderStruct8 *_1508;
     /* 0x150c */ bool _150c;
     /* 0x150d */ u8 _pad_150d[7];
-    /* 0x1514 */ u8 mNumLights;
+    /* 0x1514 */ u8 mLightCount;
     /* 0x1518 */ GSrenderLight *mLights[8];
     /* 0x1538 */ u32 mTextureFlags;
     /* 0x153c */ GStexture *mTextures[8];
-};
-
-// Size: 0xc
-class GSrenderClass1 {
-public:
-    /* 0x0 */ u8 _pad_0[4];
-    /* 0x4 */ GSrenderStruct8 *_4;
-    /* 0x8 */ u8 _pad_8[4];
-
-    GSrenderClass1(u32 param1);
-    ~GSrenderClass1();
-
-    GSrenderStruct8 *get_4() const {
-        return _4;
-    }
 };
 
 // NOTE(samm) Name known from RTTI
@@ -427,7 +389,7 @@ private:
     /* 0xdc */ GSrenderState _dc;
     /* 0x1638 */ GSrenderState *mState;
     /* 0x163c */ GSgraphicsFifo mGraphicsFifo;
-    /* 0x16e8 */ GSrenderClass1 *_16e8;
+    /* 0x16e8 */ _UnkClass80236704 *_16e8;
     /* 0x16ec */ GSlightStruct1 *_16ec;
     /* 0x16f0 */ u32 _16f0;
     /* 0x16f4 */ u32 _16f4;
@@ -463,8 +425,6 @@ private:
         return &mState->mCurr.mChannels[channel];
     }
 
-    static GSrender *sInstance;
-
 public:
     GSrender(GSrenderStruct1 *param1);
     virtual ~GSrender();
@@ -473,7 +433,15 @@ public:
         mFlags |= GS_RENDER_INVALIDATE_TEXTURE_CACHE;
     }
 
+    bool isFogEnabled() const {
+        return mState->mCurr.mFogEnable;
+    }
+
     // TODO(samm) Name these
+
+    _UnkClass80236704 *get_16e8() const {
+        return _16e8;
+    }
 
     void set_16f4(u32 value) {
         _16f4 = value;
@@ -497,6 +465,26 @@ public:
 
     bool get_1719() const {
         return _1719;
+    }
+
+    void setTexOffsetEnabled(u8 gen, bool lineEnable, bool pointEnable) {
+        GStexOffsetEnable *texOffset = &mState->mCurr.mTexOffsetsEnabled[gen];
+        texOffset->mLineEnable = lineEnable;
+        texOffset->mPointEnable = pointEnable;
+        mState->mTexOffsetFlags |= (1 << gen);
+        mState->_0 |= (1 << 0);
+    }
+
+    void setCullMode(GXCullMode mode) {
+        mState->mCurr.mCullMode = mode;
+        mState->_10 |= (1 << 1);
+        mState->_0 |= (1 << 1);
+    }
+
+    void setClipMode(GXClipMode mode) {
+        mState->mCurr.mClipMode = mode;
+        mState->_10 |= (1 << 2);
+        mState->_0 |= (1 << 1);
     }
 
     void setNumChannels(u8 nChans) {
@@ -523,73 +511,228 @@ public:
         mState->_0 |= (1 << 7);
     }
 
-    void setIndTexStage(u8 stage, GStevIndType type) {
-        // TODO(samm) Should this check really be in here?
-        if (mState->mCurr.mIndTexStages[stage].mType != GS_TEV_NULL) {
-            mState->mCurr.mIndTexStages[stage].mType = type;
-        }
-        mState->mIndTexStageFlags |= (1 << stage);
+    void setChannelColors(u8 channel, GScolor ambColor, GScolor matColor) {
+        mState->mCurr.mChanAmbColors[channel] = ambColor;
+        mState->mCurr.mChanMatColors[channel] = matColor;
+        mState->mChanAmbColorFlags |= (1 << channel);
+        mState->mChanMatColorFlags |= (1 << channel);
+        mState->_0 |= (1 << 2);
+    }
+
+    void setTevColor(u8 reg, GStevColorType type, GScolor *color) {
+        mState->mCurr.mTevColors[reg].mType = type;
+        // TODO(samm) Figure this out
+        *(u32 *)(&mState->mCurr.mTevColors[reg].mColor) = *color;
+        mState->mTevColorFlags |= (1 << reg);
         mState->_0 |= (1 << 3);
     }
 
-    void setTevStage(u8 stage, GXTexCoordID texCoord, GXTexMapID texMap, GXChannelID channel) {
-        GStevStage *tevStage = &mState->mCurr.mTevStages[stage];
-        tevStage->mTexCoord = texCoord;
-        tevStage->mTexMap = texMap;
-        tevStage->mChannel = channel;
-        mState->mTevStageFlags |= (1 << stage);
-        mState->_0 |= (1 << 3);
+    void setTevKColor(u8 index, GScolor *color) {
+        mState->mCurr.mTevKColors[index] = *color;
+        mState->mTevKColorFlags |= (1 << index);
+        mState->_0 |= (1 << 4);
     }
 
-    void setTevSwapMode(u8 stage, GXTevSwapSel rasSel, GXTevSwapSel texSel) {
-        GStevSwapMode *tevSwapMode = &mState->mCurr.mTevSwapModes[stage];
-        tevSwapMode->mRasSel = rasSel;
-        tevSwapMode->mTexSel = texSel;
-        mState->mTevSwapModeFlags |= (1 << stage);
+    void setTevSwapModTable(u8 index, u8 r, u8 g, u8 b, u8 a) {
+        GStevSwapModeTable *table = &mState->mCurr.mTevSwapModeTables[index];
+        table->mRed = (GXTevColorChan)r;
+        table->mGreen = (GXTevColorChan)g;
+        table->mBlue = (GXTevColorChan)b;
+        table->mAlpha = (GXTevColorChan)a;
+        mState->mTevSwapModeTableFlags |= (1 << index);
         mState->_0 |= (1 << 5);
     }
 
-    void setTevColorOp(u8 stage, GXTevOp op, GXTevBias bias, GXTevScale scale, GXBool clamp, GXTevRegID reg) {
-        GStevOp *tevColorOp = &mState->mCurr.mTevColorOps[stage];
-        tevColorOp->mOp = op;
-        tevColorOp->mBias = bias;
-        tevColorOp->mScale = scale;
-        tevColorOp->mClamp = clamp;
-        tevColorOp->mReg = reg;
-        mState->mTevColorOpFlags |= (1 << stage);
+    void setZTexture(GStexture *zTexture, u8 op, u32 bias) {
+        if (zTexture) {
+            GXTexFmt fmt = (GXTexFmt)zTexture->getGXTextureFormat(true);
+            mState->mCurr.mZTexOp = (GXZTexOp)op;
+            mState->mCurr.mZTexFmt = fmt;
+            mState->mCurr.mZTexBias = bias;
+        } else {
+            mState->mCurr.mZTexOp = GX_ZT_DISABLE;
+            mState->mCurr.mZTexFmt = GX_TF_Z8;
+            mState->mCurr.mZTexBias = 0;
+        }
+        mState->_24 |= (1 << 8);
         mState->_0 |= (1 << 3);
     }
 
-    void setTevColorIn(u8 stage, GXTevColorArg argA, GXTevColorArg argB, GXTevColorArg argC, GXTevColorArg argD) {
-        GStevColorIn *tevColorIn = &mState->mCurr.mTevColorIns[stage];
-        tevColorIn->mArgA = argA;
-        tevColorIn->mArgB = argB;
-        tevColorIn->mArgC = argC;
-        tevColorIn->mArgD = argD;
-        mState->mTevColorInFlags |= (1 << stage);
-        mState->_0 |= (1 << 3);
+    // TODO(samm) Better names for these blend inlines?
+
+    void setBlend(GXBlendMode mode, GXBlendFactor srcFactor, GXBlendFactor dstFactor) {
+        if (mode == GX_BM_NONE) {
+            mState->mCurr.mBlendMode = GX_BM_NONE;
+            mState->mCurr.mBlendSrcFactor = GX_BL_ONE;
+            mState->mCurr.mBlendDstFactor = GX_BL_ONE;
+            mState->mCurr.mBlendOp = GX_LO_NOOP;
+
+        } else {
+            mState->mCurr.mBlendMode = mode;
+            mState->mCurr.mBlendSrcFactor = srcFactor;
+            mState->mCurr.mBlendDstFactor = dstFactor;
+            mState->mCurr.mBlendOp = GX_LO_NOOP;
+        }
+        mState->_64 |= (1 << 0);
+        mState->_0 |= (1 << 6);
     }
 
-    void setTevAlphaOp(u8 stage, GXTevOp op, GXTevBias bias, GXTevScale scale, GXBool clamp, GXTevRegID reg) {
-        GStevOp *tevAlphaOp = &mState->mCurr.mTevAlphaOps[stage];
-        tevAlphaOp->mOp = op;
-        tevAlphaOp->mBias = bias;
-        tevAlphaOp->mScale = scale;
-        tevAlphaOp->mClamp = clamp;
-        tevAlphaOp->mReg = reg;
-        mState->mTevAlphaOpFlags |= (1 << stage);
-        mState->_0 |= (1 << 3);
+    void setBlend(GXLogicOp op) {
+        if (op == GX_LO_NOOP) {
+            mState->mCurr.mBlendMode = GX_BM_NONE;
+            mState->mCurr.mBlendSrcFactor = GX_BL_ONE;
+            mState->mCurr.mBlendDstFactor = GX_BL_ONE;
+            mState->mCurr.mBlendOp = GX_LO_NOOP;
+
+        } else {
+            mState->mCurr.mBlendMode = GX_BM_LOGIC;
+            mState->mCurr.mBlendSrcFactor = GX_BL_ONE;
+            mState->mCurr.mBlendDstFactor = GX_BL_ONE;
+            mState->mCurr.mBlendOp = op;
+        }
+        mState->_64 |= (1 << 0);
+        mState->_0 |= (1 << 6);
     }
 
-    void setTevAlphaIn(u8 stage, GXTevAlphaArg argA, GXTevAlphaArg argB, GXTevAlphaArg argC, GXTevAlphaArg argD) {
-        GStevAlphaIn *tevAlphaIn = &mState->mCurr.mTevAlphaIns[stage];
-        tevAlphaIn->mArgA = argA;
-        tevAlphaIn->mArgB = argB;
-        tevAlphaIn->mArgC = argC;
-        tevAlphaIn->mArgD = argD;
-        mState->mTevAlphaInFlags |= (1 << stage);
-        mState->_0 |= (1 << 3);
+    void setDstAlpha(bool enable, u8 alpha) {
+        if (enable) {
+            mState->mCurr.mDstAlphaEnable = GX_TRUE;
+        } else {
+            mState->mCurr.mDstAlphaEnable = GX_FALSE;
+        }
+        mState->mCurr.mDstAlpha = alpha;
+        mState->_64 |= (1 << 1);
+        mState->_0 |= (1 << 6);
     }
+
+    void setEfbUpdate(bool colorEnable, bool alphaEnable, bool zEnable) const {
+        if (colorEnable) {
+            mState->mCurr.mColorUpdateEnable = GX_TRUE;
+        } else {
+            mState->mCurr.mColorUpdateEnable = GX_FALSE;
+        }
+
+        if (alphaEnable) {
+            mState->mCurr.mAlphaUpdateEnable = GX_TRUE;
+        } else {
+            mState->mCurr.mAlphaUpdateEnable = GX_FALSE;
+        }
+
+        if (zEnable) {
+            mState->mCurr.mZUpdateEnable = GX_TRUE;
+        } else {
+            mState->mCurr.mZUpdateEnable = GX_FALSE;
+        }
+
+        mState->_64 |= (1 << 2);
+        mState->_0 |= (1 << 6);
+    }
+
+    // TODO(samm) Revisit the type of func
+    void setZCompare(bool enable, u32 func) const {
+        if (enable) {
+            mState->mCurr.mZCompareEnable = GX_TRUE;
+        } else {
+            mState->mCurr.mZCompareEnable = GX_FALSE;
+        }
+        mState->mCurr.mZCompareFunc = (GXCompare)func;
+        mState->_64 |= (1 << 3);
+        mState->_0 |= (1 << 6);
+    }
+
+    void setAlphaCompare(bool enable, u8 comp, u8 ref) const {
+        if (enable) {
+            mState->mCurr.mAlphaComp0 = (GXCompare)comp;
+            mState->mCurr.mAlphaRef0 = ref;
+            mState->mCurr.mAlphaOp = GX_AOP_AND;
+            mState->mCurr.mAlphaComp1 = GX_ALWAYS;
+            mState->mCurr.mAlphaRef1 = 0;
+            mState->mCurr.mZCompBeforeTex = GX_FALSE;
+        } else {
+            mState->mCurr.mAlphaComp0 = GX_ALWAYS;
+            mState->mCurr.mAlphaRef0 = 0;
+            mState->mCurr.mAlphaOp = GX_AOP_AND;
+            mState->mCurr.mAlphaComp1 = GX_ALWAYS;
+            mState->mCurr.mAlphaRef1 = 0;
+            mState->mCurr.mZCompBeforeTex = GX_TRUE;
+        }
+        mState->_64 |= (1 << 4);
+        mState->_0 |= (1 << 6);
+    }
+
+    void setFogEnabled(bool enable) {
+        mState->mCurr.mFogEnable = enable;
+
+        mState->_64 |= (1 << 6);
+        if (enable) {
+            mState->_64 |= (1 << 9);
+            if (mState->mCurr.mFogRangeAdjEnable) {
+                mState->_64 |= (1 << 8);
+            }
+        }
+        mState->_0 |= (1 << 6);
+    }
+
+    void setFog(GXFogType type, f32 startZ, f32 endZ, const GScolor *color) {
+        mState->mCurr.mFogType = type;
+        mState->mCurr.mFogStartZ = startZ;
+        mState->mCurr.mFogEndZ = endZ;
+        mState->mCurr.mFogColor = *color;
+
+        if (mState->mCurr.mFogEnable) {
+            mState->_64 |= (1 << 6);
+            mState->_0 |= (1 << 6);
+        }
+    }
+
+    void setFogRangeAdjEnabled(bool enable) {
+        mState->mCurr.mFogRangeAdjEnable = enable;
+        mState->mCurr.mFogRangeAdjCenter = 0;
+
+        if (mState->mCurr.mFogEnable) {
+            mState->_64 |= (1 << 9);
+            if (enable) {
+                mState->_64 |= (1 << 8);
+            }
+            mState->_0 |= (1 << 6);
+        }
+    }
+
+    void setLights(u32 lightCount, GSrenderLight **lights) {
+        mState->mLightCount = lightCount;
+
+        for (u8 i = 0; i < 8; i++) {
+            if (i < lightCount) {
+                mState->mLights[i] = lights[i];
+            } else {
+                mState->mLights[i] = NULL;
+            }
+        }
+
+        mState->_14 |= (1 << 4);
+        mState->_0 |= (1 << 2);
+    }
+
+    void setTexture(u8 index, GStexture *texture) {
+        if (mState->mTextures[index] != texture || (texture->mFlags & (1 << 0)) == (1 << 0)) {
+            mState->mTextures[index] = texture;
+            mState->mTextureFlags |= (1 << index);
+        }
+    }
+
+    void setFlag(u16 flag) {
+        mFlags |= flag;
+    }
+
+    void setTevKColorSel(u8 stage, u8 sel);
+    void setTevKAlphaSel(u8 stage, u8 sel);
+    void setIndTexStageDirect(u8 stage);
+    void setTevStage(u8 stage, GXTexCoordID texCoord, GXTexMapID texMap, u8 channel);
+    void setTevSwapMode(u8 stage, u8 rasSel, u8 texSel);
+    void setTevColorOp(u8 stage, GXTevOp op, GXTevBias bias, GXTevScale scale, GXBool clamp, GXTevRegID reg);
+    void setTevAlphaOp(u8 stage, GXTevOp op, GXTevBias bias, GXTevScale scale, GXBool clamp, GXTevRegID reg);
+    void setTevColorIn(u8 stage, GXTevColorArg argA, GXTevColorArg argB, GXTevColorArg argC, GXTevColorArg argD);
+    void setTevAlphaIn(u8 stage, GXTevAlphaArg argA, GXTevAlphaArg argB, GXTevAlphaArg argC, GXTevAlphaArg argD);
 
     void fn_802310C0();
     void fn_802311AC(u32 *);
@@ -599,12 +742,12 @@ public:
     void fn_802313B0();
     void fn_80231400();
     void update(f32 deltaTime);
-    void fn_80231544();
+    void draw();
     void fn_8023177C(GSdvdError error, u32 param2, GScolor fillColor);
     void fn_80231918();
     void fn_802321DC();
 
-    u32 fn_80232404(_UnkRenderFunc_1, void *);
+    u32 fn_80232404(_UnkRenderFunc_1 arg0, void *arg1);
     GSrenderStruct2 *fn_802324F0();
     GSrenderStruct2 *fn_8023246C();
     void fn_8023255C(u32, u32);
@@ -613,13 +756,19 @@ public:
 
     void fn_8023352C(u32 nVerts);
     void fn_80233580();
-    void configureColorChannel(
-        u32 channel, u32 chanFlags, GXColorSrc ambSrc, GXColorSrc matSrc, u32 lightCount, GSrenderLight **lights,
-        GXAttnFn attnFn, GXDiffuseFn diffFn
-    );
+    void callDisplayList(GSdisplayList *displayList);
+    void configureColorChannel(u32 channel,
+                               u32 chanFlags,
+                               GXColorSrc ambSrc,
+                               GXColorSrc matSrc,
+                               u32 lightCount,
+                               GSrenderLight **lights,
+                               GXAttnFn attnFn,
+                               GXDiffuseFn diffFn);
     void configureTevStage(u8 stage, GStevMode mode);
-    void
-    configureTexCoordGen(u8 texCoord, GXTexGenType type, GXTexGenSrc src, Mtx texMtx, GXBool normalize, Mtx postMtx);
+    void configureTexCoordGen(u8 texCoord, u8 type, u8 src, Mtx texMtx, GXBool normalize, Mtx postMtx);
+    void fn_802345F8(u32 arg0, GSmatrix *arg1, bool arg2);
+    void fn_802346FC(u8 arg0, u32 arg1, u32 arg2, u32 arg3, u32 arg4, u32 arg5);
     void fn_80234FE0(f32, f32, f32, f32, f32, f32);
     void fn_80235178(u32, u32, u32, u32, u32);
     void fn_80235204(u32, f32, f32, f32, f32);
@@ -647,12 +796,15 @@ public:
     void fn_8023B6B0();
     void fn_8023B6BC();
     void fn_8023B704();
-    u32 fn_8023B864(u32);
-    u32 fn_8023B948(void *);
+    bool fn_8023B864(u32 arg0);
+    void fn_8023B88C(u32 arg0);
+    u32 fn_8023B948(void *arg0);
 
-    static GSrender *getInstance() {
-        return sInstance;
-    }
+    /* NOTE(samm)
+     * As far as I can tell, this should indeed be public; using
+     * a getter introduces a whole host of regswap issues.
+     */
+    static GSrender *sInstance;
 };
 
 // TODO(samm) Move these somewhere appropriate
@@ -660,7 +812,3 @@ void fn_80231374(void *arg0);
 void fn_8023234C();
 void fn_80232394();
 GSvertexFormat *fn_8023CF1C(u32 arg0);
-GStexture *fn_8023D6CC(void *arg0);
-void fn_8023E2D0(void *arg0);
-u16 fn_8023E540(void *arg0);
-u16 fn_8023E548(void *arg0);

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "gs/GSsceneData.hpp"
 #include "gs/scene/GShierMemObject.hpp"
 
 #define GS_ANIM_NULL 0xffff
@@ -14,7 +15,6 @@
 #define ANIM_FLAG_FINISHED (1 << 3)
 #define ANIM_FLAG_LOCKED (1 << 4)
 
-struct GSkeyframeData;
 class GSanimationObject;
 
 // Size: 0x10
@@ -29,6 +29,23 @@ private:
 public:
     GSanimationPlayer()
         : mAnimData(NULL), mAnimType(0), mFlags(ANIM_FLAG_FINISHED | ANIM_FLAG_LOOPED), mSpeed(1.f), mCursor(0.f) {}
+
+    u16 getAnimId() const {
+        if (mAnimData) {
+            return mAnimData->mAnimId;
+        }
+        return GS_ANIM_NULL;
+    }
+
+    f32 getAnimProgress() const {
+        if (!mAnimData) {
+            return 0.f;
+        }
+        if (mSpeed < 0.f) {
+            return mAnimData->mAnimLength - mCursor;
+        }
+        return mCursor;
+    }
 
     bool isPlaying() const {
         return mAnimData && (mFlags & ANIM_FLAG_PLAYING);

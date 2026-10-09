@@ -1,4 +1,5 @@
 #include "gs/GSrender.hpp"
+#include "gs/render/80236704.hpp"
 #include "gs/render/8023B9F4.hpp"
 
 #include <revolution.h>
@@ -24,7 +25,7 @@ void GSrender::setupFlatTranslucentTexture() {
 
     configureColorChannel(0, (1 << 0) | (1 << 1), GX_SRC_REG, GX_SRC_REG, 0, NULL, GX_AF_NONE, GX_DF_NONE);
 
-    setIndTexStage(0, GS_TEV_DIRECT);
+    setIndTexStageDirect(0);
 
     // TODO(samm) I feel like these names are too similar to each other
     setTevStage(0, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR0A0);
@@ -41,10 +42,10 @@ void GSrender::setupAdditiveMultiTexture(u8 textureCount) {
 
     u8 i;
     for (i = 0; i < textureCount; i++) {
-        configureTexCoordGen(i, GX_TG_MTX2x4, (GXTexGenSrc)(GX_TG_TEX0 + i), NULL, GX_FALSE, NULL);
+        configureTexCoordGen(i, GX_TG_MTX2x4, GX_TG_TEX0 + i, NULL, GX_FALSE, NULL);
     }
     for (i = 0; i < textureCount; i++) {
-        setIndTexStage(i, GS_TEV_DIRECT);
+        setIndTexStageDirect(i);
 
         setTevStage(i, (GXTexCoordID)i, (GXTexMapID)i, GX_COLOR_NULL);
 
@@ -66,7 +67,7 @@ void GSrender::setupVertexColoring() {
 
     configureColorChannel(0, (1 << 0) | (1 << 1), GX_SRC_REG, GX_SRC_VTX, 0, NULL, GX_AF_NONE, GX_DF_NONE);
 
-    setIndTexStage(0, GS_TEV_DIRECT);
+    setIndTexStageDirect(0);
 
     setTevStage(0, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR0A0);
     configureTevStage(0, GS_TEV_MODE_PASSCLR);
@@ -84,10 +85,10 @@ void GSrender::setupMultiplicativeMultiTexture(u8 textureCount) {
 
     u8 i;
     for (i = 0; i < textureCount; i++) {
-        configureTexCoordGen(i, GX_TG_MTX2x4, (GXTexGenSrc)(GX_TG_TEX0 + i), NULL, GX_FALSE, NULL);
+        configureTexCoordGen(i, GX_TG_MTX2x4, GX_TG_TEX0 + i, NULL, GX_FALSE, NULL);
     }
     for (i = 0; i < textureCount; i++) {
-        setIndTexStage(i, GS_TEV_DIRECT);
+        setIndTexStageDirect(i);
 
         setTevStage(i, (GXTexCoordID)i, (GXTexMapID)i, GX_COLOR0A0);
 
@@ -130,7 +131,7 @@ void GSrender::loadLights() {
         return;
     }
 
-    nLights = mState->mNumLights;
+    nLights = mState->mLightCount;
     light = mState->mLights;
     for (i = 0; (u8)i < nLights; i++, light++) {
         (*light)->load(i, _16ec);
@@ -193,7 +194,7 @@ void GSrender::loadModelViewMatrix() {
     if ((_unk1->mFlags & (1 << 2)) || _unk1 != mState->_1508) {
         GXLoadPosMtxImm(_16e8->get_4()->mPosMtx, GX_PNMTX9);
 
-        GSrenderClass1 *_unk2 = _16e8;
+        _UnkClass80236704 *_unk2 = _16e8;
         if ((_unk2->_4->mFlags & (1 << 1))) {
             Mtx nrmMtx;
             MTXInvXpose(_unk2->_4->mPosMtx, nrmMtx);
@@ -284,9 +285,12 @@ void GSrender::syncRenderSettings() {
 
                 if (prev->mType != curr->mType || prev->mSrc != curr->mSrc || prev->mTexMtx != curr->mTexMtx ||
                     prev->mNormalize != curr->mNormalize || prev->mPostMtx != curr->mPostMtx) {
-                    GXSetTexCoordGen2(
-                        (GXTexCoordID)i, curr->mType, curr->mSrc, curr->mTexMtx, curr->mNormalize, curr->mPostMtx
-                    );
+                    GXSetTexCoordGen2((GXTexCoordID)i,
+                                      curr->mType,
+                                      curr->mSrc,
+                                      curr->mTexMtx,
+                                      curr->mNormalize,
+                                      curr->mPostMtx);
 
                     prev->mType = curr->mType;
                     prev->mSrc = curr->mSrc;
@@ -373,10 +377,10 @@ void GSrender::syncRenderSettings() {
                 state->mPrev.mScissor.mOrigY != state->mCurr.mScissor.mOrigY ||
                 state->mPrev.mScissor.mWidth != state->mCurr.mScissor.mWidth ||
                 state->mPrev.mScissor.mHeight != state->mCurr.mScissor.mHeight) {
-                setScissor(
-                    state->mCurr.mScissor.mOrigX, state->mCurr.mScissor.mOrigY, state->mCurr.mScissor.mWidth,
-                    state->mCurr.mScissor.mHeight
-                );
+                setScissor(state->mCurr.mScissor.mOrigX,
+                           state->mCurr.mScissor.mOrigY,
+                           state->mCurr.mScissor.mWidth,
+                           state->mCurr.mScissor.mHeight);
                 state->mPrev.mScissor.mOrigX = state->mCurr.mScissor.mOrigX;
                 state->mPrev.mScissor.mOrigY = state->mCurr.mScissor.mOrigY;
                 state->mPrev.mScissor.mWidth = state->mCurr.mScissor.mWidth;
@@ -395,10 +399,12 @@ void GSrender::syncRenderSettings() {
                 state->mPrev.mViewport.mOrigY != state->mCurr.mViewport.mOrigY ||
                 state->mPrev.mViewport.mWidth != state->mCurr.mViewport.mWidth ||
                 state->mPrev.mViewport.mHeight != state->mCurr.mViewport.mHeight) {
-                setViewport(
-                    state->mCurr.mViewport.mOrigX, state->mCurr.mViewport.mOrigY, state->mCurr.mViewport.mWidth,
-                    state->mCurr.mViewport.mHeight, 0.f, 1.f
-                );
+                setViewport(state->mCurr.mViewport.mOrigX,
+                            state->mCurr.mViewport.mOrigY,
+                            state->mCurr.mViewport.mWidth,
+                            state->mCurr.mViewport.mHeight,
+                            0.f,
+                            1.f);
                 state->mPrev.mViewport.mOrigX = state->mCurr.mViewport.mOrigX;
                 state->mPrev.mViewport.mOrigY = state->mCurr.mViewport.mOrigY;
                 state->mPrev.mViewport.mWidth = state->mCurr.mViewport.mWidth;
@@ -456,10 +462,13 @@ void GSrender::syncRenderSettings() {
                 if (prev->mEnable != enable || prev->mAmbSrc != curr->mAmbSrc || prev->mMatSrc != curr->mMatSrc ||
                     prev->mLightMask != curr->mLightMask || prev->mDiffFn != curr->mDiffFn ||
                     prev->mAttnFn != curr->mAttnFn) {
-                    GXSetChanCtrl(
-                        (GXChannelID)i, enable, curr->mAmbSrc, curr->mMatSrc, curr->mLightMask, curr->mDiffFn,
-                        curr->mAttnFn
-                    );
+                    GXSetChanCtrl((GXChannelID)i,
+                                  enable,
+                                  curr->mAmbSrc,
+                                  curr->mMatSrc,
+                                  curr->mLightMask,
+                                  curr->mDiffFn,
+                                  curr->mAttnFn);
                     prev->mEnable = enable;
                     prev->mAmbSrc = curr->mAmbSrc;
                     prev->mMatSrc = curr->mMatSrc;
@@ -663,7 +672,7 @@ void GSrender::syncRenderSettings() {
                     continue;
                 }
 
-                if (curr->mType == TEV_COLOR_U8) {
+                if (curr->mType == GS_TEV_COLOR_U8) {
                     GXSetTevColor((GXTevRegID)i, curr->mColor);
                 } else {
                     GXSetTevColorS10((GXTevRegID)i, curr->mColorS10);
@@ -691,26 +700,37 @@ void GSrender::syncRenderSettings() {
                         break;
 
                     case GS_TEV_INDIRECT:
-                        GXSetTevIndirect(
-                            (GXTevStageID)i, curr->mIndStage, curr->indirect.mFormat, curr->indirect.mBiasSel,
-                            curr->indirect.mMatrixSel, curr->indirect.mWrapS, curr->indirect.mWrapT,
-                            curr->indirect.mAddPrev, curr->indirect.mUtcLod, curr->indirect.mAlphaSel
-                        );
+                        GXSetTevIndirect((GXTevStageID)i,
+                                         curr->mIndStage,
+                                         curr->indirect.mFormat,
+                                         curr->indirect.mBiasSel,
+                                         curr->indirect.mMatrixSel,
+                                         curr->indirect.mWrapS,
+                                         curr->indirect.mWrapT,
+                                         curr->indirect.mAddPrev,
+                                         curr->indirect.mUtcLod,
+                                         curr->indirect.mAlphaSel);
                         break;
 
                     case GS_TEV_IND_WARP:
-                        GXSetTevIndWarp(
-                            (GXTevStageID)i, curr->mIndStage, curr->warp.mSignedOffsets, curr->warp.mReplaceMode,
-                            curr->warp.mMatrixSel
-                        );
+                        GXSetTevIndWarp((GXTevStageID)i,
+                                        curr->mIndStage,
+                                        curr->warp.mSignedOffsets,
+                                        curr->warp.mReplaceMode,
+                                        curr->warp.mMatrixSel);
                         break;
 
                     case GS_TEV_IND_TILE:
-                        GXSetTevIndTile(
-                            (GXTevStageID)i, curr->mIndStage, curr->tile.mTileSizeS, curr->tile.mTileSizeT,
-                            curr->tile.mTileSpacingS, curr->tile.mTileSpacingT, curr->tile.mFormat,
-                            curr->tile.mMatrixSel, curr->tile.mBiasSel, curr->tile.mAlphaSel
-                        );
+                        GXSetTevIndTile((GXTevStageID)i,
+                                        curr->mIndStage,
+                                        curr->tile.mTileSizeS,
+                                        curr->tile.mTileSizeT,
+                                        curr->tile.mTileSpacingS,
+                                        curr->tile.mTileSpacingT,
+                                        curr->tile.mFormat,
+                                        curr->tile.mMatrixSel,
+                                        curr->tile.mBiasSel,
+                                        curr->tile.mAlphaSel);
                         break;
 
                     case GS_TEV_IND_BUMP_ST:
@@ -923,10 +943,10 @@ void GSrender::syncRenderSettings() {
                 state->mPrev.mBlendSrcFactor != state->mCurr.mBlendSrcFactor ||
                 state->mPrev.mBlendDstFactor != state->mCurr.mBlendDstFactor ||
                 state->mPrev.mBlendOp != state->mCurr.mBlendOp) {
-                GXSetBlendMode(
-                    state->mCurr.mBlendMode, state->mCurr.mBlendSrcFactor, state->mCurr.mBlendDstFactor,
-                    state->mCurr.mBlendOp
-                );
+                GXSetBlendMode(state->mCurr.mBlendMode,
+                               state->mCurr.mBlendSrcFactor,
+                               state->mCurr.mBlendDstFactor,
+                               state->mCurr.mBlendOp);
                 state->mPrev.mBlendMode = state->mCurr.mBlendMode;
                 state->mPrev.mBlendSrcFactor = state->mCurr.mBlendSrcFactor;
                 state->mPrev.mBlendDstFactor = state->mCurr.mBlendDstFactor;
@@ -970,10 +990,11 @@ void GSrender::syncRenderSettings() {
                 state->mPrev.mAlphaRef0 != state->mCurr.mAlphaRef0 || state->mPrev.mAlphaOp != state->mCurr.mAlphaOp ||
                 state->mPrev.mAlphaComp1 != state->mCurr.mAlphaComp1 ||
                 state->mPrev.mAlphaRef1 != state->mCurr.mAlphaRef1) {
-                GXSetAlphaCompare(
-                    state->mCurr.mAlphaComp0, state->mCurr.mAlphaRef0, state->mCurr.mAlphaOp, state->mCurr.mAlphaComp1,
-                    state->mCurr.mAlphaRef1
-                );
+                GXSetAlphaCompare(state->mCurr.mAlphaComp0,
+                                  state->mCurr.mAlphaRef0,
+                                  state->mCurr.mAlphaOp,
+                                  state->mCurr.mAlphaComp1,
+                                  state->mCurr.mAlphaRef1);
                 state->mPrev.mAlphaComp0 = state->mCurr.mAlphaComp0;
                 state->mPrev.mAlphaRef0 = state->mCurr.mAlphaRef0;
                 state->mPrev.mAlphaOp = state->mCurr.mAlphaOp;
@@ -1016,10 +1037,12 @@ void GSrender::syncRenderSettings() {
                                            state->mPrev.mFogFarZ != state->mCurr.mFogFarZ
                                            // TODO revisit this casting (GScolor?)
                                            || *(s32 *)(&state->mPrev.mFogColor) != *(s32 *)(&state->mCurr.mFogColor))) {
-                GXSetFog(
-                    fogType, state->mCurr.mFogStartZ, state->mCurr.mFogEndZ, state->mCurr.mFogNearZ,
-                    state->mCurr.mFogFarZ, state->mCurr.mFogColor
-                );
+                GXSetFog(fogType,
+                         state->mCurr.mFogStartZ,
+                         state->mCurr.mFogEndZ,
+                         state->mCurr.mFogNearZ,
+                         state->mCurr.mFogFarZ,
+                         state->mCurr.mFogColor);
                 state->mPrev.mFogType = fogType;
                 state->mPrev.mFogStartZ = state->mCurr.mFogStartZ;
                 state->mPrev.mFogEndZ = state->mCurr.mFogEndZ;
@@ -1095,10 +1118,11 @@ void GSrender::syncRenderSettings() {
 
 void GSrender::sync() {
     GXGetFifoPtrs(mGraphicsFifo.mFifoObj, &mGraphicsFifo.mReadPtr, &mGraphicsFifo.mWritePtr);
-    GXGetGPStatus(
-        &mGraphicsFifo.mOverhi, &mGraphicsFifo.mUnderlow, &mGraphicsFifo.mReadIdle, &mGraphicsFifo.mCmdIdle,
-        &mGraphicsFifo.mBrkpt
-    );
+    GXGetGPStatus(&mGraphicsFifo.mOverhi,
+                  &mGraphicsFifo.mUnderlow,
+                  &mGraphicsFifo.mReadIdle,
+                  &mGraphicsFifo.mCmdIdle,
+                  &mGraphicsFifo.mBrkpt);
 
     _16fc = false;
 

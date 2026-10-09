@@ -1,5 +1,4 @@
 #include ".unsorted/80249BA0.hpp"
-#include "common.hpp"
 #include "gs/GScache.hpp"
 #include "gs/GSfsys.hpp"
 #include "gs/GSinput.hpp"
@@ -16,6 +15,7 @@
 #include <revolution/types.h>
 #include <revolution/vi.h>
 
+#include "common.hpp"
 
 void fn_80006980(u32, void *);
 void fn_80006A00(u32, void *);
@@ -90,8 +90,8 @@ void fn_80006980(void) {
     u8 refreshRate = GSvideo::getInstance()->getRefreshRate();
     f32 deltaTime = GSvideo::getInstance()->fn_8023FFEC() / refreshRate;
 
-    GSrender::getInstance()->update(deltaTime > 0.f ? deltaTime : 0.f);
-    GSrender::getInstance()->fn_80231544();
+    GSrender::sInstance->update(deltaTime > 0.f ? deltaTime : 0.f);
+    GSrender::sInstance->draw();
 
     if (lbl_8063E8FC) {
         fn_8000AE8C();
@@ -213,7 +213,7 @@ int main(void) {
     new UnkClass1(0x20);
     fn_802353F8(&var5);
 
-    GSrender::getInstance()->fn_80237794(0);
+    GSrender::sInstance->fn_80237794(0);
 
     VIEnableDimming(TRUE);
     VISetTimeToDimming(VI_DM_10M);

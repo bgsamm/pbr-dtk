@@ -1,11 +1,11 @@
 #include "gs/GSvideo.hpp"
 
-#include "common.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GSrender.hpp"
 
 #include <cstring>
 
+#include "common.hpp"
 
 extern void fn_8025B6B4(u32);
 extern void fn_8025B6B8(f32 *, f32 *);
@@ -52,10 +52,10 @@ void GSvideo::postRetraceCallback(u32 retraceCount) {
     sInstance->mRetraceCount++;
 
     if (sInstance->mRetraceCallback != NULL) {
-        u8 var1 = GSrender::getInstance()->get_16f9();
-        GSrender::getInstance()->set_16f9(false);
+        u8 var1 = GSrender::sInstance->get_16f9();
+        GSrender::sInstance->set_16f9(false);
         sInstance->mRetraceCallback(retraceCount);
-        GSrender::getInstance()->set_16f9(var1);
+        GSrender::sInstance->set_16f9(var1);
     }
 }
 
@@ -417,19 +417,19 @@ GSxfbHandle *GSvideo::fn_8023FC0C(XfbState param1) {
 }
 
 GSxfbHandle *GSvideo::fn_8023FC54(u32 param1) {
-    if (GSrender::getInstance()->get_1718()) {
+    if (GSrender::sInstance->get_1718()) {
         return NULL;
     }
 
     u32 var1;
-    GSrender::getInstance()->fn_802311AC(&var1);
+    GSrender::sInstance->fn_802311AC(&var1);
 
     GSxfbHandle *var2;
     u32 var3 = param1;
     while (true) {
         BOOL intEnabled = OSDisableInterrupts();
 
-        if (GSrender::getInstance()->get_1718() || GSrender::getInstance()->get_1719()) {
+        if (GSrender::sInstance->get_1718() || GSrender::sInstance->get_1719()) {
             var2 = NULL;
             var3 = 0;
         } else {
@@ -439,17 +439,17 @@ GSxfbHandle *GSvideo::fn_8023FC54(u32 param1) {
         OSRestoreInterrupts(intEnabled);
 
         if (var3 == 0 || var2 != NULL) {
-            GSrender::getInstance()->fn_8023125C(&var1);
+            GSrender::sInstance->fn_8023125C(&var1);
             return var2;
         }
 
-        GSrender::getInstance()->fn_802311BC(&var1);
+        GSrender::sInstance->fn_802311BC(&var1);
 
         GXBool readIdle, dummy;
         GXGetGPStatus(&dummy, &dummy, &readIdle, &dummy, &dummy);
 
         if (readIdle == GX_TRUE) {
-            fn_80231374(GSrender::getInstance());
+            fn_80231374(GSrender::sInstance);
         }
     }
 }

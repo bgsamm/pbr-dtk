@@ -9,7 +9,6 @@
 
 #include "common.hpp"
 
-
 GSscene::GSscene(GSsceneData *sceneData) : mData(sceneData), mObjects(NULL), _8(0), _c(0), _10(0) {
     u16 objectCount = mData->mObjectCount;
     if (!objectCount) {
@@ -30,8 +29,8 @@ GSscene::GSscene(GSsceneData *sceneData) : mData(sceneData), mObjects(NULL), _8(
         }
     }
 
-    _UnkSceneData_2 *_unk6 = sceneData->_24;
-    if (_unk6) {
+    GSenvData *envData = sceneData->mEnvData;
+    if (envData) {
         for (s32 i = 0; i < objectCount; i++) {
             GSobject *object = mObjects[i];
             if (!object) {
@@ -40,18 +39,18 @@ GSscene::GSscene(GSsceneData *sceneData) : mData(sceneData), mObjects(NULL), _8(
 
             u16 lightCount = object->getLightCount();
             for (u16 j = 0; j < lightCount; j++) {
-                GSlight *lightNode = object->getLightNode(j);
+                GSlight *light = object->getLight(j);
 
-                if (lightNode && lightNode->get_10c()) {
-                    u32 _unk7 = lightNode->get_10c();
-                    if (_unk7 == _unk6->_18) {
-                        _8 = lightNode;
+                if (light && light->get_10c()) {
+                    u32 _unk7 = light->get_10c();
+                    if (_unk7 == envData->_18) {
+                        _8 = light;
                     }
-                    if (_unk7 == _unk6->_1c) {
-                        _c = lightNode;
+                    if (_unk7 == envData->_1c) {
+                        _c = light;
                     }
-                    if (_unk7 == _unk6->_20) {
-                        _10 = lightNode;
+                    if (_unk7 == envData->_20) {
+                        _10 = light;
                     }
                 }
             }

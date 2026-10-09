@@ -210,7 +210,7 @@ GSnull::GSnull(GSobject *parentObject, GSnodeData *data)
     GSnodeData *childData = data->mFirstChild;
     while (childData) {
         switch (childData->mNodeType) {
-            case GS_NODE_MODEL:    childNode = new GSmodel(parentObject, childData); break;
+            case GS_NODE_MODEL:    childNode = new GSmodel(parentObject, static_cast<GSmodelNodeData *>(childData)); break;
             case GS_NODE_CAMERA:   childNode = new GScamera(parentObject, childData); break;
             case GS_NODE_JOINT:    childNode = new GSjointNode(parentObject, childData); break;
             case GS_NODE_LIGHT:    childNode = new GSlight(parentObject, childData); break;

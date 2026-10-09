@@ -13,13 +13,27 @@ protected:
 
 protected:
     GSkeyframeData *findAnimData(u16 animId);
-    void update(f32 deltaTime);
 
 public:
     GSanimationObject(GSkeyframeData *animData);
     ~GSanimationObject();
 
+    void update(f32 deltaTime);
     void startAnimation(u16 animId, u32 animType, f32 startTime, f32 speed);
+
+    u16 getAnimId() const {
+        if (mPlayer) {
+            return mPlayer->getAnimId();
+        }
+        return GS_ANIM_NULL;
+    }
+
+    f32 getAnimProgress() const {
+        if (mPlayer) {
+            return mPlayer->getAnimProgress();
+        }
+        return 0.f;
+    }
 
     void lockAnimation() {
         if (mPlayer) {
@@ -47,6 +61,20 @@ public:
     void update(f32 deltaTime);
     void startAnimation(u16 animId, u32 animType, f32 startTime, f32 speed);
     void blendAnimation(u16 animId, u32 animType, f32 startTime, f32 speed, f32 blendFactor);
+
+    u16 getBlendAnimId() const {
+        if (mBlendPlayer) {
+            return mBlendPlayer->getAnimId();
+        }
+        return GS_ANIM_NULL;
+    }
+
+    f32 getBlendAnimProgress() const {
+        if (mBlendPlayer) {
+            return mBlendPlayer->getAnimProgress();
+        }
+        return 0.f;
+    }
 
     void lockAnimation() {
         GSanimationObject::lockAnimation();

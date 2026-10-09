@@ -20,7 +20,7 @@ struct UnkStruct1 {
 };
 
 bool Battle::fn_8017A754(u32 coloId, TrainerDeckEntry *trainer, UnkStruct1 *_r6) {
-    PokemonDeck *pokeDeck = (PokemonDeck *)GScache::getCacheEntryBuffer(0xc8, fn_8017831C(coloId));
+    PokemonDeck *pokeDeck = (PokemonDeck *)GScache::getCachedFile(0xc8, fn_8017831C(coloId));
 
     if (!pokeDeck) {
         return false;
@@ -36,7 +36,7 @@ bool Battle::fn_8017A754(u32 coloId, TrainerDeckEntry *trainer, UnkStruct1 *_r6)
 
     for (s32 i = 0; i < trainer->mTeamSize; i++) {
         UnkStruct2 *unk = _r6->_48[i];
-    
+
         entries[i] = deckEntries + trainer->mPokeDeckStart + i;
         fn_80178E10(unk, entries[i], _r6, 0xff);
     }

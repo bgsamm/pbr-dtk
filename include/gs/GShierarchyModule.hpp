@@ -1,11 +1,13 @@
 #pragma once
 
 #include "gs/GSlinkedList.hpp"
+#include "gs/GSrender.hpp"
 #include "gs/render/GSrenderModule.hpp"
-#include "gs/render/GSrenderTarget.hpp"
 
 #include <revolution.h>
 
+struct GSvec3;
+class GSlight;
 class GSobject;
 class GSscene;
 class GStexture;
@@ -23,25 +25,24 @@ public:
 // Size: 0x154
 class GShierarchyModule : public GSrenderModule {
 private:
-    /* 0x010 */ GSlistNode *mObjectList;
-    /* 0x014 */ u32 _14;
-    /* 0x018 */ u32 _18;
-    /* 0x01C */ u32 _1c;
-    /* 0x020 */ u32 _20;
-    /* 0x024 */ u32 _24;
+    /* 0x010 */ GSsinglyLinkedList mObjectList;
+    /* 0x014 */ GSdoublyLinkedList _14;
+    /* 0x01C */ GSsinglyLinkedList _1c;
+    /* 0x020 */ GSsinglyLinkedList _20;
+    /* 0x024 */ GSsinglyLinkedList _24;
     // TODO(samm) #define the 8s
-    /* 0x028 */ u32 _28[8];
+    /* 0x028 */ GSobject *_28[8];
     /* 0x048 */ _UnkHierModuleClass_1 _48[8];
     /* 0x108 */ u16 _108;
     /* 0x10A */ u16 _10a;
-    /* 0x10C */ u32 _10c;
-    /* 0x110 */ u32 _110;
-    /* 0x114 */ u32 _114;
-    /* 0x118 */ u32 _118;
-    /* 0x11C */ u32 _11c;
-    /* 0x120 */ u32 _120;
+    /* 0x10C */ GSsinglyLinkedList mLights;
+    /* 0x110 */ GStexture *_110;
+    /* 0x114 */ GStexture *_114;
+    /* 0x118 */ GSlight *_118;
+    /* 0x11C */ GSlight *_11c;
+    /* 0x120 */ GSlight *_120;
     /* 0x124 */ GSscene *mCurrentScene;
-    /* 0x128 */ u32 _128;
+    /* 0x128 */ GStexture *_128;
     /* 0x12C */ GStexture *_12c;
     /* 0x130 */ u32 _130;
     /* 0x134 */ u32 _134;
@@ -53,9 +54,13 @@ private:
     /* 0x14C */ u32 _14c;
     /* 0x150 */ u32 _150;
 
-public:
-    // TODO(samm) Make this private? (See GSobject::~GSobject())
-    static GShierarchyModule *sInstance;
+public: // TODO(samm) Make private
+    static GSrenderLight *sLights[8];
+    static GSrenderLight *lbl_804920B0[8];
+    static GSrenderLight *lbl_804920D0[8];
+    static u8 sLightCount;
+    static u8 lbl_8063F46D;
+    static u8 lbl_8063F46E;
 
 public:
     GShierarchyModule();
@@ -65,80 +70,33 @@ public:
     /* 0x10 */ virtual void fn_80236AE4();
     /* 0x14 */ virtual ~GShierarchyModule();
 
-    // TODO(samm) Move bulk of body to GSlinkedList
+    void fn_802010E0();
+
     void registerObject(GSobject *object) {
-        if (!object) {
-            return;
-        }
-
-        GSlistNode *tail = mObjectList;
-
-        // Walk through list until found or at end
-        if (tail) {
-            if (tail->mData == object) {
-                return;
-            }
-
-            GSlistNode *curr;
-            while ((curr = tail->sll.mNext)) {
-                if (curr->mData == object) {
-                    return;
-                }
-                tail = curr;
-            }
-        }
-
-        GSlistNode *newNode = GSlinkedList::allocNode();
-        if (newNode) {
-            newNode->mData = object;
-            newNode->sll.mNext = NULL;
-        }
-
-        if (tail) {
-            tail->sll.mNext = newNode;
-        } else {
-            mObjectList = newNode;
-        }
+        mObjectList.append(object);
     }
 
-    // TODO(samm) Move bulk of body to GSlinkedList
     void unregisterObject(GSobject *object) {
-        if (!object) {
-            return;
-        }
-
-        GSlistNode *node = mObjectList;
-        GSlistNode *prev = NULL;
-
-        // Return if list is empty
-        if (!node) {
-            return;
-        }
-
-        while (node) {
-            if (node->mData == object) {
-                break;
-            }
-            prev = node;
-            node = node->sll.mNext;
-        }
-
-        // Return if object not found
-        if (!node) {
-            return;
-        }
-
-        GSlistNode *next = node->sll.mNext;
-        if (prev) {
-            prev->sll.mNext = next;
-        } else {
-            mObjectList = next;
-        }
-
-        GSlinkedList::freeNode(node);
+        mObjectList.remove(object);
     }
 
     // TODO(samm) Names
+
+    GStexture *get_110() const {
+        return _110;
+    }
+
+    GStexture *get_114() const {
+        return _114;
+    }
+
+    GSlight *get_118() const {
+        return _118;
+    }
+
+    GStexture *get_128() const {
+        return _128;
+    }
 
     u32 get_138() const {
         return _138;
@@ -152,16 +110,24 @@ public:
         return _144;
     }
 
-    static GSlistNode *fn_80200594(GSobject *arg0);
-    static GSlistNode *fn_80200858(GSobject *arg0);
+    static void fn_80200594(GSobject *arg0);
+    static void fn_80200858(GSobject *arg0);
+
+    static void fn_802027FC(GSvec3 *arg0);
 
     static void setCurrentScene(GSscene *scene);
+
+    static bool isCurrentScene(GSscene *scene) {
+        return sInstance->mCurrentScene == scene;
+    }
+
+    static void applyLights() {
+        GSrender::sInstance->setLights(sLightCount, sLights);
+    }
 
     static GShierarchyModule *getInstance() {
         return sInstance;
     }
 
-    static bool isCurrentScene(GSscene *scene) {
-        return sInstance->mCurrentScene == scene;
-    }
+    static GShierarchyModule *sInstance;
 };

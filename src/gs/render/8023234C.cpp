@@ -1,4 +1,3 @@
-#include "common.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GSrender.hpp"
 
@@ -6,35 +5,36 @@
 #include <revolution/gx.h>
 #include <revolution/os.h>
 
+#include "common.hpp"
 
 // BreakPtCallback
 void fn_8023234C() {
-    if (GSrender::getInstance() == NULL) {
+    if (GSrender::sInstance == NULL) {
         return;
     }
 
-    u8 var1 = GSrender::getInstance()->get_16f9();
-    GSrender::getInstance()->set_16f9(false);
+    u8 var1 = GSrender::sInstance->get_16f9();
+    GSrender::sInstance->set_16f9(false);
     GXDisableBreakPt();
-    GSrender::getInstance()->set_16f9(var1);
+    GSrender::sInstance->set_16f9(var1);
 }
 
 // DrawDoneCallback
 void fn_80232394() {
-    if (GSrender::getInstance() == NULL) {
+    if (GSrender::sInstance == NULL) {
         return;
     }
 
-    u8 var1 = GSrender::getInstance()->get_16f9();
-    GSrender::getInstance()->set_16f9(false);
+    u8 var1 = GSrender::sInstance->get_16f9();
+    GSrender::sInstance->set_16f9(false);
 
     GSrenderStruct2 *var2;
-    while ((var2 = GSrender::getInstance()->fn_802324F0()) != 0) {
+    while ((var2 = GSrender::sInstance->fn_802324F0()) != 0) {
         if (var2->_0 != NULL) {
             var2->_0(var2->_4);
         }
     }
-    GSrender::getInstance()->set_16f9(var1);
+    GSrender::sInstance->set_16f9(var1);
 }
 
 u32 GSrender::fn_80232404(_UnkRenderFunc_1 param1, void *param2) {

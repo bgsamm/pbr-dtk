@@ -45,10 +45,10 @@ void *
 createCacheEntryOnHeapAligned(MEMHeapHandle heap, u32 size, u32 align, u32 fsysId, u32 fileId, _UnkCacheFunc_1 param6);
 void *createCacheEntryAligned(u32 size, u32 align, u32 fsysId, u32 fileId, _UnkCacheFunc_1 param5);
 void setCacheEntryBuffer(void *buffer, u32 fsysId, u32 fileId, _UnkCacheFunc_1 param4);
-void *getCacheEntryBuffer(u32 fsysId, u32 fileId);
+void *getCachedFile(u32 fsysId, u32 fileId);
 u32 incrementRefCount(u32 fsysId, u32 fileId);
 u32 decrementRefCount(u32 fsysId, u32 fileId);
-u32 getCacheEntryBufferSize(u32 fsysId, u32 fileId);
+u32 getCachedFileSize(u32 fsysId, u32 fileId);
 void freeFileCacheEntry(u32 fsysId, u32 fileId);
 void freeFsysCacheEntries(u32 fsysId);
 bool copyCacheEntry(

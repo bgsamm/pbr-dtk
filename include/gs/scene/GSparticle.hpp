@@ -20,9 +20,19 @@ public:
     /* 0x110 */ f32 _110;
     /* 0x114 */ u8 _pad_114[0x24];
     /* 0x138 */ _UnkParticleStruct_1 *_138;
+    /* 0x13c */ u8 _pad_13c[0x4];
 
 public:
     GSparticle(GSobject *parentObject, GSnodeData *data);
+
+    /* 0x08 */ virtual ~GSparticle();
+    /* 0x0C */ virtual void update(f32 deltaTime);
+    /* 0x10 */ virtual void initTransform(bool recursive);
+    /* 0x14 */ virtual void updateTransform();
+
+    _UnkParticleStruct_1 *get_138() const {
+        return _138;
+    }
 
     // TODO(samm) Name
     bool _unkCondition1() const {

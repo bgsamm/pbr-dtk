@@ -4,6 +4,7 @@
 #include "gs/GShierarchyModule.hpp"
 #include "gs/GSmenuModule.hpp"
 #include "gs/GSrender.hpp"
+#include "gs/render/GSrenderTarget.hpp"
 #include "gs/render/GStexture.hpp"
 #include "gs/scene/GScamera.hpp"
 #include "gs/scene/GSlight.hpp"
@@ -287,14 +288,14 @@ void fn_801E18F8(GSmaterialData *materialData, GSsceneData *sceneData, u32 baseA
         fixPointer(texSlots, baseAddr);
     }
 
-    void **_unkVar1 = materialData->_2c;
+    _UnkMaterialData_2 **_unkVar1 = materialData->_2c;
     for (u32 i = 0; i < MATERIAL_MAX_TEXTURE_SLOTS; i++, _unkVar1++) {
         fixPointer(_unkVar1, baseAddr);
     }
 
-    // TODO(samm) Is it possible to clean up these types?
+    // TODO(samm) Clean up these types!!!
     u32 _unkVar3 = 0;
-    _UnkMaterialData_1 *(*_unkVar2)[2] = materialData->_40;
+    _UnkMaterialData_1 *(*_unkVar2)[2] = (_UnkMaterialData_1 * (*)[2]) materialData->_40;
     for (u32 i = 0; i < 2; i++, _unkVar2++) {
         for (u32 j = 0; j < 2; j++) {
             fixPointer(&(*_unkVar2)[j], baseAddr);
@@ -309,10 +310,10 @@ void fn_801E18F8(GSmaterialData *materialData, GSsceneData *sceneData, u32 baseA
         }
     }
 
-    fixPointer(&materialData->_84, baseAddr);
+    fixPointer(&materialData->mKeyframes, baseAddr);
 
-    if (materialData->_84) {
-        fn_801E1540(materialData->_84, sceneData, baseAddr);
+    if (materialData->mKeyframes) {
+        fn_801E1540(materialData->mKeyframes, sceneData, baseAddr);
     }
 }
 
@@ -375,14 +376,6 @@ void fn_801E1CD0(GSnodeData *nodeData, GSsceneData *sceneData, u32 baseAddr) {
     }
 }
 
-// TODO(samm) Move?
-inline void _unkRenderTarget(u32 arg0) {
-    GSrenderTarget *target = GSrenderTarget::findTarget((arg0 >> 16) & 0xff);
-    if (target) {
-        target->fn_8023B3B8(arg0);
-    }
-}
-
 void fn_801E2E34(GSanimationData *animationData, GSsceneData *sceneData, u32 baseAddr) {
     fixPointer(&animationData->mName, baseAddr);
     fixPointer(&animationData->_10, baseAddr);
@@ -417,13 +410,13 @@ void fn_801E2F60(GSobjectData *objectData, GSsceneData *sceneData, u32 baseAddr,
     }
 
     if (arg3) {
-        _unkRenderTarget(GShierarchyModule::getInstance()->get_138());
-        _unkRenderTarget(GShierarchyModule::getInstance()->get_144());
+        GSrenderTarget::_unkFunc_1(GShierarchyModule::getInstance()->get_138());
+        GSrenderTarget::_unkFunc_1(GShierarchyModule::getInstance()->get_144());
     } else {
-        _unkRenderTarget(GShierarchyModule::getInstance()->get_140());
-        _unkRenderTarget(GShierarchyModule::getInstance()->get_144());
-        _unkRenderTarget(GSmenuModule::getInstance()->get_10c());
-        _unkRenderTarget(GSmenuModule::getInstance()->get_110());
+        GSrenderTarget::_unkFunc_1(GShierarchyModule::getInstance()->get_140());
+        GSrenderTarget::_unkFunc_1(GShierarchyModule::getInstance()->get_144());
+        GSrenderTarget::_unkFunc_1(GSmenuModule::getInstance()->get_10c());
+        GSrenderTarget::_unkFunc_1(GSmenuModule::getInstance()->get_110());
     }
 }
 
@@ -443,7 +436,7 @@ static inline void initSceneTextures(GSsceneData *sceneData, u32 baseAddr) {
         fixPointer(texList, baseAddr);
         *texList = fn_8023D6CC(*texList);
 
-        if (GSrender::getInstance()->get_7a()) {
+        if (GSrender::sInstance->get_7a()) {
             GXTexFilter magFilter = (*texList)->mMagFilter;
             if (magFilter < GX_NEAR_MIP_NEAR) {
                 magFilter = GX_NEAR_MIP_NEAR;
@@ -459,7 +452,7 @@ static inline void initSceneTextures(GSsceneData *sceneData, u32 baseAddr) {
         }
     }
 
-    GSrender::getInstance()->invalidateTextureCache();
+    GSrender::sInstance->invalidateTextureCache();
 }
 
 static inline void initSceneUnknown(GSsceneData *sceneData, u32 baseAddr) {
@@ -512,7 +505,7 @@ static inline void initSceneObjects(GSsceneData *sceneData, u32 baseAddr) {
         }
 
         fixPointer(objList, baseAddr);
-        fn_801E2F60(*objList, sceneData, baseAddr, (bool)sceneData->_24);
+        fn_801E2F60(*objList, sceneData, baseAddr, (bool)sceneData->mEnvData);
     }
 }
 
@@ -521,14 +514,14 @@ void fn_801E34DC(GSsceneData *sceneData, u32 baseAddr) {
     fixPointer(&sceneData->mTextureList, baseAddr);
     fixPointer(&sceneData->_10, baseAddr);
     fixPointer(&sceneData->mMaterialList, baseAddr);
-    fixPointer(&sceneData->_24, baseAddr);
+    fixPointer(&sceneData->mEnvData, baseAddr);
     fixPointer(&sceneData->_28, baseAddr);
 
     initSceneTextures(sceneData, baseAddr);
 
     // TODO(samm) Move to its own inline function?
-    if (sceneData->_24) {
-        fn_801E3380(sceneData->_24, sceneData, baseAddr);
+    if (sceneData->mEnvData) {
+        fn_801E3380(sceneData->mEnvData, sceneData, baseAddr);
     }
 
     initSceneUnknown(sceneData, baseAddr);
