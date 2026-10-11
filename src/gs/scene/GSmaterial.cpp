@@ -17,7 +17,7 @@ extern GSmaterialData *lbl_8063F3AC;
 extern u8 lbl_8063F3B0;
 extern GSmatrix lbl_804932B0;
 
-GSmatrix lbl_80491970;
+GSmatrix lbl_80491970(GSvec3(0.5f, -0.5f, 0.f), GSvec3(0.5f, 0.5f, 1.f));
 _UnkMaterialStruct_2 lbl_8063D768 = {1};
 
 GSmaterial::GSmaterial(GSmaterialData *matData, GSmeshRenderSettings *renderSettings)
@@ -1520,4 +1520,81 @@ bool GSmaterial::fn_801EC538(_UnkMaterialStruct_3 *arg0, GSmatrix *arg1, bool ar
     GSrender::sInstance->setNumTevStages(mCurrTevStage);
 
     return true;
+}
+
+void GSmaterial::fn_801EC9AC(GSanimationObject *animObj, GSchannelData *channel, f32 cursor, bool blend) {
+    GSmaterial *material = static_cast<GSmaterial *>(animObj);
+
+    if (!blend && material->mMatData != material->mOrigMatData) {
+        switch (channel->mChannel) {
+            case 0x14: {
+                _UnkMaterialData_2 *texData = material->mMatData->_2c[channel->_3];
+                if (texData != material->mOrigMatData->_2c[channel->_3]) {
+                    GSvec2 translate;
+                    translate.x = texData->_4;
+                    translate.y = texData->_8;
+                    fn_801E13B8(channel, cursor, &translate);
+                    texData->_4 = translate.x;
+                    texData->_8 = translate.y;
+                    material->_1c |= (1 << channel->_3);
+                }
+            } break;
+            case 0x15: {
+                _UnkMaterialData_2 *texData = material->mMatData->_2c[channel->_3];
+                if (texData != material->mOrigMatData->_2c[channel->_3]) {
+                    fn_801E10C0(channel, cursor, &texData->_c);
+                    material->_1c |= (1 << channel->_3);
+                }
+            } break;
+            case 0x16: {
+                _UnkMaterialData_2 *texData = material->mMatData->_2c[channel->_3];
+                if (texData != material->mOrigMatData->_2c[channel->_3]) {
+                    GSvec2 scale;
+                    scale.x = texData->_10;
+                    scale.y = texData->_14;
+                    fn_801E13B8(channel, cursor, &scale);
+                    texData->_10 = scale.x;
+                    texData->_14 = scale.y;
+                    material->_1c |= (1 << channel->_3);
+                }
+            } break;
+            case 0x17: fn_801E1440(channel, cursor, &material->mMatData->_60); break;
+            case 0x18: fn_801E1440(channel, cursor, &material->mMatData->_64); break;
+            case 0x19: fn_801E1440(channel, cursor, &material->mMatData->_78); break;
+            case 0x1a: fn_801E10C0(channel, cursor, &material->mMatData->_7c); break;
+            case 0x1b: fn_801E1440(channel, cursor, &material->mMatData->_70); break;
+            case 0x1c: fn_801E1440(channel, cursor, &material->mMatData->_4[channel->_3]); break;
+        }
+    }
+}
+
+void GSmaterial::fn_801ECBA8() {
+    if (mMatData != mOrigMatData) {
+        u8 count = mMatData->_5b;
+        for (u8 i = 0; i < count; i++) {
+            _UnkMaterialData_2 *src = mOrigMatData->_2c[i];
+            _UnkMaterialData_2 *dst = mMatData->_2c[i];
+            if (dst != src) {
+                memcpy(dst, src, sizeof(*dst));
+            }
+        }
+
+        u8 kColorCount = mOrigMatData->_58;
+        for (u8 i = 0; i < kColorCount; i++) {
+            static_cast<GXColor &>(mMatData->_4[i]) = mOrigMatData->_4[i];
+        }
+
+        static_cast<GXColor &>(mMatData->_60) = mOrigMatData->_60;
+        static_cast<GXColor &>(mMatData->_64) = mOrigMatData->_64;
+        static_cast<GXColor &>(mMatData->_78) = mOrigMatData->_78;
+    }
+
+    if (_18) {
+        u8 count = mMatData->_5b;
+        for (u8 i = 0; i < count; i++) {
+            _1c = (1 << i);
+            fn_801E9C74(i, mMatData->_2c[i]);
+        }
+        _1c = 0;
+    }
 }

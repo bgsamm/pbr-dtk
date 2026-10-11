@@ -269,7 +269,7 @@ struct GSmaterialData {
     /* 0x5D */ u8 _5d;
     /* 0x5E */ u8 _5e;
     /* 0x5F */ u8 _5f;
-    /* 0x60 */ GXColor _60;
+    /* 0x60 */ GScolor _60;
     /* 0x64 */ GScolor _64;
     /* 0x68 */ f32 _68;
     /* 0x6C */ u8 _6c;

@@ -175,6 +175,11 @@ public:
         mMatrix[2][3] = x23;
     }
 
+    GSmatrix(GSvec3 scale, GSvec3 trans) {
+        MTXScale(mMatrix, scale.x, scale.y, scale.z);
+        MTXTransApply(mMatrix, mMatrix, trans.x, trans.y, trans.z);
+    }
+
     GSmatrix(const GSmatrix &other) {
         MTXCopy(other, mMatrix);
     }
