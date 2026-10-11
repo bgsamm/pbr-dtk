@@ -41,6 +41,7 @@ OSThreadQueue __DVDThreadQueue;
 u32 __DVDLongFileNameFlag = TRUE;
 
 void cbForReadAsync(s32 result, DVDCommandBlock* block);
+void cbForSeekAsync(s32 result, DVDCommandBlock* block);
 void cbForReadSync(s32 result, DVDCommandBlock* block);
 
 #define IS_ENTRY_DIR(fstStart, i) ((((fstStart)[i].isDirAndStringOff & 0xFF000000) == 0) ? FALSE : TRUE)
@@ -349,3 +350,21 @@ void cbForReadSync(s32 result, DVDCommandBlock* block) {
     OSWakeupThread(&__DVDThreadQueue);
 }
 
+// Not in the imported source: written from the original binary.
+BOOL DVDSeekAsyncPrio(DVDFileInfo* fileInfo, s32 offset, DVDCallback callback, s32 prio) {
+    if (!(offset >= 0 && offset <= fileInfo->length)) OSPanic(__FILE__, 980, "DVDSeek(): offset is out of the file  ");
+
+    fileInfo->callback = callback;
+    DVDSeekAbsAsyncPrio(&fileInfo->cb, (u32)(fileInfo->startAddr + (offset >> 2)), cbForSeekAsync, prio);
+
+    return TRUE;
+}
+
+// Not in the imported source: written from the original binary.
+void cbForSeekAsync(s32 result, DVDCommandBlock* block) {
+    DVDFileInfo* fileInfo = (DVDFileInfo*)((char*)block - offsetof(DVDFileInfo, cb));
+
+    if (fileInfo->callback) {
+        (fileInfo->callback)(result, fileInfo);
+    }
+}

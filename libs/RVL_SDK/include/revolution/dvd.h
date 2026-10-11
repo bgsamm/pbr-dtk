@@ -72,7 +72,7 @@ struct DVDCommandBlock {
     DVDCommandBlock* prev;  // 0x04
 
     u32 command;  // 0x08
-    s32 state;    // 0x0C
+    volatile s32 state;  // 0x0C
 
     u32 offset;  // 0x10
     u32 length;  // 0x14
@@ -153,7 +153,8 @@ extern DVDErrorInfo __ErrorInfo;
 
 void DVDInit(void);
 
-BOOL DVDReadAbsAsyncPrio(DVDCommandBlock* block, void* addr, s32 length, u32 offset, DVDCommandCallback callback, s32 prio);
+BOOL DVDSeekAbsAsyncPrio(DVDCommandBlock* block, u32 offset, DVDCommandCallback callback, s32 prio);
+BOOL DVDReadAbsAsyncPrio(DVDCommandBlock* block, void* addr, u32 length, u32 offset, DVDCommandCallback callback, s32 prio);
 BOOL DVDReadAbsAsyncForBS(DVDCommandBlock* block, void* addr, s32 length, u32 offset, DVDCommandCallback callback, s32 prio);
 
 BOOL DVDReadDiskID(DVDCommandBlock* block, DVDDiskID* diskID, DVDCommandCallback callback);

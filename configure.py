@@ -582,6 +582,7 @@ config.libs = [
     RVLSDKLib(
         "dvd",
         [
+            Object(NonMatching, "dvd/dvd.c"),
             Object(NonMatching, "dvd/dvdqueue.c"),
             Object(NonMatching, "dvd/dvderror.c"),
             Object(NonMatching, "dvd/dvdidutils.c"),
@@ -938,7 +939,6 @@ config.libs = [
             Object(NonMatching, ".unsorted/80281F38.cpp"),
             Object(NonMatching, ".unsorted/80284950.cpp"),
             Object(NonMatching, ".unsorted/8028680C.cpp"),
-            Object(NonMatching, ".unsorted/802880D4.cpp"),
             Object(NonMatching, ".unsorted/8028EB04.cpp"),
             Object(NonMatching, ".unsorted/802973F8.cpp"),
             Object(NonMatching, ".unsorted/80297890.cpp"),

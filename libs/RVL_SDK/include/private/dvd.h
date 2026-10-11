@@ -162,7 +162,7 @@ void __DVDPrepareResetAsync(DVDCommandCallback callback);
 void __DVDPrepareReset();
 void __DVDResetWithNoSpinup();
 
-BOOL __DVDTestAlarm(OSAlarm* alarm);
+BOOL __DVDTestAlarm(const OSAlarm* alarm);
 
 BOOL __DVDStopMotorAsync(DVDCommandBlock* block, DVDCommandCallback callback);
 void __DVDRestartMotor();

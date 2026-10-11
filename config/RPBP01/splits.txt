@@ -1596,10 +1596,10 @@ libs/RVL_SDK/src/gx/GXPerf.c:
 	.text       start:0x80286E50 end:0x8028768C
 
 libs/RVL_SDK/src/dvd/dvdfs.c:
-	.text       start:0x8028768C end:0x802880D4
+	.text       start:0x8028768C end:0x8028818C
 
-src/.unsorted/802880D4.cpp:
-	.text       start:0x802880D4 end:0x8028C98C
+libs/RVL_SDK/src/dvd/dvd.c:
+	.text       start:0x8028818C end:0x8028C98C
 
 libs/RVL_SDK/src/dvd/dvdqueue.c:
 	.text       start:0x8028C98C end:0x8028CBE4
