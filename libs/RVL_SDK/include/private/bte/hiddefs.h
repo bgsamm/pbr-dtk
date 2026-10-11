@@ -26,10 +26,10 @@
 
 /* Includes changes by muff1n1634 and for this repository (KoopTheKoopa) */
 
-#include "bt_target.h"
-#include "data_types.h"
+#include <private/bte/bt_target.h>
+#include <private/bte/data_types.h>
 
-#include "sdp_api.h"
+#include <private/bte/sdp_api.h>
 
 #define HID_GET_TRANS_FROM_HDR(x)	(((x) >> 4) & 0x0f)
 #define HID_GET_PARAM_FROM_HDR(x)	( (x)       & 0x0f)

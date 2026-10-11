@@ -194,6 +194,9 @@ cflags_includes = [
     "-i include",
     "-i libs/MSL/include",
     "-i libs/RVL_SDK/include",
+    "-i libs/Runtime/include",
+    "-i libs/RevoEX/include",
+    "-i libs/MetroTRK/include",
     f"-i build/{config.version}/include",
 ]
 
@@ -331,6 +334,15 @@ config.libs = [
             Object(NonMatching, "os/OSTime.c"),
             Object(NonMatching, "os/OSUtf.c"),
             Object(NonMatching, "os/OSIpc.c"),
+            Object(NonMatching, "os/OS.c"),
+            Object(NonMatching, "os/OSAudioSystem.c"),
+            Object(NonMatching, "os/OSCache.c"),
+            Object(NonMatching, "os/OSStateTM.c"),
+            Object(NonMatching, "os/OSPlayRecord.c"),
+            Object(NonMatching, "os/OSStateFlags.c"),
+            Object(NonMatching, "os/OSNet.c"),
+            Object(NonMatching, "os/OSNandbootInfo.c"),
+            Object(NonMatching, "os/__ppc_eabi_init.cpp"),
         ],
     ),
     RVLSDKLib(
@@ -350,6 +362,26 @@ config.libs = [
         "si",
         [
             Object(NonMatching, "si/SISamplingRate.c"),
+        ],
+    ),
+    RVLSDKLib(
+        "db",
+        [
+            Object(NonMatching, "db/db.c"),
+        ],
+    ),
+    RVLSDKLib(
+        "vi",
+        [
+            Object(NonMatching, "vi/vi.c"),
+            Object(NonMatching, "vi/i2c.c"),
+            Object(NonMatching, "vi/vi3in1.c"),
+        ],
+    ),
+    RVLSDKLib(
+        "nand",
+        [
+            Object(NonMatching, "nand/nand.c"),
         ],
     ),
     RVLSDKLib(
@@ -383,6 +415,7 @@ config.libs = [
         "dvd",
         [
             Object(NonMatching, "dvd/dvdqueue.c"),
+            Object(NonMatching, "dvd/dvdfs.c"),
         ],
     ),
     RVLSDKLib(
@@ -413,6 +446,7 @@ config.libs = [
         [
             Object(NonMatching, "wpad/WPADEncrypt.c"),
             Object(NonMatching, "wpad/debug_msg.c"),
+            Object(NonMatching, "wpad/WPAD.c"),
         ],
     ),
     RVLSDKLib(

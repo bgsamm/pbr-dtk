@@ -157,7 +157,7 @@ GSinputDevice *getDevice(s32 channel);
 s32 getMaxDevices();
 void samplingCallback(s32 chan);
 void *wpadAlloc(u32 size);
-u8 wpadFree(void *ptr);
+BOOL wpadFree(void *ptr);
 void init(s32 maxDevices);
 void fn_802448BC();
 

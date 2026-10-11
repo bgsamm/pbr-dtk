@@ -26,10 +26,10 @@
 
 /* Includes changes by muff1n1634 and for this repository (KoopTheKoopa) */
 
-#include "bt_types.h"
-#include "data_types.h"
+#include <private/bte/bt_types.h>
+#include <private/bte/data_types.h>
 
-#include "gki_target.h"
+#include <private/bte/gki_target.h>
 
 /*******************************************************************************
  * Configuration options, sorted as seen in bluedroid's bt_target.h

@@ -26,7 +26,7 @@
 
 /* Includes changes by muff1n1634 and for this repository (KoopTheKoopa) */
 
-#include "data_types.h"
+#include <private/bte/data_types.h>
 
 #define HCI_PER_INQ_MIN_MIN_PERIOD					2
 #define HCI_PER_INQ_MAX_MIN_PERIOD					65534

@@ -26,16 +26,16 @@
 
 /* Includes changes by muff1n1634 and for this repository (KoopTheKoopa) */
 
-#include "bt_target.h"
-#include "bt_trace.h"
-#include "bt_types.h"
-#include "data_types.h"
+#include <private/bte/bt_target.h>
+#include <private/bte/bt_trace.h>
+#include <private/bte/bt_types.h>
+#include <private/bte/data_types.h>
 
-#include "btm_api.h"
-#include "gki.h"
-#include "hcidefs.h"
-#include "rfcdefs.h"
-#include "sdp_api.h"
+#include <private/bte/btm_api.h>
+#include <private/bte/gki.h>
+#include <private/bte/hcidefs.h>
+#include <private/bte/rfcdefs.h>
+#include <private/bte/sdp_api.h>
 
 #define BTM_MAX_SCN					PORT_MAX_RFC_PORTS
 

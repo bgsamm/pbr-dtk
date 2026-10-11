@@ -149,6 +149,8 @@ BOOL __DVDLowTestAlarm(OSAlarm* alarm);
 
 /* Main stuff */
 
+extern DVDCommandBlock __DVDStopMotorCommandBlock;
+
 void __DVDAudioBufferConfig(DVDCommandBlock* block, u32 enable, u32 size, DVDCommandCallback callback);
 
 s32 __DVDGetDriveStatus();

@@ -26,9 +26,9 @@
 
 /* Includes changes by muff1n1634 and for this repository (KoopTheKoopa) */
 
-#include "bt_target.h"
-#include "bt_types.h"
-#include "data_types.h"
+#include <private/bte/bt_target.h>
+#include <private/bte/bt_types.h>
+#include <private/bte/data_types.h>
 
 #define SDP_PSM							0x0001
 

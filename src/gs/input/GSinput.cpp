@@ -597,7 +597,7 @@ void *GSinput::wpadAlloc(u32 size) {
     return GSmem::allocFromHeap(gUnkHeap2, size);
 }
 
-u8 GSinput::wpadFree(void *ptr) {
+BOOL GSinput::wpadFree(void *ptr) {
     GSmem::freeToHeap(gUnkHeap2, ptr);
     // Should this be returning 1 for success?
     return 0;
