@@ -44,7 +44,7 @@ bool Battle::fn_8017A754(u32 coloId, TrainerDeckEntry *trainer, UnkStruct1 *_r6)
     for (s32 i = trainer->mTeamSize; i < 6; i++) {
         UnkStruct2 *unk = _r6->_48[i];
         u32 species = 0;
-        BoxPokemon_SetValue((BoxPokemon *)unk, 0x5, &species);
+        BoxPokemon_SetValue((BoxPokemon *)unk, MON_DATA_SPECIES, &species);
         unk->_88 = 0;
         unk->_89 = 0;
         unk->_8A &= ~(0x80);
