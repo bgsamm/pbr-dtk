@@ -221,6 +221,14 @@ public:
     void scale(GSvec3 vec) {
         MTXScaleApply(mMatrix, mMatrix, vec.x, vec.y, vec.z);
     }
+
+    void setScale(GSvec3 vec) {
+        MTXScale(mMatrix, vec.x, vec.y, vec.z);
+    }
+
+    void translate(GSvec3 vec) {
+        MTXTransApply(mMatrix, mMatrix, vec.x, vec.y, vec.z);
+    }
 };
 
 // TODO(samm) Name? Move? Vec vs. GSvec3?

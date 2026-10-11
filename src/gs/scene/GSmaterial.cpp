@@ -15,6 +15,7 @@
 extern GSmeshRenderSettings *sLastMeshRenderSettings;
 extern GSmaterialData *lbl_8063F3AC;
 extern u8 lbl_8063F3B0;
+extern GSmatrix lbl_804932B0;
 
 GSmatrix lbl_80491970;
 _UnkMaterialStruct_2 lbl_8063D768 = {1};
@@ -42,7 +43,7 @@ GSmaterial::GSmaterial(GSmaterialData *matData, GSmeshRenderSettings *renderSett
       _2c(0, 0, 0, 0),
       mBaseColor(128, 128, 128, 255) {
     if (matData->_5b) {
-        _18 = new _UnkMaterialStruct_1[matData->_5b];
+        _18 = new GSmatrix[matData->_5b];
     }
 
     if (matData->mKeyframes) {
@@ -478,6 +479,32 @@ void GSmaterial::fn_801E74B0(_UnkMaterialData_1 *arg0) {
     }
 
     mCurrTevStage++;
+}
+
+GSmatrix *GSmaterial::fn_801E9C74(u8 index, _UnkMaterialData_2 *data) {
+    if (!_18) {
+        return &lbl_804932B0;
+    }
+
+    static GSvec3 center(0.5f, 0.5f, 0.f);
+
+    GSmatrix *mtx = &_18[index];
+    u16 mask = (1 << index);
+    if (_1c & mask) {
+        mtx->setScale(GSvec3(data->_10, data->_14, 1.f));
+        MTXTransApply(*mtx, *mtx, -center.x, -center.y, -center.z);
+
+        GSmatrix rot;
+        MTXRotRad(rot, 'Z', data->_c);
+        MTXConcat(rot, *mtx, *mtx);
+
+        MTXTransApply(*mtx, *mtx, center.x, center.y, center.z);
+        mtx->translate(GSvec3(data->_4, data->_8, 0.f));
+
+        _1c &= ~mask;
+    }
+
+    return mtx;
 }
 
 void GSmaterial::fn_801E9DCC(const _UnkMaterialStruct_3 *arg0, GSmatrix *arg1) {
@@ -1023,4 +1050,3 @@ bool GSmaterial::fn_801EC050(_UnkMaterialStruct_3 *arg0, GSmatrix *arg1, bool ar
     return true;
 }
 
-_UnkMaterialStruct_1::_UnkMaterialStruct_1() {}

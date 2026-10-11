@@ -1,19 +1,12 @@
 #pragma once
 
 #include "gs/GScolor.hpp"
+#include "gs/GSmath.hpp"
 #include "gs/GSrender.hpp"
 #include "gs/scene/GSanimationObject.hpp"
 
-struct GSmatrix;
 struct GSmeshRenderSettings;
 class GSchannelData;
-
-// Size: 0x30
-struct _UnkMaterialStruct_1 {
-    /* 0x00 */ u8 _pad_0[0x30];
-
-    _UnkMaterialStruct_1();
-};
 
 struct _UnkMaterialStruct_2 {
     /* 0x0 */ u8 _0;
@@ -48,7 +41,7 @@ protected:
     /* 0x0C */ GSmaterialData *mMatData;
     /* 0x10 */ GSmeshRenderSettings *mRenderSettings;
     /* 0x14 */ GStexture *_14;
-    /* 0x18 */ _UnkMaterialStruct_1 *_18;
+    /* 0x18 */ GSmatrix *_18;
     /* 0x1C */ u8 _1c;
     /* 0x1D */ u8 mTexGenCount;
     /* 0x1E */ u8 mChannelCount;
