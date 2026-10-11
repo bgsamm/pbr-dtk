@@ -16,6 +16,7 @@ When in doubt, do what that code does. Format with the repository's `.clang-form
 - Functions: real name when the evidence supports it (strings, symbol maps, the DS code it is ported from, behaviour). Class methods use the class (`GSfsys::initFsysChunkSystem`).
   When the purpose is not established yet, keep the address name (`fn_803D9778`) with a one-line `// TODO` saying what is known. Never invent a confident name.
 - Types: `PascalCase` (`ItemData`, `GSfsysEntry`). Members: `mName` for classes and engine structures, plain `camelCase` for data records ported from the DS code (`price`, `holdEffect`).
+  A type whose role is not established is named `Unk` plus the address of the function or object it was found from (`Unk80035CB0`), never `UnkStruct_...`, which reads like a DS address in pret.
 - Globals `gName`, file statics `sName`, constants and enum values `UPPER_CASE`.
 - Data whose address is known gets a `/* lbl_XXXXXXXX */` comment where it is defined.
 - `symbols.txt` is updated with the mangled name produced by the compiler; the address comment in the source keeps the link.

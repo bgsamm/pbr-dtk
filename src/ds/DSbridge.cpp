@@ -1,269 +1,321 @@
 #include "ds/DSbridge.hpp"
 
-#include "common.hpp"
+#include ".unsorted/80035CB0.hpp"
+#include ".unsorted/803D9EB4.hpp"
 
 #include <cstdarg>
 #include <cstring>
 
+#include "common.hpp"
 
-// TODO Replace with proper imports once the callers' units are decompiled
+// TODO Replace with proper imports
 extern "C" {
 void *fn_8016DF70(u32 heapId, u32 size);
-void fn_8016E0A0(void *heap);
+void fn_8016E0A0(void *ptr);
 void fn_8016E2DC();
-void fn_8016E70C(DSSystem *system);
-void fn_8016ECC0(DSSystem *system);
-void fn_8016EEC8(DSSystem *system);
-void *fn_8016F0F4(void *archive, u32 narcId, u32 memberId, u32 *size);
-void fn_8016FA4C(void *window, MsgRequest *request);
-void fn_8017CC8C(u32 flags);
-void *fn_80035D9C();
-void fn_80035E60(void *config, BOOL enable);
-void fn_80035E70(void *config, u32 mode);
-void *fn_803DA26C(u32 heapId);
-void fn_803DEEA4();
-void *fn_803DECFC(const void *template_, u32 *flags, u32 count);
-void fn_803DED78(void *msgManager);
-BattleMsgSource *fn_803DEDB0(void *msgManager);
-BOOL fn_803DEDC0(void *msgManager);
-s32 fn_803DEE9C(void *msgManager);
-void fn_803DEF70();
-const u16 *fn_803DF418(void *strbuf);
-s32 fn_803DF274(void *strbuf);
-u32 fn_803ACA60(BattleMsgSource *source);
-u32 fn_803ACA68(BattleMsgSource *source);
-void fn_803AF38C(BattleMsgSource *source, BattleMsg *msg, u32 param);
+void fn_8016E70C(Unk806405F4 *params);
+void fn_8016ECC0(Unk806405F4 *params);
+void fn_8016EEC8(Unk806405F4 *params);
+void *fn_8016F0F4(void *archive, u32 narcId, u32 memberIndex, u32 *size);
+void fn_8016FA4C(u32 command, Unk8048CDE8 *args);
+void fn_8017CC8C(u32 battleType);
+Unk80035CB0 *fn_80035D9C();
+void fn_80035E60(Unk80035CB0 *config, u32 enable);
+void fn_80035E70(Unk80035CB0 *config, u32 mode);
+void *fn_803ACA60(BattleSystem *battleSys);
+void *fn_803ACA68(BattleSystem *battleSys);
+void fn_803AF38C(BattleSystem *battleSys, BattleMessage *battleMsg, void *msgLoader);
 s32 fn_803AC830();
 u32 fn_803AB534();
 
-// Item data file reader (one getter per field)
-u16 fn_8038FD44(void *file, u32 item);
-u8 fn_8038FD78(void *file, u32 item);
-u8 fn_8038FDAC(void *file, u32 item);
-u8 fn_8038FDE0(void *file, u32 item);
-u8 fn_8038FE14(void *file, u32 item);
-u8 fn_8038FE48(void *file, u32 item);
-u8 fn_8038FE7C(void *file, u32 item);
-u8 fn_8038FEB0(void *file, u32 item);
-u8 fn_8038FEE8(void *file, u32 item);
-u8 fn_8038FF20(void *file, u32 item);
-u8 fn_8038FF58(void *file, u32 item);
-u8 fn_8038FF90(void *file, u32 item);
-u8 fn_8038FFC8(void *file, u32 item);
-u8 fn_8038FFFC(void *file, u32 item);
-u8 fn_80390030(void *file, u32 item);
-u8 fn_80390064(void *file, u32 item);
-u8 fn_80390098(void *file, u32 item, s32 index);
+u16 fn_8038FD44(u8 **file, s32 item);
+u8 fn_8038FD78(u8 **file, s32 item);
+u8 fn_8038FDAC(u8 **file, s32 item);
+u8 fn_8038FDE0(u8 **file, s32 item);
+u8 fn_8038FE14(u8 **file, s32 item);
+u8 fn_8038FE48(u8 **file, s32 item);
+u8 fn_8038FE7C(u8 **file, s32 item);
+u32 fn_8038FEB0(u8 **file, s32 item);
+u32 fn_8038FEE8(u8 **file, s32 item);
+u32 fn_8038FF20(u8 **file, s32 item);
+u32 fn_8038FF58(u8 **file, s32 item);
+u32 fn_8038FF90(u8 **file, s32 item);
+u8 fn_8038FFC8(u8 **file, s32 item);
+u8 fn_8038FFFC(u8 **file, s32 item);
+u8 fn_80390030(u8 **file, s32 item);
+u8 fn_80390064(u8 **file, s32 item);
+u8 fn_80390098(u8 **file, s32 item, u32 index);
+
+extern void *lbl_8063F1D8;
+extern ItemData *gItemTable;
+extern u32 gLCRNGState;
+// TODO Counts the calls to LCRNG_Next; nothing decompiled reads it yet.
+extern u32 lbl_806405E4;
+extern Unk8063CE34 lbl_8063CE34;
+extern Unk8048CE28 lbl_8048CE28;
+extern Unk8048CDE8 lbl_8048CDE8;
 }
 
-// TODO Owned by units that are not decompiled yet
-extern "C" {
-extern void *lbl_8063F1D8;      // DS archive handle
-extern u8 lbl_8063CE34[];       // item data file
-extern MsgWindow lbl_8048CE28;  // message window
-extern MsgRequest lbl_8048CDE8; // pending message request
-}
+/* lbl_80405B38 */ static const u16 sMailItemIDs[NUM_MAIL_ITEMS] = {
+    137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148};
 
-/* lbl_80405B38 */ extern const u16 gMailItems[ITEM_MAIL_COUNT];
-/* lbl_80405B50 */ extern const u16 gBerryItems[ITEM_BERRY_COUNT];
-/* lbl_80405BD0 */ extern const u8 gDSMsgTemplate[];
+/* lbl_80405B50 */ static const u16 sBerryItemIDs[NUM_BERRY_ITEMS] = {
+    149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 161, 162, 163, 164, 165, 166, 167, 168, 169, 170,
+    171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192,
+    193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206, 207, 208, 209, 210, 211, 212,
+};
 
-/* lbl_806405D8 */ ItemData *gItemTable;
-/* lbl_806405E0 */ u32 gDSRandSeed;
-/* lbl_806405E4 */ u32 gDSRandCount;
-/* lbl_806405F0 */ DSRandState *gDSRandState;
-/* lbl_806405F4 */ DSSystem *gDSSystem;
-/* lbl_806405F8 */ void *gDSUserData;
+static BOOL fn_803D9CE4(ApplicationManager *appMan, s32 *state);
+static BOOL fn_803D9CEC(ApplicationManager *appMan, s32 *state);
+static BOOL fn_803D9D14(ApplicationManager *appMan, s32 *state);
 
-u32 Item_LoadParam(u16 item, u32 param, u32 heapId) {
+/* lbl_80405BD0 */ static const ApplicationManagerTemplate sBattleAppTemplate = {
+    fn_803D9CE4,
+    fn_803D9CEC,
+    fn_803D9D14,
+    FS_OVERLAY_ID_NONE,
+};
+
+/* lbl_806405F0 */ static Unk806405F0 *sUnk806405F0;
+/* lbl_806405F4 */ static Unk806405F4 *sUnk806405F4;
+/* lbl_806405F8 */ static void *sUnk806405F8;
+
+s32 Item_LoadParam(u16 item, ItemDataParam param, u32 heapId) {
     if (gItemTable == NULL) {
         return 0;
     }
-    return ItemData_GetParam(&gItemTable[item], param);
+    return Item_Get(&gItemTable[item], param);
 }
 
-static inline s32 ItemPartyParam_Get(ItemPartyParam *param, u32 which) {
-    switch (which) {
-        case ITEM_PARAM_SLP_HEAL:             return param->slpHeal;
-        case ITEM_PARAM_PSN_HEAL:             return param->psnHeal;
-        case ITEM_PARAM_BRN_HEAL:             return param->brnHeal;
-        case ITEM_PARAM_FRZ_HEAL:             return param->frzHeal;
-        case ITEM_PARAM_PRZ_HEAL:             return param->przHeal;
-        case ITEM_PARAM_CFS_HEAL:             return param->cfsHeal;
-        case ITEM_PARAM_INFATUATION_HEAL:     return param->infatuationHeal;
-        case ITEM_PARAM_GUARD_SPEC:           return param->guardSpec;
-        case ITEM_PARAM_REVIVE:               return param->revive;
-        case ITEM_PARAM_REVIVE_ALL:           return param->reviveAll;
-        case ITEM_PARAM_LEVEL_UP:             return param->levelUp;
-        case ITEM_PARAM_EVOLVE:               return param->evolve;
-        case ITEM_PARAM_ATK_STAGES:           return param->atkStages;
-        case ITEM_PARAM_DEF_STAGES:           return param->defStages;
-        case ITEM_PARAM_SPATK_STAGES:         return param->spatkStages;
-        case ITEM_PARAM_SPDEF_STAGES:         return param->spdefStages;
-        case ITEM_PARAM_SPEED_STAGES:         return param->speedStages;
-        case ITEM_PARAM_ACC_STAGES:           return param->accStages;
-        case ITEM_PARAM_CRIT_STAGES:          return param->critStages;
-        case ITEM_PARAM_PP_UP:                return param->ppUp;
-        case ITEM_PARAM_PP_MAX:               return param->ppMax;
-        case ITEM_PARAM_PP_RESTORE:           return param->ppRestore;
-        case ITEM_PARAM_PP_RESTORE_ALL:       return param->ppRestoreAll;
-        case ITEM_PARAM_HP_RESTORE:           return param->hpRestore;
-        case ITEM_PARAM_HP_EV_UP:             return param->hpEvUp;
-        case ITEM_PARAM_ATK_EV_UP:            return param->atkEvUp;
-        case ITEM_PARAM_DEF_EV_UP:            return param->defEvUp;
-        case ITEM_PARAM_SPEED_EV_UP:          return param->speedEvUp;
-        case ITEM_PARAM_SPATK_EV_UP:          return param->spatkEvUp;
-        case ITEM_PARAM_SPDEF_EV_UP:          return param->spdefEvUp;
-        case ITEM_PARAM_FRIENDSHIP_LO:        return param->friendshipLo;
-        case ITEM_PARAM_FRIENDSHIP_MED:       return param->friendshipMed;
-        case ITEM_PARAM_FRIENDSHIP_HI:        return param->friendshipHi;
-        case ITEM_PARAM_HP_EV:                return param->hpEv;
-        case ITEM_PARAM_ATK_EV:               return param->atkEv;
-        case ITEM_PARAM_DEF_EV:               return param->defEv;
-        case ITEM_PARAM_SPEED_EV:             return param->speedEv;
-        case ITEM_PARAM_SPATK_EV:             return param->spatkEv;
-        case ITEM_PARAM_SPDEF_EV:             return param->spdefEv;
-        case ITEM_PARAM_HP_RESTORE_AMOUNT:    return param->hpRestoreAmount;
-        case ITEM_PARAM_PP_RESTORE_AMOUNT:    return param->ppRestoreAmount;
-        case ITEM_PARAM_FRIENDSHIP_LO_AMOUNT: return param->friendshipLoAmount;
-        case ITEM_PARAM_FRIENDSHIP_MED_AMOUNT: return param->friendshipMedAmount;
-        case ITEM_PARAM_FRIENDSHIP_HI_AMOUNT: return param->friendshipHiAmount;
+static inline s32 ItemPartyParam_Get(ItemPartyParam *partyParam, ItemDataParam param) {
+    switch (param) {
+        case ITEM_PARAM_HEAL_SLEEP:           return partyParam->healSleep;
+        case ITEM_PARAM_HEAL_POISON:          return partyParam->healPoison;
+        case ITEM_PARAM_HEAL_BURN:            return partyParam->healBurn;
+        case ITEM_PARAM_HEAL_FREEZE:          return partyParam->healFreeze;
+        case ITEM_PARAM_HEAL_PARALYSIS:       return partyParam->healParalysis;
+        case ITEM_PARAM_HEAL_CONFUSION:       return partyParam->healConfusion;
+        case ITEM_PARAM_HEAL_ATTRACT:         return partyParam->healAttract;
+        case ITEM_PARAM_GUARD_SPEC:           return partyParam->guardSpec;
+        case ITEM_PARAM_REVIVE:               return partyParam->revive;
+        case ITEM_PARAM_REVIVE_ALL:           return partyParam->reviveAll;
+        case ITEM_PARAM_LEVEL_UP:             return partyParam->levelUp;
+        case ITEM_PARAM_EVOLVE:               return partyParam->evolve;
+        case ITEM_PARAM_ATK_STAGES:           return partyParam->atkStages;
+        case ITEM_PARAM_DEF_STAGES:           return partyParam->defStages;
+        case ITEM_PARAM_SPATK_STAGES:         return partyParam->spatkStages;
+        case ITEM_PARAM_SPDEF_STAGES:         return partyParam->spdefStages;
+        case ITEM_PARAM_SPEED_STAGES:         return partyParam->speedStages;
+        case ITEM_PARAM_ACC_STAGES:           return partyParam->accStages;
+        case ITEM_PARAM_CRIT_STAGES:          return partyParam->critStages;
+        case ITEM_PARAM_PP_UP:                return partyParam->ppUp;
+        case ITEM_PARAM_PP_MAX:               return partyParam->ppMax;
+        case ITEM_PARAM_PP_RESTORE:           return partyParam->ppRestore;
+        case ITEM_PARAM_PP_RESTORE_ALL:       return partyParam->ppRestoreAll;
+        case ITEM_PARAM_HP_RESTORE:           return partyParam->hpRestore;
+        case ITEM_PARAM_GIVE_HP_EVS:          return partyParam->giveHPEVs;
+        case ITEM_PARAM_GIVE_ATK_EVS:         return partyParam->giveAtkEVs;
+        case ITEM_PARAM_GIVE_DEF_EVS:         return partyParam->giveDefEVs;
+        case ITEM_PARAM_GIVE_SPEED_EVS:       return partyParam->giveSpeedEVs;
+        case ITEM_PARAM_GIVE_SPATK_EVS:       return partyParam->giveSpAtkEVs;
+        case ITEM_PARAM_GIVE_SPDEF_EVS:       return partyParam->giveSpDefEVs;
+        case ITEM_PARAM_GIVE_FRIENDSHIP_LOW:  return partyParam->giveFriendshipLow;
+        case ITEM_PARAM_GIVE_FRIENDSHIP_MED:  return partyParam->giveFriendshipMed;
+        case ITEM_PARAM_GIVE_FRIENDSHIP_HIGH: return partyParam->giveFriendshipHigh;
+        case ITEM_PARAM_HP_EVS:               return partyParam->hpEVs;
+        case ITEM_PARAM_ATK_EVS:              return partyParam->atkEVs;
+        case ITEM_PARAM_DEF_EVS:              return partyParam->defEVs;
+        case ITEM_PARAM_SPEED_EVS:            return partyParam->speedEVs;
+        case ITEM_PARAM_SPATK_EVS:            return partyParam->spatkEVs;
+        case ITEM_PARAM_SPDEF_EVS:            return partyParam->spdefEVs;
+        case ITEM_PARAM_HP_RESTORED:          return partyParam->hpRestored;
+        case ITEM_PARAM_PP_RESTORED:          return partyParam->ppRestored;
+        case ITEM_PARAM_FRIENDSHIP_LOW:       return partyParam->friendshipLow;
+        case ITEM_PARAM_FRIENDSHIP_MED:       return partyParam->friendshipMed;
+        case ITEM_PARAM_FRIENDSHIP_HIGH:      return partyParam->friendshipHigh;
     }
     return 0;
 }
 
-s32 ItemData_GetParam(ItemData *item, u32 param) {
+s32 Item_Get(ItemData *itemData, ItemDataParam param) {
     switch (param) {
-        case ITEM_PARAM_PRICE:              return item->price;
-        case ITEM_PARAM_HOLD_EFFECT:        return item->holdEffect;
-        case ITEM_PARAM_HOLD_EFFECT_PARAM:  return item->holdEffectParam;
-        case ITEM_PARAM_PREVENT_TOSS:       return item->preventToss;
-        case ITEM_PARAM_IS_SELECTABLE:      return item->isSelectable;
-        case ITEM_PARAM_FIELD_POCKET:       return item->fieldPocket;
-        case ITEM_PARAM_FIELD_USE_FUNC:     return item->fieldUseFunc;
-        case ITEM_PARAM_BATTLE_USE_FUNC:    return item->battleUseFunc;
-        case ITEM_PARAM_PLUCK_EFFECT:       return item->pluckEffect;
-        case ITEM_PARAM_FLING_EFFECT:       return item->flingEffect;
-        case ITEM_PARAM_FLING_POWER:        return item->flingPower;
-        case ITEM_PARAM_NATURAL_GIFT_POWER: return item->naturalGiftPower;
-        case ITEM_PARAM_NATURAL_GIFT_TYPE:  return item->naturalGiftType;
-        case ITEM_PARAM_BATTLE_POCKET:      return item->battlePocket;
-        case ITEM_PARAM_PARTY_USE:          return item->partyUse;
+        case ITEM_PARAM_PRICE:               return itemData->price;
+        case ITEM_PARAM_HOLD_EFFECT:         return itemData->holdEffect;
+        case ITEM_PARAM_EFFECT_PARAM:        return itemData->effectParam;
+        case ITEM_PARAM_PREVENT_TOSS:        return itemData->preventToss;
+        case ITEM_PARAM_CAN_REGISTER:        return itemData->canRegister;
+        case ITEM_PARAM_FIELD_POCKET:        return itemData->fieldPocket;
+        case ITEM_PARAM_FIELD_USE_FUNC:      return itemData->fieldUseFunc;
+        case ITEM_PARAM_BATTLE_USE_CATEGORY: return itemData->battleUseCategory;
+        case ITEM_PARAM_PLUCK_EFFECT:        return itemData->pluckEffect;
+        case ITEM_PARAM_FLING_EFFECT:        return itemData->flingEffect;
+        case ITEM_PARAM_FLING_POWER:         return itemData->flingPower;
+        case ITEM_PARAM_NATURAL_GIFT_POWER:  return itemData->naturalGiftPower;
+        case ITEM_PARAM_NATURAL_GIFT_TYPE:   return itemData->naturalGiftType;
+        case ITEM_PARAM_BATTLE_POCKET:       return itemData->battlePocket;
+        case ITEM_PARAM_PARTY_USE:           return itemData->partyUse;
         default:
-            switch (item->partyUse) {
-                case 0: return item->partyUseParamRaw[0];
-                case 1: return ItemPartyParam_Get(&item->partyUseParam, param);
+            switch (itemData->partyUse) {
+                case 0: return itemData->partyUseParamBytes[0];
+                case 1: return ItemPartyParam_Get(&itemData->partyUseParam, param);
             }
     }
     return 0;
 }
 
-BOOL Item_IsMail(u16 item) {
-    for (int i = 0; i < ITEM_MAIL_COUNT; i++) {
-        if (item == gMailItems[i]) {
+u8 Item_IsMail(u16 item) {
+    for (int i = 0; i < NUM_MAIL_ITEMS; i++) {
+        if (item == sMailItemIDs[i]) {
             return TRUE;
         }
     }
     return FALSE;
 }
 
-BOOL Item_IsBerry(u16 item) {
-    for (int i = 0; i < ITEM_BERRY_COUNT; i++) {
-        if (item == gBerryItems[i]) {
+u8 Item_IsBerry(u16 item) {
+    for (int i = 0; i < NUM_BERRY_ITEMS; i++) {
+        if (item == sBerryItemIDs[i]) {
             return TRUE;
         }
     }
     return FALSE;
 }
 
-ItemData *Item_LoadTable(u32 heapId) {
-    ItemData *item;
+// Unlike the DS version, the table is filled from the item data file field by field.
+ItemData *ItemTable_Load(u32 heapId) {
+    ItemData *itemData;
     s32 i;
     s32 j;
-    ItemData *table = (ItemData *)Narc_AllocReadFromMember(NARC_ITEM_DATA, 0, heapId, 0, ITEM_COUNT * sizeof(ItemData));
-    gItemTable = table;
+    ItemData *itemTable = (ItemData *)
+        NARC_AllocAndReadFromMemberByIndexPair(NARC_INDEX_ITEM_DATA, 0, heapId, 0, NUM_ITEMS * sizeof(ItemData));
+    gItemTable = itemTable;
 
-    for (i = 0; i < ITEM_COUNT; i++) {
-        item = &table[i];
-        item->price = fn_8038FD44(lbl_8063CE34 + 0xC, i);
-        item->holdEffect = fn_8038FD78(lbl_8063CE34 + 0xC, i);
-        item->holdEffectParam = fn_8038FDAC(lbl_8063CE34 + 0xC, i);
-        item->pluckEffect = fn_8038FDE0(lbl_8063CE34 + 0xC, i);
-        item->flingEffect = fn_8038FE14(lbl_8063CE34 + 0xC, i);
-        item->flingPower = fn_8038FE48(lbl_8063CE34 + 0xC, i);
-        item->naturalGiftPower = fn_8038FE7C(lbl_8063CE34 + 0xC, i);
-        item->naturalGiftType = fn_8038FEB0(lbl_8063CE34 + 0xC, i);
-        item->preventToss = fn_8038FEE8(lbl_8063CE34 + 0xC, i);
-        item->isSelectable = fn_8038FF20(lbl_8063CE34 + 0xC, i);
-        item->fieldPocket = fn_8038FF58(lbl_8063CE34 + 0xC, i);
-        item->battlePocket = fn_8038FF90(lbl_8063CE34 + 0xC, i);
-        item->fieldUseFunc = fn_8038FFC8(lbl_8063CE34 + 0xC, i);
-        item->battleUseFunc = fn_8038FFFC(lbl_8063CE34 + 0xC, i);
-        item->partyUse = fn_80390030(lbl_8063CE34 + 0xC, i);
-        item->padding = fn_80390064(lbl_8063CE34 + 0xC, i);
+    for (i = 0; i < NUM_ITEMS; i++) {
+        itemData = &itemTable[i];
+        itemData->price = fn_8038FD44(&lbl_8063CE34.itemData, i);
+        itemData->holdEffect = fn_8038FD78(&lbl_8063CE34.itemData, i);
+        itemData->effectParam = fn_8038FDAC(&lbl_8063CE34.itemData, i);
+        itemData->pluckEffect = fn_8038FDE0(&lbl_8063CE34.itemData, i);
+        itemData->flingEffect = fn_8038FE14(&lbl_8063CE34.itemData, i);
+        itemData->flingPower = fn_8038FE48(&lbl_8063CE34.itemData, i);
+        itemData->naturalGiftPower = fn_8038FE7C(&lbl_8063CE34.itemData, i);
+        itemData->naturalGiftType = fn_8038FEB0(&lbl_8063CE34.itemData, i);
+        itemData->preventToss = fn_8038FEE8(&lbl_8063CE34.itemData, i);
+        itemData->canRegister = fn_8038FF20(&lbl_8063CE34.itemData, i);
+        itemData->fieldPocket = fn_8038FF58(&lbl_8063CE34.itemData, i);
+        itemData->battlePocket = fn_8038FF90(&lbl_8063CE34.itemData, i);
+        itemData->fieldUseFunc = fn_8038FFC8(&lbl_8063CE34.itemData, i);
+        itemData->battleUseCategory = fn_8038FFFC(&lbl_8063CE34.itemData, i);
+        itemData->partyUse = fn_80390030(&lbl_8063CE34.itemData, i);
+        itemData->padding_0D = fn_80390064(&lbl_8063CE34.itemData, i);
 
-        for (j = 0; j < ITEM_PARTY_PARAM_COUNT; j++) {
-            item->partyUseParamRaw[j] = fn_80390098(lbl_8063CE34 + 0xC, i, j);
+        for (j = 0; j < ITEM_PARTY_PARAM_SIZE; j++) {
+            itemData->partyUseParamBytes[j] = fn_80390098(&lbl_8063CE34.itemData, i, j);
         }
     }
 
-    return table;
+    return itemTable;
 }
 
-ItemData *ItemTable_GetEntry(ItemData *table, u16 index) {
-    return &table[index];
+ItemData *ItemTable_Index(ItemData *itemTable, u16 index) {
+    return &itemTable[index];
 }
 
-// TODO name: allocates and clears a 0x774-byte work area
-void *fn_803D9778(u32 heapId) {
-    void *work = fn_8016DF70(heapId, 0x774);
-    memset(work, 0, 0x774);
-    return work;
+Bag *Bag_New(u32 heapId) {
+    Bag *bag = (Bag *)fn_8016DF70(heapId, sizeof(Bag));
+    memset(bag, 0, sizeof(Bag));
+    return bag;
 }
 
-u16 DS_Rand() {
-    gDSRandSeed = gDSRandSeed * 0x41C64E6D + 0x6073;
-    gDSRandCount++;
-    return gDSRandSeed >> 16;
+u16 LCRNG_Next() {
+    gLCRNGState = gLCRNGState * 1103515245 + 24691;
+    lbl_806405E4++;
+    return gLCRNGState >> 16;
 }
 
-// DS hardware and system calls stubbed out on the Wii
-BOOL fn_803D97E4(void *, u16) { return TRUE; }
-BOOL fn_803D97EC() { return FALSE; }
+BOOL fn_803D97E4(void *, u16) {
+    return TRUE;
+}
+
+BOOL fn_803D97EC() {
+    return FALSE;
+}
+
 void fn_803D97F4() {}
-void fn_803D97F8() {}
-s32 fn_803D97FC(u32, u32) { return FALSE; }
-void fn_803D9804(u32) {}
-void fn_803D9808(void *) {}
-void fn_803D980C(void *) {}
-BOOL fn_803D9810() { return FALSE; }
-BOOL fn_803D9818() { return TRUE; }
-BOOL fn_803D9820() { return TRUE; }
-BOOL fn_803D9828() { return FALSE; }
-void fn_803D9830() {}
-void fn_803D9834() {}
-void fn_803D9838() {}
-BOOL fn_803D983C() { return FALSE; }
-void fn_803D9844(u32) {}
-u8 fn_803D9848(u32, u32) { return FALSE; }
-void fn_803D9850(void *) {}
-void fn_803D9854() {}
-void fn_803D9858() {}
-BOOL fn_803D985C() { return FALSE; }
-BOOL fn_803D9864() { return TRUE; }
-void fn_803D986C() {}
-BOOL fn_803D9870() { return FALSE; }
 
-// Scales value / max to a 0..scale range, never rounding a non-zero value down to 0
-u8 fn_803D9878(s16 value, s16 max, s32 scale) {
-    u8 result = value * scale / max;
-    if (result == 0 && value > 0) {
-        result = 1;
-    }
-    return result;
+void fn_803D97F8() {}
+
+s32 fn_803D97FC(u32, u32) {
+    return FALSE;
 }
 
-// Debug print, compiled out
+void fn_803D9804(u32) {}
+
+void fn_803D9808(void *) {}
+
+void fn_803D980C(void *) {}
+
+BOOL fn_803D9810() {
+    return FALSE;
+}
+
+BOOL fn_803D9818() {
+    return TRUE;
+}
+
+BOOL fn_803D9820() {
+    return TRUE;
+}
+
+BOOL fn_803D9828() {
+    return FALSE;
+}
+
+void fn_803D9830() {}
+
+void fn_803D9834() {}
+
+void fn_803D9838() {}
+
+BOOL fn_803D983C() {
+    return FALSE;
+}
+
+void fn_803D9844(u32) {}
+
+u8 fn_803D9848(u32, u32) {
+    return FALSE;
+}
+
+void fn_803D9850(void *) {}
+
+void fn_803D9854() {}
+
+void fn_803D9858() {}
+
+BOOL fn_803D985C() {
+    return FALSE;
+}
+
+BOOL fn_803D9864() {
+    return TRUE;
+}
+
+void fn_803D986C() {}
+
+BOOL fn_803D9870() {
+    return FALSE;
+}
+
+u8 App_PixelCount(s16 cur, s16 max, s32 maxPixels) {
+    u8 pixels = cur * maxPixels / max;
+    if (pixels == 0 && cur > 0) {
+        pixels = 1;
+    }
+    return pixels;
+}
+
+// TODO Assertion with a printf-style message, compiled out in this build.
 void fn_803D989C(BOOL cond, const char *fmt, ...) {
     if (!cond) {
         va_list args;
@@ -271,176 +323,174 @@ void fn_803D989C(BOOL cond, const char *fmt, ...) {
     }
 }
 
-// TODO Callers disagree on the signature; kept under its address name
-extern "C" BOOL fn_803D990C(void *dst, u32 narcId, u32 memberId) {
+// Returns TRUE when the member could not be read.
+BOOL NARC_ReadWholeMemberByIndexPair(void *dest, u32 narcId, u32 memberIndex) {
     u32 size;
-    void *src = fn_8016F0F4(lbl_8063F1D8, narcId, memberId, &size);
+    void *src = fn_8016F0F4(lbl_8063F1D8, narcId, memberIndex, &size);
     if (src == NULL) {
         return TRUE;
     }
-    memcpy(dst, src, size);
+    memcpy(dest, src, size);
     return FALSE;
 }
 
-void Narc_ReadFromMember(void *dst, u32 narcId, u32 memberId, u32 offset, u32 size) {
-    u32 memberSize;
-    u8 *src = (u8 *)fn_8016F0F4(lbl_8063F1D8, narcId, memberId, &memberSize);
+void NARC_ReadFromMemberByIndexPair(void *dest, u32 narcId, u32 memberIndex, u32 offset, u32 bytesToRead) {
+    u32 size;
+    u8 *src = (u8 *)fn_8016F0F4(lbl_8063F1D8, narcId, memberIndex, &size);
     if (src != NULL) {
-        memcpy(dst, src + offset, size);
+        memcpy(dest, src + offset, bytesToRead);
     }
 }
 
-void *Narc_AllocReadFromMember(u32 narcId, u32 memberId, u32 heapId, u32 offset, u32 size) {
-    void *dst = fn_8016DF70(heapId, size);
-    u32 memberSize;
-    u8 *src = (u8 *)fn_8016F0F4(lbl_8063F1D8, narcId, memberId, &memberSize);
+void *NARC_AllocAndReadFromMemberByIndexPair(u32 narcId, u32 memberIndex, u32 heapId, u32 offset, u32 bytesToRead) {
+    void *dest = fn_8016DF70(heapId, bytesToRead);
+    u32 size;
+    u8 *src = (u8 *)fn_8016F0F4(lbl_8063F1D8, narcId, memberIndex, &size);
     if (src != NULL) {
-        memcpy(dst, src + offset, size);
+        memcpy(dest, src + offset, bytesToRead);
     }
-    return dst;
+    return dest;
 }
 
-// Queues a string for the message window
-s32 fn_803D9A44(void *strbuf, void *param) {
+// TODO Sends a string to the Wii message window when a command is pending.
+s32 fn_803D9A44(Strbuf *str, void *param) {
     fn_8016E2DC();
-    if (lbl_8048CE28.mPending != NULL) {
-        lbl_8048CDE8.mText = fn_803DF418(strbuf);
-        lbl_8048CDE8.mSize = (fn_803DF274(strbuf) + 1) * sizeof(u16);
-        lbl_8048CDE8.mFlags = 0;
-        lbl_8048CDE8.mParam = param;
-        lbl_8048CDE8.mColor = lbl_8048CE28.mColor;
-        lbl_8048CDE8.mFont = lbl_8048CE28.mFont;
-        fn_8016FA4C(lbl_8048CE28.mPending, &lbl_8048CDE8);
-        lbl_8048CE28.mPending = NULL;
-        lbl_8048CE28.mColor = 0xFF;
+    if (lbl_8048CE28.pendingCommand != 0) {
+        lbl_8048CDE8.text = Strbuf_GetData(str);
+        lbl_8048CDE8.size = (Strbuf_Length(str) + 1) * sizeof(u16);
+        lbl_8048CDE8._08 = 0;
+        lbl_8048CDE8.param = param;
+        lbl_8048CDE8._10 = lbl_8048CE28._0C;
+        lbl_8048CDE8._14 = lbl_8048CE28._18;
+        fn_8016FA4C(lbl_8048CE28.pendingCommand, &lbl_8048CDE8);
+        lbl_8048CE28.pendingCommand = 0;
+        lbl_8048CE28._0C = 0xFF;
     }
     return 0;
 }
 
-// Builds the text of a battle message, returns it and its size in bytes
+// TODO Formats a battle message into the battle system's buffer and returns its text and size in bytes.
+// The call to fn_803D9E48 below is not inlined in the original.
 #pragma dont_inline on
-const u16 *fn_803D9AEC(BattleMsg *msg, u32 *size) {
+const u16 *fn_803D9AEC(BattleMessage *battleMsg, u32 *size) {
     const u16 *text;
-    u32 param;
-    BattleMsgSource *source;
+    void *msgLoader;
+    BattleSystem *battleSys;
 
-    source = fn_803DEDB0(DSSystem_GetMsgManager());
-    switch (msg->mType) {
-        case 0x14:
-            param = fn_803ACA68(source);
-            break;
+    battleSys = (BattleSystem *)ApplicationManager_Data(fn_803D9E48());
+    switch (battleMsg->commandCode) {
+        case 0x14: msgLoader = fn_803ACA68(battleSys); break;
         case 0x15:
-        case 0x25:
-            param = fn_803ACA60(source);
-            break;
-        default:
-            param = fn_803ACA60(source);
-            break;
+        case 0x25: msgLoader = fn_803ACA60(battleSys); break;
+        default:   msgLoader = fn_803ACA60(battleSys); break;
     }
-    fn_803AF38C(source, msg, param);
+    fn_803AF38C(battleSys, battleMsg, msgLoader);
 
-    text = fn_803DF418(source->mStrbuf);
-    *size = (fn_803DF274(source->mStrbuf) + 1) * sizeof(u16);
+    text = Strbuf_GetData(battleSys->msgBuffer);
+    *size = (Strbuf_Length(battleSys->msgBuffer) + 1) * sizeof(u16);
     return text;
 }
 #pragma dont_inline reset
 
-void *DSSystem_GetUserData() {
-    return gDSUserData;
+// TODO Accessors of a pointer set by the Wii battle code.
+void *fn_803D9BAC() {
+    return sUnk806405F8;
 }
 
-void DSSystem_SetUserData(void *data) {
-    gDSUserData = data;
+void fn_803D9BB4(void *data) {
+    sUnk806405F8 = data;
 }
 
-void DSRand_Create() {
-    gDSRandState = new DSRandState;
-    memset(gDSRandState, 0, sizeof(DSRandState));
-    gDSRandState->mSeedA = -1;
-    gDSRandState->mCountA = 0;
-    gDSRandState->mSeedB = -1;
-    gDSRandState->mCountB = 0;
+void fn_803D9BBC() {
+    sUnk806405F0 = new Unk806405F0;
+    memset(sUnk806405F0, 0, sizeof(Unk806405F0));
+    sUnk806405F0->_00 = -1;
+    sUnk806405F0->_04 = 0;
+    sUnk806405F0->_08 = -1;
+    sUnk806405F0->_0C = 0;
 }
 
-DSSystem *DSSystem_Create() {
-    gDSSystem = new DSSystem;
-    memset(gDSSystem, 0, sizeof(DSSystem));
-    gDSSystem->mHeap = fn_803DA26C(0);
-    fn_8016E70C(gDSSystem);
+// TODO Allocates the parameters of the DS battle and lets the Wii side fill them.
+Unk806405F4 *fn_803D9C18() {
+    sUnk806405F4 = new Unk806405F4;
+    memset(sUnk806405F4, 0, sizeof(Unk806405F4));
+    sUnk806405F4->mon = Pokemon_New(0);
+    fn_8016E70C(sUnk806405F4);
 
-    void *config = fn_80035D9C();
-    if (gDSSystem->mFlags & 2) {
+    Unk80035CB0 *config = fn_80035D9C();
+    if (sUnk806405F4->battleType & BATTLE_TYPE_DOUBLES) {
         fn_80035E60(config, TRUE);
     } else {
         fn_80035E60(config, FALSE);
     }
-    if (gDSSystem->mFlags & 8) {
+    if (sUnk806405F4->battleType & BATTLE_TYPE_2vs2) {
         fn_80035E70(config, 3);
     } else {
         fn_80035E70(config, 2);
     }
 
-    fn_8016ECC0(gDSSystem);
-    fn_8016EEC8(gDSSystem);
-    fn_8017CC8C(gDSSystem->mFlags);
-    return gDSSystem;
+    fn_8016ECC0(sUnk806405F4);
+    fn_8016EEC8(sUnk806405F4);
+    fn_8017CC8C(sUnk806405F4->battleType);
+    return sUnk806405F4;
 }
 
-BOOL fn_803D9CE4() {
+static BOOL fn_803D9CE4(ApplicationManager *appMan, s32 *state) {
     return TRUE;
 }
 
-BOOL fn_803D9CEC() {
+static BOOL fn_803D9CEC(ApplicationManager *appMan, s32 *state) {
     return fn_803AB534() != 0;
 }
 
-BOOL fn_803D9D14() {
+static BOOL fn_803D9D14(ApplicationManager *appMan, s32 *state) {
     return TRUE;
 }
 
-u32 DSSystem_Init() {
-    DSRand_Create();
+// TODO Starts the DS battle application; returns the battle type.
+u32 fn_803D9D1C() {
+    fn_803D9BBC();
     fn_803DEEA4();
-    DSSystem_Create();
-    *gDSSystem->mFlagsOut = gDSSystem->mFlags;
-    gDSSystem->mMsgManager = fn_803DECFC(gDSMsgTemplate, gDSSystem->mFlagsOut, 0x1B);
-    return gDSSystem->mFlags;
+    fn_803D9C18();
+    sUnk806405F4->dto->battleType = sUnk806405F4->battleType;
+    sUnk806405F4->appMan = ApplicationManager_New(&sBattleAppTemplate, sUnk806405F4->dto, 0x1B);
+    return sUnk806405F4->battleType;
 }
 
-void DSSystem_Exit() {
-    if (gDSSystem->mMsgManager != NULL) {
-        fn_803DED78(gDSSystem->mMsgManager);
-        gDSSystem->mMsgManager = NULL;
+void fn_803D9D7C() {
+    if (sUnk806405F4->appMan != NULL) {
+        ApplicationManager_Free(sUnk806405F4->appMan);
+        sUnk806405F4->appMan = NULL;
     }
-    if (gDSSystem->mHeap != NULL) {
-        fn_8016E0A0(gDSSystem->mHeap);
-        gDSSystem->mHeap = NULL;
+    if (sUnk806405F4->mon != NULL) {
+        fn_8016E0A0(sUnk806405F4->mon);
+        sUnk806405F4->mon = NULL;
     }
-    if (gDSRandState != NULL) {
-        delete gDSRandState;
-        gDSRandState = NULL;
+    if (sUnk806405F0 != NULL) {
+        delete sUnk806405F0;
+        sUnk806405F0 = NULL;
     }
-    if (gDSSystem != NULL) {
-        delete gDSSystem;
-        gDSSystem = NULL;
+    if (sUnk806405F4 != NULL) {
+        delete sUnk806405F4;
+        sUnk806405F4 = NULL;
     }
 }
 
+// TODO Runs one frame of the DS battle application; returns TRUE once it has exited.
 BOOL fn_803D9E08() {
-    if (fn_803DEDC0(gDSSystem->mMsgManager)) {
+    if (ApplicationManager_Exec(sUnk806405F4->appMan)) {
         return TRUE;
     }
     fn_803DEF70();
     return FALSE;
 }
 
-void *DSSystem_GetMsgManager() {
-    return gDSSystem->mMsgManager;
+ApplicationManager *fn_803D9E48() {
+    return sUnk806405F4->appMan;
 }
 
-// TODO role not established: compares the battle message manager state against a constant 8
 BOOL fn_803D9E54() {
-    s32 a = fn_803DEE9C(gDSSystem->mMsgManager);
-    s32 b = fn_803AC830();
-    return a > b;
+    s32 procState = fn_803DEE9C(sUnk806405F4->appMan);
+    s32 limit = fn_803AC830();
+    return procState > limit;
 }

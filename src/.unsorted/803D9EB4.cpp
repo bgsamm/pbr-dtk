@@ -23,13 +23,6 @@ typedef struct BoxPokemon {
     u8 data[0x80];
 } BoxPokemon;
 
-typedef struct Strbuf {
-    u16 maxSize;
-    u16 size;
-    u32 integrity;
-    u16 data[1];
-} Strbuf;
-
 typedef struct HandleEntry {
     void *a;
     void *b;
@@ -51,7 +44,6 @@ void *fn_8016DF70(u32 heapId, u32 size);
 void fn_8016E0A0(void *p);
 u32 fn_803DBF64(void *mon);
 void fn_803DC598(void *mon, u32 move, u32 slot);
-void *fn_803D990C(u32 member, u32 narc, u32 heapId);
 void fn_803DE824(void *party, s32 capacity);
 void *fn_803DF5D0(u32 count, u32 len, u32 heapId);
 void fn_803DFF20(u32 bank, u32 entry, void *buf);
@@ -262,8 +254,8 @@ void fn_803DC90C(BoxPokemon *src, BoxPokemon *dst) { fn_803DAE24(dst, src); }
 
 u8 *fn_803DE94C(u8 *party, s32 idx) { return party + idx * 0xa4 + 8; }
 
-void *fn_803DE99C(u32 heapId, u32 idx) { return fn_803D990C(idx, 0x3a, heapId); }
-void *fn_803DE9AC(u32 heapId, u32 idx) { return fn_803D990C(idx, 0x3b, heapId); }
+BOOL fn_803DE99C(u32 memberIndex, void *dest) { return NARC_ReadWholeMemberByIndexPair(dest, 0x3a, memberIndex); }
+BOOL fn_803DE9AC(u32 memberIndex, void *dest) { return NARC_ReadWholeMemberByIndexPair(dest, 0x3b, memberIndex); }
 
 u32 fn_803DF540(u8 *p, s32 idx) { return *(u16 *)(p + idx * 2 + 6); }
 
@@ -308,12 +300,16 @@ void fn_803DC594(void *mon, u32 move, u32 slot) { fn_803DC598(mon, move, slot); 
 s32 fn_803DE7D8(void) { return 992; }
 u32 fn_803DE944(u8 *p) { return *(u32 *)(p + 0x4); }
 s32 fn_803DE994(void) { return 0; }
-void fn_803DED78(void *p) { fn_8016E0A0(p); }
-u32 fn_803DEDB0(u8 *p) { return *(u32 *)(p + 0x1c); }
-u32 fn_803DEDB8(u8 *p) { return *(u32 *)(p + 0x18); }
-u32 fn_803DEE9C(u8 *p) { return *(u32 *)(p + 0x14); }
-u16 fn_803DF274(u8 *p) { return *(u16 *)(p + 0x2); }
-u8 *fn_803DF418(u8 *p) { return p + 0x8; }
+}
+
+void ApplicationManager_Free(ApplicationManager *appMan) { fn_8016E0A0(appMan); }
+void *ApplicationManager_Data(ApplicationManager *appMan) { return appMan->data; }
+void *ApplicationManager_Args(ApplicationManager *appMan) { return appMan->args; }
+s32 fn_803DEE9C(ApplicationManager *appMan) { return appMan->procState; }
+u32 Strbuf_Length(const Strbuf *str) { return str->size; }
+const u16 *Strbuf_GetData(const Strbuf *str) { return str->data; }
+
+extern "C" {
 void fn_803DFCCC(void) {}
 void fn_803DFD24(void) {}
 void fn_803DFE20(void) {}
@@ -548,11 +544,15 @@ void *fn_803DA020(u32 heapId) {
     return p;
 }
 
-void *fn_803DA26C(u32 heapId) {
-    void *p = fn_8016DF70(heapId, 0xa4);
-    memset(p, 0, 0xa4);
-    return p;
 }
+
+Pokemon *Pokemon_New(u32 heapId) {
+    Pokemon *mon = (Pokemon *)fn_8016DF70(heapId, 0xa4);
+    memset(mon, 0, 0xa4);
+    return mon;
+}
+
+extern "C" {
 
 #pragma dont_inline off
 void fn_803DAE24(BoxPokemon *dst, BoxPokemon *src) { *dst = *src; }
@@ -691,11 +691,15 @@ u8 fn_803DC0D0(void *mon) {
     return fn_803DC12C(id, fn_803DAEFC((BoxPokemon *)mon, 0, NULL));
 }
 
-void fn_803DEEA4(void) {
+}
+
+void fn_803DEEA4() {
     for (s32 i = 0; i < 16; i++) {
         memset(&lbl_8063D230[i], 0, sizeof(HandleEntry));
     }
 }
+
+extern "C" {
 
 #pragma dont_inline on
 void MessageLoader_GetSpeciesName(u32 species, u32 heapId, void *dest) {
@@ -745,7 +749,9 @@ BOOL fn_803DCDF0(void *mon, u32 tm) {
     return fn_803DCE54(a, fn_803DAEFC((BoxPokemon *)mon, 0x70, NULL), tm);
 }
 
-void fn_803DEF70(void) {
+}
+
+void fn_803DEF70() {
     HandleEntry *e = lbl_8063D230;
     for (s32 i = 0; i < 16; i++, e++) {
         if (e->a != NULL) {
@@ -753,6 +759,8 @@ void fn_803DEF70(void) {
         }
     }
 }
+
+extern "C" {
 
 Strbuf *fn_803DEFD4(u32 size, u32 heapId) {
     Strbuf *buf = (Strbuf *)fn_8016DF70(heapId, size * 2 + 10);
@@ -783,7 +791,7 @@ void fn_803DA878(void *mon) {
 }
 
 void fn_803DE9BC(u8 *dest) {
-    Narc_ReadFromMember(dest, 10, 0, 0, 0x1d40);
+    NARC_ReadFromMemberByIndexPair(dest, 10, 0, 0, 0x1d40);
     for (s32 i = 0; i < 0x1d4; i++) {
         fn_803DEB48(i, dest + i * 16);
     }
@@ -951,37 +959,23 @@ u32 fn_803DBB90(BoxPokemon *mon) {
     return Pokemon_GetSpeciesLevelAt((u16)species, exp);
 }
 
-#pragma dont_inline off
-typedef struct Header16 {
-    u32 w[4];
-} Header16;
-#pragma dont_inline reset
+}
 
-typedef struct Obj28 {
-    Header16 h;
-    u32 f10;
-    u32 f14;
-    u32 f18;
-    u32 f1c;
-    u32 f20;
-    u32 f24;
-} Obj28;
-
+// Lets the template copy be inlined.
 #pragma dont_inline off
-Obj28 *fn_803DECFC(Header16 *src, u32 x, u32 heapId) {
-    Obj28 *p = (Obj28 *)fn_8016DF70(heapId, sizeof(Obj28));
-    p->h = *src;
-    p->f10 = 0;
-    p->f14 = 0;
-    p->f18 = x;
-    p->f1c = 0;
-    p->f20 = 0;
-    p->f24 = 0;
-    return p;
+ApplicationManager *ApplicationManager_New(const ApplicationManagerTemplate *appTemplate, void *args, u32 heapId) {
+    ApplicationManager *appMan = (ApplicationManager *)fn_8016DF70(heapId, sizeof(ApplicationManager));
+    appMan->appTemplate = *appTemplate;
+    appMan->execState = 0;
+    appMan->procState = 0;
+    appMan->args = args;
+    appMan->data = NULL;
+    appMan->parent = NULL;
+    appMan->child = NULL;
+    return appMan;
 }
 #pragma dont_inline reset
 
-}
 
 extern "C" {
 
@@ -1730,87 +1724,57 @@ void fn_803DEB48(u32 move, void *buf) {
 
 }
 
-extern "C" {
 
-typedef struct Task {
-    BOOL (*init)(struct Task *t, u32 *sub);
-    BOOL (*main)(struct Task *t, u32 *sub);
-    BOOL (*exit)(struct Task *t, u32 *sub);
-    u32 unkC;
-    u32 state;
-    u32 sub;
-} Task;
-
-BOOL fn_803DEDC0(Task *t) {
-    switch (t->state) {
-    case 0:
-        t->state = 1;
-    case 1:
-        if (t->init(t, &t->sub) == TRUE) {
-            t->state = 2;
-            t->sub = 0;
-        }
-        break;
-    case 2:
-        if (t->main(t, &t->sub) == TRUE) {
-            t->state = 3;
-            t->sub = 0;
-        }
-        break;
-    case 3:
-        if (t->exit(t, &t->sub) == TRUE) {
-            return TRUE;
-        }
-        break;
+BOOL ApplicationManager_Exec(ApplicationManager *appMan) {
+    switch (appMan->execState) {
+        case 0:
+            appMan->execState = 1;
+        case 1:
+            if (appMan->appTemplate.init(appMan, &appMan->procState) == TRUE) {
+                appMan->execState = 2;
+                appMan->procState = 0;
+            }
+            break;
+        case 2:
+            if (appMan->appTemplate.main(appMan, &appMan->procState) == TRUE) {
+                appMan->execState = 3;
+                appMan->procState = 0;
+            }
+            break;
+        case 3:
+            if (appMan->appTemplate.exit(appMan, &appMan->procState) == TRUE) {
+                return TRUE;
+            }
+            break;
     }
     return FALSE;
 }
 
-typedef struct BattleSetup {
-    u32 f0;
-    void *parties[4];
-    u32 f14;
-    u8 pad18[0xd8 - 0x18];
-    void *trainers[4];
-    void *fe8;
-    u32 fec;
-    u32 ff0;
-    u8 padf4[0x130 - 0xf4];
-    u32 f130;
-    u32 f134;
-    u8 pad138[8];
-    u32 f140;
-    u8 pad144[0x10];
-    u32 f154;
-    u8 pad158[0x14];
-    u32 f16c;
-    u8 pad170[4];
-    u32 f174;
-    u8 pad178[4];
-} BattleSetup;
+extern "C" {
 
-BattleSetup *fn_803DA174(u32 heapId, u32 a, u32 b, u32 c, u32 d) {
-    BattleSetup *p = (BattleSetup *)fn_8016DF70(heapId, sizeof(BattleSetup));
+
+FieldBattleDTO *fn_803DA174(u32 heapId, u32 battleType, u32 b, u32 c, u32 d) {
+    FieldBattleDTO *dto = (FieldBattleDTO *)fn_8016DF70(heapId, sizeof(FieldBattleDTO));
     s32 i;
-    memset(p, 0, sizeof(BattleSetup));
-    p->f0 = a;
-    p->f16c = 0;
-    p->f14 = 0;
-    p->f130 = 0;
-    p->f134 = d;
-    p->f174 = c;
-    p->f140 = 0;
-    p->f154 = b;
+    memset(dto, 0, sizeof(FieldBattleDTO));
+    dto->battleType = battleType;
+    dto->_16C = 0;
+    dto->_14 = 0;
+    dto->_130 = 0;
+    dto->_134 = d;
+    dto->_174 = c;
+    dto->_140 = 0;
+    dto->_154 = b;
     for (i = 0; i < 4; i++) {
-        p->parties[i] = fn_803DE7E0(heapId);
+        dto->parties[i] = fn_803DE7E0(heapId);
     }
     for (i = 0; i < 4; i++) {
-        p->trainers[i] = fn_803DA020(heapId);
+        dto->trainerInfo[i] = fn_803DA020(heapId);
     }
-    p->fe8 = fn_803D9778(heapId);
-    p->ff0 = 0;
-    p->fec = 0;
-    return p;
+    dto->bag = Bag_New(heapId);
+    dto->_F0 = 0;
+    dto->_EC = 0;
+    return dto;
 }
 
 void *fn_803DF5D0(u32 count, u32 len, u32 heapId) {
@@ -1839,7 +1803,7 @@ void *fn_803DF5D0(u32 count, u32 len, u32 heapId) {
 }
 
 void fn_803DFD28(StringTemplate *t, Strbuf *out, u8 *fmt) {
-    u16 *src = (u16 *)fn_803DF418(fmt);
+    u16 *src = (u16 *)Strbuf_GetData((Strbuf *)fmt);
     fn_803DF048((u8 *)out);
     while (*src != 0xffff) {
         if (*src == 0xfffe) {
@@ -1951,17 +1915,17 @@ void fn_803DC988(u8 *party) {
     s32 count = fn_803DE944(party);
     u8 *mon;
     s32 slot;
-    u16 r = DS_Rand();
+    u16 r = LCRNG_Next();
     if (r == 0x4000 || r == 0x8000 || r == 0xc000) {
         do {
-            slot = DS_Rand() % count;
+            slot = LCRNG_Next() % count;
             mon = fn_803DE94C(party, slot);
         } while (!GetMonDataInternal(mon, 5, NULL) || GetMonDataInternal(mon, 0x4c, NULL));
         if (!fn_803DCA94(party, fn_803DD920(slot))) {
             u8 strain;
             u32 val;
             do {
-                strain = DS_Rand();
+                strain = LCRNG_Next();
             } while ((strain & 7) == 0);
             if (strain & 0xf0) {
                 strain &= 7;
@@ -2091,7 +2055,7 @@ void fn_803DCB44(u8 *party) {
     s32 i;
     u32 prev;
     u32 next;
-    if ((DS_Rand() % 3) == 0) {
+    if ((LCRNG_Next() % 3) == 0) {
         for (i = 0; i < count; i++) {
             mon = fn_803DE94C(party, i);
             if (GetMonDataInternal(mon, 5, NULL)) {
@@ -2518,7 +2482,7 @@ void fn_803DBDDC(void *mon, u32 event, u32 location) {
     s8 delta;
     s32 v;
     if (event == 5) {
-        if (DS_Rand() & 1) {
+        if (LCRNG_Next() & 1) {
             return;
         }
     }
@@ -2526,7 +2490,7 @@ void fn_803DBDDC(void *mon, u32 event, u32 location) {
     if (species == 0 || species == 0x1ee) {
         return;
     }
-    effect = Item_LoadParam(GetMonDataInternal(mon, 6, NULL), 1, 0);
+    effect = Item_LoadParam(GetMonDataInternal(mon, 6, NULL), ITEM_PARAM_HOLD_EFFECT, 0);
     idx = 0;
     friendship = GetMonDataInternal(mon, 9, NULL);
     if (friendship >= 100) {
@@ -3943,12 +3907,12 @@ void fn_803DA474(void *mon, u32 species, u32 level, u32 ivs, u32 hasPersonality,
     memset(mon, 0, sizeof(BoxPokemon));
     dec = fn_803DA318((BoxPokemon *)mon);
     if (!hasPersonality) {
-        personality = DS_Rand() | (DS_Rand() << 16);
+        personality = LCRNG_Next() | (LCRNG_Next() << 16);
     }
     fn_803DB678((BoxPokemon *)mon, 0, &personality);
     if ((s32)otIdSource == 2) {
         do {
-            otId = DS_Rand() | (DS_Rand() << 16);
+            otId = LCRNG_Next() | (LCRNG_Next() << 16);
         } while ((((personality & 0xffff) ^ (personality >> 16)) ^ ((otId >> 16) ^ (otId & 0xffff))) < 8);
     } else if ((s32)otIdSource != 1) {
         otId = 0;
@@ -3975,14 +3939,14 @@ void fn_803DA474(void *mon, u32 species, u32 level, u32 ivs, u32 hasPersonality,
         fn_803DB678((BoxPokemon *)mon, 0x4a, &ivs);
         fn_803DB678((BoxPokemon *)mon, 0x4b, &ivs);
     } else {
-        value = DS_Rand();
+        value = LCRNG_Next();
         iv = value & 0x1f;
         fn_803DB678((BoxPokemon *)mon, 0x46, &iv);
         iv = (value & 0x3e0) >> 5;
         fn_803DB678((BoxPokemon *)mon, 0x47, &iv);
         iv = (value & 0x7c00) >> 10;
         fn_803DB678((BoxPokemon *)mon, 0x48, &iv);
-        value = DS_Rand();
+        value = LCRNG_Next();
         iv = value & 0x1f;
         fn_803DB678((BoxPokemon *)mon, 0x49, &iv);
         iv = (value & 0x3e0) >> 5;
@@ -4469,7 +4433,7 @@ u32 BoxPokemon_GetDataInternal(BoxPokemon *mon, s32 param, void *dest) {
     case 0xb0:
     case 0xb1:
         if (a->species == 0x1ed && a->b[1] == 0x79) {
-            result = (u8)Pokemon_GetArceusTypeOf((u16)Item_LoadParam(a->item, 1, 0));
+            result = (u8)Pokemon_GetArceusTypeOf((u16)Item_LoadParam(a->item, ITEM_PARAM_HOLD_EFFECT, 0));
         } else {
             result = SpeciesData_GetFormValue(a->species, b->form.form, param - 0xaa);
         }

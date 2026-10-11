@@ -1738,6 +1738,9 @@ src/.unsorted/8038F424.cpp:
 src/ds/DSbridge.cpp:
 	.text       start:0x803D9208 end:0x803D9EB4
 	.ctors      start:0x803E2288 end:0x803E228C
+	.rodata     start:0x80405B38 end:0x80405BE0
+	.data       start:0x804743B8 end:0x804744A4
+	.sbss       start:0x806405E8 end:0x806405FC
 
 src/.unsorted/803D9EB4.cpp:
 	.text       start:0x803D9EB4 end:0x803E1E54

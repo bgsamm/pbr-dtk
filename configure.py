@@ -630,7 +630,7 @@ config.libs = [
         "progress_category": "game",
         "objects": [
             Object(NonMatching, "main.cpp"),
-            Object(NonMatching, "ds/DSbridge.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
+            Object(Matching, "ds/DSbridge.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
             Object(NonMatching, ".unsorted/800559D4.cpp"),
             Object(NonMatching, ".unsorted/8005B4A4.cpp"),
             Object(NonMatching, ".unsorted/80177C24.cpp"),
