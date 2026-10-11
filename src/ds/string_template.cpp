@@ -93,87 +93,87 @@ void StringTemplate_SetNumber(
     Strbuf_FormatInt(strTemplate->templateBuffer, num, maxDigits, paddingMode, charsetMode);
     SetStringTemplateArg(strTemplate, idx, strTemplate->templateBuffer, NULL);
 }
-// TODO Sets argument idx to entry entryID of message bank 3.
 
-void fn_803DF94C(StringTemplate *strTemplate, u32 idx, u32 entryID) {
+// Sets argument idx to the name of the given move (message bank 3).
+void StringTemplate_SetMoveName(StringTemplate *strTemplate, u32 idx, u32 move) {
     MessageLoader *loader = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA, 3, strTemplate->heapID);
     if (loader != NULL) {
-        MessageLoader_GetString(loader, entryID, strTemplate->templateBuffer);
+        MessageLoader_GetString(loader, move, strTemplate->templateBuffer);
         SetStringTemplateArg(strTemplate, idx, strTemplate->templateBuffer, NULL);
         MessageLoader_Free(loader);
     }
 }
-// TODO Sets argument idx to entry entryID of message bank 4.
 
-void fn_803DF9CC(StringTemplate *strTemplate, u32 idx, u32 entryID) {
+// Sets argument idx to the name of the given ability (message bank 4).
+void StringTemplate_SetAbilityName(StringTemplate *strTemplate, u32 idx, u32 ability) {
     MessageLoader *loader = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA, 4, strTemplate->heapID);
     if (loader != NULL) {
-        MessageLoader_GetString(loader, entryID, strTemplate->templateBuffer);
+        MessageLoader_GetString(loader, ability, strTemplate->templateBuffer);
         SetStringTemplateArg(strTemplate, idx, strTemplate->templateBuffer, NULL);
         MessageLoader_Free(loader);
     }
 }
-// TODO Sets argument idx to entry entryID of message bank 5.
 
-void fn_803DFA4C(StringTemplate *strTemplate, u32 idx, u32 entryID) {
+// Sets argument idx to the name of the given item (message bank 5).
+void StringTemplate_SetItemName(StringTemplate *strTemplate, u32 idx, u32 item) {
     MessageLoader *loader = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA, 5, strTemplate->heapID);
     if (loader != NULL) {
-        MessageLoader_GetString(loader, entryID, strTemplate->templateBuffer);
+        MessageLoader_GetString(loader, item, strTemplate->templateBuffer);
         SetStringTemplateArg(strTemplate, idx, strTemplate->templateBuffer, NULL);
         MessageLoader_Free(loader);
     }
 }
-// TODO Sets argument idx to entry entryID of message bank 10.
 
-void fn_803DFACC(StringTemplate *strTemplate, u32 idx, u32 entryID) {
+// Sets argument idx to the name of the given type (message bank 10).
+void StringTemplate_SetPokemonTypeName(StringTemplate *strTemplate, u32 idx, u32 type) {
     MessageLoader *loader = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA, 10, strTemplate->heapID);
     if (loader != NULL) {
-        MessageLoader_GetString(loader, entryID, strTemplate->templateBuffer);
+        MessageLoader_GetString(loader, type, strTemplate->templateBuffer);
         SetStringTemplateArg(strTemplate, idx, strTemplate->templateBuffer, NULL);
         MessageLoader_Free(loader);
     }
 }
-// TODO Sets argument idx to entry entryID of message bank 8.
 
-void fn_803DFB4C(StringTemplate *strTemplate, u32 idx, u32 entryID) {
+// Sets argument idx to the name of the given stat (message bank 8).
+void StringTemplate_SetPokemonStatName(StringTemplate *strTemplate, u32 idx, u32 stat) {
     MessageLoader *loader = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA, 8, strTemplate->heapID);
     if (loader != NULL) {
-        MessageLoader_GetString(loader, entryID, strTemplate->templateBuffer);
+        MessageLoader_GetString(loader, stat, strTemplate->templateBuffer);
         SetStringTemplateArg(strTemplate, idx, strTemplate->templateBuffer, NULL);
         MessageLoader_Free(loader);
     }
 }
-// TODO Sets argument idx to entry entryID of message bank 7.
 
-void fn_803DFBCC(StringTemplate *strTemplate, u32 idx, u32 entryID) {
+// Sets argument idx to the name of the given status condition (message bank 7).
+void StringTemplate_SetStatusConditionName(StringTemplate *strTemplate, u32 idx, u32 status) {
     MessageLoader *loader = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA, 7, strTemplate->heapID);
     if (loader != NULL) {
-        MessageLoader_GetString(loader, entryID, strTemplate->templateBuffer);
+        MessageLoader_GetString(loader, status, strTemplate->templateBuffer);
         SetStringTemplateArg(strTemplate, idx, strTemplate->templateBuffer, NULL);
         MessageLoader_Free(loader);
     }
 }
-// TODO Sets argument idx to entry entryID of message bank 9.
 
-void fn_803DFC4C(StringTemplate *strTemplate, u32 idx, u32 entryID) {
+// Sets argument idx to the name of the given flavor (message bank 9).
+void StringTemplate_SetFlavorName(StringTemplate *strTemplate, u32 idx, u32 flavor) {
     MessageLoader *loader = MessageLoader_Init(MESSAGE_LOADER_NARC_HANDLE, NARC_INDEX_MSGDATA, 9, strTemplate->heapID);
     if (loader != NULL) {
-        MessageLoader_GetString(loader, entryID, strTemplate->templateBuffer);
+        MessageLoader_GetString(loader, flavor, strTemplate->templateBuffer);
         SetStringTemplateArg(strTemplate, idx, strTemplate->templateBuffer, NULL);
         MessageLoader_Free(loader);
     }
 }
-// TODO Empty.
 
-void fn_803DFCCC() {}
+// Empty in this game.
+void StringTemplate_SetTrainerClassNameBattle(StringTemplate *strTemplate, u32 idx, Trainer *trainer) {}
 
 void StringTemplate_SetTrainerNameBattle(StringTemplate *strTemplate, u32 idx, Trainer *trainer) {
     Strbuf_CopyChars(strTemplate->templateBuffer, trainer->name);
     SetStringTemplateArg(strTemplate, idx, strTemplate->templateBuffer, NULL);
 }
-// TODO Empty.
 
-void fn_803DFD24() {}
+// Empty in this game.
+void StringTemplate_SetPCBoxName(StringTemplate *strTemplate, u32 idx, const PCBoxes *pcBoxes, u32 boxIdx) {}
 
 void StringTemplate_Format(const StringTemplate *strTemplate, Strbuf *dst, const Strbuf *src) {
     const u16 *srcChars = Strbuf_GetData(src);

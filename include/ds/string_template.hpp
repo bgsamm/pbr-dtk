@@ -3,6 +3,7 @@
 #include <revolution/types.h>
 
 struct BoxPokemon;
+struct PCBoxes;
 struct Strbuf;
 struct Trainer;
 
@@ -36,16 +37,16 @@ void StringTemplate_SetSpeciesName(StringTemplate *strTemplate, u32 idx, BoxPoke
 void StringTemplate_SetNickname(StringTemplate *strTemplate, u32 idx, BoxPokemon *boxMon);
 void StringTemplate_SetNumber(
     StringTemplate *strTemplate, u32 idx, s32 num, u32 maxDigits, s32 paddingMode, s32 charsetMode);
-void fn_803DF94C(StringTemplate *strTemplate, u32 idx, u32 entryID);
-void fn_803DF9CC(StringTemplate *strTemplate, u32 idx, u32 entryID);
-void fn_803DFA4C(StringTemplate *strTemplate, u32 idx, u32 entryID);
-void fn_803DFACC(StringTemplate *strTemplate, u32 idx, u32 entryID);
-void fn_803DFB4C(StringTemplate *strTemplate, u32 idx, u32 entryID);
-void fn_803DFBCC(StringTemplate *strTemplate, u32 idx, u32 entryID);
-void fn_803DFC4C(StringTemplate *strTemplate, u32 idx, u32 entryID);
-void fn_803DFCCC();
+void StringTemplate_SetMoveName(StringTemplate *strTemplate, u32 idx, u32 move);
+void StringTemplate_SetAbilityName(StringTemplate *strTemplate, u32 idx, u32 ability);
+void StringTemplate_SetItemName(StringTemplate *strTemplate, u32 idx, u32 item);
+void StringTemplate_SetPokemonTypeName(StringTemplate *strTemplate, u32 idx, u32 type);
+void StringTemplate_SetPokemonStatName(StringTemplate *strTemplate, u32 idx, u32 stat);
+void StringTemplate_SetStatusConditionName(StringTemplate *strTemplate, u32 idx, u32 status);
+void StringTemplate_SetFlavorName(StringTemplate *strTemplate, u32 idx, u32 flavor);
+void StringTemplate_SetTrainerClassNameBattle(StringTemplate *strTemplate, u32 idx, Trainer *trainer);
 void StringTemplate_SetTrainerNameBattle(StringTemplate *strTemplate, u32 idx, Trainer *trainer);
-void fn_803DFD24();
+void StringTemplate_SetPCBoxName(StringTemplate *strTemplate, u32 idx, const PCBoxes *pcBoxes, u32 boxIdx);
 void StringTemplate_Format(const StringTemplate *strTemplate, Strbuf *dst, const Strbuf *src);
 Strbuf *fn_803DFE0C(const StringTemplate *strTemplate, u32 idx);
 void fn_803DFE20();

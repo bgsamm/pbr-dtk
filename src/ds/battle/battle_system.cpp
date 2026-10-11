@@ -597,6 +597,485 @@ void BattleMessage_CheckSide(BattleSystem *battleSys, BattleMessage *battleMsg, 
     }
 }
 
+static inline void BattleMessage_SetNumberDigits(BattleSystem *battleSys, u32 idx, int num, int digits) {
+    if (digits) {
+        StringTemplate_SetNumber(battleSys->strFormatter, idx, num, digits, PADDING_MODE_NONE, 2);
+    } else {
+        StringTemplate_SetNumber(battleSys->strFormatter, idx, num, 5, PADDING_MODE_NONE, 2);
+    }
+}
+
+// The numbers use charset mode 2. With BATTLE_TYPE_UNK_19, some messages get an extra argument from
+// fn_803AF0D8.
+void BattleMessage_FillFormatBuffers(BattleSystem *battleSys,
+                                     BattleMessage *battleMsg,
+                                     MessageLoader *msgLoader,
+                                     int swapSides) {
+    Pokemon *mon;
+
+    if (battleMsg->id == 0x5140) {
+        fn_803AF0D8(battleSys, 0, battleMsg->params[0], msgLoader, battleMsg->id);
+        StringTemplate_SetMoveName(battleSys->strFormatter, 1, battleMsg->params[1]);
+        return;
+    }
+
+    switch (battleMsg->tags & BATTLE_MESSAGE_TAGS) {
+        case TAG_NONE: break;
+
+        case TAG_NONE_SIDE_CONSCIOUS:
+            if (battleSys->battleType & BATTLE_TYPE_UNK_19) {
+                fn_803AF0D8(battleSys, 0, battleMsg->params[1], msgLoader, battleMsg->id);
+            }
+            break;
+
+        case TAG_NICKNAME: BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides); break;
+
+        case TAG_MOVE:     StringTemplate_SetMoveName(battleSys->strFormatter, 0, battleMsg->params[0]); break;
+
+        case TAG_MOVE_SIDE:
+            if (battleSys->battleType & BATTLE_TYPE_UNK_19) {
+                fn_803AF0D8(battleSys, 0, battleMsg->params[2], msgLoader, battleMsg->id);
+                StringTemplate_SetMoveName(battleSys->strFormatter, 1, battleMsg->params[0]);
+            } else {
+                StringTemplate_SetMoveName(battleSys->strFormatter, 0, battleMsg->params[0]);
+            }
+            break;
+
+        case TAG_STAT: StringTemplate_SetPokemonStatName(battleSys->strFormatter, 0, battleMsg->params[0]); break;
+
+        case TAG_ITEM: StringTemplate_SetItemName(battleSys->strFormatter, 0, battleMsg->params[0]); break;
+
+        case TAG_NUMBER:
+            StringTemplate_SetNumber(battleSys->strFormatter, 0, battleMsg->params[0], 5, PADDING_MODE_SPACES, 2);
+            break;
+
+        case TAG_NUMBERS: BattleMessage_SetNumberDigits(battleSys, 0, battleMsg->params[0], battleMsg->digits); break;
+
+        case TAG_TRNAME:
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                0,
+                                                fn_803ACB30(battleSys, battleMsg->params[0] ^ swapSides));
+            break;
+
+        case TAG_NICKNAME_NICKNAME:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            BattleMessage_SetNickname(battleSys, 1, battleMsg->params[1], swapSides);
+            break;
+
+        case TAG_NICKNAME_MOVE:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetMoveName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            break;
+
+        case TAG_NICKNAME_ABILITY:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetAbilityName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            break;
+
+        case TAG_NICKNAME_STAT:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetPokemonStatName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            break;
+
+        case TAG_NICKNAME_TYPE:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetPokemonTypeName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            break;
+
+        case TAG_NICKNAME_POKE:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            mon = BattleSystem_GetPartyPokemon(battleSys,
+                                               (battleMsg->params[1] & 0xFF) ^ swapSides,
+                                               (battleMsg->params[1] & 0xFF00) >> 8);
+            StringTemplate_SetSpeciesName(battleSys->strFormatter, 1, &mon->box);
+            break;
+
+        case TAG_NICKNAME_ITEM:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetItemName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            break;
+
+        case TAG_NICKNAME_POFFIN: BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides); break;
+
+        case TAG_NICKNAME_NUM:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetNumber(battleSys->strFormatter, 1, battleMsg->params[1], 5, PADDING_MODE_SPACES, 2);
+            break;
+
+        case TAG_NICKNAME_TRNAME:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                1,
+                                                fn_803ACB30(battleSys, battleMsg->params[1] ^ swapSides));
+            break;
+
+        case TAG_NICKNAME_BOX:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetPCBoxName(battleSys->strFormatter, 1, battleSys->pcBoxes, battleMsg->params[1]);
+            break;
+
+        case TAG_MOVE_NICKNAME:
+            StringTemplate_SetMoveName(battleSys->strFormatter, 0, battleMsg->params[0]);
+            BattleMessage_SetNickname(battleSys, 1, battleMsg->params[1], swapSides);
+            break;
+
+        case TAG_MOVE_MOVE:
+            StringTemplate_SetMoveName(battleSys->strFormatter, 0, battleMsg->params[0]);
+            StringTemplate_SetMoveName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            break;
+
+        case TAG_ABILITY_NICKNAME:
+            StringTemplate_SetAbilityName(battleSys->strFormatter, 0, battleMsg->params[0]);
+            BattleMessage_SetNickname(battleSys, 1, battleMsg->params[1], swapSides);
+            break;
+
+        case TAG_ITEM_MOVE:
+            StringTemplate_SetItemName(battleSys->strFormatter, 0, battleMsg->params[0]);
+            StringTemplate_SetMoveName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            break;
+
+        case TAG_NUMBER_NUMBER:
+            StringTemplate_SetNumber(battleSys->strFormatter, 0, battleMsg->params[0], 5, PADDING_MODE_SPACES, 2);
+            StringTemplate_SetNumber(battleSys->strFormatter, 1, battleMsg->params[1], 5, PADDING_MODE_SPACES, 2);
+            break;
+
+        case TAG_TRNAME_TRNAME:
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                0,
+                                                fn_803ACB30(battleSys, battleMsg->params[0] ^ swapSides));
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                1,
+                                                fn_803ACB30(battleSys, battleMsg->params[1] ^ swapSides));
+            break;
+
+        case TAG_TRNAME_NICKNAME:
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                0,
+                                                fn_803ACB30(battleSys, battleMsg->params[0] ^ swapSides));
+            BattleMessage_SetNickname(battleSys, 1, battleMsg->params[1], swapSides);
+            break;
+
+        case TAG_TRNAME_ITEM:
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                0,
+                                                fn_803ACB30(battleSys, battleMsg->params[0] ^ swapSides));
+            StringTemplate_SetItemName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            break;
+
+        case TAG_TRNAME_NUM:
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                0,
+                                                fn_803ACB30(battleSys, battleMsg->params[0] ^ swapSides));
+            StringTemplate_SetNumber(battleSys->strFormatter, 1, battleMsg->params[1], 5, PADDING_MODE_SPACES, 2);
+            break;
+
+        case TAG_TRCLASS_TRNAME:
+            StringTemplate_SetTrainerClassNameBattle(battleSys->strFormatter,
+                                                     0,
+                                                     fn_803ACB30(battleSys, battleMsg->params[0] ^ swapSides));
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                1,
+                                                fn_803ACB30(battleSys, battleMsg->params[1] ^ swapSides));
+            break;
+
+        case TAG_NICKNAME_NICKNAME_MOVE:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            BattleMessage_SetNickname(battleSys, 1, battleMsg->params[1], swapSides);
+            StringTemplate_SetMoveName(battleSys->strFormatter, 2, battleMsg->params[2]);
+            break;
+
+        case TAG_NICKNAME_NICKNAME_ABILITY:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            BattleMessage_SetNickname(battleSys, 1, battleMsg->params[1], swapSides);
+            StringTemplate_SetAbilityName(battleSys->strFormatter, 2, battleMsg->params[2]);
+            break;
+
+        case TAG_NICKNAME_NICKNAME_ITEM:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            BattleMessage_SetNickname(battleSys, 1, battleMsg->params[1], swapSides);
+            StringTemplate_SetItemName(battleSys->strFormatter, 2, battleMsg->params[2]);
+            break;
+
+        case TAG_NICKNAME_MOVE_MOVE:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetMoveName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            StringTemplate_SetMoveName(battleSys->strFormatter, 2, battleMsg->params[2]);
+            break;
+
+        case TAG_NICKNAME_MOVE_NUMBER:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetMoveName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            StringTemplate_SetNumber(battleSys->strFormatter, 2, battleMsg->params[2], 5, PADDING_MODE_SPACES, 2);
+            break;
+
+        case TAG_NICKNAME_ABILITY_NICKNAME:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetAbilityName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            BattleMessage_SetNickname(battleSys, 2, battleMsg->params[2], swapSides);
+            break;
+
+        case TAG_NICKNAME_ABILITY_MOVE:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetAbilityName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            StringTemplate_SetMoveName(battleSys->strFormatter, 2, battleMsg->params[2]);
+            break;
+
+        case TAG_NICKNAME_ABILITY_ITEM:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetAbilityName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            StringTemplate_SetItemName(battleSys->strFormatter, 2, battleMsg->params[2]);
+            break;
+
+        case TAG_NICKNAME_ABILITY_STAT:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetAbilityName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            StringTemplate_SetPokemonStatName(battleSys->strFormatter, 2, battleMsg->params[2]);
+            break;
+
+        case TAG_NICKNAME_ABILITY_TYPE:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetAbilityName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            StringTemplate_SetPokemonTypeName(battleSys->strFormatter, 2, battleMsg->params[2]);
+            break;
+
+        case TAG_NICKNAME_ABILITY_STATUS:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetAbilityName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            StringTemplate_SetStatusConditionName(battleSys->strFormatter, 2, battleMsg->params[2]);
+            break;
+
+        case TAG_NICKNAME_ABILITY_NUMBER:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetAbilityName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            StringTemplate_SetNumber(battleSys->strFormatter, 2, battleMsg->params[2], 5, PADDING_MODE_SPACES, 2);
+            break;
+
+        case TAG_NICKNAME_ITEM_NICKNAME:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetItemName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            BattleMessage_SetNickname(battleSys, 2, battleMsg->params[2], swapSides);
+            break;
+
+        case TAG_NICKNAME_ITEM_MOVE:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetItemName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            StringTemplate_SetMoveName(battleSys->strFormatter, 2, battleMsg->params[2]);
+            break;
+
+        case TAG_NICKNAME_ITEM_STAT:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetItemName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            StringTemplate_SetPokemonStatName(battleSys->strFormatter, 2, battleMsg->params[2]);
+            break;
+
+        case TAG_NICKNAME_ITEM_STATUS:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetItemName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            StringTemplate_SetStatusConditionName(battleSys->strFormatter, 2, battleMsg->params[2]);
+            break;
+
+        case TAG_NICKNAME_BOX_BOX:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetPCBoxName(battleSys->strFormatter, 1, battleSys->pcBoxes, battleMsg->params[1]);
+            StringTemplate_SetPCBoxName(battleSys->strFormatter, 2, battleSys->pcBoxes, battleMsg->params[2]);
+            break;
+
+        case TAG_ITEM_NICKNAME_FLAVOR:
+            StringTemplate_SetItemName(battleSys->strFormatter, 0, battleMsg->params[0]);
+            BattleMessage_SetNickname(battleSys, 1, battleMsg->params[1], swapSides);
+            StringTemplate_SetFlavorName(battleSys->strFormatter, 2, battleMsg->params[2]);
+            break;
+
+        case TAG_TRNAME_NICKNAME_NICKNAME:
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                0,
+                                                fn_803ACB30(battleSys, battleMsg->params[0] ^ swapSides));
+            BattleMessage_SetNickname(battleSys, 1, battleMsg->params[1], swapSides);
+            BattleMessage_SetNickname(battleSys, 2, battleMsg->params[2], swapSides);
+            break;
+
+        case TAG_TRCLASS_TRNAME_NICKNAME:
+            StringTemplate_SetTrainerClassNameBattle(battleSys->strFormatter,
+                                                     0,
+                                                     fn_803ACB30(battleSys, battleMsg->params[0] ^ swapSides));
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                1,
+                                                fn_803ACB30(battleSys, battleMsg->params[1] ^ swapSides));
+            BattleMessage_SetNickname(battleSys, 2, battleMsg->params[2], swapSides);
+            break;
+
+        case TAG_TRCLASS_TRNAME_ITEM:
+            StringTemplate_SetTrainerClassNameBattle(battleSys->strFormatter,
+                                                     0,
+                                                     fn_803ACB30(battleSys, battleMsg->params[0] ^ swapSides));
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                1,
+                                                fn_803ACB30(battleSys, battleMsg->params[1] ^ swapSides));
+            StringTemplate_SetItemName(battleSys->strFormatter, 2, battleMsg->params[2]);
+            break;
+
+        case TAG_NICKNAME_ABILITY_NICKNAME_MOVE:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetAbilityName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            BattleMessage_SetNickname(battleSys, 2, battleMsg->params[2], swapSides);
+            StringTemplate_SetMoveName(battleSys->strFormatter, 3, battleMsg->params[3]);
+            break;
+
+        case TAG_NICKNAME_ABILITY_NICKNAME_ABILITY:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetAbilityName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            BattleMessage_SetNickname(battleSys, 2, battleMsg->params[2], swapSides);
+            StringTemplate_SetAbilityName(battleSys->strFormatter, 3, battleMsg->params[3]);
+            break;
+
+        case TAG_NICKNAME_ABILITY_NICKNAME_STAT:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetAbilityName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            BattleMessage_SetNickname(battleSys, 2, battleMsg->params[2], swapSides);
+            StringTemplate_SetPokemonStatName(battleSys->strFormatter, 3, battleMsg->params[3]);
+            break;
+
+        case TAG_NICKNAME_ITEM_NICKNAME_ITEM:
+            BattleMessage_SetNickname(battleSys, 0, battleMsg->params[0], swapSides);
+            StringTemplate_SetItemName(battleSys->strFormatter, 1, battleMsg->params[1]);
+            BattleMessage_SetNickname(battleSys, 2, battleMsg->params[2], swapSides);
+            StringTemplate_SetItemName(battleSys->strFormatter, 3, battleMsg->params[3]);
+            break;
+
+        case TAG_TRNAME_NICKNAME_TRNAME_NICKNAME:
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                0,
+                                                fn_803ACB30(battleSys, battleMsg->params[0] ^ swapSides));
+            BattleMessage_SetNickname(battleSys, 1, battleMsg->params[1], swapSides);
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                2,
+                                                fn_803ACB30(battleSys, battleMsg->params[2] ^ swapSides));
+            BattleMessage_SetNickname(battleSys, 3, battleMsg->params[3], swapSides);
+            break;
+
+        case TAG_TRCLASS_TRNAME_NICKNAME_NICKNAME:
+            StringTemplate_SetTrainerClassNameBattle(battleSys->strFormatter,
+                                                     0,
+                                                     fn_803ACB30(battleSys, battleMsg->params[0] ^ swapSides));
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                1,
+                                                fn_803ACB30(battleSys, battleMsg->params[1] ^ swapSides));
+            BattleMessage_SetNickname(battleSys, 2, battleMsg->params[2], swapSides);
+            BattleMessage_SetNickname(battleSys, 3, battleMsg->params[3], swapSides);
+            break;
+
+        case TAG_TRCLASS_TRNAME_NICKNAME_TRNAME:
+            StringTemplate_SetTrainerClassNameBattle(battleSys->strFormatter,
+                                                     0,
+                                                     fn_803ACB30(battleSys, battleMsg->params[0] ^ swapSides));
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                1,
+                                                fn_803ACB30(battleSys, battleMsg->params[1] ^ swapSides));
+            BattleMessage_SetNickname(battleSys, 2, battleMsg->params[2], swapSides);
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                3,
+                                                fn_803ACB30(battleSys, battleMsg->params[3] ^ swapSides));
+            break;
+
+        case TAG_TRCLASS_TRNAME_TRCLASS_TRNAME:
+            StringTemplate_SetTrainerClassNameBattle(battleSys->strFormatter,
+                                                     0,
+                                                     fn_803ACB30(battleSys, battleMsg->params[0] ^ swapSides));
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                1,
+                                                fn_803ACB30(battleSys, battleMsg->params[1] ^ swapSides));
+            StringTemplate_SetTrainerClassNameBattle(battleSys->strFormatter,
+                                                     2,
+                                                     fn_803ACB30(battleSys, battleMsg->params[2] ^ swapSides));
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                3,
+                                                fn_803ACB30(battleSys, battleMsg->params[3] ^ swapSides));
+            break;
+
+        case TAG_TRCLASS_TRNAME_NICKNAME_TRCLASS_TRNAME_NICKNAME:
+            StringTemplate_SetTrainerClassNameBattle(battleSys->strFormatter,
+                                                     0,
+                                                     fn_803ACB30(battleSys, battleMsg->params[0] ^ swapSides));
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                1,
+                                                fn_803ACB30(battleSys, battleMsg->params[1] ^ swapSides));
+            BattleMessage_SetNickname(battleSys, 2, battleMsg->params[2], swapSides);
+            StringTemplate_SetTrainerClassNameBattle(battleSys->strFormatter,
+                                                     3,
+                                                     fn_803ACB30(battleSys, battleMsg->params[3] ^ swapSides));
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter,
+                                                4,
+                                                fn_803ACB30(battleSys, battleMsg->params[4] ^ swapSides));
+            BattleMessage_SetNickname(battleSys, 5, battleMsg->params[5], swapSides);
+            break;
+
+        default: fn_803D989C(FALSE, "\x91\xb6\x8d\xdd\x82\xb5\x82\xc8\x82\xa2TAG\x82\xc5\x82\xb7\x81I\n"); break;
+    }
+}
+
+// Copies one of the messages 0x5141 + offset (0x552A + offset for some messages in mode 1) into a format
+// argument.
+// TODO fn_803D9BAC returns a mode that DSbridge stores as a pointer.
+void fn_803AF0D8(BattleSystem *battleSys, u32 idx, int offset, MessageLoader *msgLoader, u32 msgID) {
+    int base = 0x5141;
+
+    if ((int)fn_803D9BAC() == 1 && (msgID == 0x5131 || msgID == 0x5132 || msgID == 0x5133 || msgID == 0x5134 ||
+                                    msgID == 0x513A || msgID == 0x513C || msgID == 0x5140)) {
+        base = 0x552A;
+    }
+
+    Strbuf *string = MessageLoader_GetNewString(msgLoader, base + offset);
+
+    Strbuf_Copy(fn_803DFE0C(battleSys->strFormatter, idx), string);
+    Strbuf_Free(string);
+}
+
+// With BATTLE_TYPE_UNK_19, the nickname is joined with the trainer name by message 0x5143, in an order that
+// depends on the mode returned by fn_803D9BAC.
+void BattleMessage_SetNickname(BattleSystem *battleSys, u32 idx, int nicknameTag, int swapSides) {
+    Pokemon *mon;
+    Strbuf *separator;
+    Strbuf *arg;
+    u8 battler;
+
+    if ((battleSys->battleType & BATTLE_TYPE_UNK_19) && lbl_806405C8 == 0) {
+        if (fn_803D9BAC() == NULL || (int)fn_803D9BAC() == 5) {
+            battler = nicknameTag & 0xFF;
+
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter, idx, fn_803ACB30(battleSys, battler));
+
+            separator = MessageLoader_GetNewString(battleSys->msgLoader, 0x5143);
+            arg = fn_803DFE0C(battleSys->strFormatter, idx);
+
+            Strbuf_Concat(arg, separator);
+            Strbuf_Free(separator);
+
+            mon = BattleSystem_GetPartyPokemon(battleSys, battler, (nicknameTag & 0xFF00) >> 8);
+
+            StringTemplate_SetNickname(battleSys->strFormatter, 6, &mon->box);
+            Strbuf_Concat(arg, fn_803DFE0C(battleSys->strFormatter, 6));
+        } else {
+            battler = nicknameTag & 0xFF;
+            mon = BattleSystem_GetPartyPokemon(battleSys, battler, (nicknameTag & 0xFF00) >> 8);
+
+            StringTemplate_SetNickname(battleSys->strFormatter, idx, &mon->box);
+
+            separator = MessageLoader_GetNewString(battleSys->msgLoader, 0x5143);
+            arg = fn_803DFE0C(battleSys->strFormatter, idx);
+
+            Strbuf_Concat(arg, separator);
+            Strbuf_Free(separator);
+
+            StringTemplate_SetTrainerNameBattle(battleSys->strFormatter, 6, fn_803ACB30(battleSys, battler));
+            Strbuf_Concat(arg, fn_803DFE0C(battleSys->strFormatter, 6));
+        }
+    } else {
+        mon = BattleSystem_GetPartyPokemon(battleSys, (nicknameTag & 0xFF) ^ swapSides, (nicknameTag & 0xFF00) >> 8);
+
+        StringTemplate_SetNickname(battleSys->strFormatter, idx, &mon->box);
+    }
+}
+
 void BattleMessage_Format(BattleSystem *battleSys, MessageLoader *msgLoader, BattleMessage *battleMsg) {
     Strbuf *string = MessageLoader_GetNewString(msgLoader, battleMsg->id);
 

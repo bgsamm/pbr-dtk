@@ -9,6 +9,7 @@ struct Pokemon;
 struct Strbuf;
 struct TrainerInfo;
 struct MessageLoader;
+struct PCBoxes;
 struct StringTemplate;
 
 // Only the fields used so far (pokeplatinum BattleSystem; the layout is the same up to 0xAC).
@@ -29,7 +30,7 @@ struct BattleSystem {
     /* 0x48 */ TrainerInfo *trainerInfo[MAX_BATTLERS];
     /* 0x58 */ u8 unk58[0x8];
     /* 0x60 */ void *pokedex;
-    /* 0x64 */ u8 unk64[0x4];
+    /* 0x64 */ PCBoxes *pcBoxes;
     /* 0x68 */ Party *parties[MAX_BATTLERS];
     /* 0x78 */ void *chatotCries[MAX_BATTLERS];
     /* 0x88 */ u8 unk88[0x18];
@@ -97,6 +98,8 @@ void BattleMessage_FillFormatBuffers(BattleSystem *battleSys,
                                      int swapSides);
 void BattleMessage_Format(BattleSystem *battleSys, MessageLoader *msgLoader, BattleMessage *battleMsg);
 void fn_803AF38C(BattleSystem *battleSys, BattleMessage *battleMsg, MessageLoader *msgLoader);
+void fn_803AF0D8(BattleSystem *battleSys, u32 idx, int offset, MessageLoader *msgLoader, u32 msgID);
+void BattleMessage_SetNickname(BattleSystem *battleSys, u32 idx, int nicknameTag, int swapSides);
 Trainer *fn_803ACB30(BattleSystem *battleSys, int battler);
 int BattleSystem_GetBattlerOfType(BattleSystem *battleSys, int type);
 void *BattleSystem_GetChatotCry(BattleSystem *battleSys, int battler);
