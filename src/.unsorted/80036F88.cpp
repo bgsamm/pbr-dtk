@@ -9,6 +9,7 @@ void fn_800375A4(void *p);
 void fn_80037D28(void *p) {
     fn_800375A4(p);
 }
+// TODO role: accessors of the object at 0xBF6, 0xBF8, 0xC50, 0xC54 and 0xD04
 u16 fn_80039460(Unk80036F88 *obj) {
     return obj->_BF8;
 }
@@ -21,6 +22,7 @@ void fn_80039634(Unk80036F88 *obj, u32 x, u32 y) {
     obj->_C54 = y;
 }
 
+// TODO role: wrappers calling fn_8003D4D4 and fn_8003D82C with a fixed kind from 0 to 3
 void fn_8003D4B4(Unk80036F88 *obj) {
     fn_8003D4D4(obj, 0);
 }

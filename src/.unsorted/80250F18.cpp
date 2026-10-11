@@ -4,6 +4,7 @@
 
 extern "C" {
 
+// TODO role: sets byte 6 of element i of the array at 0x08, when i is below the count at 0x00
 void fn_80251AD4(Unk80250F18 *obj, u32 index) {
     if (index < obj->_00) {
         obj->_08[index]._06 = 2;
@@ -15,6 +16,7 @@ void fn_80253B20(Unk80250F18 *obj, u32 x, u32 y) {
     obj->_28 = y;
 }
 
+// TODO role: clears entry i of three parallel tables of 32 entries
 void fn_80253BC8(Unk80250F18 *obj, s32 index) {
     if (index < 0 || index >= 32) {
         return;
@@ -29,16 +31,19 @@ void fn_80253BFC(Unk80250F18 *obj, u32 x, u32 y) {
     obj->_150 = y;
 }
 
+// TODO role: stores the callback at 0x154
 void fn_80253C08(Unk80250F18 *obj, Unk80250F18Callback callback) {
     obj->_154 = callback;
 }
 
+// TODO role: calls that callback with the object when it is set
 void fn_80253C10(Unk80250F18 *obj) {
     if (obj->_154 != NULL) {
         obj->_154(obj);
     }
 }
 
+// TODO role: the wrappers below call methods of the global object lbl_804FDAB0
 void fn_80253C28(u16 count) {
     fn_80250FF8(&lbl_804FDAB0, count);
 }

@@ -18,6 +18,7 @@ void fn_8024C434(void) {}
 void fn_8024C438(void) {}
 void fn_8024C43C(void) {}
 
+// TODO role: 8-bit field stored shifted by 5 at 0xD54, with its getter
 void fn_8024F958(Unk80249D38 *obj, u8 v) {
     obj->_D54 = v << 5;
 }
@@ -26,6 +27,7 @@ u8 fn_8024F964(Unk80249D38 *obj) {
     return (obj->_D54 >> 5) & 0xFF;
 }
 
+// TODO role: setters on a second record (0x34 as a signed byte; 0x64, 0x1E and 0x20 reset)
 void fn_8024F9B8(Unk80249D38 *, Unk8024F9B8 *arg, s32 value) {
     arg->_34 = (s8)value;
 }
@@ -36,16 +38,19 @@ void fn_8024FA5C(Unk80249D38 *, Unk8024F9B8 *arg) {
     arg->_20 = -1;
 }
 
+// TODO role: allocates from the second game heap, size rounded up to a multiple of 32
 void *fn_8024FF3C(Unk80249D38 *, u32 size) {
     return GSmem::allocFromHeap(gUnkHeap2, (size + 0x1F) & ~0x1F);
 }
 
+// TODO role: frees a block of that heap when it is not null
 void fn_8024FF4C(Unk80249D38 *, void *block) {
     if (block != NULL) {
         GSmem::freeToHeap(gUnkHeap2, block);
     }
 }
 
+// TODO role: the wrappers below call methods of the global object lbl_80497FEC
 void fn_8025004C(u32 a) {
     fn_8024A464(&lbl_80497FEC, a);
 }
@@ -126,6 +131,7 @@ u8 fn_80250664(void) {
     return fn_8024F964(&lbl_80497FEC);
 }
 
+// TODO role: sets a float global; the next function sets it to 0.59
 void fn_80250ECC(f32 v) {
     lbl_8063F8D8 = v;
 }
