@@ -7,7 +7,7 @@ A map of the executable's modules, used to pick what to decompile next and to pr
 - Functions, sizes and names: `config/RPBP01/symbols.txt` (13,890 functions, 3.86 MiB of code).
 - Identification of unnamed areas: strings referenced by the code (through Ghidra) and the call graph.
 - Boundaries of areas without any known name are **approximate** (to within a few functions). Areas marked "to be confirmed" are inferences.
-  Known correction: 0x8038F424–0x8039A000 holds DS-derived code (item data file readers), not NW4R.
+  `splits.txt` makes 0x8038F424–0x803D9208 a single unit of DS-derived code (item data file readers, then the battle engine), so the ends of areas 16 and 17 below overlap it and are to be redone.
 - Libraries identified from their version banners: `RVL_SDK` (OS, GX, DVD, VI, AI, AX, DSP, EXI, SI, KPAD, WPAD, NAND, SC, MP, MPDL, NCD, SO, NWC24, THP, HBM, DWC, DWCDL), `NW4R - SND`, `REX-PPC 1.0.0.1 (RevoEX-1.0plus1)`, MetroTRK. The OS library is dated April 2007, DWC March 2007.
 
 ## Overview

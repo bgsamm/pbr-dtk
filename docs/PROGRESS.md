@@ -30,7 +30,7 @@ By area at the end: Pokémon data 75 %, entry point 34 %, game networking 28 %, 
 - 16 SDK files are split but not compiled yet (OS, OSCache, VI, DVDfs, NAND, WPAD…): our headers need adapting to the April 2007 SDK.
 - Jump tables and data stay in automatic splits, so functions with a `switch` can show 99.8 % instead of 100 % until the data sections are split; units cannot be marked `Matching` before that.
 - Most matched functions outside `src/gs/` and `src/ds/` still use placeholder names and types (`fn_`, offset access): they are scaffolding, to be rewritten unit by unit following [STYLE.md](STYLE.md).
-- `docs/architecture.md`: 0x8038F424–0x8039A000 is DS-derived code, not NW4R.
+- `docs/architecture.md`: areas 16 to 18 need new boundaries; the DS-derived unit starts at 0x8038F424.
 
 ## Static recompilation (evaluated, not pursued)
 

@@ -35,6 +35,7 @@ analysis/
 /*.txt
 *.bak
 *.exe
+.DS_Store
 
 # Original game files: never commit them
 *.iso
@@ -49,5 +50,3 @@ analysis/
 *.gpr
 *.rep/
 
-# Misc
-.DS_Store

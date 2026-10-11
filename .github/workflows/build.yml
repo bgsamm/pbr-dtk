@@ -1,14 +1,13 @@
 name: Build
 
-# Disabled until this repository has its own private build container
-# (see docs/github_actions.md).
+# Manual only: the job needs a private build container holding the original
+# game files in /orig, and this repository does not have one yet.
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    # This is a *private* build container.
-    # See docs/github_actions.md for more information.
+    # Private container from bgsamm/pbr-dtk; replace it with our own.
     container: ghcr.io/bgsamm/pbr-dtk-build:main
 
     runs-on: ubuntu-latest
