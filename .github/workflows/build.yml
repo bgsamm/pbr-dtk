@@ -1,8 +1,9 @@
 name: Build
 
+# Disabled until this repository has its own private build container
+# (see docs/github_actions.md).
 on:
-  push:
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   build:

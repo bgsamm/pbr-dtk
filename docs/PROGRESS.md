@@ -1,0 +1,41 @@
+# Progress log
+
+## 2026-10 — project setup and first push
+
+Starting point: the bgsamm/pbr-dtk tree at 2.42 % of code matched (601 of 13,890 functions), DOL hash verified locally.
+
+| Step | Code matched | Functions |
+|---|---|---|
+| Starting point | 2.42 % | 601 |
+| Trivial functions generated (`tools/stubgen/`) | 2.62 % | 1,800 |
+| Second generator pass, per-unit static initializers named | 2.84 % | 2,336 |
+| Hand decompilation of the DS bridge, battle engine, battle presentation, menus, networking, Pokémon data | 5.59 % | 3,955 |
+| Revolution SDK imported from wii-ipl (45 files) | 7.1 % | 4,461 |
+| End of the first push | **10.89 %** | **5,005** |
+
+By area at the end: Pokémon data 75 %, entry point 34 %, game networking 28 %, battle presentation 21 %, battle engine 19.5 %, gs engine 18 %, battle loop 17 %, SDK 7 %, scenes and menus 4.8 %.
+
+### Compiler notes
+
+- DS-derived code (`src/ds/`, units 803D9EB4 and 8038F424) and some menu units are built with `-O4,s -inline noauto`: loops are not unrolled, `_savegpr` is used, inline constructors stay out of line.
+- The game code rarely inlines functions from the same file; `#pragma dont_inline` reproduces it where needed.
+- Virtual calls need real C++ classes (the compiler uses r12); the slot is (offset - 8) / 4.
+- Local declaration order drives register and stack allocation; call arguments are evaluated right to left.
+- Signed `a < b` compiles to xor/srawi/and/subf/srwi; unsigned to subfc/subfe.
+- Float constants should be written as literals (`0.5f`); `extern` constants change scheduling.
+- Each unit has a static initializer (`__sinit_\<unit>_cpp`) for the `Version` object in `common.hpp`; some call the constructor out of line (`__ct__7VersionFUcUsUc`).
+
+### Open issues
+
+- 16 SDK files are split but not compiled yet (OS, OSCache, VI, DVDfs, NAND, WPAD…): our headers need adapting to the April 2007 SDK.
+- Jump tables and data stay in automatic splits, so functions with a `switch` can show 99.8 % instead of 100 % until the data sections are split; units cannot be marked `Matching` before that.
+- Most matched functions outside `src/gs/` and `src/ds/` still use placeholder names and types (`fn_`, offset access): they are scaffolding, to be rewritten unit by unit following [STYLE.md](STYLE.md).
+- `docs/architecture.md`: 0x8038F424–0x8039A000 is DS-derived code, not NW4R.
+
+## Static recompilation (evaluated, not pursued)
+
+Neither tool is ready for RPBP01; they do not replace matching.
+
+- **NWiiRecomp** (`BlackLineInteractive/NWiiRecomp`): C++, own GX renderer, SDL2. Experimental: only GameCube games are reported to boot, no Wii game listed as working.
+- **DolRecomp** (`ExpansionPak/DolRecomp`): C11, GPL-3.0, CPU only (graphics, audio and input left to the host). The README says the project is probably no longer maintained.
+- Neither handles `.fsys`. Decision: stay on matching decompilation; revisit NWiiRecomp if its GX renderer and Wii support mature.

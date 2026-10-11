@@ -1,102 +1,68 @@
-Pokémon Battle Revolution 
-[![Build Status]][actions] [![Progress]][progress site] [![Discord Badge]][discord]
-=============
+# Pokémon Battle Revolution — decompilation
 
-[Build Status]: https://github.com/bgsamm/pbr-dtk/actions/workflows/build.yml/badge.svg
-[actions]: https://github.com/bgsamm/pbr-dtk/actions/workflows/build.yml
-<!--
-decomp.dev progress badges
-See https://decomp.dev/api for an API overview.
--->
-[Progress]: https://decomp.dev/bgsamm/pbr-dtk.svg?mode=shield&label=Progress
-[progress site]: https://decomp.dev/bgsamm/pbr-dtk
-[Discord Badge]: https://img.shields.io/discord/727908905392275526?color=%237289DA&logo=discord&logoColor=%23FFFFFF
-[discord]: https://discord.gg/hKx3FJJgrV
+A matching decompilation of **Pokémon Battle Revolution** (Wii, PAL release `RPBP01`, Rev 0), with a native PC port and online battles between friends as long-term goals.
 
-A work-in-progress decompilation of Pokémon Battle Revolution.
+The build produces a `main.dol` that is byte-for-byte identical to the original (SHA-1 `ffcd539d239722b8bb27e45c9ad4aacc818c8933`). Every function is compared against the original binary with [objdiff](https://github.com/encounter/objdiff).
 
-This repository does **not** contain any game assets or assembly whatsoever. An existing copy of the game is required.
+This repository contains **no game data and no assembly**. You need your own copy of the game.
 
-Supported versions:
+This work builds on [bgsamm/pbr-dtk](https://github.com/bgsamm/pbr-dtk) (CC0), which set up the project and decompiled most of the `gs` engine so far. Parts of the Revolution SDK come from [koopthekoopa/wii-ipl](https://github.com/koopthekoopa/wii-ipl) (CC0); each imported file names its source.
 
-- `RPBP01`: Rev 0 (PAL)
+## Status
 
-Dependencies
-============
+| | |
+|---|---|
+| Code matched | **10.9 %** (5,005 of 13,890 functions) |
 
-Windows
---------
+Progress by area (functions matching at 100 % in objdiff):
 
-On Windows, it's **highly recommended** to use native tooling. WSL or msys2 are **not** required.  
-When running under WSL, [objdiff](#diffing) is unable to get filesystem notifications for automatic rebuilds.
+| Area | Matched code |
+|---|---|
+| Pokémon data (species, items, strings) | 75 % |
+| Game entry point | 34 % |
+| Game networking (Wi-Fi state machine) | 28 % |
+| Battle presentation | 21 % |
+| Battle engine (ported from the DS games) | 20 % |
+| `gs` engine | 18 % |
+| Battle loop and camera | 17 % |
+| Revolution SDK | 7 % |
+| Scenes and menus | 5 % |
 
-- Install [Python](https://www.python.org/downloads/) and add it to `%PATH%`.
-  - Also available from the [Windows Store](https://apps.microsoft.com/store/detail/python-311/9NRWMJP3717K).
-- Download [ninja](https://github.com/ninja-build/ninja/releases) and add it to `%PATH%`.
-  - Quick install via pip: `pip install ninja`
+Many of these functions are still written with placeholder names and types. A unit counts as finished only when it meets [docs/STYLE.md](docs/STYLE.md).
+See [docs/architecture.md](docs/architecture.md) for a map of the executable and [docs/PROGRESS.md](docs/PROGRESS.md) for the log.
 
-macOS
-------
+## Building
 
-- Install [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages):
+Requirements:
 
-  ```sh
-  brew install ninja
-  ```
+- Python 3 and [ninja](https://ninja-build.org/).
+- Linux and macOS use [wibo](https://github.com/decompals/wibo) to run the Metrowerks compiler; it is downloaded automatically. On Apple Silicon, wibo needs Rosetta 2 (`softwareupdate --install-rosetta`).
+- Windows runs the compiler natively.
 
-- Install [wine-crossover](https://github.com/Gcenx/homebrew-wine):
+Steps:
 
-  ```sh
-  brew install --cask --no-quarantine gcenx/wine/wine-crossover
-  ```
+1. Put your disc image (ISO, RVZ, WBFS, CISO, GCZ…) in `orig/RPBP01/`. It can be deleted after the first build.
+2. Configure and build:
 
-After OS upgrades, if macOS complains about `Wine Crossover.app` being unverified, you can unquarantine it using:
+   ```sh
+   python configure.py
+   ninja
+   ```
 
-```sh
-sudo xattr -rd com.apple.quarantine '/Applications/Wine Crossover.app'
-```
+3. To compare functions, open the project directory in [objdiff](https://github.com/encounter/objdiff) once `objdiff.json` exists.
 
-Linux
-------
+## Layout
 
-- Install [ninja](https://github.com/ninja-build/ninja/wiki/Pre-built-Ninja-packages).
-- For non-x86(_64) platforms: Install wine from your package manager.
-  - For x86(_64), [wibo](https://github.com/decompals/wibo), a minimal 32-bit Windows binary wrapper, will be automatically downloaded and used.
+| Path | Contents |
+|---|---|
+| `src/gs/` | Genius Sonority engine (memory, files, `.fsys` archives, scenes, rendering, input) |
+| `src/ds/` | Glue for the code ported from the Gen 4 DS games |
+| `src/.unsorted/` | Units whose role is not identified yet |
+| `libs/RVL_SDK/` | Revolution SDK |
+| `config/RPBP01/` | `splits.txt` and `symbols.txt` for decomp-toolkit |
+| `tools/stubgen/` | Generators for trivial placeholder functions |
+| `ghidra_scripts/` | Imports `symbols.txt` into a Ghidra project |
 
-Building
-========
+## License
 
-- Clone the repository:
-
-  ```sh
-  git clone https://github.com/my/repo.git
-  ```
-
-- Copy your game's disc image to `orig/GAMEID`.
-  - Supported formats: ISO (GCM), RVZ, WIA, WBFS, CISO, NFS, GCZ, TGC
-  - After the initial build, the disc image can be deleted to save space.
-
-- Configure:
-
-  ```sh
-  python configure.py
-  ```
-
-  To use a version other than `GAMEID` (USA), specify it with `--version`.
-
-- Build:
-
-  ```sh
-  ninja
-  ```
-
-Diffing
-=======
-
-Once the initial build succeeds, an `objdiff.json` should exist in the project root.
-
-Download the latest release from [encounter/objdiff](https://github.com/encounter/objdiff). Under project settings, set `Project directory`. The configuration should be loaded automatically.
-
-Select an object from the left sidebar to begin diffing. Changes to the project will rebuild automatically: changes to source files, headers, `configure.py`, `splits.txt` or `symbols.txt`.
-
-![](assets/objdiff.png)
+CC0, like the projects it builds on.

@@ -35,3 +35,19 @@ analysis/
 /*.txt
 *.bak
 *.exe
+
+# Original game files: never commit them
+*.iso
+*.wbfs
+*.rvz
+*.ciso
+*.gcz
+/extracted/
+/disc/
+
+# Ghidra projects
+*.gpr
+*.rep/
+
+# Misc
+.DS_Store
