@@ -1,0 +1,2 @@
+// Imported from SMGCommunity/Petari (CC0), libs/MSL_C/include/cerrno
+extern int errno;

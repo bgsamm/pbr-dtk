@@ -247,6 +247,36 @@ cflags_runtime = [
     "-fp_contract on",
 ]
 
+# Metrowerks C library flags
+cflags_msl = [
+    "-nodefaults",
+    "-proc gekko",
+    "-align powerpc",
+    "-enum int",
+    "-fp hardware",
+    "-Cpp_exceptions off",
+    "-O4,p",
+    "-inline auto",
+    '-pragma "cats off"',
+    '-pragma "warn_notinlined off"',
+    "-maxerrors 1",
+    "-nosyspath",
+    "-RTTI off",
+    "-str reuse,pool,readonly",
+    "-enc SJIS",
+    "-ipa file",
+    "-use_lmw_stmw on",
+    "-i libs/MSL_C/include",
+    "-i libs/MetroTRK/include",
+    "-i libs/RVL_SDK/include",
+    "-i libs/Runtime/include",
+    "-i include",
+    f"-i build/{config.version}/include",
+    f"-DBUILD_VERSION={version_num}",
+    f"-DVERSION_{config.version}",
+    "-DNDEBUG=1",
+]
+
 # RVL SDK flags
 cflags_sdk = [
     *cflags_base,
@@ -277,6 +307,17 @@ def RuntimeLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
         "progress_category": "runtime",
         "objects": objects,
         "src_dir": "libs/Runtime/src",
+    }
+
+
+def MSLLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
+    return {
+        "lib": lib_name,
+        "mw_version": "GC/3.0a3",
+        "cflags": cflags_msl,
+        "progress_category": "runtime",
+        "objects": objects,
+        "src_dir": "libs/MSL_C/src",
     }
 
 
@@ -312,6 +353,59 @@ config.libs = [
         [
             Object(NonMatching, "global_destructor_chain.c"),
             Object(NonMatching, "__init_cpp_exceptions.cpp"),
+        ],
+    ),
+    MSLLib(
+        "MSL_C",
+        [
+            Object(NonMatching, "FILE_POS.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/e_acos.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/e_asin.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/e_atan2.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/e_fmod.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/e_pow.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/e_rem_pio2.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/e_sqrt.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/k_cos.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/k_rem_pio2.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/k_sin.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/k_tan.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/s_atan.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/s_copysign.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/s_cos.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/s_floor.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/s_frexp.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/s_ldexp.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/s_sin.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/s_tan.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/w_acos.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/w_asin.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/w_atan2.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/w_fmod.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/w_pow.c"),
+            Object(NonMatching, "MSL_Common_Embedded/Math/Double_precision/w_sqrt.c"),
+            Object(NonMatching, "PPC_EABI/SRC/math_ppc.c"),
+            Object(NonMatching, "ansi_files.c"),
+            Object(NonMatching, "ansi_fp.c"),
+            Object(NonMatching, "arith.c"),
+            Object(NonMatching, "buffer_io.c"),
+            Object(NonMatching, "direct_io.c"),
+            Object(NonMatching, "extras.c"),
+            Object(NonMatching, "file_io.c"),
+            Object(NonMatching, "math_api.c"),
+            Object(NonMatching, "math_sun.c"),
+            Object(NonMatching, "mbstring.c"),
+            Object(NonMatching, "mem.c"),
+            Object(NonMatching, "mem_funcs.c"),
+            Object(NonMatching, "misc_io.c"),
+            Object(NonMatching, "printf.c", mw_version="GC/3.0a5.2"),
+            Object(NonMatching, "scanf.c"),
+            Object(NonMatching, "string.c"),
+            Object(NonMatching, "strtold.c"),
+            Object(NonMatching, "strtoul.c"),
+            Object(NonMatching, "uart_console_io_gcn.c"),
+            Object(NonMatching, "wchar_io.c"),
+            Object(NonMatching, "wstring.c"),
         ],
     ),
     RVLSDKLib(
@@ -650,7 +744,7 @@ config.libs = [
             Object(NonMatching, ".unsorted/80185AE0.cpp"),
             Object(NonMatching, ".unsorted/8018777C.cpp"),
             Object(NonMatching, ".unsorted/8019BEC4.cpp"),
-            Object(NonMatching, ".unsorted/801C7830.cpp"),
+            Object(NonMatching, ".unsorted/801C9584.cpp"),
             Object(NonMatching, "gs/scene/GScamera.cpp"),
             Object(NonMatching, "gs/scene/GSvolumeNode.cpp"),
             Object(NonMatching, ".unsorted/801E07E8.cpp"),

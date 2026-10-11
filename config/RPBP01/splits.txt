@@ -502,9 +502,206 @@ libs/Runtime/src/__init_cpp_exceptions.cpp:
 	.sdata      start:0x8063D698 end:0x8063D6A0
 
 src/.unsorted/801C7830.cpp:
-	extab       start:0x80006520 end:0x800066B0
-	extabindex  start:0x800066F0 end:0x80006948
-	.text       start:0x801C7830 end:0x801DAA30
+	.text       start:0x801C7830 end:0x801C7894
+
+libs/MSL_C/src/ansi_files.c:
+	extab       start:0x80006520 end:0x80006538
+	extabindex  start:0x800066F0 end:0x80006714
+	.text       start:0x801C7894 end:0x801C7A28
+
+libs/MSL_C/src/ansi_fp.c:
+	extab       start:0x80006538 end:0x80006570
+	extabindex  start:0x80006714 end:0x80006768
+	.text       start:0x801C7A28 end:0x801C9398
+
+libs/MSL_C/src/arith.c:
+	.text       start:0x801C9398 end:0x801C93A8
+
+libs/MSL_C/src/buffer_io.c:
+	extab       start:0x80006570 end:0x80006580
+	extabindex  start:0x80006768 end:0x80006780
+	.text       start:0x801C93A8 end:0x801C9584
+
+src/.unsorted/801C9584.cpp:
+	extab       start:0x80006580 end:0x80006588
+	extabindex  start:0x80006780 end:0x8000678C
+	.text       start:0x801C9584 end:0x801C98C8
+
+libs/MSL_C/src/direct_io.c:
+	extab       start:0x80006588 end:0x80006590
+	extabindex  start:0x8000678C end:0x80006798
+	.text       start:0x801C98C8 end:0x801C9BD0
+
+libs/MSL_C/src/file_io.c:
+	extab       start:0x80006590 end:0x800065A0
+	extabindex  start:0x80006798 end:0x800067B0
+	.text       start:0x801C9BD0 end:0x801C9E80
+
+libs/MSL_C/src/FILE_POS.c:
+	extab       start:0x800065A0 end:0x800065A8
+	extabindex  start:0x800067B0 end:0x800067BC
+	.text       start:0x801C9E80 end:0x801CA0F4
+
+src/.unsorted/801CA0F4.cpp:
+	extab       start:0x800065A8 end:0x800065B0
+	extabindex  start:0x800067BC end:0x800067C8
+	.text       start:0x801CA0F4 end:0x801CA13C
+
+libs/MSL_C/src/mbstring.c:
+	extab       start:0x800065B0 end:0x800065B8
+	extabindex  start:0x800067C8 end:0x800067D4
+	.text       start:0x801CA13C end:0x801CA274
+
+libs/MSL_C/src/mem.c:
+	extab       start:0x800065B8 end:0x800065C0
+	extabindex  start:0x800067D4 end:0x800067E0
+	.text       start:0x801CA274 end:0x801CA3E4
+
+libs/MSL_C/src/mem_funcs.c:
+	.text       start:0x801CA3E4 end:0x801CA6B4
+
+libs/MSL_C/src/math_api.c:
+	extab       start:0x800065C0 end:0x800065D8
+	extabindex  start:0x800067E0 end:0x80006804
+	.text       start:0x801CA6B4 end:0x801CA7B0
+
+libs/MSL_C/src/misc_io.c:
+	.text       start:0x801CA7B0 end:0x801CA7C0
+
+libs/MSL_C/src/printf.c:
+	extab       start:0x800065D8 end:0x80006638
+	extabindex  start:0x80006804 end:0x80006894
+	.text       start:0x801CA7C0 end:0x801CCBCC
+
+src/.unsorted/801CCBCC.cpp:
+	extab       start:0x80006638 end:0x80006640
+	extabindex  start:0x80006894 end:0x800068A0
+	.text       start:0x801CCBCC end:0x801CCD64
+
+libs/MSL_C/src/scanf.c:
+	extab       start:0x80006640 end:0x80006658
+	extabindex  start:0x800068A0 end:0x800068C4
+	.text       start:0x801CCD64 end:0x801CE2D0
+
+libs/MSL_C/src/string.c:
+	extab       start:0x80006658 end:0x80006668
+	extabindex  start:0x800068C4 end:0x800068DC
+	.text       start:0x801CE2D0 end:0x801CE80C
+
+libs/MSL_C/src/strtold.c:
+	extab       start:0x80006668 end:0x80006670
+	extabindex  start:0x800068DC end:0x800068E8
+	.text       start:0x801CE80C end:0x801CFC00
+
+src/.unsorted/801CFC00.cpp:
+	extab       start:0x80006670 end:0x80006678
+	extabindex  start:0x800068E8 end:0x800068F4
+	.text       start:0x801CFC00 end:0x801CFC84
+
+libs/MSL_C/src/strtoul.c:
+	extab       start:0x80006678 end:0x800066A0
+	extabindex  start:0x800068F4 end:0x80006930
+	.text       start:0x801CFC84 end:0x801D07D0
+
+libs/MSL_C/src/wstring.c:
+	.text       start:0x801D07D0 end:0x801D0864
+
+libs/MSL_C/src/wchar_io.c:
+	.text       start:0x801D0864 end:0x801D08E8
+
+libs/MSL_C/src/uart_console_io_gcn.c:
+	extab       start:0x800066A0 end:0x800066A8
+	extabindex  start:0x80006930 end:0x8000693C
+	.text       start:0x801D08E8 end:0x801D09C0
+
+libs/MSL_C/src/math_sun.c:
+	extab       start:0x800066A8 end:0x800066B0
+	extabindex  start:0x8000693C end:0x80006948
+	.text       start:0x801D09C0 end:0x801D0A00
+
+libs/MSL_C/src/extras.c:
+	.text       start:0x801D0A00 end:0x801D0BFC
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/e_acos.c:
+	.text       start:0x801D0BFC end:0x801D0EC0
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/e_asin.c:
+	.text       start:0x801D0EC0 end:0x801D1158
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/e_atan2.c:
+	.text       start:0x801D1158 end:0x801D13C8
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/e_fmod.c:
+	.text       start:0x801D13C8 end:0x801D16F8
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/e_pow.c:
+	.text       start:0x801D16F8 end:0x801D1F40
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/e_rem_pio2.c:
+	.text       start:0x801D1F40 end:0x801D22D8
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/k_cos.c:
+	.text       start:0x801D22D8 end:0x801D23E8
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/k_rem_pio2.c:
+	.text       start:0x801D23E8 end:0x801D3AF4
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/k_sin.c:
+	.text       start:0x801D3AF4 end:0x801D3BB4
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/k_tan.c:
+	.text       start:0x801D3BB4 end:0x801D3E0C
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/s_atan.c:
+	.text       start:0x801D3E0C end:0x801D404C
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/s_copysign.c:
+	.text       start:0x801D404C end:0x801D4078
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/s_cos.c:
+	.text       start:0x801D4078 end:0x801D414C
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/s_floor.c:
+	.text       start:0x801D414C end:0x801D4290
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/s_frexp.c:
+	.text       start:0x801D4290 end:0x801D4318
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/s_ldexp.c:
+	.text       start:0x801D4318 end:0x801D4484
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/s_sin.c:
+	.text       start:0x801D4484 end:0x801D455C
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/s_tan.c:
+	.text       start:0x801D455C end:0x801D45D4
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/w_acos.c:
+	.text       start:0x801D45D4 end:0x801D45D8
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/w_asin.c:
+	.text       start:0x801D45D8 end:0x801D45DC
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/w_atan2.c:
+	.text       start:0x801D45DC end:0x801D45E0
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/w_fmod.c:
+	.text       start:0x801D45E0 end:0x801D45E4
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/w_pow.c:
+	.text       start:0x801D45E4 end:0x801D45E8
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/e_sqrt.c:
+	.text       start:0x801D45E8 end:0x801D4830
+
+libs/MSL_C/src/PPC_EABI/SRC/math_ppc.c:
+	.text       start:0x801D4830 end:0x801D4834
+
+libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/w_sqrt.c:
+	.text       start:0x801D4834 end:0x801D4838
+
+src/.unsorted/801D4838.cpp:
+	.text       start:0x801D4838 end:0x801DAA30
 
 src/gs/operators.cpp:
 	.text       start:0x801DAA30 end:0x801DAAE0
