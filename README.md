@@ -11,9 +11,9 @@ This work builds on [bgsamm/pbr-dtk](https://github.com/bgsamm/pbr-dtk) (CC0), w
 ## Status
 
 <!-- progress:start -->
-![Code matched](https://img.shields.io/badge/code%20matched-12.1%25-blue) ![Functions](https://img.shields.io/badge/functions-5188%2F13890-blue) ![Linked](https://img.shields.io/badge/linked-0.8%25-green)
+![Code matched](https://img.shields.io/badge/code%20matched-12.2%25-blue) ![Functions](https://img.shields.io/badge/functions-5196%2F13890-blue) ![Linked](https://img.shields.io/badge/linked-0.8%25-green)
 
-**12.14 %** of the code matches the original (5,188 of 13,890 functions). **0.83 %** is in finished units linked into the build.
+**12.16 %** of the code matches the original (5,196 of 13,890 functions). **0.83 %** is in finished units linked into the build.
 
 | Area | Size | Matched | |
 |---|---:|---:|---|
@@ -27,7 +27,7 @@ This work builds on [bgsamm/pbr-dtk](https://github.com/bgsamm/pbr-dtk) (CC0), w
 | gs engine | 470 KiB | 18.2 % | `████░░░░░░░░░░░░░░░░` |
 | Game sound | 46 KiB | 0.8 % | `░░░░░░░░░░░░░░░░░░░░` |
 | Game networking | 51 KiB | 28.1 % | `██████░░░░░░░░░░░░░░` |
-| Revolution SDK | 627 KiB | 15.0 % | `███░░░░░░░░░░░░░░░░░` |
+| Revolution SDK | 627 KiB | 15.2 % | `███░░░░░░░░░░░░░░░░░` |
 | Other Nintendo libraries (VF, DWC, NW4R, HOME menu) | 554 KiB | 0.3 % | `░░░░░░░░░░░░░░░░░░░░` |
 | Battle engine (ported from the DS games) | 295 KiB | 23.7 % | `█████░░░░░░░░░░░░░░░` |
 | Pokémon data | 35 KiB | 74.9 % | `███████████████░░░░░` |

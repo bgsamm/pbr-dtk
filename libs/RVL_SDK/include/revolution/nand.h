@@ -179,6 +179,7 @@ struct NANDCommandBlock {
 s32 NANDInit();
 
 s32 NANDCreate(const char* path, u8 perm, u8 attr);
+s32 NANDCreateAsync(const char* path, u8 perm, u8 attr, NANDCallback callback, NANDCommandBlock* block);
 
 s32 NANDOpen(const char* path, NANDFileInfo* info, u8 accType);
 s32 NANDOpenAsync(const char* path, NANDFileInfo* info, u8 accType, NANDCallback callback, NANDCommandBlock* block);
@@ -214,11 +215,13 @@ void NANDSetUserData(NANDCommandBlock* block, void* data);
 void* NANDGetUserData(NANDCommandBlock* block);
 
 s32 NANDCreateDir(const char* path, u8 perm, u8 attr);
+s32 NANDCreateDirAsync(const char* path, u8 perm, u8 attr, NANDCallback callback, NANDCommandBlock* block);
 
 s32 NANDChangeDir(const char* path);
 s32 NANDGetCurrentDir(char* path);
 
 s32 NANDReadDir(const char* path, char* nameList, u32* num);
+s32 NANDReadDirAsync(const char* path, char* nameList, u32* num, NANDCallback callback, NANDCommandBlock* block);
 
 s32 NANDGetHomeDir(char* path);
 

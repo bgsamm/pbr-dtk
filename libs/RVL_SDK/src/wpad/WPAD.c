@@ -1191,7 +1191,7 @@ void WPADGetAccGravityUnit(s32 chan, u32 type, WPADAccGravityUnit* pAcc) {
     OSRestoreInterrupts(enabled);
 }
 
-static void DisconnectCallback(s32 chan, s32 status) {
+static void CloseCallback(s32 chan, s32 status) {
     WPADCB* p = _wpdcb[chan];
 
     if (status != WPAD_ERR_NO_CONTROLLER) {
@@ -1220,7 +1220,7 @@ static void WPADiDisconnect(s32 chan, BOOL sleep) {
         p->sleeping = TRUE;
 
         OSRestoreInterrupts(enabled);
-        WPADControlLed(chan, 0, DisconnectCallback);
+        WPADControlLed(chan, 0, CloseCallback);
     } else {
         BD_ADDR addr;
         WPADGetAddress(chan, addr);

@@ -51,6 +51,14 @@ s32 NANDPrivateCreate(const char* path, u8 perm, u8 attr) {
     return nandConvertErrorCode(nandCreate(path, perm, attr, NULL, FALSE, TRUE));
 }
 
+s32 NANDCreateAsync(const char* path, u8 perm, u8 attr, NANDCallback callback, NANDCommandBlock* block) {
+    if (!nandIsInitialized()) {
+        return NAND_RESULT_FATAL_ERROR;
+    }
+    block->callback = callback;
+    return nandConvertErrorCode(nandCreate(path, perm, attr, block, TRUE, FALSE));
+}
+
 s32 NANDPrivateCreateAsync(const char* path, u8 perm, u8 attr, NANDCallback callback, NANDCommandBlock* block) {
     if (!nandIsInitialized()) {
         return NAND_RESULT_FATAL_ERROR;
@@ -184,6 +192,14 @@ static ISFSError nandReadDir(const char* path, char* nameList, u32* num, NANDCom
     }
 }
 
+s32 NANDReadDirAsync(const char* path, char* nameList, u32* num, NANDCallback callback, NANDCommandBlock* block) {
+    if (!nandIsInitialized()) {
+        return NAND_RESULT_FATAL_ERROR;
+    }
+    block->callback = callback;
+    return nandConvertErrorCode(nandReadDir(path, nameList, num, block, TRUE, FALSE));
+}
+
 s32 NANDReadDir(const char* path, char* nameList, u32* num) {
     if (!nandIsInitialized()) {
         return NAND_RESULT_FATAL_ERROR;
@@ -230,6 +246,14 @@ s32 NANDPrivateCreateDir(const char* path, u8 perm, u8 attr) {
         return NAND_RESULT_FATAL_ERROR;
     }
     return nandConvertErrorCode(nandCreateDir(path, perm, attr, NULL, FALSE, TRUE));
+}
+
+s32 NANDCreateDirAsync(const char* path, u8 perm, u8 attr, NANDCallback callback, NANDCommandBlock* block) {
+    if (!nandIsInitialized()) {
+        return NAND_RESULT_FATAL_ERROR;
+    }
+    block->callback = callback;
+    return nandConvertErrorCode(nandCreateDir(path, perm, attr, block, TRUE, FALSE));
 }
 
 s32 NANDPrivateCreateDirAsync(const char* path, u8 perm, u8 attr, NANDCallback callback, NANDCommandBlock* block) {
