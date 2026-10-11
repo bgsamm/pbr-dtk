@@ -172,7 +172,6 @@ u8 *fn_8011C974(void);
 void fn_8000B570(int);
 int fn_80056BD4(void *);
 int fn_80056C4C(void *);
-int GetMonDataInternal(void *, int, int);
 
 void fn_800561E8(void) { if (fn_80253DE0(ACTX->_1044) != 2) fn_80253DB0(ACTX->_1044, 2, 0); }
 void fn_80056274(void) { if (fn_80253DE0(ACTX->_1044) != 2) fn_80253DB0(ACTX->_1044, 2, 0); }
@@ -181,9 +180,9 @@ BOOL fn_80058610(void) { if (*(u16 *)(fn_8011C974() + 0x94) == 0) return 0; retu
 BOOL fn_80058660(void) { if (*(u16 *)(fn_8011C974() + 0x92) == 0) return 0; return ACTXF->_1090 >= ACTXF->_1094; }
 void fn_80056458(int x) { if (x) fn_8000B570(lbl_80640B6C + lbl_80640B70 * lbl_8063D988); else fn_8000B570(0); }
 void fn_80059884(int i) { u32 *row = lbl_803FB880[i]; GScache::freeFsysCacheEntries(row[fn_80058BA4()]); GSfsys::fn_80249890(row[fn_80058BA4()]); }
-BOOL fn_80056E2C(void *p) { if (!fn_80056BD4(p)) return 0; if (BoxPokemon_GetValue((BoxPokemon *)p, 0xac, NULL)) return 1; return 0; }
-BOOL fn_80056E84(void *p) { if (fn_80056C4C(p) == 0) return 0; return (u32)GetMonDataInternal(p, 0xac, 0) != 0; }
-BOOL fn_80056EDC(void *p) { if (!fn_80056BD4(p)) return 0; if (BoxPokemon_GetValue((BoxPokemon *)p, 3, NULL)) return 1; return 0; }
+BOOL fn_80056E2C(void *p) { if (!fn_80056BD4(p)) return 0; if (BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_SANITY_IS_EGG, NULL)) return 1; return 0; }
+BOOL fn_80056E84(void *p) { if (fn_80056C4C(p) == 0) return 0; return (u32)Pokemon_GetValue((Pokemon *)p, MON_DATA_SANITY_IS_EGG, NULL) != 0; }
+BOOL fn_80056EDC(void *p) { if (!fn_80056BD4(p)) return 0; if (BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_CHECKSUM_FAILED, NULL)) return 1; return 0; }
 
 }
 
@@ -262,14 +261,14 @@ extern const f32 lbl_80640B64;
 
 u16 *fn_8005697C(void *p) {
     u16 buf[32];
-    BoxPokemon_GetValue((BoxPokemon *)p, 0x74, buf);
+    BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_NICKNAME, buf);
     fn_80177080(ACTX->names[ACTX->_103C & 0x3f], buf, 0x20);
     ACTX->_103C++;
     return ACTX->names[(ACTX->_103C - 1) & 0x3f];
 }
 u16 *fn_800569EC(void *p) {
     u16 buf[32];
-    GetMonDataInternal(p, 0x74, (int)buf);
+    Pokemon_GetValue((Pokemon *)p, MON_DATA_NICKNAME, buf);
     fn_80177080(ACTX->names[ACTX->_103C & 0x3f], buf, 0x20);
     ACTX->_103C++;
     return ACTX->names[(ACTX->_103C - 1) & 0x3f];
@@ -306,17 +305,17 @@ f32 fn_80055E3C(void) {
 int fn_80056BD4(void *p) {
     u16 v;
     if (p == 0) return 0;
-    v = BoxPokemon_GetValue((BoxPokemon *)p, 5, NULL);
+    v = BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_SPECIES, NULL);
     if (v == 0 || v > 0x1ef) return 0;
-    if (BoxPokemon_GetValue((BoxPokemon *)p, 0xab, NULL)) return 1;
+    if (BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_SPECIES_EXISTS, NULL)) return 1;
     return 0;
 }
 int fn_80056C4C(void *p) {
     u16 v;
     if (p == 0) return 0;
-    v = GetMonDataInternal(p, 5, 0);
+    v = Pokemon_GetValue((Pokemon *)p, MON_DATA_SPECIES, NULL);
     if (v == 0 || v > 0x1ef) return 0;
-    if (GetMonDataInternal(p, 0xab, 0)) return 1;
+    if (Pokemon_GetValue((Pokemon *)p, MON_DATA_SPECIES_EXISTS, NULL)) return 1;
     return 0;
 }
 
@@ -379,11 +378,11 @@ void fn_80057450(void *p) {
     u32 z;
     u16 buf2[32];
     u16 buf1[32];
-    fn_802503D8(fn_80391F94(lbl_8063CE34 + 0x10, BoxPokemon_GetValue((BoxPokemon *)p, 5, NULL)), buf2);
+    fn_802503D8(fn_80391F94(lbl_8063CE34 + 0x10, BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_SPECIES, NULL)), buf2);
     fn_80176EB4(buf1, buf2, 0x20);
-    BoxPokemon_SetValue((BoxPokemon *)p, 0x74, buf1);
+    BoxPokemon_SetValue((BoxPokemon *)p, MON_DATA_NICKNAME, buf1);
     z = 0;
-    BoxPokemon_SetValue((BoxPokemon *)p, 0x4d, &z);
+    BoxPokemon_SetValue((BoxPokemon *)p, MON_DATA_HAS_NICKNAME, &z);
 }
 
 }
@@ -506,34 +505,34 @@ int fn_80250398(int, int, int);
 void *fn_80056CC4(void *p) {
     if (!fn_80056BD4(p)) {
         return fn_802502F4(10);
-    } else if (BoxPokemon_GetValue((BoxPokemon *)p, 0xac, NULL)) {
-        if (BoxPokemon_GetValue((BoxPokemon *)p, 3, NULL)) {
+    } else if (BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_SANITY_IS_EGG, NULL)) {
+        if (BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_CHECKSUM_FAILED, NULL)) {
             return fn_802502F4(0x1f9);
         } else {
             return fn_802502F4(0x1f8);
         }
     } else {
-        return fn_802502F4(fn_80391F94(lbl_8063CE34 + 0x10, BoxPokemon_GetValue((BoxPokemon *)p, 5, NULL)));
+        return fn_802502F4(fn_80391F94(lbl_8063CE34 + 0x10, BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_SPECIES, NULL)));
     }
 }
 void *fn_80056D78(void *p) {
     if (!fn_80056C4C(p)) {
         return fn_802502F4(10);
-    } else if (GetMonDataInternal(p, 0xac, 0)) {
-        if (GetMonDataInternal(p, 3, 0)) {
+    } else if (Pokemon_GetValue((Pokemon *)p, MON_DATA_SANITY_IS_EGG, NULL)) {
+        if (Pokemon_GetValue((Pokemon *)p, MON_DATA_CHECKSUM_FAILED, NULL)) {
             return fn_802502F4(0x1f9);
         } else {
             return fn_802502F4(0x1f8);
         }
     } else {
-        return fn_802502F4(fn_80391F94(lbl_8063CE34 + 0x10, GetMonDataInternal(p, 5, 0)));
+        return fn_802502F4(fn_80391F94(lbl_8063CE34 + 0x10, Pokemon_GetValue((Pokemon *)p, MON_DATA_SPECIES, NULL)));
     }
 }
 u8 fn_80056A5C(void *p) {
     if (!fn_80056BD4(p)) return 2;
-    if (BoxPokemon_GetValue((BoxPokemon *)p, 0xac, NULL)) return 2;
-    if (!BoxPokemon_GetValue((BoxPokemon *)p, 0xaf, NULL)) return 2;
-    switch ((u16)BoxPokemon_GetValue((BoxPokemon *)p, 0x6f, NULL)) {
+    if (BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_SANITY_IS_EGG, NULL)) return 2;
+    if (!BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_NO_PRINT_GENDER, NULL)) return 2;
+    switch ((u16)BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_GENDER, NULL)) {
     case 0:
         return 0;
     case 1:
@@ -544,9 +543,9 @@ u8 fn_80056A5C(void *p) {
 }
 u8 fn_80056B18(void *p) {
     if (!fn_80056C4C(p)) return 2;
-    if (GetMonDataInternal(p, 0xac, 0)) return 2;
-    if (!GetMonDataInternal(p, 0xaf, 0)) return 2;
-    switch ((u16)GetMonDataInternal(p, 0x6f, 0)) {
+    if (Pokemon_GetValue((Pokemon *)p, MON_DATA_SANITY_IS_EGG, NULL)) return 2;
+    if (!Pokemon_GetValue((Pokemon *)p, MON_DATA_NO_PRINT_GENDER, NULL)) return 2;
+    switch ((u16)Pokemon_GetValue((Pokemon *)p, MON_DATA_GENDER, NULL)) {
     case 0:
         return 0;
     case 1:
@@ -577,9 +576,9 @@ int fn_803919C4(void *, int);
 int fn_803919F8(void *, int);
 
 int fn_80056F68(void *p, int b) {
-    int v = BoxPokemon_GetValue((BoxPokemon *)p, 5, NULL);
+    int v = BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_SPECIES, NULL);
     if (v == 0x1ed) {
-        switch (BoxPokemon_GetValue((BoxPokemon *)p, 0x70, NULL)) {
+        switch (BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_FORM, NULL)) {
         case 1: return 1;
         case 2: return 2;
         case 3: return 3;
@@ -601,7 +600,7 @@ int fn_80056F68(void *p, int b) {
     } else if (b == 0) {
         return fn_803919C4(lbl_8063CE34 + 0x10, v);
     } else if (v == 0x19d) {
-        switch (BoxPokemon_GetValue((BoxPokemon *)p, 0x70, NULL)) {
+        switch (BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_FORM, NULL)) {
         case 0:
         default: return 12;
         case 1: return 4;
@@ -665,42 +664,42 @@ struct MonSetup {
 void fn_80057208(void *p) {
     u32 tmp;
     if (fn_80056C4C(p)) {
-        if (GetMonDataInternal(p, 0x36, 0)) {
-            tmp = GetMonDataInternal(p, 0x42, 0);
-            Pokemon_SetValue((Pokemon *)p, 0x3a, &tmp);
+        if (Pokemon_GetValue((Pokemon *)p, MON_DATA_MOVE1, NULL)) {
+            tmp = Pokemon_GetValue((Pokemon *)p, MON_DATA_MOVE1_MAX_PP, NULL);
+            Pokemon_SetValue((Pokemon *)p, MON_DATA_MOVE1_PP, &tmp);
         }
-        if (GetMonDataInternal(p, 0x37, 0)) {
-            tmp = GetMonDataInternal(p, 0x43, 0);
-            Pokemon_SetValue((Pokemon *)p, 0x3b, &tmp);
+        if (Pokemon_GetValue((Pokemon *)p, MON_DATA_MOVE2, NULL)) {
+            tmp = Pokemon_GetValue((Pokemon *)p, MON_DATA_MOVE2_MAX_PP, NULL);
+            Pokemon_SetValue((Pokemon *)p, MON_DATA_MOVE2_PP, &tmp);
         }
-        if (GetMonDataInternal(p, 0x38, 0)) {
-            tmp = GetMonDataInternal(p, 0x44, 0);
-            Pokemon_SetValue((Pokemon *)p, 0x3c, &tmp);
+        if (Pokemon_GetValue((Pokemon *)p, MON_DATA_MOVE3, NULL)) {
+            tmp = Pokemon_GetValue((Pokemon *)p, MON_DATA_MOVE3_MAX_PP, NULL);
+            Pokemon_SetValue((Pokemon *)p, MON_DATA_MOVE3_PP, &tmp);
         }
-        if (GetMonDataInternal(p, 0x39, 0)) {
-            tmp = GetMonDataInternal(p, 0x45, 0);
-            Pokemon_SetValue((Pokemon *)p, 0x3d, &tmp);
+        if (Pokemon_GetValue((Pokemon *)p, MON_DATA_MOVE4, NULL)) {
+            tmp = Pokemon_GetValue((Pokemon *)p, MON_DATA_MOVE4_MAX_PP, NULL);
+            Pokemon_SetValue((Pokemon *)p, MON_DATA_MOVE4_PP, &tmp);
         }
     }
 }
 void fn_8005732C(void *p) {
     u32 tmp;
     if (fn_80056BD4(p)) {
-        if (BoxPokemon_GetValue((BoxPokemon *)p, 0x36, NULL)) {
-            tmp = BoxPokemon_GetValue((BoxPokemon *)p, 0x42, NULL);
-            BoxPokemon_SetValue((BoxPokemon *)p, 0x3a, &tmp);
+        if (BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_MOVE1, NULL)) {
+            tmp = BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_MOVE1_MAX_PP, NULL);
+            BoxPokemon_SetValue((BoxPokemon *)p, MON_DATA_MOVE1_PP, &tmp);
         }
-        if (BoxPokemon_GetValue((BoxPokemon *)p, 0x37, NULL)) {
-            tmp = BoxPokemon_GetValue((BoxPokemon *)p, 0x43, NULL);
-            BoxPokemon_SetValue((BoxPokemon *)p, 0x3b, &tmp);
+        if (BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_MOVE2, NULL)) {
+            tmp = BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_MOVE2_MAX_PP, NULL);
+            BoxPokemon_SetValue((BoxPokemon *)p, MON_DATA_MOVE2_PP, &tmp);
         }
-        if (BoxPokemon_GetValue((BoxPokemon *)p, 0x38, NULL)) {
-            tmp = BoxPokemon_GetValue((BoxPokemon *)p, 0x44, NULL);
-            BoxPokemon_SetValue((BoxPokemon *)p, 0x3c, &tmp);
+        if (BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_MOVE3, NULL)) {
+            tmp = BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_MOVE3_MAX_PP, NULL);
+            BoxPokemon_SetValue((BoxPokemon *)p, MON_DATA_MOVE3_PP, &tmp);
         }
-        if (BoxPokemon_GetValue((BoxPokemon *)p, 0x39, NULL)) {
-            tmp = BoxPokemon_GetValue((BoxPokemon *)p, 0x45, NULL);
-            BoxPokemon_SetValue((BoxPokemon *)p, 0x3d, &tmp);
+        if (BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_MOVE4, NULL)) {
+            tmp = BoxPokemon_GetValue((BoxPokemon *)p, MON_DATA_MOVE4_MAX_PP, NULL);
+            BoxPokemon_SetValue((BoxPokemon *)p, MON_DATA_MOVE4_PP, &tmp);
         }
     }
 }
@@ -708,24 +707,24 @@ void fn_800570E8(void *p, MonSetup *q) {
     u32 tmp;
     u16 buf[20];
     tmp = 0;
-    BoxPokemon_SetValue((BoxPokemon *)p, 0x97, &tmp);
-    BoxPokemon_SetValue((BoxPokemon *)p, 0x6e, &tmp);
+    BoxPokemon_SetValue((BoxPokemon *)p, MON_DATA_EGG_LOCATION, &tmp);
+    BoxPokemon_SetValue((BoxPokemon *)p, MON_DATA_FATEFUL_ENCOUNTER, &tmp);
     tmp = 0x37;
-    BoxPokemon_SetValue((BoxPokemon *)p, 0x98, &tmp);
+    BoxPokemon_SetValue((BoxPokemon *)p, MON_DATA_MET_LOCATION, &tmp);
     tmp = 0x10;
-    BoxPokemon_SetValue((BoxPokemon *)p, 0x79, &tmp);
+    BoxPokemon_SetValue((BoxPokemon *)p, MON_DATA_MET_GAME, &tmp);
     tmp = q->_0;
-    BoxPokemon_SetValue((BoxPokemon *)p, 0x94, &tmp);
+    BoxPokemon_SetValue((BoxPokemon *)p, MON_DATA_MET_YEAR, &tmp);
     tmp = q->_2;
-    BoxPokemon_SetValue((BoxPokemon *)p, 0x95, &tmp);
+    BoxPokemon_SetValue((BoxPokemon *)p, MON_DATA_MET_MONTH, &tmp);
     tmp = q->_4;
-    BoxPokemon_SetValue((BoxPokemon *)p, 0x96, &tmp);
+    BoxPokemon_SetValue((BoxPokemon *)p, MON_DATA_MET_DAY, &tmp);
     tmp = q->_6;
-    BoxPokemon_SetValue((BoxPokemon *)p, 0x9b, &tmp);
+    BoxPokemon_SetValue((BoxPokemon *)p, MON_DATA_MET_LEVEL, &tmp);
     tmp = q->_8;
-    BoxPokemon_SetValue((BoxPokemon *)p, 0x7, &tmp);
+    BoxPokemon_SetValue((BoxPokemon *)p, MON_DATA_OT_ID, &tmp);
     fn_80176EB4(buf, q->name, 0x10);
-    BoxPokemon_SetValue((BoxPokemon *)p, 0x8f, buf);
+    BoxPokemon_SetValue((BoxPokemon *)p, MON_DATA_OT_NAME, buf);
 }
 
 }
