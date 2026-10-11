@@ -1,11 +1,10 @@
 #include "common.hpp"
 #include ".unsorted/80177C24.hpp"
 
+#include "ds/pokemon.hpp"
 #include "gs/GScache.hpp"
 #include "types/pokemonDeck.hpp"
 #include "types/trainerDeck.hpp"
-
-extern "C" void fn_803DB678(void *to, u32 attrId, void *from);
 
 struct UnkStruct2 {
     /* 0x00 */ u8 _00[0x88];
@@ -45,7 +44,7 @@ bool Battle::fn_8017A754(u32 coloId, TrainerDeckEntry *trainer, UnkStruct1 *_r6)
     for (s32 i = trainer->mTeamSize; i < 6; i++) {
         UnkStruct2 *unk = _r6->_48[i];
         u32 species = 0;
-        fn_803DB678(unk, 0x5, &species);
+        BoxPokemon_SetValue((BoxPokemon *)unk, 0x5, &species);
         unk->_88 = 0;
         unk->_89 = 0;
         unk->_8A &= ~(0x80);

@@ -1,5 +1,6 @@
 #include ".unsorted/800C5968.hpp"
 #include ".unsorted/800B9E10.hpp"
+#include "ds/pokemon.hpp"
 
 #include "common.hpp"
 
@@ -746,7 +747,6 @@ struct Obj1D0 {
 extern u8 lbl_8063CE34[];
 extern f32 lbl_8064106C;
 extern f32 lbl_80641080;
-u32 fn_803DAEFC(void*, int, int);
 u16 fn_80391F94(void*, u32);
 
 static inline void SetX4XC(Arg2508* b, f32 x, f32 y) {
@@ -867,7 +867,7 @@ void fn_800D2508(int a, Arg2508* b) {
         case 0x2bf6:
         case 0x2c32:
         case 0x2c6e:
-            fn_8015C308(0x15, (void*)fn_802502F4(fn_80391F94(lbl_8063CE34 + 0x10, fn_803DAEFC(pk, 5, 0))));
+            fn_8015C308(0x15, (void*)fn_802502F4(fn_80391F94(lbl_8063CE34 + 0x10, BoxPokemon_GetValue((BoxPokemon *)pk, 5, NULL))));
             break;
         }
         if (q->x1c != 0xffff) {
@@ -910,11 +910,11 @@ u8 fn_80056A5C(void*);
 static inline void fn_800D1E50_sub(void* a, void* b, int type, PkmFlag* p) {
     switch (type) {
     case 0x13:
-        fn_80253EB4(a, b, 1, fn_803DAEFC(p, 3, 0) ? 0 : fn_8005A9F8(lbl_8041BFE0[fn_80056F68(p, 0)]));
+        fn_80253EB4(a, b, 1, BoxPokemon_GetValue((BoxPokemon *)p, 3, NULL) ? 0 : fn_8005A9F8(lbl_8041BFE0[fn_80056F68(p, 0)]));
         break;
     case 0x14: {
         if (fn_80056F68(p, 0) != fn_80056F68(p, 1)) {
-            fn_80253EB4(a, b, 1, fn_803DAEFC(p, 3, 0) ? 0 : fn_8005A9F8(lbl_8041BFE0[fn_80056F68(p, 1)]));
+            fn_80253EB4(a, b, 1, BoxPokemon_GetValue((BoxPokemon *)p, 3, NULL) ? 0 : fn_8005A9F8(lbl_8041BFE0[fn_80056F68(p, 1)]));
         }
         break;
     }
@@ -1140,7 +1140,7 @@ void fn_800D7704(void) {
             item[i] = 0;
             lv[i] = 0;
             if (p->flag && fn_80056BD4(p) && !fn_80056E2C(p)) {
-                u8 l = fn_803DAEFC(p, 0xa0, 0);
+                u8 l = BoxPokemon_GetValue((BoxPokemon *)p, 0xa0, NULL);
                 lv[i] = l;
                 if (l > maxLv) {
                     maxLv = l;
@@ -1150,11 +1150,11 @@ void fn_800D7704(void) {
                 }
                 need += l;
                 count++;
-                if (!fn_80390988(lbl_8063CE34 + 4, fn_803DAEFC(p, 5, 0))) {
+                if (!fn_80390988(lbl_8063CE34 + 4, BoxPokemon_GetValue((BoxPokemon *)p, 5, NULL))) {
                     ok = 0;
                 }
-                species[i] = fn_803DAEFC(p, 5, 0);
-                item[i] = fn_803DAEFC(p, 6, 0);
+                species[i] = BoxPokemon_GetValue((BoxPokemon *)p, 5, NULL);
+                item[i] = BoxPokemon_GetValue((BoxPokemon *)p, 6, NULL);
             }
         }
         if (r->xc == 0) {
@@ -1242,7 +1242,7 @@ void fn_800D7704(void) {
                     u8 j;
                     if (dupSpecies) {
                         for (j = 0; j < 6; j++) {
-                            if (j != i && species[j] == fn_803DAEFC(p, 5, 0)) {
+                            if (j != i && species[j] == BoxPokemon_GetValue((BoxPokemon *)p, 5, NULL)) {
                                 lbl_8047CE18[t].lo = 1;
                                 break;
                             }
@@ -1252,7 +1252,7 @@ void fn_800D7704(void) {
                         for (j = 0; j < 6; j++) {
                             if (j != i) {
                                 u16 it = item[j];
-                                if (it != 0 && it == fn_803DAEFC(p, 6, 0)) {
+                                if (it != 0 && it == BoxPokemon_GetValue((BoxPokemon *)p, 6, NULL)) {
                                     lbl_8047CE18[t].lo = 1;
                                     break;
                                 }
@@ -1626,7 +1626,7 @@ void fn_800D2BF4(void* a, DrawObj* b) {
         break;
     case 0x17:
         fn_80253EDC(a, b, 6, &t.r);
-        fn_8015C308(0x1b, (void*)fn_803DAEFC(p, 0xa0, 0));
+        fn_8015C308(0x1b, (void*)BoxPokemon_GetValue((BoxPokemon *)p, 0xa0, NULL));
         DRAW(0xea0, hl ? (0x00EEFF00 | b->x11) : WHITE);
         break;
     }

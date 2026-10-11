@@ -1,3 +1,4 @@
+#include "ds/pokemon.hpp"
 #include "common.hpp"
 
 void fn_8005C9C8();
@@ -105,7 +106,6 @@ u8 *fn_8015F690(void);
 double fn_8015F7A0(void);
 void fn_8015F758(double);
 f32 fn_80055E3C(void);
-void *fn_803DC19C(int);
 int fn_80056F68(void *, int);
 void *fn_80059288(void *);
 extern u16 lbl_8040B088[];
@@ -141,7 +141,7 @@ u8 fn_80058BA4(void) { return *(u32 *)(fn_8015F690() + 0x48); }
 int fn_8005694C(int a, int b) { u32 tmp; return fn_80253E8C(a, b, 3, &tmp); }
 void fn_8005925C(int x) { ACTX->flags.b1 = x; if (!x) ACTX->flags.b0 = 0; }
 u16 fn_80058BCC(u32 x) { if (x >= 1 && x <= 12) { u32 i = x - 1; return lbl_8040B088[i]; } return 0; }
-void fn_80056F34(int a, int b) { fn_80056F68(fn_803DC19C(a), b); }
+void fn_80056F34(int a, int b) { fn_80056F68(Pokemon_GetBoxPokemon((Pokemon *)a), b); }
 GSthreadHandle *fn_80059208(void) { ACTX->flags.b2 = 0; return GSthreadManager::sInstance->createThread(200, fn_80059288, 0, 0x2000, 8, 1); }
 void fn_800561B0(void) { double a = fn_8015F7A0(); fn_8015F758(a + fn_80055E3C()); }
 BOOL fn_800562F8(void) { return fn_80253DD0(ACTX->_1044) == 3; }
@@ -173,7 +173,6 @@ u8 *fn_8011C974(void);
 void fn_8000B570(int);
 int fn_80056BD4(void *);
 int fn_80056C4C(void *);
-int fn_803DAEFC(void *, int, int);
 int GetMonDataInternal(void *, int, int);
 
 void fn_800561E8(void) { if (fn_80253DE0(ACTX->_1044) != 2) fn_80253DB0(ACTX->_1044, 2, 0); }
@@ -183,9 +182,9 @@ BOOL fn_80058610(void) { if (*(u16 *)(fn_8011C974() + 0x94) == 0) return 0; retu
 BOOL fn_80058660(void) { if (*(u16 *)(fn_8011C974() + 0x92) == 0) return 0; return ACTXF->_1090 >= ACTXF->_1094; }
 void fn_80056458(int x) { if (x) fn_8000B570(lbl_80640B6C + lbl_80640B70 * lbl_8063D988); else fn_8000B570(0); }
 void fn_80059884(int i) { u32 *row = lbl_803FB880[i]; GScache::freeFsysCacheEntries(row[fn_80058BA4()]); GSfsys::fn_80249890(row[fn_80058BA4()]); }
-BOOL fn_80056E2C(void *p) { if (!fn_80056BD4(p)) return 0; if (fn_803DAEFC(p, 0xac, 0)) return 1; return 0; }
+BOOL fn_80056E2C(void *p) { if (!fn_80056BD4(p)) return 0; if (BoxPokemon_GetValue((BoxPokemon *)p, 0xac, NULL)) return 1; return 0; }
 BOOL fn_80056E84(void *p) { if (fn_80056C4C(p) == 0) return 0; return (u32)GetMonDataInternal(p, 0xac, 0) != 0; }
-BOOL fn_80056EDC(void *p) { if (!fn_80056BD4(p)) return 0; if (fn_803DAEFC(p, 3, 0)) return 1; return 0; }
+BOOL fn_80056EDC(void *p) { if (!fn_80056BD4(p)) return 0; if (BoxPokemon_GetValue((BoxPokemon *)p, 3, NULL)) return 1; return 0; }
 
 }
 
@@ -266,7 +265,7 @@ extern const f32 lbl_80640B64;
 
 u16 *fn_8005697C(void *p) {
     u16 buf[32];
-    fn_803DAEFC(p, 0x74, (int)buf);
+    BoxPokemon_GetValue((BoxPokemon *)p, 0x74, buf);
     fn_80177080(ACTX->names[ACTX->_103C & 0x3f], buf, 0x20);
     ACTX->_103C++;
     return ACTX->names[(ACTX->_103C - 1) & 0x3f];
@@ -310,9 +309,9 @@ f32 fn_80055E3C(void) {
 int fn_80056BD4(void *p) {
     u16 v;
     if (p == 0) return 0;
-    v = fn_803DAEFC(p, 5, 0);
+    v = BoxPokemon_GetValue((BoxPokemon *)p, 5, NULL);
     if (v == 0 || v > 0x1ef) return 0;
-    if (fn_803DAEFC(p, 0xab, 0)) return 1;
+    if (BoxPokemon_GetValue((BoxPokemon *)p, 0xab, NULL)) return 1;
     return 0;
 }
 int fn_80056C4C(void *p) {
@@ -339,7 +338,6 @@ extern u8 lbl_8063CE34[];
 u32 fn_80391F94(void *, int);
 void fn_802503D8(u16, u16 *);
 void fn_80176EB4(u16 *, u16 *, int);
-void fn_803DB678(void *, int, void *);
 
 f32 fn_800597C4(void) {
     if (fn_801E07E8()) return lbl_80640B60;
@@ -385,11 +383,11 @@ void fn_80057450(void *p) {
     u32 z;
     u16 buf2[32];
     u16 buf1[32];
-    fn_802503D8(fn_80391F94(lbl_8063CE34 + 0x10, fn_803DAEFC(p, 5, 0)), buf2);
+    fn_802503D8(fn_80391F94(lbl_8063CE34 + 0x10, BoxPokemon_GetValue((BoxPokemon *)p, 5, NULL)), buf2);
     fn_80176EB4(buf1, buf2, 0x20);
-    fn_803DB678(p, 0x74, buf1);
+    BoxPokemon_SetValue((BoxPokemon *)p, 0x74, buf1);
     z = 0;
-    fn_803DB678(p, 0x4d, &z);
+    BoxPokemon_SetValue((BoxPokemon *)p, 0x4d, &z);
 }
 
 }
@@ -514,14 +512,14 @@ int fn_80250398(int, int, int);
 void *fn_80056CC4(void *p) {
     if (!fn_80056BD4(p)) {
         return fn_802502F4(10);
-    } else if (fn_803DAEFC(p, 0xac, 0)) {
-        if (fn_803DAEFC(p, 3, 0)) {
+    } else if (BoxPokemon_GetValue((BoxPokemon *)p, 0xac, NULL)) {
+        if (BoxPokemon_GetValue((BoxPokemon *)p, 3, NULL)) {
             return fn_802502F4(0x1f9);
         } else {
             return fn_802502F4(0x1f8);
         }
     } else {
-        return fn_802502F4(fn_80391F94(lbl_8063CE34 + 0x10, fn_803DAEFC(p, 5, 0)));
+        return fn_802502F4(fn_80391F94(lbl_8063CE34 + 0x10, BoxPokemon_GetValue((BoxPokemon *)p, 5, NULL)));
     }
 }
 void *fn_80056D78(void *p) {
@@ -539,9 +537,9 @@ void *fn_80056D78(void *p) {
 }
 u8 fn_80056A5C(void *p) {
     if (!fn_80056BD4(p)) return 2;
-    if (fn_803DAEFC(p, 0xac, 0)) return 2;
-    if (!fn_803DAEFC(p, 0xaf, 0)) return 2;
-    switch ((u16)fn_803DAEFC(p, 0x6f, 0)) {
+    if (BoxPokemon_GetValue((BoxPokemon *)p, 0xac, NULL)) return 2;
+    if (!BoxPokemon_GetValue((BoxPokemon *)p, 0xaf, NULL)) return 2;
+    switch ((u16)BoxPokemon_GetValue((BoxPokemon *)p, 0x6f, NULL)) {
     case 0:
         return 0;
     case 1:
@@ -586,9 +584,9 @@ int fn_803919C4(void *, int);
 int fn_803919F8(void *, int);
 
 int fn_80056F68(void *p, int b) {
-    int v = fn_803DAEFC(p, 5, 0);
+    int v = BoxPokemon_GetValue((BoxPokemon *)p, 5, NULL);
     if (v == 0x1ed) {
-        switch (fn_803DAEFC(p, 0x70, 0)) {
+        switch (BoxPokemon_GetValue((BoxPokemon *)p, 0x70, NULL)) {
         case 1: return 1;
         case 2: return 2;
         case 3: return 3;
@@ -610,7 +608,7 @@ int fn_80056F68(void *p, int b) {
     } else if (b == 0) {
         return fn_803919C4(lbl_8063CE34 + 0x10, v);
     } else if (v == 0x19d) {
-        switch (fn_803DAEFC(p, 0x70, 0)) {
+        switch (BoxPokemon_GetValue((BoxPokemon *)p, 0x70, NULL)) {
         case 0:
         default: return 12;
         case 1: return 4;
@@ -663,7 +661,6 @@ void *fn_8005757C(void *arg) {
 // Batch 10
 extern "C" {
 
-void fn_803DB524(void *, int, void *);
 
 struct MonSetup {
     /* 0x0 */ u16 _0;
@@ -679,40 +676,40 @@ void fn_80057208(void *p) {
     if (fn_80056C4C(p)) {
         if (GetMonDataInternal(p, 0x36, 0)) {
             tmp = GetMonDataInternal(p, 0x42, 0);
-            fn_803DB524(p, 0x3a, &tmp);
+            Pokemon_SetValue((Pokemon *)p, 0x3a, &tmp);
         }
         if (GetMonDataInternal(p, 0x37, 0)) {
             tmp = GetMonDataInternal(p, 0x43, 0);
-            fn_803DB524(p, 0x3b, &tmp);
+            Pokemon_SetValue((Pokemon *)p, 0x3b, &tmp);
         }
         if (GetMonDataInternal(p, 0x38, 0)) {
             tmp = GetMonDataInternal(p, 0x44, 0);
-            fn_803DB524(p, 0x3c, &tmp);
+            Pokemon_SetValue((Pokemon *)p, 0x3c, &tmp);
         }
         if (GetMonDataInternal(p, 0x39, 0)) {
             tmp = GetMonDataInternal(p, 0x45, 0);
-            fn_803DB524(p, 0x3d, &tmp);
+            Pokemon_SetValue((Pokemon *)p, 0x3d, &tmp);
         }
     }
 }
 void fn_8005732C(void *p) {
     u32 tmp;
     if (fn_80056BD4(p)) {
-        if (fn_803DAEFC(p, 0x36, 0)) {
-            tmp = fn_803DAEFC(p, 0x42, 0);
-            fn_803DB678(p, 0x3a, &tmp);
+        if (BoxPokemon_GetValue((BoxPokemon *)p, 0x36, NULL)) {
+            tmp = BoxPokemon_GetValue((BoxPokemon *)p, 0x42, NULL);
+            BoxPokemon_SetValue((BoxPokemon *)p, 0x3a, &tmp);
         }
-        if (fn_803DAEFC(p, 0x37, 0)) {
-            tmp = fn_803DAEFC(p, 0x43, 0);
-            fn_803DB678(p, 0x3b, &tmp);
+        if (BoxPokemon_GetValue((BoxPokemon *)p, 0x37, NULL)) {
+            tmp = BoxPokemon_GetValue((BoxPokemon *)p, 0x43, NULL);
+            BoxPokemon_SetValue((BoxPokemon *)p, 0x3b, &tmp);
         }
-        if (fn_803DAEFC(p, 0x38, 0)) {
-            tmp = fn_803DAEFC(p, 0x44, 0);
-            fn_803DB678(p, 0x3c, &tmp);
+        if (BoxPokemon_GetValue((BoxPokemon *)p, 0x38, NULL)) {
+            tmp = BoxPokemon_GetValue((BoxPokemon *)p, 0x44, NULL);
+            BoxPokemon_SetValue((BoxPokemon *)p, 0x3c, &tmp);
         }
-        if (fn_803DAEFC(p, 0x39, 0)) {
-            tmp = fn_803DAEFC(p, 0x45, 0);
-            fn_803DB678(p, 0x3d, &tmp);
+        if (BoxPokemon_GetValue((BoxPokemon *)p, 0x39, NULL)) {
+            tmp = BoxPokemon_GetValue((BoxPokemon *)p, 0x45, NULL);
+            BoxPokemon_SetValue((BoxPokemon *)p, 0x3d, &tmp);
         }
     }
 }
@@ -720,24 +717,24 @@ void fn_800570E8(void *p, MonSetup *q) {
     u32 tmp;
     u16 buf[20];
     tmp = 0;
-    fn_803DB678(p, 0x97, &tmp);
-    fn_803DB678(p, 0x6e, &tmp);
+    BoxPokemon_SetValue((BoxPokemon *)p, 0x97, &tmp);
+    BoxPokemon_SetValue((BoxPokemon *)p, 0x6e, &tmp);
     tmp = 0x37;
-    fn_803DB678(p, 0x98, &tmp);
+    BoxPokemon_SetValue((BoxPokemon *)p, 0x98, &tmp);
     tmp = 0x10;
-    fn_803DB678(p, 0x79, &tmp);
+    BoxPokemon_SetValue((BoxPokemon *)p, 0x79, &tmp);
     tmp = q->_0;
-    fn_803DB678(p, 0x94, &tmp);
+    BoxPokemon_SetValue((BoxPokemon *)p, 0x94, &tmp);
     tmp = q->_2;
-    fn_803DB678(p, 0x95, &tmp);
+    BoxPokemon_SetValue((BoxPokemon *)p, 0x95, &tmp);
     tmp = q->_4;
-    fn_803DB678(p, 0x96, &tmp);
+    BoxPokemon_SetValue((BoxPokemon *)p, 0x96, &tmp);
     tmp = q->_6;
-    fn_803DB678(p, 0x9b, &tmp);
+    BoxPokemon_SetValue((BoxPokemon *)p, 0x9b, &tmp);
     tmp = q->_8;
-    fn_803DB678(p, 0x7, &tmp);
+    BoxPokemon_SetValue((BoxPokemon *)p, 0x7, &tmp);
     fn_80176EB4(buf, q->name, 0x10);
-    fn_803DB678(p, 0x8f, buf);
+    BoxPokemon_SetValue((BoxPokemon *)p, 0x8f, buf);
 }
 
 }
