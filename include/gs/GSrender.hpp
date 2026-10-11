@@ -741,6 +741,11 @@ public:
         mState->_0 |= (1 << 4);
     }
 
+    void setTevKSel(u8 stage, u8 colorSel, u8 alphaSel) {
+        setTevKColorSel(stage, colorSel);
+        setTevKAlphaSel(stage, alphaSel);
+    }
+
     void setIndTexStageDirect(u8 stage) {
         if (mState->mCurr.mIndTexStages[stage].mType != GS_TEV_NULL) {
             mState->mCurr.mIndTexStages[stage].mType = GS_TEV_DIRECT;

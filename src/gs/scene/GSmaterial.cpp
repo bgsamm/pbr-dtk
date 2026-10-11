@@ -988,8 +988,7 @@ void GSmaterial::fn_801E98E0() {
     GSrender::sInstance->setTevSwapMode(mCurrTevStage, GX_TEV_SWAP0, GX_TEV_SWAP0);
     GSrender::sInstance->setTevColorOp(mCurrTevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_FALSE, GX_TEVPREV);
     GSrender::sInstance->setTevAlphaOp(mCurrTevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_TRUE, GX_TEVPREV);
-    GSrender::sInstance->setTevKColorSel(mCurrTevStage, GX_TEV_KCSEL_K2);
-    GSrender::sInstance->setTevKAlphaSel(mCurrTevStage, GX_TEV_KASEL_K2_A);
+    GSrender::sInstance->setTevKSel(mCurrTevStage, GX_TEV_KCSEL_K2, GX_TEV_KASEL_K2_A);
     GSrender::sInstance->setTevStage(mCurrTevStage, (GXTexCoordID)_25, (GXTexMapID)_24, 0xFF);
     GSrender::sInstance->setTevColorIn(mCurrTevStage,
                                        (mCurrTevStage != GX_TEVSTAGE0) ? GX_CC_CPREV : GX_CC_ZERO,
@@ -1631,8 +1630,7 @@ bool GSmaterial::fn_801EC538(_UnkMaterialStruct_3 *arg0, GSmatrix *arg1, bool ar
     if (mBaseColor.r != 128 || mBaseColor.g != 128 || mBaseColor.b != 128 || mBaseColor.a != 255) {
         GSrender::sInstance->setIndTexStageDirect(mCurrTevStage);
         GSrender::sInstance->setTevSwapMode(mCurrTevStage, GX_TEV_SWAP0, GX_TEV_SWAP0);
-        GSrender::sInstance->setTevKColorSel(mCurrTevStage, GX_TEV_KCSEL_K3);
-        GSrender::sInstance->setTevKAlphaSel(mCurrTevStage, GX_TEV_KASEL_K3_A);
+        GSrender::sInstance->setTevKSel(mCurrTevStage, GX_TEV_KCSEL_K3, GX_TEV_KASEL_K3_A);
         GSrender::sInstance->setTevColorOp(mCurrTevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_2, GX_TRUE, GX_TEVPREV);
         GSrender::sInstance->setTevAlphaOp(mCurrTevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_FALSE, GX_TEVPREV);
         GSrender::sInstance->setTevStage(mCurrTevStage, GX_TEXCOORD_NULL, GX_TEXMAP_NULL, GX_COLOR_NULL);
