@@ -1761,4 +1761,58 @@ src/ds/DSbridge.cpp:
 	.sbss       start:0x806405E8 end:0x806405FC
 
 src/.unsorted/803D9EB4.cpp:
-	.text       start:0x803D9EB4 end:0x803E1E54
+	.text       start:0x803D9EB4 end:0x803DA018
+
+src/ds/trainer_info.cpp:
+	.text       start:0x803DA018 end:0x803DA174
+
+src/ds/field_battle_data_transfer.cpp:
+	.text       start:0x803DA174 end:0x803DA258
+
+src/ds/pokemon.cpp:
+	.text       start:0x803DA258 end:0x803DE7D8
+
+src/ds/party.cpp:
+	.text       start:0x803DE7D8 end:0x803DE99C
+
+src/ds/trainer_data.cpp:
+	.text       start:0x803DE99C end:0x803DE9BC
+
+src/ds/move_table.cpp:
+	.text       start:0x803DE9BC end:0x803DEC24
+	.data       start:0x80474CD8 end:0x80474D08
+
+src/ds/charcode_util.cpp:
+	.text       start:0x803DEC24 end:0x803DECFC
+
+src/ds/overlay_manager.cpp:
+	.text       start:0x803DECFC end:0x803DEEA4
+
+src/.unsorted/803DEEA4.cpp:
+	.text       start:0x803DEEA4 end:0x803DEFD4
+	.bss        start:0x8063D230 end:0x8063D2B0
+
+src/ds/strbuf.cpp:
+	.text       start:0x803DEFD4 end:0x803DF508
+	.rodata     start:0x80405CF8 end:0x80405D48
+	.data       start:0x80474D08 end:0x80474DF8
+
+src/ds/charcode.cpp:
+	.text       start:0x803DF508 end:0x803DF550
+
+src/ds/message_util.cpp:
+	.text       start:0x803DF550 end:0x803DF5C0
+
+src/ds/string_template.cpp:
+	.text       start:0x803DF5C0 end:0x803DFE28
+	.data       start:0x80474DF8 end:0x80474E10
+
+src/ds/message.cpp:
+	.text       start:0x803DFE28 end:0x803E02B4
+	.data       start:0x80474E10 end:0x80474E40
+
+src/ds/convert_pokemon.cpp:
+	.text       start:0x803E02B4 end:0x803E1A78
+
+src/ds/convert_save.cpp:
+	.text       start:0x803E1A78 end:0x803E1E54

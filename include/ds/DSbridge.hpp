@@ -214,16 +214,20 @@ struct Unk8048CE28 {
     /* 0x1C */ u8 unk1C[0x24];
 };
 
-// TODO Arguments of the battle commands sent to fn_8016FA4C.
+// TODO Arguments of the battle commands sent to fn_8016FA4C; the layout depends on the command.
 // size: 0x40
-struct Unk8048CDE8 {
-    /* 0x0 */ const u16 *text;
-    /* 0x4 */ u32 size;
-    /* 0x8 */ u32 _08;
-    /* 0xC */ void *param;
-    /* 0x10 */ u32 _10;
-    /* 0x14 */ u32 _14;
-    /* 0x18 */ u8 unk18[0x28];
+union Unk8048CDE8 {
+    // A message to show (see fn_803D9A44)
+    struct {
+        /* 0x0 */ const u16 *text;
+        /* 0x4 */ u32 size;
+        /* 0x8 */ u32 _08;
+        /* 0xC */ void *param;
+        /* 0x10 */ u32 _10;
+        /* 0x14 */ u32 _14;
+    } message;
+    // Other commands: a battler index and integers
+    /* 0x0 */ u32 args[0x10];
 };
 
 // TODO Table of the game data files; each field is a handle read by the getters in 8038F424.
@@ -231,7 +235,13 @@ struct Unk8048CDE8 {
 struct Unk8063CE34 {
     /* 0x0 */ u8 unk0[0xC];
     /* 0xC */ u8 *itemData;
-    /* 0x10 */ u8 unk10[0x74];
+    /* 0x10 */ u8 *speciesData;
+    /* 0x14 */ u8 unk14[0x4];
+    /* 0x18 */ u8 *moveData;
+    /* 0x1C */ u8 *expData;
+    /* 0x20 */ u8 unk20[0x28];
+    /* 0x48 */ u8 *levelUpMoveData;
+    /* 0x4C */ u8 unk4C[0x38];
 };
 
 s32 Item_LoadParam(u16 item, ItemDataParam param, u32 heapId);

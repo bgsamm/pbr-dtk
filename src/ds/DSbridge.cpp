@@ -1,7 +1,11 @@
 #include "ds/DSbridge.hpp"
 
 #include ".unsorted/80035CB0.hpp"
-#include ".unsorted/803D9EB4.hpp"
+#include ".unsorted/803DEEA4.hpp"
+#include "ds/field_battle_data_transfer.hpp"
+#include "ds/overlay_manager.hpp"
+#include "ds/pokemon.hpp"
+#include "ds/strbuf.hpp"
 
 #include <cstdarg>
 #include <cstring>
@@ -356,12 +360,12 @@ void *NARC_AllocAndReadFromMemberByIndexPair(u32 narcId, u32 memberIndex, u32 he
 s32 fn_803D9A44(Strbuf *str, void *param) {
     fn_8016E2DC();
     if (lbl_8048CE28.pendingCommand != 0) {
-        lbl_8048CDE8.text = Strbuf_GetData(str);
-        lbl_8048CDE8.size = (Strbuf_Length(str) + 1) * sizeof(u16);
-        lbl_8048CDE8._08 = 0;
-        lbl_8048CDE8.param = param;
-        lbl_8048CDE8._10 = lbl_8048CE28._0C;
-        lbl_8048CDE8._14 = lbl_8048CE28._18;
+        lbl_8048CDE8.message.text = Strbuf_GetData(str);
+        lbl_8048CDE8.message.size = (Strbuf_Length(str) + 1) * sizeof(u16);
+        lbl_8048CDE8.message._08 = 0;
+        lbl_8048CDE8.message.param = param;
+        lbl_8048CDE8.message._10 = lbl_8048CE28._0C;
+        lbl_8048CDE8.message._14 = lbl_8048CE28._18;
         fn_8016FA4C(lbl_8048CE28.pendingCommand, &lbl_8048CDE8);
         lbl_8048CE28.pendingCommand = 0;
         lbl_8048CE28._0C = 0xFF;
