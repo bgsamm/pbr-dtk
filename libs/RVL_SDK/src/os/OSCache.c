@@ -115,6 +115,28 @@ do_flush:
 #endif // __MWERKS__
 }
 
+asm void DCStoreRangeNoSync(register const void* addr, register u32 len) {
+#ifdef __MWERKS__
+    nofralloc
+
+    cmplwi  len, 0
+    blelr
+
+    clrlwi  r5, addr, 27
+    add     len, len, r5
+    addi    len, len, 31
+    srwi    len, len, 5
+    mtctr   len
+
+do_store:
+    dcbst   0, addr
+    addi    addr, addr, 32
+    bdnz    do_store
+
+    blr
+#endif // __MWERKS__
+}
+
 asm void DCZeroRange(register void* addr, register u32 len) {
 #ifdef __MWERKS__
     nofralloc
@@ -189,6 +211,83 @@ asm void ICEnable() {
 
 #define LC_LINES    512
 
+static asm void __LCEnable() {
+#ifdef __MWERKS__
+    nofralloc
+
+    mfmsr   r5
+    ori     r5, r5, 0x1000
+    mtmsr   r5
+
+    lis     r3, 0x8000
+    li      r4, 0x400
+    mtctr   r4
+do_touch:
+    dcbt    0, r3
+    dcbst   0, r3
+    addi    r3, r3, 32
+    bdnz    do_touch
+
+    mfspr   r4, HID2
+    oris    r4, r4, 0x100f
+    mtspr   HID2, r4
+
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+
+    lis     r3, LC_BASE_PREFIX
+    ori     r3, r3, 0x2
+    mtdbatl 3, r3
+    ori     r3, r3, 0x1fe
+    mtdbatu 3, r3
+    isync
+
+    lis     r3, LC_BASE_PREFIX
+    li      r6, 0x200
+    mtctr   r6
+    li      r6, 0
+do_zero_lc:
+    dcbz_l  r6, r3
+    addi    r3, r3, 32
+    bdnz    do_zero_lc
+
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+    nop
+
+    blr
+#endif // __MWERKS__
+}
+
+// clang-format on
+
+void LCEnable() {
+    BOOL enabled = OSDisableInterrupts();
+    __LCEnable();
+    OSRestoreInterrupts(enabled);
+}
+
+// clang-format off
+
 asm void LCDisable() {
 #ifdef __MWERKS__
     nofralloc
@@ -204,6 +303,61 @@ do_invalidate:
     mfspr   r4, HID2
     rlwinm  r4, r4, 0, 4, 2
     mtspr   HID2, r4
+
+    blr
+#endif // __MWERKS__
+}
+
+asm void LCStoreBlocks(register void* dst, register void* src, register u32 blocks) {
+#ifdef __MWERKS__
+    nofralloc
+
+    rlwinm  r6, blocks, 30, 27, 31
+    clrlwi  dst, dst, 3
+    or      r6, r6, dst
+    mtspr   DMA_U, r6
+
+    rlwinm  r6, blocks, 2, 28, 29
+    or      r6, r6, src
+    ori     r6, r6, 0x2
+    mtspr   DMA_L, r6
+
+    blr
+#endif // __MWERKS__
+}
+
+// clang-format on
+
+u32 LCStoreData(void* dst, void* src, u32 len) {
+    u32 blocks = (len + 31) >> 5;
+    u32 transfers = (blocks + 127) >> 7;
+
+    while (blocks != 0) {
+        if (blocks < LC_MAX_DMA_BLOCKS) {
+            LCStoreBlocks(dst, src, blocks);
+            blocks = 0;
+        } else {
+            LCStoreBlocks(dst, src, 0);
+            blocks -= LC_MAX_DMA_BLOCKS;
+            dst = (u8*)dst + LC_MAX_DMA_BLOCKS * 32;
+            src = (u8*)src + LC_MAX_DMA_BLOCKS * 32;
+        }
+    }
+
+    return transfers;
+}
+
+// clang-format off
+
+asm void LCQueueWait(register u32 len) {
+#ifdef __MWERKS__
+    nofralloc
+
+wait:
+    mfspr   r4, HID2
+    rlwinm  r4, r4, 8, 28, 31
+    cmpw    r4, len
+    bgt     wait
 
     blr
 #endif // __MWERKS__

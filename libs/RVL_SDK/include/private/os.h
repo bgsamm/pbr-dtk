@@ -63,7 +63,6 @@ u8 __OSPADButton ADDRESS(OS_BASE_CACHED | OS_ADDR_PAD_BUTTON);
 
 /* Revision get */
 
-u32 __OSGetHollywoodRev();
 
 typedef struct OSIOSRev {
     u8 reserved;  // 0x00
@@ -79,7 +78,6 @@ void __OSGetIOSRev(OSIOSRev* iosRev);
 
 /* Initialize subsystems */
 
-void OSExceptionInit();
 
 void __OSInitMemoryProtection();
 
@@ -101,7 +99,6 @@ BOOL __OSSetVIForceDimming(BOOL enable, u32 shiftY, u32 shiftX);
 
 void OSDefaultExceptionHandler(u8 type, register OSContext* context);
 
-s32 __OSSyncTimeWithNetRM();
 
 #ifdef __cplusplus
 }

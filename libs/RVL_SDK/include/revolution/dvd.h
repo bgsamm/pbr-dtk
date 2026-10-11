@@ -179,7 +179,6 @@ BOOL DVDCheckDiskAsync(DVDCommandBlock *block, DVDCommandCallback callback);
 /* Filesystem stuff */
 
 s32 DVDConvertPathToEntrynum(const char* pathPtr);
-BOOL DVDEntrynumIsDir(s32 entry);
 
 BOOL DVDFastOpen(s32 entry, DVDFileInfo* fileInfo);
 BOOL DVDOpen(const char* fileName, DVDFileInfo* fileInfo);
@@ -188,11 +187,7 @@ s32 DVDReadPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset, s32 p
 BOOL DVDSeekAsyncPrio(DVDFileInfo* fileInfo, s32 offset, DVDCallback callback, s32 prio);
 BOOL DVDClose(DVDFileInfo* fileInfo);
 
-BOOL DVDOpenDir(const char* dirName, DVDDir* dir);
-BOOL DVDReadDir(DVDDir* dir, DVDDirEntry* dirent);
-BOOL DVDCloseDir(DVDDir* dir);
 
-void* DVDGetFSTLocation(void);
 
 /* Fatal stuff*/
 

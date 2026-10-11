@@ -14,6 +14,13 @@ void DBInit() {
     DBVerbose = TRUE;
 }
 
+BOOL DBIsDebuggerPresent() {
+    if (__DBInterface == NULL) {
+        return FALSE;
+    }
+    return __DBInterface->bPresent;
+}
+
 void __DBExceptionDestinationAux() {
     u32* contextAddr = (void*)OS_ADDR_CURRENT_CONTEXT_REAL;
     OSContext* context = OSPhysicalToCached(*contextAddr);

@@ -174,7 +174,7 @@ skipPairedSingleInit:
     // clang-format on
 }
 
-u32 __OSGetHollywoodRev() {
+static u32 __OSGetHollywoodRev() {
     return *(u32*)OSPhysicalToCached(OS_ADDR_HOLLYWOOD_REVISION);
 }
 
@@ -257,10 +257,6 @@ u32 OSGetConsoleType() {
                 if (hwRev > HOLLYWOOD_ES_2_1) {
                     return OS_CONSOLE_NDEV_2_1;
                 }
-            }
-            // Revolution Arcade
-            case 0x0300: {
-                return OS_CONSOLE_RETAIL_RVA;
             }
             default: {
                 break;
@@ -368,7 +364,8 @@ static void ClearMEM2Arena() NO_INLINE {
     }
 }
 
-void InquiryCallback(s32 res, DVDCommandBlock* block) {
+static void OSExceptionInit();
+static void InquiryCallback(s32 res, DVDCommandBlock* block) {
     switch (block->state) {
         case DVD_STATE_IDLE: {
             __OSDeviceCode = DriveInfo.deviceCode | DVD_DEVICE_CODE;
@@ -408,10 +405,6 @@ static void ReportOSInfo() {
                 }
                 case OS_CONSOLE_RVL_PP_2_2: {
                     OSReport("Pre-production board 2-2\n");
-                    break;
-                }
-                case OS_CONSOLE_RETAIL_RVA: {
-                    OSReport("RVA 1\n");
                     break;
                 }
                 default: {
@@ -485,7 +478,7 @@ static void CheckTargets() {
         }
         case OS_APP_TYPE_CHANNEL: {
             OSReport("OS ERROR: boot program is not for RVL target. Please use correct boot program.\n");
-            OSPanic(__FILE__, 1138, "Failed to run app");
+            OSPanic(__FILE__, 1112, "Failed to run app");
             break;
         }
         default: {
@@ -499,7 +492,7 @@ static void CheckTargets() {
         }
         case OS_APP_TYPE_CHANNEL: {
             OSReport("OS ERROR: apploader[D].img is not for RVL target. Please use correct apploader[D].img.\n");
-            OSPanic(__FILE__, 1156, "Failed to run app");
+            OSPanic(__FILE__, 1130, "Failed to run app");
             break;
         }
         default: {
@@ -650,10 +643,8 @@ void OSInit() {
             EnableMetroTRKInterrupts();
         }
 
-        if (!__OSInNandBoot && !__OSInReboot) {
-            ClearArena();
-            ClearMEM2Arena();
-        }
+        ClearArena();
+        ClearMEM2Arena();
 
         OSEnableInterrupts();
         IPCCltInit();
@@ -681,10 +672,6 @@ void OSInit() {
             }
         }
 
-        if (!__OSInIPL && !__OSInNandBoot) {
-            __OSInitPlayTime();
-        }
-
         if (!__OSInIPL && !__OSInNandBoot && !__OSInReboot) {
             __OSStartPlayRecord();
         }
@@ -693,7 +680,7 @@ void OSInit() {
 
 static u32 __OSExceptionLocations[] = {0x100, 0x200, 0x300, 0x400, 0x500, 0x600, 0x700, 0x800, 0x900, 0xC00, 0xD00, 0xF00, 0x1300, 0x1400, 0x1700};
 
-void OSExceptionInit() {
+static void OSExceptionInit() {
     __OSException excep;
 
     u32* opCodeAddr = (u32*)__OSEVSetNumber;
@@ -921,12 +908,10 @@ void OSRegisterVersion(const char* id) {
 static const char* AppGameNameForSysMenu = "HAEA";
 
 const char* OSGetAppGamename() {
-    const char* appNameSrc = (char*)OSPhysicalToCached(OS_ADDR_BOOT_PART_TYPE);
+    const char* appNameSrc = (char*)OSPhysicalToCached(OS_ADDR_CURRENT_APP_NAME);
 
     if (__OSInIPL) {
         appNameSrc = AppGameNameForSysMenu;
-    } else if ((*appNameSrc < '0') || ('9' < *appNameSrc && *appNameSrc < 'A') || ('Z' < *appNameSrc)) {
-        appNameSrc = (char*)OSPhysicalToCached(OS_ADDR_CURRENT_APP_NAME);
     }
 
     // Copy app name to buffer (along with a null)

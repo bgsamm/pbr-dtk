@@ -40,8 +40,8 @@ OSThreadQueue __DVDThreadQueue;
 
 u32 __DVDLongFileNameFlag = TRUE;
 
-static void cbForReadAsync(s32 result, DVDCommandBlock* block);
-static void cbForReadSync(s32 result, DVDCommandBlock* block);
+void cbForReadAsync(s32 result, DVDCommandBlock* block);
+void cbForReadSync(s32 result, DVDCommandBlock* block);
 
 #define IS_ENTRY_DIR(fstStart, i) ((((fstStart)[i].isDirAndStringOff & 0xFF000000) == 0) ? FALSE : TRUE)
 #define FILE_STRING_OFF(fstStart, i) ((fstStart)[i].isDirAndStringOff & 0x00FFFFFF)
@@ -184,10 +184,6 @@ s32 DVDConvertPathToEntrynum(const char* path) {
     }
 }
 
-BOOL DVDEntrynumIsDir(s32 entry) {
-    return IS_ENTRY_DIR(FstStart, entry);
-}
-
 BOOL DVDFastOpen(s32 entry, DVDFileInfo* fileInfo) {
     if (entry < 0 || entry >= MaxEntryNum || IS_ENTRY_DIR(FstStart, entry)) {
         return FALSE;
@@ -297,7 +293,7 @@ BOOL DVDReadAsyncPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset,
     return TRUE;
 }
 
-static void cbForReadAsync(s32 result, DVDCommandBlock* block) {
+void cbForReadAsync(s32 result, DVDCommandBlock* block) {
     DVDFileInfo* fileInfo = (DVDFileInfo*)((char*)block - offsetof(DVDFileInfo, cb));
 
     if (fileInfo->callback) {
@@ -349,52 +345,7 @@ s32 DVDReadPrio(DVDFileInfo* fileInfo, void* addr, s32 length, s32 offset, s32 p
     return retVal;
 }
 
-static void cbForReadSync(s32 result, DVDCommandBlock* block) {
+void cbForReadSync(s32 result, DVDCommandBlock* block) {
     OSWakeupThread(&__DVDThreadQueue);
 }
 
-BOOL DVDOpenDir(const char* dirName, DVDDir* dir) {
-    s32 entry;
-    char currentDir[128];
-
-    entry = DVDConvertPathToEntrynum(dirName);
-
-    if (entry < 0) {
-        DVDGetCurrentDir(currentDir, sizeof(currentDir));
-        OSReport("Warning: DVDOpenDir(): file '%s' was not found under %s.\n", dirName, currentDir);
-        return FALSE;
-    }
-
-    if (!IS_ENTRY_DIR(FstStart, entry)) {
-        return FALSE;
-    }
-
-    dir->entryNum = entry;
-    dir->location = entry + 1;
-    dir->next = FstStart[entry].dir.next;
-
-    return TRUE;
-}
-
-BOOL DVDReadDir(DVDDir* dir, DVDDirEntry* dirent) {
-    u32 loc = dir->location;
-
-    if ((loc <= dir->entryNum) || (dir->next <= loc)) {
-        return FALSE;
-    }
-
-    dirent->entryNum = loc;
-    dirent->isDir = IS_ENTRY_DIR(FstStart, loc);
-    dirent->name = FstStringStart + FILE_STRING_OFF(FstStart, loc);
-    dir->location = IS_ENTRY_DIR(FstStart, loc) ? FstStart[loc].dir.next : (loc + 1);
-
-    return TRUE;
-}
-
-BOOL DVDCloseDir(DVDDir* dir) {
-    return TRUE;
-}
-
-void* DVDGetFSTLocation() {
-    return BootInfo->FSTLocation;
-}

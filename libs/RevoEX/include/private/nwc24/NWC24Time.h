@@ -15,7 +15,7 @@ NWC24Err NWC24iGetUniversalTime(OSTime* pTime);
 NWC24Err NWC24iGetTimeDifference(OSTime* pDiff);
 
 NWC24Err NWC24iSetRtcCounter(u32 rtcCounter, u32 flags);
-NWC24Err NWC24iSynchronizeRtcCounter(BOOL forceSave);
+NWC24Err NWC24iSynchronizeRtcCounter(void);
 
 #ifdef __cplusplus
 }

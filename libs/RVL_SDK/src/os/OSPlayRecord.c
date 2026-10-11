@@ -8,7 +8,7 @@
 
 static OSPlayRecord PlayRecord ALIGN32;
 static NANDFileInfo FileInfo;
-static NANDCommandBlock Block;
+static NANDCommandBlock Block ALIGN32;
 static OSAlarm PlayRecordAlarm;
 
 DECOMP_FORCE_ACTIVE(OSPlayRecord_c, PlayRecord);
@@ -25,7 +25,6 @@ static BOOL PlayRecordRetry = FALSE;
 static OSTime PlayRecordLastCloseTime;
 static s32 PlayRecordLastError = NAND_RESULT_OK;
 
-// bullcrap
 #define PLAY_RECORD_TICK(x) ((OSTime)(x) * (OSTime)OSSecondsToTicks(1))
 
 static u32 RecordCheckSum(OSPlayRecord* record) {
@@ -39,57 +38,6 @@ static u32 RecordCheckSum(OSPlayRecord* record) {
     }
 
     return sum;
-}
-
-void __OSCreatePlayRecord(wchar_t* titleName, char* gameCode, char* makerCode) {
-    NANDFileInfo recFile;
-    s32 ret;
-
-    memcpy(PlayRecord.titleName, titleName, sizeof(PlayRecord.titleName));
-    memcpy(PlayRecord.gameCode, gameCode, sizeof(PlayRecord.gameCode));
-    memcpy(PlayRecord.makerCode, makerCode, sizeof(PlayRecord.makerCode));
-
-    PlayRecord.playStartTime = OSGetTime();
-    PlayRecord.playTime = PlayRecord.playStartTime;
-
-    memset(PlayRecord.padding, 0, sizeof(PlayRecord.padding));
-
-    PlayRecord.checkSum = RecordCheckSum(&PlayRecord);
-
-    ret = NANDCreate(OS_RECORD_NAND_PATH, NAND_PERM_RWALL, 0);
-
-    if (ret == NAND_RESULT_OK || ret == NAND_RESULT_EXISTS) {
-        ret = NANDOpen(OS_RECORD_NAND_PATH, &recFile, NAND_ACCESS_WRITE);
-
-        if (ret == NAND_RESULT_OK) {
-            NANDWrite(&recFile, &PlayRecord, sizeof(PlayRecord));
-            NANDClose(&recFile);
-        }
-    }
-}
-
-BOOL __OSReadPlayRecord(OSPlayRecord* record) {
-    NANDFileInfo fileInfo;
-    s32 result;
-
-    result = NANDOpen(OS_RECORD_NAND_PATH, &fileInfo, NAND_ACCESS_READ);
-    if (result == NAND_RESULT_OK) {
-        result = NANDRead(&fileInfo, &PlayRecord, sizeof(OSPlayRecord));
-        NANDClose(&fileInfo);
-        if (result != sizeof(OSPlayRecord)) {
-            return FALSE;
-        }
-    } else {
-        return FALSE;
-    }
-
-    if (RecordCheckSum(&PlayRecord) != PlayRecord.checkSum) {
-        return FALSE;
-    }
-
-    memcpy(record, &PlayRecord, sizeof(OSPlayRecord));
-
-    return TRUE;
 }
 
 static void PlayRecordCallback(s32 result, NANDCommandBlock* block);

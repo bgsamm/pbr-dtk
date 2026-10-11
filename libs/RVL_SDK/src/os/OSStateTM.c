@@ -40,10 +40,10 @@ BOOL StmReady;
 
 BOOL ResetDown;
 
-void __OSDefaultResetCallback();
-void __OSDefaultPowerCallback();
+static void __OSDefaultResetCallback();
+static void __OSDefaultPowerCallback();
 
-s32 __OSStateEventHandler(s32 result, void* arg);
+static s32 __OSStateEventHandler(s32 result, void* arg);
 s32 __OSVIDimReplyHandler(s32 result, void* arg);
 
 static void LockUp() {
@@ -54,7 +54,7 @@ static void LockUp() {
     }
 }
 
-void __OSRegisterStateEvent() {
+static void __OSRegisterStateEvent() {
     BOOL enabled;
     enabled = OSDisableInterrupts();
 
@@ -68,7 +68,7 @@ void __OSRegisterStateEvent() {
     OSRestoreInterrupts(enabled);
 }
 
-BOOL __OSGetResetButtonStateRaw() {
+static BOOL __OSGetResetButtonStateRaw() {
     return (!(PI_READ_REG(PI_INTERRUPT_CAUSE) & (1 << PI_INTERRUPT_RSW_STATE))) ? TRUE : FALSE;
 }
 
@@ -106,6 +106,22 @@ OSPowerCallback OSSetPowerCallback(OSPowerCallback callback) {
     return old;
 }
 
+BOOL OSGetResetButtonState() {
+    BOOL enabled;
+    BOOL state;
+
+    enabled = OSDisableInterrupts();
+    state = ResetDown;
+    ResetDown = FALSE;
+    OSRestoreInterrupts(enabled);
+
+    if (!StmEhRegistered) {
+        __OSRegisterStateEvent();
+    }
+
+    return state;
+}
+
 BOOL __OSInitSTM() {
     PowerCallback = __OSDefaultPowerCallback;
     ResetCallback = __OSDefaultResetCallback;
@@ -140,7 +156,7 @@ BOOL __OSInitSTM() {
 void __OSShutdownToSBY() {
     __VIRegs[VI_DISPLAY_CONFIG] = 0;
 
-    if (!(StmReady)) OSPanic(__FILE__, 281, "Error: The firmware doesn't support shutdown feature.\n");
+    if (!(StmReady)) OSPanic(__FILE__, 276, "Error: The firmware doesn't support shutdown feature.\n");
 
     StmImInBuf[0] = 0;
     IOS_Ioctl(StmImDesc, STM_IOCTL_SHUTDOWN_TO_SBY, StmImInBuf, sizeof(StmImInBuf), StmImOutBuf, sizeof(StmImOutBuf));
@@ -148,26 +164,10 @@ void __OSShutdownToSBY() {
     LockUp();
 }
 
-void __OSShutdownToIDL() {
-    __VIRegs[VI_DISPLAY_CONFIG] = 0;
-
-    if (!(StmReady)) OSPanic(__FILE__, 308, "Error: The firmware doesn't support shutdown feature.\n");
-
-    if (__OSGetHollywoodRev() == HOLLYWOOD_ES_1_0 || __OSGetHollywoodRev() == HOLLYWOOD_ES_1_1 || __OSGetHollywoodRev() == HOLLYWOOD_ES_1_2) {
-        StmImInBuf[0] = 0xFCA08280;
-    } else {
-        StmImInBuf[0] = 0xFCE082C0;
-    }
-
-    IOS_Ioctl(StmImDesc, STM_IOCTL_SHUTDOWN_TO_IDL, StmImInBuf, sizeof(StmImInBuf), StmImOutBuf, sizeof(StmImOutBuf));
-
-    LockUp();
-}
-
 void __OSHotReset() {
     __VIRegs[VI_DISPLAY_CONFIG] = 0;
 
-    if (!(StmReady)) OSPanic(__FILE__, 345, "Error: The firmware doesn't support reboot feature.\n");
+    if (!(StmReady)) OSPanic(__FILE__, 340, "Error: The firmware doesn't support reboot feature.\n");
 
     IOS_Ioctl(StmImDesc, STM_IOCTL_HOT_RESET, StmImInBuf, sizeof(StmImInBuf), StmImOutBuf, sizeof(StmImOutBuf));
 
@@ -247,17 +247,17 @@ s32 __OSVIDimReplyHandler(s32 result, void* arg) {
     return 0;
 }
 
-void __OSDefaultResetCallback() {
+static void __OSDefaultResetCallback() {
 }
-void __OSDefaultPowerCallback() {
+static void __OSDefaultPowerCallback() {
 }
 
-s32 __OSStateEventHandler(s32 result, void* arg) {
+static s32 __OSStateEventHandler(s32 result, void* arg) {
 #pragma unused(result)
 #pragma unused(arg)
     OSPowerCallback callback;
 
-    if (!(result == 0)) OSPanic(__FILE__, 753, "Error on STM state event handler\n");
+    if (!(result == 0)) OSPanic(__FILE__, 748, "Error on STM state event handler\n");
 
     StmEhRegistered = FALSE;
 
@@ -271,7 +271,6 @@ s32 __OSStateEventHandler(s32 result, void* arg) {
             callback();
 
             OSRestoreInterrupts(enabled);
-            VIResetDimmingCount();
         }
         __OSRegisterStateEvent();
     }

@@ -27,16 +27,10 @@ void __OSInitNet() {
         }
     }
 
-    if (!__OSInIPL) {
-        ret = NWC24iSynchronizeRtcCounter(FALSE);
-        if (ret != NWC24_OK) {
-            OSReport("Failed to synchronize time with network resource managers. %d\n", ret);
-        }
+    ret = NWC24iSynchronizeRtcCounter();
+    if (ret != NWC24_OK) {
+        OSReport("Failed to synchronize time with network resource managers. %d\n", ret);
     }
-}
-
-s32 __OSSyncTimeWithNetRM() {
-    return NWC24iSynchronizeRtcCounter(FALSE);
 }
 
 DECOMP_FORCE_ACTIVE(OSNet_c, "NWC24iPrepareShutdown");

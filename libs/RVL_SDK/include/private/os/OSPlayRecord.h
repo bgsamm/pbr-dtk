@@ -41,8 +41,6 @@ enum {
     OS_RECORD_STATE_STOPPED
 };
 
-void __OSCreatePlayRecord(wchar_t* titleName, char* gameCode, char* makerCode);
-BOOL __OSReadPlayRecord(OSPlayRecord* record);
 
 void __OSStartPlayRecord();
 void __OSStopPlayRecord();
