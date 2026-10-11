@@ -1,5 +1,4 @@
 
-// Fonctions simples (getters, stubs, tail calls)
 #include "common.hpp"
 
 extern "C" {

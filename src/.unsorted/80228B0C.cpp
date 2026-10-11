@@ -1,20 +1,17 @@
 #include ".unsorted/80228B0C.hpp"
+#include ".unsorted/80226364.hpp"
 
 #include "common.hpp"
 
 extern "C" {
 
-u32 fn_80228B84(u8 *p) { return *(u32 *)(p + 0x14); }
-void fn_80228FBC(void) {}
+u32 fn_80228B84(Unk80226364Record *record) { return record->_14; }
 
+void fn_80228C50(Unk80226364Record *record, u32 x, u32 y) {
+    record->_08 = x;
+    record->_0C = y;
 }
 
-#include "common.hpp"
-
-extern "C" {
-
-
-
-void fn_80228C50(u8 *p, u32 x, u32 y) { *(u32 *)(p + 0x8) = x; *(u32 *)(p + 0xc) = y; }
+void fn_80228FBC(void) {}
 
 }
