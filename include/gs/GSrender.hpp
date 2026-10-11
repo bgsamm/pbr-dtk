@@ -724,15 +724,88 @@ public:
         mFlags |= flag;
     }
 
-    void setTevKColorSel(u8 stage, u8 sel);
-    void setTevKAlphaSel(u8 stage, u8 sel);
-    void setIndTexStageDirect(u8 stage);
-    void setTevStage(u8 stage, GXTexCoordID texCoord, GXTexMapID texMap, u8 channel);
-    void setTevSwapMode(u8 stage, u8 rasSel, u8 texSel);
-    void setTevColorOp(u8 stage, GXTevOp op, GXTevBias bias, GXTevScale scale, GXBool clamp, GXTevRegID reg);
-    void setTevAlphaOp(u8 stage, GXTevOp op, GXTevBias bias, GXTevScale scale, GXBool clamp, GXTevRegID reg);
-    void setTevColorIn(u8 stage, GXTevColorArg argA, GXTevColorArg argB, GXTevColorArg argC, GXTevColorArg argD);
-    void setTevAlphaIn(u8 stage, GXTevAlphaArg argA, GXTevAlphaArg argB, GXTevAlphaArg argC, GXTevAlphaArg argD);
+    void setTevKColorSel(u8 stage, u8 sel) {
+        mState->mCurr.mTevKColorSels[stage] = (GXTevKColorSel)sel;
+        mState->mTevKColorSelFlags |= (1 << stage);
+        mState->_0 |= (1 << 4);
+    }
+
+    void setTevKAlphaSel(u8 stage, u8 sel) {
+        mState->mCurr.mTevKAlphaSels[stage] = (GXTevKAlphaSel)sel;
+        mState->mTevKAlphaSelFlags |= (1 << stage);
+        mState->_0 |= (1 << 4);
+    }
+
+    void setIndTexStageDirect(u8 stage) {
+        if (mState->mCurr.mIndTexStages[stage].mType != GS_TEV_NULL) {
+            mState->mCurr.mIndTexStages[stage].mType = GS_TEV_DIRECT;
+        }
+        mState->mIndTexStageFlags |= (1 << stage);
+        mState->_0 |= (1 << 3);
+    }
+
+    void setTevStage(u8 stage, GXTexCoordID texCoord, GXTexMapID texMap, u8 channel) {
+        GStevStage *tevStage = &mState->mCurr.mTevStages[stage];
+        tevStage->mTexCoord = texCoord;
+        tevStage->mTexMap = texMap;
+        if (channel != 0xff) {
+            tevStage->mChannel = (GXChannelID)(channel + GX_COLOR0A0);
+        } else {
+            tevStage->mChannel = GX_COLOR_NULL;
+        }
+        mState->mTevStageFlags |= (1 << stage);
+        mState->_0 |= (1 << 3);
+    }
+
+    void setTevSwapMode(u8 stage, u8 rasSel, u8 texSel) {
+        GStevSwapMode *tevSwapMode = &mState->mCurr.mTevSwapModes[stage];
+        tevSwapMode->mRasSel = (GXTevSwapSel)rasSel;
+        tevSwapMode->mTexSel = (GXTevSwapSel)texSel;
+        mState->mTevSwapModeFlags |= (1 << stage);
+        mState->_0 |= (1 << 5);
+    }
+
+    void setTevColorOp(u8 stage, GXTevOp op, GXTevBias bias, GXTevScale scale, GXBool clamp, GXTevRegID reg) {
+        GStevOp *tevColorOp = &mState->mCurr.mTevColorOps[stage];
+        tevColorOp->mOp = op;
+        tevColorOp->mBias = bias;
+        tevColorOp->mScale = scale;
+        tevColorOp->mClamp = clamp;
+        tevColorOp->mReg = reg;
+        mState->mTevColorOpFlags |= (1 << stage);
+        mState->_0 |= (1 << 3);
+    }
+
+    void setTevAlphaOp(u8 stage, GXTevOp op, GXTevBias bias, GXTevScale scale, GXBool clamp, GXTevRegID reg) {
+        GStevOp *tevAlphaOp = &mState->mCurr.mTevAlphaOps[stage];
+        tevAlphaOp->mOp = op;
+        tevAlphaOp->mBias = bias;
+        tevAlphaOp->mScale = scale;
+        tevAlphaOp->mClamp = clamp;
+        tevAlphaOp->mReg = reg;
+        mState->mTevAlphaOpFlags |= (1 << stage);
+        mState->_0 |= (1 << 3);
+    }
+
+    void setTevColorIn(u8 stage, GXTevColorArg argA, GXTevColorArg argB, GXTevColorArg argC, GXTevColorArg argD) {
+        GStevColorIn *tevColorIn = &mState->mCurr.mTevColorIns[stage];
+        tevColorIn->mArgA = argA;
+        tevColorIn->mArgB = argB;
+        tevColorIn->mArgC = argC;
+        tevColorIn->mArgD = argD;
+        mState->mTevColorInFlags |= (1 << stage);
+        mState->_0 |= (1 << 3);
+    }
+
+    void setTevAlphaIn(u8 stage, GXTevAlphaArg argA, GXTevAlphaArg argB, GXTevAlphaArg argC, GXTevAlphaArg argD) {
+        GStevAlphaIn *tevAlphaIn = &mState->mCurr.mTevAlphaIns[stage];
+        tevAlphaIn->mArgA = argA;
+        tevAlphaIn->mArgB = argB;
+        tevAlphaIn->mArgC = argC;
+        tevAlphaIn->mArgD = argD;
+        mState->mTevAlphaInFlags |= (1 << stage);
+        mState->_0 |= (1 << 3);
+    }
 
     void fn_802310C0();
     void fn_802311AC(u32 *);
