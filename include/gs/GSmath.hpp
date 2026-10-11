@@ -169,33 +169,6 @@ private:
     Mtx mMatrix;
 
 public:
-    GSmatrix() {}
-
-    GSmatrix(
-        f32 x00, f32 x01, f32 x02, f32 x03, f32 x10, f32 x11, f32 x12, f32 x13, f32 x20, f32 x21, f32 x22, f32 x23) {
-        mMatrix[0][0] = x00;
-        mMatrix[0][1] = x01;
-        mMatrix[0][2] = x02;
-        mMatrix[0][3] = x03;
-        mMatrix[1][0] = x10;
-        mMatrix[1][1] = x11;
-        mMatrix[1][2] = x12;
-        mMatrix[1][3] = x13;
-        mMatrix[2][0] = x20;
-        mMatrix[2][1] = x21;
-        mMatrix[2][2] = x22;
-        mMatrix[2][3] = x23;
-    }
-
-    GSmatrix(GSvec3 scale, GSvec3 trans) {
-        MTXScale(mMatrix, scale.x, scale.y, scale.z);
-        MTXTransApply(mMatrix, mMatrix, trans.x, trans.y, trans.z);
-    }
-
-    GSmatrix(const GSmatrix &other) {
-        MTXCopy(other, mMatrix);
-    }
-
     operator Mtx &() {
         return mMatrix;
     }

@@ -595,6 +595,9 @@ src/gs/scene/GSlight.cpp:
 src/gs/scene/GSmaterial.cpp:
 	.text       start:0x801E6BF8 end:0x801ED3F0
 	.ctors      start:0x803E2080 end:0x803E2084
+	.data       start:0x804235D0 end:0x80423620
+	.sbss       start:0x8063F3A0 end:0x8063F3A8
+	.sdata2     start:0x80641D78 end:0x80641DC0
 
 src/gs/scene/GSmesh.cpp:
 	.text       start:0x801ED3F0 end:0x801EE044

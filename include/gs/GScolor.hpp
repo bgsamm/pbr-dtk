@@ -12,10 +12,6 @@ struct GScolor : public GXColor {
         this->a = a;
     }
 
-    GScolor(const GScolor &other) {
-        *reinterpret_cast<u32 *>(this) = other;
-    }
-
     GScolor &operator=(const GScolor &other) {
         *reinterpret_cast<u32 *>(this) = other;
         return *this;

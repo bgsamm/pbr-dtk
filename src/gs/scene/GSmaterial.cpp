@@ -17,7 +17,7 @@ extern GSmaterialData *lbl_8063F3AC;
 extern u8 lbl_8063F3B0;
 extern GSmatrix lbl_804932B0;
 
-GSmatrix lbl_80491970(GSvec3(0.5f, -0.5f, 0.f), GSvec3(0.5f, 0.5f, 1.f));
+_UnkMaterialStruct_1 lbl_80491970(GSvec3(0.5f, -0.5f, 0.f), GSvec3(0.5f, 0.5f, 1.f));
 _UnkMaterialStruct_2 lbl_8063D768 = {1};
 
 GSmaterial::GSmaterial(GSmaterialData *matData, GSmeshRenderSettings *renderSettings)
@@ -43,7 +43,7 @@ GSmaterial::GSmaterial(GSmaterialData *matData, GSmeshRenderSettings *renderSett
       _2c(0, 0, 0, 0),
       mBaseColor(128, 128, 128, 255) {
     if (matData->_5b) {
-        _18 = new GSmatrix[matData->_5b];
+        _18 = new _UnkMaterialStruct_1[matData->_5b];
     }
 
     if (matData->mKeyframes) {
@@ -904,17 +904,13 @@ void GSmaterial::fn_801E9114(_UnkMaterialStruct_3 *arg0, bool useTexture) {
     mtx(0, 0) *= 0.5f;
     mtx(0, 1) *= 0.5f;
     mtx(0, 2) *= 0.5f;
-    mtx(0, 3) = 0.5f;
 
     mtx(1, 0) *= 0.5f;
     mtx(1, 1) *= 0.5f;
     mtx(1, 2) *= 0.5f;
-    mtx(1, 3) = 0.5f;
 
-    mtx(2, 0) = 0.f;
-    mtx(2, 1) = 0.f;
-    mtx(2, 2) = 0.f;
-    mtx(2, 3) = 0.f;
+    mtx(0, 3) = mtx(1, 3) = 0.5f;
+    mtx(2, 0) = mtx(2, 1) = mtx(2, 2) = mtx(2, 3) = 0.f;
 
     u32 texMtx = mTexGenCount + 13;
     GSrender::sInstance->fn_802345F8(texMtx, &mtx, true);
@@ -1081,12 +1077,10 @@ void GSmaterial::fn_801E9DCC(const _UnkMaterialStruct_3 *arg0, GSmatrix *arg1) {
 
     if (_24 != 0xFF) {
         _UnkClass80236704 *_unk4 = GSrender::sInstance->get_16e8();
-        if ((_unk4->_4->mFlags & (1 << 1))) {
-            _unk4->_4->mNrmMtx = _unk4->_4->mPosMtx.invXpose();
-            _unk4->_4->mFlags &= ~(1 << 1);
-        }
+        _unk4->updateNrmMtx();
 
-        GSmatrix _unk6 = _unk4->_4->mNrmMtx;
+        GSmatrix _unk6;
+        MTXCopy(_unk4->_4->mNrmMtx, _unk6);
 
         if (_27) {
             _unk6.scale(GSvec3(1.f, 1.f, 0.75f));
@@ -1393,7 +1387,8 @@ void GSmaterial::fn_801EB044(bool inverted, bool blend, bool zComp) {
     f32 _unk2 = u8tof32(mBaseColor.a);
     u8 value = f32tou8(_unk2 * _unk1 + 0.5f);
 
-    GScolor color(value, value, value, value);
+    GScolor color;
+    color.r = color.g = color.b = color.a = value;
     GSrender::sInstance->setChannelColors(0, color, color);
 
     if (sLastMeshRenderSettings != mRenderSettings) {
@@ -1448,7 +1443,8 @@ void GSmaterial::fn_801EB668(bool inverted) {
     f32 _unk2 = u8tof32(mBaseColor.a);
     u8 value = f32tou8(_unk2 * _unk1 + 0.5f);
 
-    GScolor color(value, value, value, value);
+    GScolor color;
+    color.r = color.g = color.b = color.a = value;
     GSrender::sInstance->setChannelColors(0, color, color);
 
     if (sLastMeshRenderSettings != mRenderSettings) {
@@ -1461,15 +1457,17 @@ void GSmaterial::fn_801EB668(bool inverted) {
 }
 
 void GSmaterial::fn_801EB87C(_UnkMaterialStruct_3 *arg0, GSmatrix *arg1) {
-    u8 kColorCount = mMatData->_58;
+    u8 i, count;
+
+    count = mMatData->_58;
     GScolor *kColor = mMatData->_4;
-    for (u8 i = 0; i < kColorCount; i++, kColor++) {
+    for (i = 0; i < count; i++, kColor++) {
         GSrender::sInstance->setTevKColor(i, kColor);
     }
 
     u8(*tevSwapTable)[4] = mMatData->_c;
-    u8 tevSwapCount = mMatData->_59;
-    for (u8 i = 0; i < tevSwapCount; i++, tevSwapTable++) {
+    count = mMatData->_59;
+    for (i = 0; i < count; i++, tevSwapTable++) {
         GSrender::sInstance->setTevSwapModTable(i + 1,
                                                 (*tevSwapTable)[0],
                                                 (*tevSwapTable)[1],
@@ -1477,8 +1475,8 @@ void GSmaterial::fn_801EB87C(_UnkMaterialStruct_3 *arg0, GSmatrix *arg1) {
                                                 (*tevSwapTable)[3]);
     }
 
-    u8 textureCount = mMatData->mTextureCount;
-    for (u8 i = 0; i < textureCount; i++) {
+    count = mMatData->mTextureCount;
+    for (i = 0; i < count; i++) {
         GStexture *texture = mMatData->mTextureSlots[i];
         if (_14 && mOrigMatData->_50 == texture) {
             GSrender::sInstance->setTexture(i, _14);
@@ -1541,15 +1539,17 @@ bool GSmaterial::fn_801EC050(_UnkMaterialStruct_3 *arg0, GSmatrix *arg1, bool ar
         return false;
     }
 
-    u8 kColorCount = mMatData->_58;
+    u8 i, count;
+
+    count = mMatData->_58;
     GScolor *kColor = mMatData->_4;
-    for (u8 i = 0; i < kColorCount; i++, kColor++) {
+    for (i = 0; i < count; i++, kColor++) {
         GSrender::sInstance->setTevKColor(i, kColor);
     }
 
     u8(*tevSwapTable)[4] = mMatData->_c;
-    u8 tevSwapCount = mMatData->_59;
-    for (u8 i = 0; i < tevSwapCount; i++, tevSwapTable++) {
+    count = mMatData->_59;
+    for (i = 0; i < count; i++, tevSwapTable++) {
         GSrender::sInstance->setTevSwapModTable(i + 1,
                                                 (*tevSwapTable)[0],
                                                 (*tevSwapTable)[1],
@@ -1557,8 +1557,8 @@ bool GSmaterial::fn_801EC050(_UnkMaterialStruct_3 *arg0, GSmatrix *arg1, bool ar
                                                 (*tevSwapTable)[3]);
     }
 
-    u8 textureCount = mMatData->mTextureCount;
-    for (u8 i = 0; i < textureCount; i++) {
+    count = mMatData->mTextureCount;
+    for (i = 0; i < count; i++) {
         GStexture *texture = mMatData->mTextureSlots[i];
         if (_14 && mOrigMatData->_50 == texture) {
             GSrender::sInstance->setTexture(i, _14);
@@ -1595,8 +1595,10 @@ bool GSmaterial::fn_801EC538(_UnkMaterialStruct_3 *arg0, GSmatrix *arg1, bool ar
     }
 
     if (arg2) {
-        u8 count = mMatData->_5c;
-        for (u8 i = 0; i < count; i++) {
+        u8 i, count;
+
+        count = mMatData->_5c;
+        for (i = 0; i < count; i++) {
             fn_801E74B0(mMatData->_40[i]);
         }
         fn_801E7FA4(arg0, arg1, arg4);
@@ -1634,11 +1636,17 @@ bool GSmaterial::fn_801EC538(_UnkMaterialStruct_3 *arg0, GSmatrix *arg1, bool ar
 void GSmaterial::fn_801EC9AC(GSanimationObject *animObj, GSchannelData *channel, f32 cursor, bool blend) {
     GSmaterial *material = static_cast<GSmaterial *>(animObj);
 
-    if (!blend && material->mMatData != material->mOrigMatData) {
+    if (blend) {
+        return;
+    }
+
+    GSmaterialData *matData = material->mMatData;
+    const GSmaterialData *origMatData = material->mOrigMatData;
+    if (matData != origMatData) {
         switch (channel->mChannel) {
             case 0x14: {
-                _UnkMaterialData_2 *texData = material->mMatData->_2c[channel->_3];
-                if (texData != material->mOrigMatData->_2c[channel->_3]) {
+                _UnkMaterialData_2 *texData = matData->_2c[channel->_3];
+                if (texData != origMatData->_2c[channel->_3]) {
                     GSvec2 translate;
                     translate.x = texData->_4;
                     translate.y = texData->_8;
@@ -1649,15 +1657,15 @@ void GSmaterial::fn_801EC9AC(GSanimationObject *animObj, GSchannelData *channel,
                 }
             } break;
             case 0x15: {
-                _UnkMaterialData_2 *texData = material->mMatData->_2c[channel->_3];
-                if (texData != material->mOrigMatData->_2c[channel->_3]) {
+                _UnkMaterialData_2 *texData = matData->_2c[channel->_3];
+                if (texData != origMatData->_2c[channel->_3]) {
                     fn_801E10C0(channel, cursor, &texData->_c);
                     material->_1c |= (1 << channel->_3);
                 }
             } break;
             case 0x16: {
-                _UnkMaterialData_2 *texData = material->mMatData->_2c[channel->_3];
-                if (texData != material->mOrigMatData->_2c[channel->_3]) {
+                _UnkMaterialData_2 *texData = matData->_2c[channel->_3];
+                if (texData != origMatData->_2c[channel->_3]) {
                     GSvec2 scale;
                     scale.x = texData->_10;
                     scale.y = texData->_14;
@@ -1667,20 +1675,22 @@ void GSmaterial::fn_801EC9AC(GSanimationObject *animObj, GSchannelData *channel,
                     material->_1c |= (1 << channel->_3);
                 }
             } break;
-            case 0x17: fn_801E1440(channel, cursor, &material->mMatData->_60); break;
-            case 0x18: fn_801E1440(channel, cursor, &material->mMatData->_64); break;
-            case 0x19: fn_801E1440(channel, cursor, &material->mMatData->_78); break;
-            case 0x1a: fn_801E10C0(channel, cursor, &material->mMatData->_7c); break;
-            case 0x1b: fn_801E1440(channel, cursor, &material->mMatData->_70); break;
-            case 0x1c: fn_801E1440(channel, cursor, &material->mMatData->_4[channel->_3]); break;
+            case 0x17: fn_801E1440(channel, cursor, &matData->_60); break;
+            case 0x18: fn_801E1440(channel, cursor, &matData->_64); break;
+            case 0x19: fn_801E1440(channel, cursor, &matData->_78); break;
+            case 0x1a: fn_801E10C0(channel, cursor, &matData->_7c); break;
+            case 0x1b: fn_801E1440(channel, cursor, &matData->_70); break;
+            case 0x1c: fn_801E1440(channel, cursor, &matData->_4[channel->_3]); break;
         }
     }
 }
 
 void GSmaterial::fn_801ECBA8() {
+    u8 i, count;
+
     if (mMatData != mOrigMatData) {
-        u8 count = mMatData->_5b;
-        for (u8 i = 0; i < count; i++) {
+        count = mMatData->_5b;
+        for (i = 0; i < count; i++) {
             _UnkMaterialData_2 *src = mOrigMatData->_2c[i];
             _UnkMaterialData_2 *dst = mMatData->_2c[i];
             if (dst != src) {
@@ -1688,8 +1698,8 @@ void GSmaterial::fn_801ECBA8() {
             }
         }
 
-        u8 kColorCount = mOrigMatData->_58;
-        for (u8 i = 0; i < kColorCount; i++) {
+        count = mOrigMatData->_58;
+        for (i = 0; i < count; i++) {
             static_cast<GXColor &>(mMatData->_4[i]) = mOrigMatData->_4[i];
         }
 
@@ -1699,11 +1709,13 @@ void GSmaterial::fn_801ECBA8() {
     }
 
     if (_18) {
-        u8 count = mMatData->_5b;
-        for (u8 i = 0; i < count; i++) {
+        count = mMatData->_5b;
+        for (i = 0; i < count; i++) {
             _1c = (1 << i);
             fn_801E9C74(i, mMatData->_2c[i]);
         }
         _1c = 0;
     }
 }
+
+_UnkMaterialStruct_1::_UnkMaterialStruct_1() {}

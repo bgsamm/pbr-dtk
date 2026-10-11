@@ -32,13 +32,17 @@ public:
         return _4;
     }
 
-    void _unkFunc_1() {
+    void updateNrmMtx() {
         if ((_4->mFlags & (1 << 1))) {
-            Mtx _unk1;
-            MTXInvXpose(_4->mPosMtx, _unk1);
-            MTXCopy(_unk1, _4->mNrmMtx);
+            Mtx invXpose;
+            MTXInvXpose(_4->mPosMtx, invXpose);
+            MTXCopy(invXpose, _4->mNrmMtx);
             _4->mFlags &= ~(1 << 1);
         }
+    }
+
+    void _unkFunc_1() {
+        updateNrmMtx();
         GSrender::sInstance->fn_802345F8(10, &_4->mNrmMtx, true);
     }
 };

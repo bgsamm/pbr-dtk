@@ -8,6 +8,16 @@
 struct GSmeshRenderSettings;
 class GSchannelData;
 
+// Size: 0x30
+struct _UnkMaterialStruct_1 : public GSmatrix {
+    _UnkMaterialStruct_1();
+
+    _UnkMaterialStruct_1(GSvec3 scale, GSvec3 trans) {
+        MTXScale(*this, scale.x, scale.y, scale.z);
+        MTXTransApply(*this, *this, trans.x, trans.y, trans.z);
+    }
+};
+
 struct _UnkMaterialStruct_2 {
     /* 0x0 */ u8 _0;
     /* 0x1 */ bool _1;
@@ -47,7 +57,7 @@ protected:
     /* 0x0C */ GSmaterialData *mMatData;
     /* 0x10 */ GSmeshRenderSettings *mRenderSettings;
     /* 0x14 */ GStexture *_14;
-    /* 0x18 */ GSmatrix *_18;
+    /* 0x18 */ _UnkMaterialStruct_1 *_18;
     /* 0x1C */ u8 _1c;
     /* 0x1D */ u8 mTexGenCount;
     /* 0x1E */ u8 mChannelCount;
