@@ -4,9 +4,21 @@
 
 extern "C" {
 
-void fn_8016E2E4(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7);
+/* lbl_8048CDD8 */ extern s32 lbl_8048CDD8[4];
+extern s32 lbl_8063F1CC;
 
-void fn_8016E2DC(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7) { fn_8016E2E4(0x1, a1, a2, a3, a4, a5, a6, a7); }
+void fn_8016E2DC(void) { fn_8016E2E4(1); }
+
+// TODO name: appends a value to a small list unless it is already there
+void fn_8016E2E4(u32 value) {
+    s32 i;
+    for (i = 0; i < lbl_8063F1CC; i++) {
+        if (lbl_8048CDD8[i] == (s32)value) {
+            return;
+        }
+    }
+    lbl_8048CDD8[lbl_8063F1CC++] = value;
+}
 
 s32 fn_8016E430(u8 i) { return lbl_8063F1C8->_10[i]; }
 void fn_8016E444(s32 i) { lbl_8063F1C8->_78[i] = 1; }

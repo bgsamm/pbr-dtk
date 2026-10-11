@@ -1,4 +1,5 @@
 #include ".unsorted/80263CBC.hpp"
+#include ".unsorted/8025E348.hpp"
 
 #include "common.hpp"
 
@@ -24,9 +25,7 @@ void fn_802673B8(u8 *p) {}
 
 extern "C" {
 
-void fn_8025E47C(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7);
-
-void fn_802643F8(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7) { fn_8025E47C(a1, a1, a2, a3, a4, a5, a6, a7); }
+void fn_802643F8(u32, u32 a) { fn_8025E47C(a); }
 BOOL fn_802644DC(u8 *p) { return *(u32 *)(p + 0x3c38) != 0; }
 BOOL fn_802644F0(u8 *p) { return *(u32 *)(p + 0x3c70) != 0; }
 void fn_80266FBC(u8 *p) { *(u32 *)(p + 0x3d18) = 0x0; }
@@ -88,7 +87,6 @@ char *fn_8025E4E8(void);
 int sprintf(char *, const char *, ...);
 void *memset(void *, int, unsigned long);
 s32 fn_8031C4A4(s32 *, s32 *);
-void fn_8025E4D0(u32);
 s32 fn_80322E74(void);
 s32 fn_80267098(u8 *);
 u32 fn_80266660(u8 *);
@@ -251,7 +249,7 @@ void fn_802643AC(u8 *p) {
 #pragma dont_inline reset
 
 void fn_80264400(u32 a, u32 b) {
-    if (b) fn_8025E4D0(b);
+    if (b) fn_8025E4D0((void *)b);
 }
 
 s32 fn_8026441C(u8 *p) {
@@ -327,8 +325,6 @@ void fn_80264684(u8 *p) {
         fn_8031C890();
     }
 }
-
-void fn_802643F8(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7);
 
 #pragma dont_inline on
 void fn_802646A0(u8 *p) {

@@ -1,4 +1,5 @@
 #include ".unsorted/8025DF80.hpp"
+#include ".unsorted/8025E348.hpp"
 
 #include "common.hpp"
 
@@ -24,10 +25,7 @@ void fn_8025E324(void) { fn_8025E370(); }
 
 extern "C" {
 
-void fn_8025E474(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7);
-void fn_8025E4D0(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7);
-
-void fn_8025DFC0(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7) { fn_8025E474(a1, a1, a2, a3, a4, a5, a6, a7); }
-void fn_8025DFC8(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7) { fn_8025E4D0(a1, a1, a2, a3, a4, a5, a6, a7); }
+void fn_8025DFC0(u32, u32 a) { fn_8025E474(a); }
+void fn_8025DFC8(u32, void *block) { fn_8025E4D0(block); }
 
 }
