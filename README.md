@@ -11,15 +11,15 @@ This work builds on [bgsamm/pbr-dtk](https://github.com/bgsamm/pbr-dtk) (CC0), w
 ## Status
 
 <!-- progress:start -->
-![Code matched](https://img.shields.io/badge/code%20matched-12.5%25-blue) ![Functions](https://img.shields.io/badge/functions-5215%2F13890-blue) ![Linked](https://img.shields.io/badge/linked-0.8%25-green)
+![Code matched](https://img.shields.io/badge/code%20matched-12.5%25-blue) ![Functions](https://img.shields.io/badge/functions-5245%2F13890-blue) ![Linked](https://img.shields.io/badge/linked-0.8%25-green)
 
-**12.47 %** of the code matches the original (5,215 of 13,890 functions). **0.83 %** is in finished units linked into the build.
+**12.49 %** of the code matches the original (5,245 of 13,890 functions). **0.83 %** is in finished units linked into the build.
 
 | Area | Size | Matched | |
 |---|---:|---:|---|
 | Startup | 2 KiB | 7.0 % | `█░░░░░░░░░░░░░░░░░░░` |
-| Game entry point | 37 KiB | 33.6 % | `███████░░░░░░░░░░░░░` |
-| Battle presentation | 288 KiB | 21.0 % | `████░░░░░░░░░░░░░░░░` |
+| Game entry point | 37 KiB | 34.7 % | `███████░░░░░░░░░░░░░` |
+| Battle presentation | 288 KiB | 21.1 % | `████░░░░░░░░░░░░░░░░` |
 | Scenes and menus | 1,024 KiB | 4.8 % | `█░░░░░░░░░░░░░░░░░░░` |
 | Save data and Wi-Fi data | 68 KiB | 3.0 % | `█░░░░░░░░░░░░░░░░░░░` |
 | Battle loop and camera | 375 KiB | 16.9 % | `███░░░░░░░░░░░░░░░░░` |
