@@ -14,7 +14,7 @@ BOOL WUDInit();
 BOOL WUDIsBusy();
 void WUDRegisterAllocator(WUDAllocFunc pAllocFunc, WUDFreeFunc pFreeFunc);
 u32 WUDGetAllocatedMemSize();
-void WUDShutdown(BOOL saveSmp);
+void WUDShutdown();
 
 WUDLibStatus WUDGetStatus();
 u8 WUDGetBufferStatus();

@@ -845,7 +845,7 @@ void __VISetRevolutionModeSimple() {
     VISetClosedCaption(0, 0, 0, 0);
     __VISetClosedCaption();
     __VISetMacrovisionImm(VIZeroACPType);
-    VISetRGBOverDrive(0);
+    VISetRGBOverDrive(1);
     __VISetRGBOverDrive();
     __VISetTrapFilterImm(0);
     __VISetGammaImm(&gammaSet[VI_GM_1_0]);

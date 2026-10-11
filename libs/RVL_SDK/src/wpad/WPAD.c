@@ -53,9 +53,6 @@ static u8 _scSetting;
 static u8 _shutdown;
 static s8 _afhChannel;
 static BOOL _initialized;
-static int _recFlag = -1;
-static int _recCnt;
-static BOOL _startup;
 static u8 _rumbleCnt[WPAD_MAX_CONTROLLERS];
 static u8 _extCnt[WPAD_MAX_CONTROLLERS];
 static u16 _afhCnt;
@@ -68,7 +65,7 @@ static u16 __WPAD_dpd_diff_count_threshold = 4;
 static u16 __WPAD_acc_hyst_count_threshold = 30;
 static u16 __WPAD_dpd_hyst_count_threshold = 30;
 
-static void WPADiConnCallback(WUDDevInfo* devInfo, u8 open);
+static void WPADiConnCallback(UINT8 devHandle, u8 open);
 static void WPADiRecvCallback(UINT8 devHandle, UINT8* pReport, UINT16 len);
 
 static inline void WPADiDisconnect(s32 chan, BOOL sleep);
@@ -101,47 +98,51 @@ static BOOL noFree(void* pBlock) {
 
 extern BOOL __OSIsReturnToIdle;
 
+// Inlined into OnShutdown; named after the later SDK function that replaced it.
+static void __WPADReconnect() {
+    BOOL enabled = OSDisableInterrupts();
+
+    if (_shutdown) {
+        OSRestoreInterrupts(enabled);
+        return;
+    }
+
+    _shutdown = TRUE;
+
+    BTA_DmSendHciReset();
+
+    OSCancelAlarm(&_managerAlarm);
+
+    WUDSetHidRecvCallback(NULL);
+    WUDShutdown();
+
+    OSRestoreInterrupts(enabled);
+}
+
 static BOOL OnShutdown(BOOL final, u32 event) {
     BOOL result = FALSE;
     WUDLibStatus status = WUDGetStatus();
 
     if (!final) {
         if (status == WUD_LIB_STATUS_3) {
-            if (WUDIsBusy()) {
-                WUDStopSyncSimple();
-                result = FALSE;
-            } else {
-                switch (event) {
-                    case OS_SHUTDOWN_FATAL: {
-                        DEBUGPrint("Deregister allocators because of fatal error.\n");
-                        WPADRegisterAllocator(&noAlloc, &noFree);
-                    }
-                    case OS_SHUTDOWN_SHUTDOWN:
-                    case OS_SHUTDOWN_IDLE: {
-                        __WPADShutdown();
-                        result = FALSE;
-                        break;
-                    }
-                    case OS_SHUTDOWN_RETURN_MENU: {
-                        if (__OSIsReturnToIdle) {
-                            __WPADShutdown();
-                        } else {
-                            __WPADReconnect(TRUE);
-                        }
-                        result = FALSE;
-                        break;
-                    }
-                    case OS_SHUTDOWN_REBOOT:
-                    case OS_SHUTDOWN_RESTART: {
-                        __WPADReconnect(TRUE);
-                        result = FALSE;
-                        break;
-                    }
-                    case OS_SHUTDOWN_LAUNCH: {
-                        __WPADReconnect(TRUE);
-                        result = FALSE;
-                        break;
-                    }
+            switch (event) {
+                case OS_SHUTDOWN_FATAL: {
+                    DEBUGPrint("Deregister allocators because of fatal error.\n");
+                    WPADRegisterAllocator(&noAlloc, &noFree);
+                }
+                case OS_SHUTDOWN_SHUTDOWN:
+                case OS_SHUTDOWN_IDLE: {
+                    __WPADShutdown();
+                    result = FALSE;
+                    break;
+                }
+                case OS_SHUTDOWN_REBOOT:
+                case OS_SHUTDOWN_RESTART:
+                case OS_SHUTDOWN_RETURN_MENU:
+                case OS_SHUTDOWN_EXEC: {
+                    __WPADReconnect();
+                    result = FALSE;
+                    break;
                 }
             }
         } else if (status == WUD_LIB_STATUS_5) {
@@ -156,7 +157,6 @@ static BOOL OnShutdown(BOOL final, u32 event) {
         result = TRUE;
     }
 
-_end:
     return result;
 }
 
@@ -606,16 +606,6 @@ static void WPADiRumbleMotor(s32 chan, BOOL prevSuccess) {
     _rumbleCnt[chan] = _wpdcb[chan]->motorBusy ? _rumbleCnt[chan] + 1 : 0;
 }
 
-static void __reconnect(BOOL exec) {
-    DEBUGPrint("Reconnect Start!!\n");
-
-    BTA_DmSendHciReset();
-
-    OSCancelAlarm(&_managerAlarm);
-
-    WUDSetHidRecvCallback(NULL);
-    WUDShutdown(exec);
-}
 static void WPADiManageHandler(OSAlarm* pAlarm, OSContext* pContext) {
     s32 status = WPADGetStatus();
     s32 chan;
@@ -627,17 +617,8 @@ static void WPADiManageHandler(OSAlarm* pAlarm, OSContext* pContext) {
 
             WUDSetHidConnCallback(WPADiConnCallback);
             WUDSetHidRecvCallback(WPADiRecvCallback);
-
-            _recCnt = 50;
         }
 
-        return;
-    }
-
-    if (_recFlag >= 0) {
-        if (--_recCnt <= 0) {
-            __reconnect(_recFlag);
-        }
         return;
     }
 
@@ -747,7 +728,6 @@ static void __ClearControlBlock(s32 chan) {
     p->sleeping = TRUE;
     p->getInfoBusy = FALSE;
     p->getInfoCB = NULL;
-    p->unk_0x98E = 0;
 
     memset(&p->wpInfo, 0, sizeof(p->wpInfo));
     memset(&p->wmReadDataBuf, 0, sizeof(p->wmReadDataBuf));
@@ -835,11 +815,6 @@ void WPADiInitSub() {
 }
 
 void WPADInit() {
-    _startup = TRUE;
-
-    _recFlag = -1;
-    _recCnt = 0;
-
     if (!_regShutdown) {
         OSRegisterShutdownFunction(&ShutdownFunctionInfo);
         _regShutdown = TRUE;
@@ -871,36 +846,13 @@ void __WPADShutdown() {
     OSCancelAlarm(&_managerAlarm);
 
     WUDSetHidRecvCallback(NULL);
-    WUDShutdown(FALSE);
-
-    OSRestoreInterrupts(enabled);
-}
-
-void __WPADReconnect(BOOL recFlag) {
-    BOOL enabled = OSDisableInterrupts();
-    int i;
-
-    if (!_startup) {
-        OSRestoreInterrupts(enabled);
-        return;
-    }
-
-    if (_shutdown) {
-        OSRestoreInterrupts(enabled);
-        return;
-    }
-
-    _shutdown = TRUE;
-
-    _recFlag = (recFlag) ? TRUE : FALSE;
-
-    DEBUGPrint("Wait for %d ms until start reconnect!\n", _recCnt);
+    WUDShutdown();
 
     OSRestoreInterrupts(enabled);
 }
 
 BOOL WPADStartSimpleSync() {
-    return WUDStartSyncSimple();
+    return TRUE;
 }
 
 BOOL WPADStartFastSimpleSync() {
@@ -952,6 +904,14 @@ void WPADGetAddress(s32 chan, BD_ADDR_PTR pAddr) {
     } else {
         memset(pAddr, 0, BD_ADDR_LEN);
     }
+}
+
+u8 WPADGetRadioSensitivity(s32 chan) {
+    WPADCB* p = _wpdcb[chan];
+    BOOL enabled = OSDisableInterrupts();
+    u8 sensitivity = p->radioSensitivity;
+    OSRestoreInterrupts(enabled);
+    return sensitivity;
 }
 
 u8 WPADGetSensorBarPosition() {
@@ -1011,13 +971,13 @@ static void firmwareCheckCallback(s32 chan, s32 status) {
 
     size = status == WPAD_ERR_NONE ? 20 : 42;
     address = status == WPAD_ERR_NONE ? WM_ADDR_MEM_176C : WM_ADDR_MEM_DEV_CONFIG_0;
-    port = 1 << chan;
 
     DEBUGPrint(" ==>this error means that the firmware is for NDEV %s\n", p->configIndex != 0 ? "2.0" : "2.1 or later");
 
-    WPADiSendSetReportType(&p->stdCmdQueue, WPAD_FMT_CORE_BTN, p->unk_0x98E, &abortConnCallback);
+    WPADiSendSetReportType(&p->stdCmdQueue, WPAD_FMT_CORE_BTN, &abortConnCallback);
 
     WPADiSendDPDCSB(&p->stdCmdQueue, FALSE, &abortConnCallback);
+    port = 1 << chan;
     WPADiSendSetPort(&p->stdCmdQueue, port, &abortConnCallback);
 
     WPADiSendReadData(&p->stdCmdQueue, p->wmReadDataBuf, sizeof(WPADGameInfo), WM_ADDR_MEM_GAME_INFO_0, &abortConnCallback);
@@ -1062,12 +1022,11 @@ static s32 WPADiRetrieveChannel(u8 devHandle) {
     return WPAD_CHAN_INVALID;
 }
 
-static void WPADiConnCallback(WUDDevInfo* devInfo, u8 open) {
+static void WPADiConnCallback(UINT8 devHandle, u8 open) {
     s32 chan;
     WPADCB* p;
     WPADCommand command;
     BOOL remain;
-    UINT8 devHandle = devInfo->devHandle;
 
     if (open) {
         DEBUGPrint("connection is opened\n");
@@ -1079,18 +1038,13 @@ static void WPADiConnCallback(WUDDevInfo* devInfo, u8 open) {
 
         __ClearControlBlock(chan);
 
-        if (WUD_DEV_NAME_IS_CNT(devInfo->conf.devName)) {
-            p->devType = WPAD_DEV_CORE;
-        } else {
-            p->devType = WPAD_DEV_FUTURE;
-        }
         p->devHandle = devHandle;
+        p->devType = WPAD_DEV_CORE;
         p->dataFormat = WPAD_FMT_CORE_BTN;
         p->used = TRUE;
         p->status = WPAD_ERR_NONE;
         p->radioSensitivity = 100;
         p->sleeping = FALSE;
-        p->unk_0x98D = FALSE;
 
         WPADiSendReadData(&p->stdCmdQueue, p->wmReadDataBuf, 1, WM_ADDR_MEM_1770, firmwareCheckCallback);
 
@@ -1350,7 +1304,7 @@ s32 WPADSetDataFormat(s32 chan, u32 format) {
     }
 
     if (currFormat != format) {
-        if (!WPADiSendSetReportType(&p->stdCmdQueue, format, p->unk_0x98E, NULL)) {
+        if (!WPADiSendSetReportType(&p->stdCmdQueue, format, NULL)) {
             status = WPAD_ERR_BUSY;
         } else {
             enabled = OSDisableInterrupts();
@@ -2205,13 +2159,13 @@ BOOL WPADiSendSetPort(WPADCommandQueue* pQueue, u8 port, WPADCallback pCallback)
     return success;
 }
 
-BOOL WPADiSendSetReportType(WPADCommandQueue* pQueue, s32 format, BOOL unk, WPADCallback pCallback) {
+BOOL WPADiSendSetReportType(WPADCommandQueue* pQueue, s32 format, WPADCallback pCallback) {
     BOOL success;
     WPADCommand command;
 
     command.reportID = RPTID_SET_DATA_REPORT_MODE;
     command.dataLength = RPT12_SIZE;
-    command.dataBuf[RPT12_CONT_REPORT] = unk ? 0 : 4;  // Always continuous reporting
+    command.dataBuf[RPT12_CONT_REPORT] = 4;  // Always continuous reporting
     command.cmdCB = pCallback;
 
     switch (format) {

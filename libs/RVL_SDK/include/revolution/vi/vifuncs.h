@@ -26,6 +26,7 @@ void VISetNextFrameBuffer(void* fb);
 
 void VISetBlack(BOOL setBlack);
 
+BOOL VIResetDimmingCount(void);
 BOOL VIEnableDimming(BOOL enableDim);
 VITimeToDIM VISetTimeToDimming(VITimeToDIM time);
 
@@ -38,7 +39,16 @@ u32 VIGetTvFormat(void);
 
 u32 VIGetCurrentLine(void);
 
+void* VIGetCurrentFrameBuffer(void);
 
+void VISetNextRightFrameBuffer(void* fb);
+void VISet3D(BOOL threeD);
+void* VIGetNextFrameBuffer();
+s32 VIGetVSyncTimingTest();
+void VISetVSyncTimingTest();
+s32 VIGetDimmingCount();
+s32 VIGetDVDStopMotorCount();
+BOOL VIEnableDVDStopMotor(BOOL flag);
 #define VI_I2C_TYPE_REVERSE 0
 #define VI_I2C_TYPE_NORMAL 1
 s32 VIGetI2CType();
