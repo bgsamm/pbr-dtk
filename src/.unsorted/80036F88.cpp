@@ -6,35 +6,54 @@ extern "C" {
 
 void fn_800375A4(void *p);
 
-void fn_80037D28(void *p) { fn_800375A4(p); }
-u16 fn_80039460(u8 *p) { return *(u16 *)(p + 0xbf8); }
-int fn_800394F0(u8 *p) { return *(u8 *)(p + 0xbf6); }
-u8 fn_8003DE50(u8 *p) { return *(u8 *)(p + 0xd04); }
-
+void fn_80037D28(void *p) {
+    fn_800375A4(p);
+}
+u16 fn_80039460(Unk80036F88 *obj) {
+    return obj->_BF8;
+}
+int fn_800394F0(Unk80036F88 *obj) {
+    return obj->_BF6;
 }
 
-#include "common.hpp"
-
-extern "C" {
-
-void fn_8003D4D4(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7);
-void fn_8003D82C(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7);
-
-void fn_80039634(u8 *p, u32 x, u32 y) { *(u32 *)(p + 0xc50) = x; *(u32 *)(p + 0xc54) = y; }
-void fn_8003D4B4(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7) { fn_8003D4D4(a0, 0x0, a2, a3, a4, a5, a6, a7); }
-void fn_8003D4BC(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7) { fn_8003D4D4(a0, 0x1, a2, a3, a4, a5, a6, a7); }
-void fn_8003D4C4(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7) { fn_8003D4D4(a0, 0x2, a2, a3, a4, a5, a6, a7); }
-void fn_8003D4CC(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7) { fn_8003D4D4(a0, 0x3, a2, a3, a4, a5, a6, a7); }
-void fn_8003D80C(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7) { fn_8003D82C(a0, 0x0, a2, a3, a4, a5, a6, a7); }
-void fn_8003D814(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7) { fn_8003D82C(a0, 0x1, a2, a3, a4, a5, a6, a7); }
-void fn_8003D81C(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7) { fn_8003D82C(a0, 0x2, a2, a3, a4, a5, a6, a7); }
-void fn_8003D824(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7) { fn_8003D82C(a0, 0x3, a2, a3, a4, a5, a6, a7); }
-
+void fn_80039634(Unk80036F88 *obj, u32 x, u32 y) {
+    obj->_C50 = x;
+    obj->_C54 = y;
 }
 
-#include "gs/GSobject.hpp"
+void fn_8003D4B4(Unk80036F88 *obj) {
+    fn_8003D4D4(obj, 0);
+}
+void fn_8003D4BC(Unk80036F88 *obj) {
+    fn_8003D4D4(obj, 1);
+}
+void fn_8003D4C4(Unk80036F88 *obj) {
+    fn_8003D4D4(obj, 2);
+}
+void fn_8003D4CC(Unk80036F88 *obj) {
+    fn_8003D4D4(obj, 3);
+}
+void fn_8003D80C(Unk80036F88 *obj) {
+    fn_8003D82C(obj, 0);
+}
+void fn_8003D814(Unk80036F88 *obj) {
+    fn_8003D82C(obj, 1);
+}
+void fn_8003D81C(Unk80036F88 *obj) {
+    fn_8003D82C(obj, 2);
+}
+void fn_8003D824(Unk80036F88 *obj) {
+    fn_8003D82C(obj, 3);
+}
+u8 fn_8003DE50(Unk80036F88 *obj) {
+    return obj->_D04;
+}
+}
+
 #include "gs/GScache.hpp"
 #include "gs/GSmath.hpp"
+#include "gs/GSobject.hpp"
+
 #include <string.h>
 
 #define F32(p, o) (*(f32 *)((u8 *)(p) + (o)))
@@ -258,7 +277,6 @@ void fn_8003CB4C(void *p, f32 a, f32 b, f32 c) {
     F32(p, 0xd3c) = b;
     F32(p, 0xd38) = c;
 }
-
 }
 
 extern "C" {
@@ -372,7 +390,6 @@ GSvec3 fn_8003B744(void *p) {
     }
     return bb->mMax;
 }
-
 }
 
 extern "C" {
@@ -411,7 +428,11 @@ void fn_8003AE30(void *p, u32 a, f32 x, f32 y) {
 }
 #pragma dont_inline reset
 
-struct TmpC70 { u8 pad[0x190]; u8 s190[0xae0]; f32 c70; };
+struct TmpC70 {
+    u8 pad[0x190];
+    u8 s190[0xae0];
+    f32 c70;
+};
 void fn_8003C8C4(TmpC70 *p, u32 a, u32 b, f32 c) {
     f32 t = (f32)a / lbl_80640838;
     fn_8005033C(p->s190, &p->c70, &t, &p->c70, b, c);
@@ -452,7 +473,6 @@ BOOL fn_8003DFC0(void *p) {
     return fn_8003C25C(p, 10) != fn_8003C25C(p, 0);
 }
 #pragma dont_inline reset
-
 }
 
 #include "gs/GSfsys.hpp"
@@ -494,14 +514,22 @@ void *fn_8003753C(void *p, int del) {
     return p;
 }
 
-struct TmpCB8 { u8 pad[0x28]; u8 s28[0xc90]; f32 cb8; };
+struct TmpCB8 {
+    u8 pad[0x28];
+    u8 s28[0xc90];
+    f32 cb8;
+};
 void fn_8003AC9C(TmpCB8 *p, u32 a, f32 x, f32 y, u32 b) {
     f32 t = x;
     fn_8005033C(p->s28, &p->cb8, &t, &p->cb8, b, y);
     fn_800399C8(p, a, lbl_80640820, lbl_80640830);
 }
 
-struct TmpCC4 { u8 pad[0x94]; u8 s94[0xc30]; f32 cc4; };
+struct TmpCC4 {
+    u8 pad[0x94];
+    u8 s94[0xc30];
+    f32 cc4;
+};
 void fn_8003ADC8(void *p, u32 a, f32 x, f32 y) {
     f32 t = x;
     TmpCC4 *s = (TmpCC4 *)p;
@@ -537,7 +565,6 @@ void fn_8003C858(void *p, u32 a) {
     }
     F32(p, 0xc70) = (f32)a / lbl_80640838;
 }
-
 }
 
 extern "C" {
@@ -575,22 +602,14 @@ void fn_80039200(void *p, u8 a, f32 f) {
 
 f32 fn_800397BC(void *p) {
     switch (fn_800396D4(p)) {
-    case 0:
-        return lbl_80640830;
-    case 1:
-        return lbl_80640888;
-    case 2:
-        return lbl_8064088C;
-    case 3:
-        return lbl_80640830;
-    case 4:
-        return lbl_80640890;
-    case 5:
-        return lbl_8064083C;
-    case 6:
-        return lbl_80640894;
-    default:
-        return lbl_80640830;
+        case 0:  return lbl_80640830;
+        case 1:  return lbl_80640888;
+        case 2:  return lbl_8064088C;
+        case 3:  return lbl_80640830;
+        case 4:  return lbl_80640890;
+        case 5:  return lbl_8064083C;
+        case 6:  return lbl_80640894;
+        default: return lbl_80640830;
     }
 }
 #pragma dont_inline reset
@@ -645,7 +664,6 @@ u32 fn_80037924(void *p, u32 a, u32 b) {
     return 1;
 }
 #pragma dont_inline reset
-
 }
 
 struct VDeletable {
@@ -778,7 +796,6 @@ void fn_8003DE90(void *p, u32 a, u32 b) {
         }
     }
 }
-
 }
 
 struct BoxPair {
@@ -818,7 +835,6 @@ f32 fn_8003B7FC(void *p) {
     f32 b = fn_8003B794(p);
     return pos.y + (b + lbl_80640888 * h);
 }
-
 }
 
 struct TmpCB4 {
@@ -859,7 +875,9 @@ int fn_80039718(void *p) {
     return 6;
 }
 
-struct W3 { u32 a, b, c; };
+struct W3 {
+    u32 a, b, c;
+};
 void fn_8003881C(void *p, GSvec3 *v) {
     GSobject *o = OBJ(p);
     if (o) {
@@ -910,7 +928,6 @@ void fn_8003DDA4(void *p, int a) {
         }
     }
 }
-
 }
 
 struct TmpD64 {
@@ -955,7 +972,6 @@ void fn_8003B2D0(void *p, u32 b, f32 x, f32 y, f32 z, f32 f) {
         fn_8005033C(s->s1fc, &s->d6c, &y, &s->d6c, b, f);
     }
 }
-
 }
 
 inline u8 *animEntry(void *q, u16 idx) {
@@ -1004,7 +1020,6 @@ f32 fn_80039E80(void *p, u16 a, int c) {
     }
     return lbl_80640820;
 }
-
 }
 
 struct BmSub24 {
@@ -1047,7 +1062,6 @@ void fn_8003AE84(void *p, f32 *v, int a, u32 b, f32 f) {
         fn_800399C8(p, a, lbl_80640820, lbl_80640830);
     }
 }
-
 }
 
 extern "C" {
@@ -1089,7 +1103,9 @@ void fn_80039C10(void *p) {
 }
 #pragma dont_inline reset
 
-struct W12 { u32 a, b, c; };
+struct W12 {
+    u32 a, b, c;
+};
 void fn_80038AD0(void *p, GSvec3 *v) {
     if (OBJ(p)) {
         u32 a = ((u32 *)v)[0];
@@ -1112,7 +1128,6 @@ void fn_80038AD0(void *p, GSvec3 *v) {
         fn_80050388((u8 *)p + 0xb8);
     }
 }
-
 }
 
 extern "C" {
@@ -1162,14 +1177,18 @@ void fn_80038FB0(void *p) {
         }
     }
 }
-
 }
 
 extern "C" {
 
 void fn_80051134(void *a, u32 b, f32 *c, u32 d, u32 e, f32 f1, f32 f2, f32 f3, f32 f4, f32 f5);
 
-struct NodeSet { u32 flags; u32 fsys; u32 file; GSnull *nodes[8]; };
+struct NodeSet {
+    u32 flags;
+    u32 fsys;
+    u32 file;
+    GSnull *nodes[8];
+};
 inline void hideNode(void *n) {
     U32(n, 0x104) |= 4;
     F32(n, 0x110) = lbl_80640820;
@@ -1204,7 +1223,6 @@ void fn_8003AF50(void *p, f32 *v, u32 a, u32 b, f32 x, f32 y) {
     fn_80051134((u8 *)p + 0x2e0, a, (f32 *)((u8 *)p + 0xcd0), b, 0, v[1], x, y, lbl_80640820, lbl_80640820);
     fn_80051134((u8 *)p + 0x3a0, a, (f32 *)((u8 *)p + 0xcd4), b, 0, v[2], x, y, lbl_80640820, lbl_80640820);
 }
-
 }
 
 extern "C" {
@@ -1260,7 +1278,6 @@ void fn_8003B044(void *p, void *a, u32 b, u32 flags) {
         U32(p, 0xd74) = b;
     }
 }
-
 }
 
 inline void clearAnimFlag(void *c) {
@@ -1297,7 +1314,6 @@ void fn_8003A958(void *p, void *a, u32 b) {
         }
     }
 }
-
 }
 
 extern "C" {
@@ -1329,7 +1345,6 @@ u32 fn_8003D9FC(void *p, void *a, void *b, void *c, u32 d) {
     fn_80200D78(h);
     return 1;
 }
-
 }
 
 extern "C" {
@@ -1343,7 +1358,6 @@ double atan2(double y, double x);
 double asin(double x);
 f32 fn_8003AA74(void *p, f32 a, f32 b);
 void fn_8003A6C8(void *p, GSvec3 *e, u32 c, u32 b, f32 f);
-
 }
 
 inline f32 safeAsin(f32 x) {
@@ -1358,7 +1372,9 @@ inline f32 safeAsin(f32 x) {
 
 extern "C" {
 
-inline f32 myAtan2(f32 y, f32 x) { return atan2(y, x); }
+inline f32 myAtan2(f32 y, f32 x) {
+    return atan2(y, x);
+}
 void fn_80038D08(void *p, void *q, u32 b, f32 f) {
     if (U16(p, 0x51c) >= 9 || U8(p, 0x520) == 0) {
         GSvec3 d = fn_8003B674(q, 10) - fn_8003B674(p, 14);
@@ -1386,7 +1402,6 @@ void fn_80038E58(void *p, void *q) {
         fn_8003A958(p, &GSvec3(-pitch, yaw, lbl_80640820), 14);
     }
 }
-
 }
 
 extern "C" {
@@ -1433,7 +1448,6 @@ u32 fn_80039090(void *p, u32 a, f32 t) {
     U32(p, 0xcb0) = 0;
     return 1;
 }
-
 }
 
 extern "C" {
@@ -1479,7 +1493,6 @@ u32 fn_8003CF54(void *p, u16 a, u8 b, u16 c, u16 d, u32 e) {
     GSthreadManager::sInstance->sleepCurrentThread();
     return 1;
 }
-
 }
 
 #include "gs/render/GSrenderTarget.hpp"
@@ -1554,7 +1567,6 @@ void fn_8003CDA4(void *p) {
         }
     }
 }
-
 }
 
 inline void vec2AddTo(GSvec2 *a, GSvec2 b) {
@@ -1616,7 +1628,6 @@ void fn_8003CBB8(void *p, f32 dt) {
     }
     F32(p, 0xd40) += dt;
 }
-
 }
 
 extern "C" {
@@ -1663,7 +1674,6 @@ void fn_8003837C(void *p, int on) {
         U32(p, 0) &= ~1;
     }
 }
-
 }
 
 #include "gs/GSscene.hpp"
@@ -1741,7 +1751,6 @@ void fn_800375A4(void *p) {
     U16(p, 0x514) = 0;
     U32(p, 0x518) = 0;
 }
-
 }
 
 extern "C" {
@@ -1753,7 +1762,7 @@ void fn_80039A54(void *p, int flag, f32 f) {
     }
     if (U32(p, 0) & 0x1000) {
         if (fn_8003C25C(p, 10) != fn_8003C25C(p, 0)) {
-            if (fn_800394F0((u8 *)p) == 10) {
+            if (fn_800394F0((Unk80036F88 *)p) == 10) {
                 F32(p, 0xd7c) = fn_8003B794(p);
             }
             if (U16(p, 0x510) == 0xb2) {
@@ -1788,7 +1797,6 @@ void fn_80039A54(void *p, int flag, f32 f) {
     }
     U32(p, 0) |= 0x200000;
 }
-
 }
 
 extern "C" {
@@ -1816,7 +1824,6 @@ GSvec3 fn_8003A430(void *p, u32 a, f32 t) {
     OBJ(p)->update(lbl_80640820, true);
     return d;
 }
-
 }
 
 extern "C" {
@@ -1838,7 +1845,6 @@ GSvec3 fn_8003A270(void *p, u32 a, u32 b, f32 t) {
     OBJ(p)->startAnimation(0, 1, lbl_80640820, lbl_80640830, false, false, false);
     return v;
 }
-
 }
 
 extern "C" {
@@ -1899,7 +1905,6 @@ u32 fn_8003D0C0(void *p, u16 id, u32 b, s8 c, u16 *d) {
     GSfsys::releaseAllCacheEntriesForFsys(fs);
     return 1;
 }
-
 }
 
 extern "C" {
@@ -1940,7 +1945,6 @@ u32 fn_8003927C(void *p, s8 *r, f32 t, f32 speed) {
     }
     return 1;
 }
-
 }
 
 extern "C" {
@@ -1948,48 +1952,47 @@ extern "C" {
 void fn_801F58FC(GSobject *o);
 void fn_80037D2C(void *p, int a);
 
-void fn_8003D82C(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7) {
-    void *p = (void *)a0;
-    int k = a1;
+void fn_8003D82C(Unk80036F88 *obj, u32 kind) {
+    void *p = obj;
+    int k = kind;
     switch (k) {
-    case 0:
-        if (!(U32(p, 0) & 0x4000)) {
-            return;
-        }
-        if (OBJ(p)) {
-            U16(OBJ(p), 0xdc) &= ~0x10;
-        }
-        U32(p, 0) &= ~0x4000;
-        break;
-    case 1:
-        if (!(U32(p, 0) & 0x80000)) {
-            return;
-        }
-        U32(p, 0) &= ~0x80000;
-        break;
-    case 2:
-        if (!(U32(p, 0) & 0x100000)) {
-            return;
-        }
-        U32(p, 0) &= ~0x100000;
-        break;
-    case 3:
-        if (!(U32(p, 0) & 0x2000)) {
-            return;
-        }
-        {
-            u16 id = fn_8003C25C(p, 0x15);
+        case 0:
+            if (!(U32(p, 0) & 0x4000)) {
+                return;
+            }
             if (OBJ(p)) {
-                fn_801F58FC(OBJ(p));
-                if (id < 0xff) {
-                    OBJ(p)->startAnimation(id, 0, lbl_80640820, lbl_80640830, false, false, false);
+                U16(OBJ(p), 0xdc) &= ~0x10;
+            }
+            U32(p, 0) &= ~0x4000;
+            break;
+        case 1:
+            if (!(U32(p, 0) & 0x80000)) {
+                return;
+            }
+            U32(p, 0) &= ~0x80000;
+            break;
+        case 2:
+            if (!(U32(p, 0) & 0x100000)) {
+                return;
+            }
+            U32(p, 0) &= ~0x100000;
+            break;
+        case 3:
+            if (!(U32(p, 0) & 0x2000)) {
+                return;
+            }
+            {
+                u16 id = fn_8003C25C(p, 0x15);
+                if (OBJ(p)) {
+                    fn_801F58FC(OBJ(p));
+                    if (id < 0xff) {
+                        OBJ(p)->startAnimation(id, 0, lbl_80640820, lbl_80640830, false, false, false);
+                    }
                 }
             }
-        }
-        U32(p, 0) &= ~0x2000;
-        break;
-    default:
-        return;
+            U32(p, 0) &= ~0x2000;
+            break;
+        default: return;
     }
     TmpC90 *s = (TmpC90 *)p;
     if (s->n[k]) {
@@ -2003,5 +2006,4 @@ void fn_8003D82C(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7)
         fn_80038020(p);
     }
 }
-
 }
