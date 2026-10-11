@@ -16,6 +16,8 @@ struct Unk800097D8 {
 };
 
 extern "C" {
+void fn_80009808(u8 v);
+
 // TODO Replace with proper imports
 void fn_8000A0F0(Unk800097D8 *obj);
 void fn_8000A54C(Unk800097D8 *obj);
