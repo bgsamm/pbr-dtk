@@ -824,6 +824,8 @@ void GSmaterial::fn_801E8BA4(bool useTexture) {
 
     if (useTexture) {
         GSrender::sInstance->setIndTexStageDirect(mCurrTevStage);
+        colorIn = GX_CC_C2;
+        channel = 0xFF;
         GSrender::sInstance->setTevSwapMode(mCurrTevStage, GX_TEV_SWAP0, GX_TEV_SWAP0);
         GSrender::sInstance->setTevColorOp(mCurrTevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_FALSE, GX_TEVREG2);
         GSrender::sInstance->setTevAlphaOp(mCurrTevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_FALSE, GX_TEVREG2);
@@ -834,9 +836,6 @@ void GSmaterial::fn_801E8BA4(bool useTexture) {
         GSrender::sInstance->setTevColorIn(mCurrTevStage, GX_CC_ZERO, GX_CC_TEXC, GX_CC_RASC, GX_CC_ZERO);
         GSrender::sInstance->setTevAlphaIn(mCurrTevStage, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO);
         mCurrTevStage++;
-
-        colorIn = GX_CC_C2;
-        channel = 0xFF;
     }
 
     GSrender::sInstance->setIndTexStageDirect(mCurrTevStage);
@@ -876,7 +875,10 @@ void GSmaterial::fn_801E9114(_UnkMaterialStruct_3 *arg0, bool useTexture) {
         return;
     }
 
-    GSvec3 dir(renderLight->mDirection.x, renderLight->mDirection.y, renderLight->mDirection.z);
+    GSvec3 dir;
+    dir.x = renderLight->mDirection.x;
+    dir.y = renderLight->mDirection.y;
+    dir.z = renderLight->mDirection.z;
     MTXMultVecSR(arg0->_1d4, &dir, &dir);
 
     f32 cosAngle = -dir.z;
@@ -891,7 +893,9 @@ void GSmaterial::fn_801E9114(_UnkMaterialStruct_3 *arg0, bool useTexture) {
         GSvec3 viewDir = -GSmath::sZAxis;
         GSvec3 half;
         VECHalfAngle(&dir, &viewDir, &half);
-        half = -half;
+        half.x = -half.x;
+        half.y = -half.y;
+        half.z = -half.z;
 
         GSvec3 axis;
         VECCrossProduct(&half, &viewDir, &axis);
@@ -934,6 +938,8 @@ void GSmaterial::fn_801E9114(_UnkMaterialStruct_3 *arg0, bool useTexture) {
 
     if (useTexture) {
         GSrender::sInstance->setIndTexStageDirect(mCurrTevStage);
+        colorIn = GX_CC_C2;
+        channel = 0xFF;
         GSrender::sInstance->setTevSwapMode(mCurrTevStage, GX_TEV_SWAP0, GX_TEV_SWAP0);
         GSrender::sInstance->setTevColorOp(mCurrTevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_FALSE, GX_TEVREG2);
         GSrender::sInstance->setTevAlphaOp(mCurrTevStage, GX_TEV_ADD, GX_TB_ZERO, GX_CS_SCALE_1, GX_FALSE, GX_TEVREG2);
@@ -944,9 +950,6 @@ void GSmaterial::fn_801E9114(_UnkMaterialStruct_3 *arg0, bool useTexture) {
         GSrender::sInstance->setTevColorIn(mCurrTevStage, GX_CC_ZERO, GX_CC_TEXC, GX_CC_RASC, GX_CC_ZERO);
         GSrender::sInstance->setTevAlphaIn(mCurrTevStage, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO, GX_CA_ZERO);
         mCurrTevStage++;
-
-        colorIn = GX_CC_C2;
-        channel = 0xFF;
     }
 
     GSrender::sInstance->setIndTexStageDirect(mCurrTevStage);
