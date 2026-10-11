@@ -50,7 +50,7 @@ A unit is finished when:
 3. It has no `fn_`/`lbl_` names left except documented unknowns, no raw offset access, no placeholder signatures.
 4. It follows this guide and has been reviewed before merging.
 
-Units that are not finished stay `NonMatching` and may contain scaffolding (for instance the generated stubs in `src/.unsorted/`), which is replaced unit by unit, never extended.
+Units that are not finished stay `NonMatching` and may contain scaffolding (for instance the placeholder stubs in `src/.unsorted/`), which is replaced unit by unit, never extended.
 
 ## Commits
 
