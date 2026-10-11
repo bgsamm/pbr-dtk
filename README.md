@@ -69,7 +69,6 @@ Steps:
 | `include/` | Headers, one per module, mirroring `src/` |
 | `libs/RVL_SDK/` | Revolution SDK |
 | `config/RPBP01/` | `splits.txt` and `symbols.txt` for decomp-toolkit |
-| `tools/stubgen/` | Generators for trivial placeholder functions |
 | `tools/progress.py` | Updates the progress section of this README |
 | `ghidra_scripts/` | Imports `symbols.txt` into a Ghidra project |
 | `docs/` | Architecture map, progress log and code style |
