@@ -7,12 +7,12 @@ A map of the executable's modules, used to pick what to decompile next and to pr
 - Functions, sizes and names: `config/RPBP01/symbols.txt` (13,890 functions, 3.86 MiB of code).
 - Identification of unnamed areas: strings referenced by the code (through Ghidra) and the call graph.
 - Boundaries of areas without any known name are **approximate** (to within a few functions). Areas marked "to be confirmed" are inferences.
-  `splits.txt` makes 0x8038F424–0x803D9208 a single unit of DS-derived code (item data file readers, then the battle engine), so the ends of areas 16 and 17 below overlap it and are to be redone.
+  `splits.txt` makes 0x8038F424–0x803D9208 a single unit of DS-derived code (item data file readers, then the battle engine), so the end of area 16 and areas 17 and 18 below overlap it and must be redrawn. The README progress table uses its own boundaries from `tools/progress.py`, which already follow this unit, so its battle engine row (295 KiB) is larger than area 18 below (216 KiB).
 - Libraries identified from their version banners: `RVL_SDK` (OS, GX, DVD, VI, AI, AX, DSP, EXI, SI, KPAD, WPAD, NAND, SC, MP, MPDL, NCD, SO, NWC24, THP, HBM, DWC, DWCDL), `NW4R - SND`, `REX-PPC 1.0.0.1 (RevoEX-1.0plus1)`, MetroTRK. The OS library is dated April 2007, DWC March 2007.
 
 ## Overview
 
-Genius Sonority game code: about **1.8 MiB** at the start of the binary, plus the `gs` engine and the battle engine at the end.
+Genius Sonority game code: about **1.8 MiB** at the start of the binary (areas 2 to 6). The `gs` engine (area 10) sits in the middle, and the battle engine (area 18) near the end.
 Nintendo and Metrowerks libraries: about **1.5 MiB**, a large part of which a PC port does not need (Bluetooth, NAND, debugger, Nintendo Wi-Fi Connection).
 
 ## Map
@@ -52,7 +52,7 @@ Nintendo and Metrowerks libraries: about **1.5 MiB**, a large part of which a PC
    It is the best target for lockstep netplay and can be built as a library testable on PC before the rest.
 2. **The online protocol is already there.** During Wi-Fi battles the consoles exchange "pseudo:" files (area 5: `fight/command`, `fight/turn_pokeparty.lz`, `fight/result`, `battle/battlepass`…).
    Understanding them gives the message format for a replacement server.
-3. **Libraries to reuse rather than decompile**: MSL, runtime, RVL SDK (OS, GX, MTX, DVD) and NW4R exist, matched, in other decomp-toolkit projects of the same era (exact versions to check).
+3. **Libraries to reuse rather than decompile**: MSL, runtime, RVL SDK (OS, GX, MTX, DVD) and NW4R may have matched versions in other decomp-toolkit projects of the same era (exact versions still to check).
 4. **To skip or replace in a port**: MetroTRK, DB, Bluetooth, HOME menu, NWC24, MPDL, DWC and GameSpy (about 600 KiB).
 
 ## Suggested order

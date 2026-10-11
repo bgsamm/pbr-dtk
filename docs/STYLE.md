@@ -9,7 +9,7 @@ When in doubt, do what that code does. Format with the repository's `.clang-form
   `src/.unsorted/<address>.cpp` is only a holding area for units whose role is still unknown.
 - One header per module in `include/`, mirroring `src/`. Structures and declarations used by more than one unit live in a header, never copied between files.
 - Functions appear in the file in address order, as in the original object.
-- Source files are ASCII (the compiler reads Shift-JIS).
+- Source files are ASCII only: the compiler reads them as Shift-JIS.
 
 ## Naming
 
@@ -22,7 +22,7 @@ When in doubt, do what that code does. Format with the repository's `.clang-form
 
 ## Types and structures
 
-- Every structure has its size (`// size: 0x22`) and a `/* 0xNN */` offset comment on each member. Unknown regions are `u8 unkN[size]`, unknown fields `_NN`.
+- Every structure has its size (`// size: 0x22`) and a `/* 0xNN */` offset comment on each member. Unknown regions are `u8 unkN[size]`, unknown fields are named `_NN` after their offset.
 - No raw pointer arithmetic such as `*(u32 *)(p + 0x2c)`: define the structure, even partially.
 - Use the right signedness and width; they change the generated code (`divw` vs `divwu`, `extsh`).
 - Bitfields, unions and enums as the data really is (see `ItemPartyParam`).
@@ -54,4 +54,4 @@ Units that are not finished stay `NonMatching` and may contain scaffolding (for 
 ## Commits
 
 - One subject line saying what was decompiled or changed (`ds: decompile item data and NARC helpers`), a short body if useful.
-- No game data, no personal names or addresses.
+- No game data, personal names, e-mail addresses or local file paths.
