@@ -622,58 +622,133 @@ void GSmaterial::fn_801E9DCC(const _UnkMaterialStruct_3 *arg0, GSmatrix *arg1) {
     }
 }
 
-static inline u8 blend1(u8 c1, u8 c2) {
-    f32 f1 = u8tof32(c1);
-    f32 f2 = u8tof32(c2);
-    return f32tou8((f1 * f2) / 255.f + 0.5f);
-}
-
-static inline u8 blend2(u8 c1, u8 c2, f32 f3) {
-    f32 f1 = u8tof32(c1);
-    f32 f2 = u8tof32(c2);
-
-    return f32tou8(0.5f + f1 + f3 * (f2 - f1));
+static inline f32 lerp(f32 a, f32 b, f32 t) {
+    return a + t * (b - a);
 }
 
 void GSmaterial::fn_801EA44C() {
-    u8 _unk1 = 0;
-    GSrenderLight **_unk2 = NULL;
+    u8 lightCount = 0;
+    GSrenderLight **lights = NULL;
 
     mChannelCount = 0;
 
     if ((mMatData->_5d & (1 << 0))) {
-        _unk1 = GShierarchyModule::lbl_8063F46D;
-        _unk2 = GShierarchyModule::lbl_804920B0;
+        lightCount = GShierarchyModule::lbl_8063F46D;
+        lights = GShierarchyModule::lbl_804920B0;
     }
 
-    GScolor matColor;
     GScolor ambColor;
+    GScolor matColor;
 
-    GSlight *_unk3 = GShierarchyModule::sInstance->get_118();
-    if (_unk3 && (_unk3->checkLightFlag((1 << 0)))) {
-        matColor.r = blend1(_unk3->_110.r, mMatData->_60.r);
-        matColor.g = blend1(_unk3->_110.g, mMatData->_60.g);
-        matColor.b = blend1(_unk3->_110.b, mMatData->_60.b);
-        matColor.a = blend1(_unk3->_110.a, mMatData->_60.a);
+    GSlight *light = GShierarchyModule::sInstance->get_118();
+    if (light && (light->checkLightFlag((1 << 0)))) {
+        ambColor.r = f32tou8(0.5f + (u8tof32(light->_110.r) * u8tof32(mMatData->_60.r)) / 255.f);
+        ambColor.g = f32tou8(0.5f + (u8tof32(light->_110.g) * u8tof32(mMatData->_60.g)) / 255.f);
+        ambColor.b = f32tou8(0.5f + (u8tof32(light->_110.b) * u8tof32(mMatData->_60.b)) / 255.f);
+        ambColor.a = f32tou8(0.5f + (u8tof32(light->_110.a) * u8tof32(mMatData->_60.a)) / 255.f);
     } else {
-        matColor.r = 0;
-        matColor.g = 0;
-        matColor.b = 0;
-        matColor.a = 255;
+        ambColor.r = 0;
+        ambColor.g = 0;
+        ambColor.b = 0;
+        ambColor.a = 255;
     }
 
-    ambColor.r = mMatData->_64.r;
-    ambColor.g = mMatData->_64.g;
-    ambColor.b = mMatData->_64.b;
-    ambColor.a = mMatData->_64.a;
+    matColor.r = mMatData->_64.r;
+    matColor.g = mMatData->_64.g;
+    matColor.b = mMatData->_64.b;
+    matColor.a = mMatData->_64.a;
 
     if (_2c.a != 0) {
-        f32 _unk3 = u8tof32(_2c.a) / 255.f;
-        ambColor.r = blend2(ambColor.r, _2c.r, _unk3);
-        ambColor.g = blend2(ambColor.g, _2c.g, _unk3);
-        ambColor.b = blend2(ambColor.b, _2c.b, _unk3);
-        ambColor.a = blend2(ambColor.a, _2c.a, _unk3);
+        f32 t = u8tof32(_2c.a) / 255.f;
+        matColor.r = f32tou8(0.5f + lerp(u8tof32(matColor.r), u8tof32(_2c.r), t));
+        matColor.g = f32tou8(0.5f + lerp(u8tof32(matColor.g), u8tof32(_2c.g), t));
+        matColor.b = f32tou8(0.5f + lerp(u8tof32(matColor.b), u8tof32(_2c.b), t));
         GSrender::sInstance->setTevColor(2, GS_TEV_COLOR_U8, &_2c);
+    }
+
+    bool _unk1 = (mMatData->_5e != 1 || mMatData->_5f != 1);
+    if (_unk1 && lightCount) {
+        GSrender::sInstance->setChannelColors(mChannelCount, ambColor, matColor);
+        GSrender::sInstance->configureColorChannel(mChannelCount,
+                                                   (1 << 0),
+                                                   (GXColorSrc)mMatData->_5e,
+                                                   (GXColorSrc)mMatData->_5f,
+                                                   lightCount,
+                                                   lights,
+                                                   GX_AF_NONE,
+                                                   GX_DF_CLAMP);
+        GSrender::sInstance->configureColorChannel(mChannelCount,
+                                                   (1 << 1),
+                                                   (GXColorSrc)mMatData->_5e,
+                                                   (GXColorSrc)mMatData->_5f,
+                                                   0,
+                                                   NULL,
+                                                   GX_AF_NONE,
+                                                   GX_DF_NONE);
+    } else {
+        GSrender::sInstance->setChannelColors(mChannelCount, ambColor, ambColor);
+        GSrender::sInstance->configureColorChannel(mChannelCount,
+                                                   (1 << 1) | (1 << 0),
+                                                   (GXColorSrc)mMatData->_5e,
+                                                   (GXColorSrc)mMatData->_5f,
+                                                   0,
+                                                   NULL,
+                                                   GX_AF_NONE,
+                                                   GX_DF_NONE);
+    }
+
+    _20 = mChannelCount;
+    _21 = 0xFF;
+    mChannelCount++;
+
+    if ((mMatData->_5d & (1 << 2))) {
+        u8 specLightCount = GShierarchyModule::lbl_8063F46E;
+        GSrenderLight **specLights = GShierarchyModule::lbl_804920D0;
+        if (specLightCount) {
+            GSrender::sInstance->setChannelColors(mChannelCount, GScolor(0, 0, 0, 0), mMatData->_78);
+
+            if (mMatData->_76 < 0) {
+                for (u16 i = 0; i < specLightCount; i++) {
+                    GSrenderLight *specLight = specLights[i];
+                    if (specLight) {
+                        specLight->setShininess(mMatData->_7c);
+                        GSrender::sInstance->setLightsDirty();
+                    }
+                }
+
+                GSrender::sInstance->configureColorChannel(mChannelCount,
+                                                           (1 << 0),
+                                                           GX_SRC_REG,
+                                                           GX_SRC_REG,
+                                                           specLightCount,
+                                                           specLights,
+                                                           GX_AF_SPEC,
+                                                           GX_DF_NONE);
+                GSrender::sInstance->configureColorChannel(mChannelCount,
+                                                           (1 << 1),
+                                                           GX_SRC_REG,
+                                                           GX_SRC_REG,
+                                                           0,
+                                                           NULL,
+                                                           GX_AF_NONE,
+                                                           GX_DF_NONE);
+            } else {
+                GSrender::sInstance->configureColorChannel(mChannelCount,
+                                                           (1 << 1) | (1 << 0),
+                                                           GX_SRC_REG,
+                                                           GX_SRC_REG,
+                                                           0,
+                                                           NULL,
+                                                           GX_AF_NONE,
+                                                           GX_DF_SIGN);
+            }
+
+            _21 = mChannelCount++;
+        }
+    }
+
+    if (mBaseColor.r != 128 || mBaseColor.g != 128 || mBaseColor.b != 128 || mBaseColor.a != 255) {
+        GSrender::sInstance->setTevKColor(3, &mBaseColor);
     }
 }
 

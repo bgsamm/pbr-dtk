@@ -511,7 +511,7 @@ public:
         mState->_0 |= (1 << 7);
     }
 
-    void setChannelColors(u8 channel, GScolor ambColor, GScolor matColor) {
+    void setChannelColors(u8 channel, const GScolor &ambColor, const GScolor &matColor) {
         mState->mCurr.mChanAmbColors[channel] = ambColor;
         mState->mCurr.mChanMatColors[channel] = matColor;
         mState->mChanAmbColorFlags |= (1 << channel);
@@ -520,9 +520,9 @@ public:
     }
 
     void setTevColor(u8 reg, GStevColorType type, GScolor *color) {
-        mState->mCurr.mTevColors[reg].mType = type;
-        // TODO(samm) Figure this out
-        *(u32 *)(&mState->mCurr.mTevColors[reg].mColor) = *color;
+        GStevColor *tevColor = &mState->mCurr.mTevColors[reg];
+        tevColor->mType = type;
+        static_cast<GScolor &>(tevColor->mColor) = *color;
         mState->mTevColorFlags |= (1 << reg);
         mState->_0 |= (1 << 3);
     }
@@ -711,6 +711,11 @@ public:
 
         mState->_14 |= (1 << 4);
         mState->_0 |= (1 << 2);
+    }
+
+    void setLightsDirty() {
+        mState->_0 |= (1 << 2);
+        mState->_14 |= (1 << 4);
     }
 
     void setTexture(u8 index, GStexture *texture) {

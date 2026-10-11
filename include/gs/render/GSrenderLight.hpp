@@ -1,5 +1,7 @@
 #pragma once
 
+#include "gs/GSmath.hpp"
+
 #include <revolution.h>
 
 enum GSlightType {
@@ -62,4 +64,14 @@ public:
     );
     void initSpecLight(GXColor color, Vec direction, f32 shininess);
     void load(u8 index, GSlightStruct1 *param2);
+
+    void setShininess(f32 shininess) {
+        if (mType == GS_LIGHT_SPEC) {
+            if ((_1 & (1 << 3)) || !FLOAT_EQUAL(mShininess, shininess)) {
+                mShininess = shininess;
+                _1 |= (1 << 7);
+                _1 &= ~(1 << 3);
+            }
+        }
+    }
 };
