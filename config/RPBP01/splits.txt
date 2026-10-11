@@ -1783,10 +1783,10 @@ src/ds/pokemon.cpp:
 	.text       start:0x803DA258 end:0x803DE7D8
 
 src/ds/party.cpp:
-	.text       start:0x803DE7D8 end:0x803DE99C
+	.text       start:0x803DE7D8 end:0x803DE994
 
 src/ds/trainer_data.cpp:
-	.text       start:0x803DE99C end:0x803DE9BC
+	.text       start:0x803DE994 end:0x803DE9BC
 
 src/ds/move_table.cpp:
 	.text       start:0x803DE9BC end:0x803DEC24

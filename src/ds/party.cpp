@@ -1,7 +1,5 @@
 #include "ds/party.hpp"
 
-#include "ds/trainer_data.hpp"
-
 #include <cstring>
 
 // TODO Replace with proper imports
@@ -58,8 +56,4 @@ Pokemon *Party_GetPokemonBySlotIndex(const Party *party, s32 slot) {
 
 void Party_Copy(const Party *src, Party *dst) {
     *dst = *src;
-}
-// This game has no trainer messages in the DS data: the battle engine never finds one.
-BOOL Trainer_HasMessageType(int trainerID, int msgType, int heapID) {
-    return FALSE;
 }
