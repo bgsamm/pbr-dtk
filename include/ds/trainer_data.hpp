@@ -10,8 +10,9 @@ BOOL Trainer_LoadParty(u32 trainerID, void *trainerParty);
 BOOL Trainer_HasMessageType(int trainerID, int msgType, int heapID);
 
 // Only the name is used so far (pokeplatinum Trainer).
-// size: unknown
+// size: 0x2C (stride of BattleSystem::trainers)
 struct Trainer {
     /* 0x0 */ u8 header[0x14];
     /* 0x14 */ u16 name[8];
+    /* 0x24 */ u8 unk24[0x8];
 };

@@ -3,7 +3,7 @@
 extern "C" {
 
 s32 fn_803B2C3C(u8 *a, u8 *b) {
-    if (b[0x311f] == 0 && fn_803ADCD8(a) != 0 && !(fn_803ADCD8(a) & 0x40)) {
+    if (b[0x311f] == 0 && fn_803ADCD8((BattleSystem *)a) != 0 && !(fn_803ADCD8((BattleSystem *)a) & 0x40)) {
         *(u32 *)(b + 8) = 0x29;
     }
     lbl_80405178[*(u32 *)(b + 8)](a, b);
@@ -97,7 +97,7 @@ void fn_803B2F20(u8 *a, u8 *b) {
     }
     fn_8017CED8(a);
     fn_8016E2E4(0xf);
-    fn_803ADCB8(a, 0);
+    BattleSystem_SetCommandSelectionFlags((BattleSystem *)a, 0);
     *(u32 *)(b + 8) = 5;
 }
 }

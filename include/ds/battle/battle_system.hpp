@@ -1,17 +1,25 @@
 #pragma once
 
 #include "ds/battle/battle_context.hpp"
+#include "ds/trainer_data.hpp"
 
 struct BattlerData;
 struct Party;
 struct Pokemon;
 struct Strbuf;
 struct TrainerInfo;
+struct MessageLoader;
+struct StringTemplate;
 
-// Only the fields used so far (pokeplatinum BattleSystem).
+// Only the fields used so far (pokeplatinum BattleSystem; the layout is the same up to 0xAC).
 // size: unknown
 struct BattleSystem {
-    /* 0x0 */ u8 unk0[0x18];
+    /* 0x0 */ u8 unk0[0x4];
+    /* 0x4 */ void *bgConfig;
+    /* 0x8 */ u8 unk8[0x4];
+    /* 0xC */ MessageLoader *msgLoader;
+    /* 0x10 */ MessageLoader *attackMsgLoader;
+    /* 0x14 */ StringTemplate *strFormatter;
     /* 0x18 */ Strbuf *msgBuffer;
     /* 0x1C */ u8 unk1C[0x10];
     /* 0x2C */ u32 battleType;
@@ -19,6 +27,45 @@ struct BattleSystem {
     /* 0x34 */ BattlerData *battlers[MAX_BATTLERS];
     /* 0x44 */ int maxBattlers;
     /* 0x48 */ TrainerInfo *trainerInfo[MAX_BATTLERS];
+    /* 0x58 */ u8 unk58[0x8];
+    /* 0x60 */ void *pokedex;
+    /* 0x64 */ u8 unk64[0x4];
+    /* 0x68 */ Party *parties[MAX_BATTLERS];
+    /* 0x78 */ void *chatotCries[MAX_BATTLERS];
+    /* 0x88 */ u8 unk88[0x18];
+    /* 0xA0 */ u16 trainerIDs[MAX_BATTLERS];
+    /* 0xA8 */ u8 unkA8[0x4];
+    /* 0xAC */ Trainer trainers[MAX_BATTLERS];
+    /* 0x15C */ u8 unk15C[0x8];
+    /* 0x164 */ void *unk164;
+    /* 0x168 */ u8 unk168[0x1084];
+    /* 0x11EC */ u8 serverMessage[0x11C6];
+    /* 0x23B2 */ u16 serverReadIndex;
+    /* 0x23B4 */ u16 serverWriteIndex;
+    /* 0x23B6 */ u16 serverEndIndex;
+    /* 0x23B8 */ u8 unk23B8[0x8];
+    /* 0x23C0 */ u8 battleInitialized;
+    /* 0x23C1 */ u8 renderMode;
+    /* 0x23C2 */ u8 commandIsEndWait;
+    /* 0x23C3 */ u8 pendingBlendReset : 1;
+    /* 0x23C3 */ u8 pendingBattleVRAMSetup : 1;
+    /* 0x23C3 */ u8 pendingSubMenuVRAMSetup : 1;
+    /* 0x23C3 */ u8 redHPSoundFlag : 2;
+    /* 0x23C3 */ u8 redHPSoundEffectDelay : 3;
+    /* 0x23C4 */ int terrain;
+    /* 0x23C8 */ int background;
+    /* 0x23CC */ int mapHeader;
+    /* 0x23D0 */ u32 battleStatusMask;
+    /* 0x23D4 */ int time;
+    /* 0x23D8 */ int safariBalls;
+    /* 0x23DC */ u8 battleParticipantMask[MAX_BATTLERS];
+    /* 0x23E0 */ u32 rulesetMask;
+    /* 0x23E4 */ u8 resultMask;
+    /* 0x23E5 */ u8 unk23E5[0xB];
+    /* 0x23F0 */ int fieldWeather;
+    /* 0x23F4 */ u8 unk23F4[0x10];
+    /* 0x2404 */ u32 commandSelectionFlags;
+    /* 0x2408 */ u8 unk2408;
 };
 
 // TODO Defined in unit 803A60D8, which is not decompiled yet
@@ -38,4 +85,29 @@ int BattleSystem_GetEnemyInSlot(BattleSystem *battleSys, int battler, int slot);
 u16 Battler_GetTrainerID(BattleSystem *battleSys, int battler);
 int BattleSystem_GetFieldWeather(BattleSystem *battleSys);
 TrainerInfo *BattleSystem_GetTrainerInfo(BattleSystem *battleSys, int battler);
+u8 fn_803ADCD8(BattleSystem *battleSys); // BattleSystem_GetResultMask
+void BattleSystem_SetResultMask(BattleSystem *battleSys, u8 resultMask);
+Trainer *fn_803ACB30(BattleSystem *battleSys, int battler);
+int BattleSystem_GetBattlerOfType(BattleSystem *battleSys, int type);
+void *BattleSystem_GetChatotCry(BattleSystem *battleSys, int battler);
+void BattleSystem_GetBattleParticipantMask(BattleSystem *battleSys, int battler, int partySlot);
+void BattleSystem_SetBattlersByType(BattleSystem *battleSys, u8 *battlersByType);
+void BattleSystem_SetBattlerTypes(BattleSystem *battleSys, u8 *battlerTypes);
+u32 BattleSystem_CalcMoneyPenalty(Party *party, TrainerInfo *trainerInfo);
+void *fn_803ACA58(BattleSystem *battleSys);
+MessageLoader *BattleSystem_GetMessageLoader(BattleSystem *battleSys);
+MessageLoader *BattleSystem_GetAttackMessageLoader(BattleSystem *battleSys);
+u8 *BattleSystem_GetServerMessage(BattleSystem *battleSys);
+u16 *BattleSystem_GetServerReadIndex(BattleSystem *battleSys);
+u16 *BattleSystem_GetServerWriteIndex(BattleSystem *battleSys);
+u16 *BattleSystem_GetServerEndIndex(BattleSystem *battleSys);
+Strbuf *BattleSystem_GetMsgBuffer(BattleSystem *battleSys);
+int BattleSystem_GetTerrain(BattleSystem *battleSys);
+int BattleSystem_GetMapHeader(BattleSystem *battleSys);
+u32 BattleSystem_GetBattleStatusMask(BattleSystem *battleSys);
+u8 BattleSystem_IsInitialized(BattleSystem *battleSys);
+int BattleSystem_GetNumSafariBalls(BattleSystem *battleSys);
+void BattleSystem_SetCommandSelectionFlags(BattleSystem *battleSys, u32 flags);
+void BattleSystem_SetUnread_2440(BattleSystem *battleSys, u8 value);
+void BattleSystem_SetRedHPSoundFlag(BattleSystem *battleSys, u8 flag);
 }

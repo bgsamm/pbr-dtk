@@ -402,7 +402,7 @@ void fn_803B24A8(u8 *a, u32 b, u32 c) {
 void fn_803B24E4(u8 *a) {
     Msg8 m;
     m.cmd = 0x41;
-    m.v = fn_803ADCD8(a);
+    m.v = fn_803ADCD8((BattleSystem *)a);
     fn_803AF5F0(a, 1, 0, &m, 8);
 }
 
@@ -411,10 +411,12 @@ void fn_803B2538(u8 *a) {
     fn_803AF5F0(a, 1, 0, &v, 4);
 }
 
-void fn_803B2570(u32 a, u32 b, u32 c) {
+}
+
+void BattleController_EmitClearCommand(BattleSystem *battleSys, int battler, int command) {
     Msg4 m;
-    m.cmd = c;
-    m.a = fn_803D9848(a, b);
-    fn_803AF5F0((u8 *)a, 2, b, &m, 4);
+    m.cmd = command;
+    m.a = fn_803D9848((u32)battleSys, battler);
+    fn_803AF5F0((u8 *)battleSys, 2, battler, &m, 4);
 }
-}
+

@@ -45,7 +45,10 @@ Area 18 follows the structure of the Platinum battle code (as decompiled in pret
 
 | Unit | Addresses | Functions | Platinum counterpart | Evidence |
 |---|---|---|---|---|
-| `.unsorted/803A60D8.cpp` | 803A60D8–803AF444 | 233 | `battle_io_command.c`, `battle_system.c`, part of `battle_main.c` | 803A60D8 allocates the 0x194-byte battler data; 803A6138 dispatches through a table of 67 battler commands (0x80405048); battle system getters from 803AC820; message formatting with two 61-case switches. Boundaries inside this range are not settled yet. |
+| `ds/battle/battle_io_command.cpp` | 803A60D8–803A7418 | 70 | `battle_io_command.c` | 803A60D8 allocates the 0x194-byte battler data; 803A6138 dispatches through a table of 67 battler commands (0x80405048), in the same order as Platinum's. |
+| `ds/battle/battle_display.cpp` | 803A7418–803AB534 | 100 | `battle_display.c` | 803A7418 onwards are the display tasks the command handlers start; it ends with the battler data getters (`BattlerData_GetBattlerType` at 803AB514), as in Platinum. |
+| `ds/battle/battle_main.cpp` | 803AB534–803AC820 | 3 | part of `battle_main.c` | 803AB534 creates the battle (eight battler data, party order, context setup) and 803AC5F0 frees it. |
+| `ds/battle/battle_system.cpp` | 803AC820–803AF444 | 60 | `battle_system.c` | Battle system getters from 803AC820 (`BattleSystem_GetBattleType` at 803AC840); message formatting with two 61-case switches. |
 | `ds/battle/battle_controller.cpp` | 803AF444–803B2AF8 | 79 | `battle_controller.c` | 803AF444 receives server messages (dequeues the I/O queue); 803AF5F0 sends them and has 73 callers, the emit functions. |
 | `ds/battle/battle_controller_player.cpp` | 803B2AF8–803BA360 | 59 | `battle_controller_player.c` | 803B2AF8 allocates the battle context; 803B2C3C runs a table of 44 control states (45 in Platinum). |
 | `ds/battle/battle_lib.cpp` | 803BA360–803C94CC | 140 | `battle_lib.c` | Starts with battler initialisation (803BA360) and the script stack; I/O queue with the `ServerQueSet` assertions at 803BAABC–803BABF0; a 112-entry table of three-byte records at 0x80405248, read by the type effectiveness code (the type chart in Platinum). Ends with functions only PBR has (803C90D0–803C94CC), called by the game code. |

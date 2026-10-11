@@ -1737,8 +1737,18 @@ src/.unsorted/8038F424.cpp:
 src/.unsorted/8039A068.cpp:
 	.text       start:0x8039A068 end:0x803A60D8
 
-src/.unsorted/803A60D8.cpp:
-	.text       start:0x803A60D8 end:0x803AF444
+src/ds/battle/battle_io_command.cpp:
+	.text       start:0x803A60D8 end:0x803A7418
+	.rodata     start:0x80405048 end:0x80405158
+
+src/ds/battle/battle_display.cpp:
+	.text       start:0x803A7418 end:0x803AB534
+
+src/ds/battle/battle_main.cpp:
+	.text       start:0x803AB534 end:0x803AC820
+
+src/ds/battle/battle_system.cpp:
+	.text       start:0x803AC820 end:0x803AF444
 
 src/ds/battle/battle_controller.cpp:
 	.text       start:0x803AF444 end:0x803B2AF8

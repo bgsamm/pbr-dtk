@@ -14,6 +14,7 @@
 #include "ds/strbuf.hpp"
 #include "ds/string_template.hpp"
 #include "ds/trainer_info.hpp"
+#include "ds/battle/battle_controller.hpp"
 #include "ds/battle/battle_lib.hpp"
 
 extern "C" {
@@ -58,25 +59,9 @@ void fn_803AC820(u32 v);
 BattleSystem *fn_803AC828(void);
 s32 fn_803AC830(void);
 u32 fn_803AC838(u8 *p);
-u32 fn_803ACA58(u8 *p);
-u32 fn_803ACA60(u8 *p);
-u32 fn_803ACA68(u8 *p);
-u8 *fn_803ACA70(u8 *p);
-u8 *fn_803ACA78(u8 *p);
-u8 *fn_803ACA80(u8 *p);
-u8 *fn_803ACA88(u8 *p);
-u32 fn_803ACA90(u8 *p);
-u32 fn_803ACD30(u8 *p);
-u32 fn_803ADB9C(u8 *p);
-u8 fn_803ADBA4(u8 *p);
-u32 fn_803ADBAC(u8 *p);
 s32 fn_803ADBB4(u8 *a);
 s32 fn_803ADBBC(void);
 s32 fn_803ADBC4(void);
-void fn_803ADCB8(u8 *p, u32 v);
-void fn_803ADCC0(u8 *p, u8 v);
-u8 fn_803ADCD8(u8 *p);
-void fn_803ADCE0(u8 *p, u8 v);
 void fn_803ADE5C(u8 *a, u32 b);
 u32 fn_803AF43C(u8 *p);
 void fn_803B6164(void);
@@ -615,7 +600,6 @@ DataHdr **fn_80399A2C(DataHdr **h, s32 del);
 DataHdr **fn_80399CA8(DataHdr **h, DataHdr *d);
 DataHdr **fn_80399CE8(DataHdr **h, s32 del);
 u32 fn_80399F14(u8 **h);
-void fn_803B2570(u32 a, u32 b, u32 c);
 void fn_8016E0A0(u8 *p);
 void fn_803AF5F0(u8 *a, u32 b, u32 c, void *d, u32 e);
 void *fn_8016DF70(u32 a, u32 b);
@@ -803,7 +787,6 @@ struct BF_3_2_3 {
     u8 c : 3;
 };
 
-void fn_803ADCE8(u8 *p, u32 v);
 u8 *fn_803D915C(u8 *p, s32 i);
 u8 *fn_803D916C(u8 *p, s32 i);
 u8 *fn_803D91D4(u8 *p, s32 i);
@@ -846,7 +829,6 @@ struct U8Pair {
 };
 
 extern u16 lbl_80405ACE[];
-extern void (*lbl_80405048[])(u8 *, u8 *);
 extern s32 (*lbl_804056D8[])(u8 *, u8 *);
 void fn_803A57D4(void *p);
 void *OSGetAlarmUserData(void *a);
@@ -854,7 +836,6 @@ void fn_803B1AC4(BattleSystem *battleSys, BattleContext *battleCtx, int battler)
 void fn_803A36B8(u8 *p);
 void fn_803A58C8(s32 *p);
 u32 fn_803A6070(u8 *p, s32 i);
-s32 fn_803ACD14(u8 *p);
 s32 fn_8039A3C8(void);
 void fn_803A37FC(u8 *p);
 void fn_803A3D44(u8 *p);
@@ -997,7 +978,6 @@ void fn_803B7E98(u8 *a, u8 *b);
 s32 fn_803CAF20(u8 *a, u8 *b);
 s32 fn_803CBACC(u8 *a, u8 *b);
 s32 fn_803CBED0(u8 *a, u8 *b);
-void fn_803ADC64(u8 *p, s32 i, u32 v);
 u16 fn_803AF3F0(u32 v);
 void fn_803B96E8(u8 *a, u8 *b);
 s32 fn_803BA074(u8 *a, u8 *b);
@@ -1163,7 +1143,6 @@ s32 fn_803D5380(u8 *a, u8 *b);
 void fn_803A66C8(u8 *a, u8 *b);
 s32 fn_803CDA14(u8 *a, u8 *b);
 s32 fn_803D2E38(u8 *a, u8 *b);
-extern u8 lbl_80405168[];
 extern U8Pair lbl_80405A50[];
 extern u8 lbl_8063CED8[];
 void fn_80379514(u32 a);
@@ -1176,7 +1155,6 @@ void fn_8016E2E4(u32 a);
 void fn_803B1458(u8 *a, u32 b, u32 c);
 void fn_803A6EA0(u8 *a, u8 *b);
 void fn_803A6F14(u8 *a, u8 *b);
-u32 fn_803ADDE8(u8 *a, u8 *b);
 s32 fn_803CE560(u8 *a, u8 *b);
 s32 fn_803CE5D4(u8 *a, u8 *b);
 u8 fn_803D01BC(s32 a, s32 b);
@@ -1210,7 +1188,6 @@ s32 fn_803D440C(u8 *a, u8 *b);
 u8 *fn_803A50E8(u8 *p, s32 del);
 s32 fn_803D63CC(u8 *a, u8 *b);
 void fn_803B2F20(u8 *a, u8 *b);
-void fn_803ADD64(u8 *p, u8 *out);
 void fn_803ADE6C(u8 *a, u8 *b, Rec24 *c);
 s32 fn_803D4C50(u8 *a, u8 *b);
 s32 fn_803D5898(u8 *a, u8 *b);
@@ -1231,8 +1208,6 @@ static inline s32 SelIdx(u8 *p, s32 i) {
     return i;
 }
 
-u32 fn_803ADBCC(u8 *p, u32 i);
-u8 *fn_803ACB30(u8 *p, u32 i);
 s32 fn_803B2C3C(u8 *a, u8 *b);
 s32 fn_803D5924(u8 *a, u8 *b);
 s32 fn_803D52EC(u8 *a, u8 *b);
@@ -1255,9 +1230,7 @@ struct BF_2DC8 {
 };
 
 s32 fn_803D1788(u8 *a, u8 *b);
-void fn_803ADCF8(u8 *p, u8 *out);
 s32 fn_803CA838(u8 *a, u8 *b);
-s32 fn_803ACC64(u8 *p, s32 v);
 void fn_803B1CA8(u8 *a, u32 b, u32 c, u32 d);
 s32 fn_803D3F98(u8 *a, u8 *b);
 void fn_803B9748(u8 *a, u8 *b);

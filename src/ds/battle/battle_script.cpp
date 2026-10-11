@@ -341,12 +341,12 @@ s32 fn_803CBF18(u8 *a, u8 *b) {
 
 s32 fn_803CC028(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    if ((BattleSystem_GetBattleType((BattleSystem *)a) & 0x400) || (fn_803ADB9C(a) & 1)) {
+    if ((BattleSystem_GetBattleType((BattleSystem *)a) & 0x400) || (BattleSystem_GetBattleStatusMask((BattleSystem *)a) & 1)) {
         *(u32 *)(b + 0x2150) = 1;
     } else if (*(s32 *)(b + 0x6c) == 0xff) {
         *(u32 *)(b + 0x2150) = 1;
     } else {
-        *(u32 *)(b + 0x2150) = BattleSystem_CalcCriticalMulti((BattleContext *)b, *(u32 *)(b + 0x64), *(u32 *)(b + 0x6c), *(u32 *)(b + 0x214c), BattleContext_Get((BattleSystem *)((u32)a), (BattleContext *)((u32)b), (enum BattleContextParam)0, *(u32 *)(b + 0x6c)));
+        *(u32 *)(b + 0x2150) = BattleSystem_CalcCriticalMulti((BattleContext *)b, *(u32 *)(b + 0x64), *(u32 *)(b + 0x6c), *(u32 *)(b + 0x214c), BattleContext_Get((BattleSystem *)a, (BattleContext *)((u32)b), (enum BattleContextParam)0, *(u32 *)(b + 0x6c)));
     }
     return 0;
 }
@@ -622,7 +622,7 @@ s32 fn_803CE014(u8 *a, u8 *b) {
         }
         TrainerInfo_GiveMoney((TrainerInfo *)((u8 *)BattleSystem_GetTrainerInfo((BattleSystem *)a, 0)), v);
     } else {
-        v = fn_803ADDE8(*(u8 **)(a + 0x68), *(u8 **)(a + 0x48));
+        v = BattleSystem_CalcMoneyPenalty((Party *)(*(u8 **)(a + 0x68)), (TrainerInfo *)(*(u8 **)(a + 0x48)));
         TrainerInfo_TakeMoney((TrainerInfo *)((u8 *)BattleSystem_GetTrainerInfo((BattleSystem *)a, 0)), v);
     }
     if (v) {
@@ -1614,7 +1614,7 @@ s32 fn_803D4F08(u8 *a, u8 *b) {
         *(u32 *)(b + 0xb4) += n;
         return 0;
     }
-    s32 t = lbl_80405AC1[fn_803ACD14(a)];
+    s32 t = lbl_80405AC1[BattleSystem_GetTerrain((BattleSystem *)a)];
     if (t != BattleMon_Get((BattleContext *)b, *(u32 *)(b + 0x64), (enum BattleMonParam)0x1b, (void *)0) && t != BattleMon_Get((BattleContext *)b, *(u32 *)(b + 0x64), (enum BattleMonParam)0x1c, (void *)0)) {
         b[*(u32 *)(b + 0x64) * 0xc0 + 0x2d64] = t;
         b[*(u32 *)(b + 0x64) * 0xc0 + 0x2d65] = t;
@@ -1639,13 +1639,13 @@ u16 fn_803D5004(u32 i) {
 
 s32 fn_803D5028(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    *(u32 *)(b + 0x124) = lbl_80405ACE[fn_803ACD14(a)];
+    *(u32 *)(b + 0x124) = lbl_80405ACE[BattleSystem_GetTerrain((BattleSystem *)a)];
     return 0;
 }
 
 s32 fn_803D5078(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    *(u32 *)(b + 0x2174) = lbl_80405AE8[fn_803ACD14(a)];
+    *(u32 *)(b + 0x2174) = lbl_80405AE8[BattleSystem_GetTerrain((BattleSystem *)a)];
     return 0;
 }
 
@@ -1789,7 +1789,7 @@ s32 fn_803D5738(u8 *a, u8 *b) {
     if (*(u16 *)(q + 0x2d40) == 0x1b9 && *(u32 *)(b + *(u32 *)(b + 0x6c) * 0xc0 + 0x2d8c) &&
         !(*(u32 *)(q + 0x2db0) & 0x200000)) {
         s32 p;
-        switch (fn_803DA018((const TrainerInfo *)(fn_803ADBCC(a, *(u32 *)(b + 0x64))))) {
+        switch (fn_803DA018((const TrainerInfo *)(BattleSystem_GetChatotCry((BattleSystem *)a, *(u32 *)(b + 0x64))))) {
             case 0:
             default: p = 0; break;
             case 1:  p = 10; break;

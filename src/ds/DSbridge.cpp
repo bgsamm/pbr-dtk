@@ -27,8 +27,6 @@ void fn_8017CC8C(u32 battleType);
 Unk80035CB0 *fn_80035D9C();
 void fn_80035E60(Unk80035CB0 *config, u32 enable);
 void fn_80035E70(Unk80035CB0 *config, u32 mode);
-void *fn_803ACA60(BattleSystem *battleSys);
-void *fn_803ACA68(BattleSystem *battleSys);
 void fn_803AF38C(BattleSystem *battleSys, BattleMessage *battleMsg, void *msgLoader);
 s32 fn_803AC830();
 u32 fn_803AB534();
@@ -384,10 +382,10 @@ const u16 *fn_803D9AEC(BattleMessage *battleMsg, u32 *size) {
 
     battleSys = (BattleSystem *)ApplicationManager_Data(fn_803D9E48());
     switch (battleMsg->commandCode) {
-        case 0x14: msgLoader = fn_803ACA68(battleSys); break;
+        case 0x14: msgLoader = BattleSystem_GetAttackMessageLoader(battleSys); break;
         case 0x15:
-        case 0x25: msgLoader = fn_803ACA60(battleSys); break;
-        default:   msgLoader = fn_803ACA60(battleSys); break;
+        case 0x25: msgLoader = BattleSystem_GetMessageLoader(battleSys); break;
+        default:   msgLoader = BattleSystem_GetMessageLoader(battleSys); break;
     }
     fn_803AF38C(battleSys, battleMsg, msgLoader);
 

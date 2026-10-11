@@ -630,6 +630,10 @@ config.libs = [
         "progress_category": "game",
         "objects": [
             Object(NonMatching, "main.cpp"),
+            Object(Matching, "ds/battle/battle_io_command.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
+            Object(NonMatching, "ds/battle/battle_display.cpp"),
+            Object(NonMatching, "ds/battle/battle_main.cpp"),
+            Object(NonMatching, "ds/battle/battle_system.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
             Object(NonMatching, "ds/battle/battle_controller.cpp"),
             Object(NonMatching, "ds/battle/battle_controller_player.cpp"),
             Object(NonMatching, "ds/battle/battle_lib.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
@@ -917,7 +921,6 @@ config.libs = [
             Object(NonMatching, ".unsorted/8038A3D8.cpp"),
             Object(NonMatching, ".unsorted/8038F424.cpp"),
             Object(NonMatching, ".unsorted/8039A068.cpp"),
-            Object(NonMatching, ".unsorted/803A60D8.cpp"),
             Object(NonMatching, ".unsorted/8026B49C.cpp"),
             Object(NonMatching, ".unsorted/8026F910.cpp"),
             Object(NonMatching, ".unsorted/80272BCC.cpp"),
