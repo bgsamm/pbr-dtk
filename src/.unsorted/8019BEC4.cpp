@@ -1228,7 +1228,6 @@ s32 fn_801AC78C(s32 a, s32 b) { u32 buf[8]; s32 r = 0; s32 v = fn_80181718(a, 0,
 #pragma pop
 #pragma pop
 
-// ---- generated tail-call wrappers ----
 void fn_801A13DC(void);
 void fn_801A13E4(void);
 s32 fn_801A16AC(s32, s32, s32, s32, s32, s32, s32);
@@ -1910,6 +1909,7 @@ void fn_801C5EBC(void) {}
 #pragma pop
 
 extern "C" {
+// Placed late to avoid inlining
 #pragma push
 #pragma optimize_for_size on
 s32 fn_8019D910(s32 a, s32 b, u32 c, s32 d) { s32 r = fn_8019D8E4(a, c, b, d); if ((fn_80181700(d) & 0x40000) && c == 0x39) r *= 2; return r; }

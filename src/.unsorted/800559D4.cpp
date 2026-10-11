@@ -150,7 +150,6 @@ void fn_80056230(void) { if (fn_80253DE0(ACTX->_1044)) fn_80253DB0(ACTX->_1044, 
 
 }
 
-// Batch 2
 #include "gs/GSfsys.hpp"
 #include "gs/GScache.hpp"
 
@@ -188,7 +187,6 @@ BOOL fn_80056EDC(void *p) { if (!fn_80056BD4(p)) return 0; if (BoxPokemon_GetVal
 
 }
 
-// Batch 3
 extern "C" {
 
 extern const f32 lbl_80640B68;
@@ -245,7 +243,6 @@ void fn_8005654C(void) {
 
 }
 
-// Batch 4
 #include "gs/GSrender.hpp"
 
 struct Bits32Q {
@@ -325,7 +322,6 @@ int fn_80056C4C(void *p) {
 
 }
 
-// Batch 5
 #include <cstring>
 
 extern "C" {
@@ -392,7 +388,6 @@ void fn_80057450(void *p) {
 
 }
 
-// Batch 6
 extern "C" {
 
 extern u32 lbl_8063F640;
@@ -501,7 +496,6 @@ int fn_80058B10(int x) {
 
 }
 
-// Batch 7
 extern "C" {
 
 void *fn_802502F4(u16);
@@ -577,7 +571,6 @@ u16 fn_80058BFC(int a, int b, int c) {
 
 }
 
-// Batch 8
 extern "C" {
 
 int fn_803919C4(void *, int);
@@ -621,7 +614,6 @@ int fn_80056F68(void *p, int b) {
 
 }
 
-// Batch 9
 #include "gs/GSfile.hpp"
 
 extern "C" {
@@ -658,7 +650,6 @@ void *fn_8005757C(void *arg) {
 
 }
 
-// Batch 10
 extern "C" {
 
 
@@ -739,7 +730,6 @@ void fn_800570E8(void *p, MonSetup *q) {
 
 }
 
-// Batch 11
 #include "gs/GSscene.hpp"
 #include "gs/GShierarchyModule.hpp"
 
@@ -812,7 +802,6 @@ void fn_800578BC(void) {
 
 }
 
-// Batch 12
 extern "C" {
 
 struct U16List {
@@ -846,7 +835,6 @@ void fn_80058EA0(U16List *p) {
 
 }
 
-// Batch 13
 struct ArenaCtxR {
     u8 _0[0x1098];
     /* 0x1098 */ f32 _1098;
@@ -912,7 +900,6 @@ void *fn_80059288(void *arg) {
 
 }
 
-// Batch 14
 extern "C" {
 
 #pragma dont_inline on
@@ -947,7 +934,6 @@ void *fn_80055EDC(void *arg) {
 
 }
 
-// Batch 15
 #include "gs/render/GSrenderTarget.hpp"
 
 extern "C" {
@@ -1000,7 +986,6 @@ void fn_80057FB4(int mode) {
 
 }
 
-// Batch 16
 extern "C" {
 
 u16 fn_80253C38(void *, void *, void *, void *, int, int, int, int);
@@ -1038,7 +1023,6 @@ void fn_800576B0(void) {
 
 }
 
-// Batch 17
 struct Bits32T {
     u32 _hi : 17;
     u32 t12 : 3;
@@ -1124,7 +1108,6 @@ void fn_80056630(s16 a, DrawObj *o) {
 
 }
 
-// Batch 18
 #include "gs/render/GStexture.hpp"
 
 struct Quad {
@@ -1191,7 +1174,6 @@ void fn_80058FD4(u8 c, int mode) {
 
 }
 
-// Batch 19
 extern "C" {
 
 extern const f32 lbl_80640B90;
@@ -1217,7 +1199,6 @@ void fn_80058178(void) {
 
 }
 
-// Batch 20
 extern "C" {
 
 extern void *lbl_8063E908;
@@ -1274,7 +1255,6 @@ void fn_80058778(int x) {
 
 }
 
-// Batch 21
 #include "gs/GSinput.hpp"
 
 extern "C" {
@@ -1387,7 +1367,6 @@ void fn_80059414(void) {
 
 }
 
-// Batch 22
 struct ArenaCtxI {
     u8 _0[0x1040];
     /* 0x1040 */ void *_1040;
@@ -1483,7 +1462,6 @@ void fn_800559D4(void) {
 
 }
 
-// Batch 23
 #include "gs/scene/GSnull.hpp"
 
 struct Vec2f {

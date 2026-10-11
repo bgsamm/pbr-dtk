@@ -25,7 +25,7 @@ void fn_80033494(u8 *p) { *(u8 *)(p + 0x1a5) = 0x0; }
 
 }
 
-// Batch 1: fade / color / tone controls
+// Fade, color and tone controls
 struct MEMiHeapHead;
 extern MEMiHeapHead *gGameHeap;
 class GSmem {
