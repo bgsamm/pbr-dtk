@@ -700,8 +700,92 @@ libs/MSL_C/src/PPC_EABI/SRC/math_ppc.c:
 libs/MSL_C/src/MSL_Common_Embedded/Math/Double_precision/w_sqrt.c:
 	.text       start:0x801D4834 end:0x801D4838
 
-src/.unsorted/801D4838.cpp:
-	.text       start:0x801D4838 end:0x801DAA30
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Portable/mainloop.c:
+	.text       start:0x801D4838 end:0x801D4930
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Portable/nubevent.c:
+	.text       start:0x801D4930 end:0x801D4B58
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Portable/nubinit.c:
+	.text       start:0x801D4B58 end:0x801D4CDC
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Portable/msg.c:
+	.text       start:0x801D4CDC end:0x801D4D08
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Portable/msgbuf.c:
+	.text       start:0x801D4D08 end:0x801D5544
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Portable/serpoll.c:
+	.text       start:0x801D5544 end:0x801D56F0
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Os/dolphin/usr_put.c:
+	.text       start:0x801D56F0 end:0x801D577C
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Portable/dispatch.c:
+	.text       start:0x801D577C end:0x801D58C4
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Portable/msghndlr.c:
+	.text       start:0x801D58C4 end:0x801D69A0
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Portable/support.c:
+	.text       start:0x801D69A0 end:0x801D7054
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Portable/mutex_TRK.c:
+	.text       start:0x801D7054 end:0x801D706C
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Portable/notify.c:
+	.text       start:0x801D706C end:0x801D7104
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Processor/ppc/Generic/flush_cache.c:
+	.text       start:0x801D7104 end:0x801D713C
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Portable/mem_TRK.c:
+	.text       start:0x801D713C end:0x801D71F4
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Portable/string_TRK.c:
+	.text       start:0x801D71F4 end:0x801D7210
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Processor/ppc/Generic/targimpl.c:
+	.text       start:0x801D7210 end:0x801D8C30
+
+src/.unsorted/801D8C30.cpp:
+	.text       start:0x801D8C30 end:0x801D8C50
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Processor/ppc/Generic/mpc_7xx_603e.c:
+	.text       start:0x801D8C50 end:0x801D8FC0
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Export/mslsupp.c:
+	.text       start:0x801D8FC0 end:0x801D9138
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Os/dolphin/dolphin_trk.c:
+	.text       start:0x801D9138 end:0x801D9454
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Portable/main_TRK.c:
+	.text       start:0x801D9454 end:0x801D9498
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Os/dolphin/dolphin_trk_glue.c:
+	.text       start:0x801D9498 end:0x801D9958
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Os/dolphin/targcont.c:
+	.text       start:0x801D9958 end:0x801D998C
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Os/dolphin/target_options.c:
+	.text       start:0x801D998C end:0x801D99A8
+
+libs/MetroTRK/src/debugger/embedded/MetroTRK/Os/dolphin/UDP_Stubs.c:
+	.text       start:0x801D99A8 end:0x801D99F0
+
+libs/MetroTRK/src/gamedev/cust_connection/cc/exi2/GCN/EXI2_GDEV_GCN/main.c:
+	.text       start:0x801D99F0 end:0x801D9CB0
+
+libs/MetroTRK/src/gamedev/cust_connection/utils/common/CircleBuffer.c:
+	.text       start:0x801D9CB0 end:0x801D9F18
+
+libs/MetroTRK/src/gamedev/cust_connection/utils/gc/MWCriticalSection_gc.c:
+	.text       start:0x801D9F18 end:0x801D9F70
+
+src/.unsorted/801D9F70.cpp:
+	.text       start:0x801D9F70 end:0x801DAA30
 
 src/gs/operators.cpp:
 	.text       start:0x801DAA30 end:0x801DAAE0

@@ -22,7 +22,7 @@ AREAS = [
     ("Scenes and menus", 0x80058000, 0x80158000),
     ("Save data and Wi-Fi data", 0x80158000, 0x80169000),
     ("Battle loop and camera", 0x80169000, 0x801C6C48),
-    ("Runtime and C library", 0x801C6C48, 0x801DAA30),
+    ("Runtime, C library and MetroTRK", 0x801C6C48, 0x801DAA30),
     ("gs engine", 0x801DAA30, 0x80250000),
     ("Game sound", 0x80250000, 0x8025B6AC),
     ("Game networking", 0x8025B6AC, 0x80268228),

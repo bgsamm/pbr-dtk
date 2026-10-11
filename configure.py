@@ -277,6 +277,37 @@ cflags_msl = [
     "-DNDEBUG=1",
 ]
 
+# MetroTRK flags
+cflags_trk = [
+    "-nodefaults",
+    "-proc gekko",
+    "-align powerpc",
+    "-enum int",
+    "-fp hardware",
+    "-Cpp_exceptions off",
+    "-O4,p",
+    "-inline deferred,auto",
+    '-pragma "cats off"',
+    '-pragma "warn_notinlined off"',
+    "-maxerrors 1",
+    "-nosyspath",
+    "-RTTI off",
+    "-fp_contract on",
+    "-str reuse,readonly",
+    "-use_lmw_stmw on",
+    "-sdata 0",
+    "-sdata2 0",
+    "-i libs/MetroTRK/include",
+    "-i libs/RVL_SDK/include",
+    "-i libs/MSL_C/include",
+    "-i include",
+    "-DMETRO_TRK",
+    f"-i build/{config.version}/include",
+    f"-DBUILD_VERSION={version_num}",
+    f"-DVERSION_{config.version}",
+    "-DNDEBUG=1",
+]
+
 # RVL SDK flags
 cflags_sdk = [
     *cflags_base,
@@ -318,6 +349,17 @@ def MSLLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
         "progress_category": "runtime",
         "objects": objects,
         "src_dir": "libs/MSL_C/src",
+    }
+
+
+def TRKLib(lib_name: str, objects: List[Object]) -> Dict[str, Any]:
+    return {
+        "lib": lib_name,
+        "mw_version": "GC/2.7",
+        "cflags": cflags_trk,
+        "progress_category": "runtime",
+        "objects": objects,
+        "src_dir": "libs/MetroTRK/src",
     }
 
 
@@ -406,6 +448,38 @@ config.libs = [
             Object(NonMatching, "uart_console_io_gcn.c"),
             Object(NonMatching, "wchar_io.c"),
             Object(NonMatching, "wstring.c"),
+        ],
+    ),
+    TRKLib(
+        "MetroTRK",
+        [
+            Object(NonMatching, "debugger/embedded/MetroTRK/Portable/mainloop.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Portable/nubevent.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Portable/nubinit.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Portable/msg.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Portable/msgbuf.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Portable/serpoll.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Os/dolphin/usr_put.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Portable/dispatch.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Portable/msghndlr.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Portable/support.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Portable/mutex_TRK.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Portable/notify.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Processor/ppc/Generic/flush_cache.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Portable/mem_TRK.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Portable/string_TRK.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Processor/ppc/Generic/targimpl.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Processor/ppc/Generic/mpc_7xx_603e.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Export/mslsupp.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Os/dolphin/dolphin_trk.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Portable/main_TRK.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Os/dolphin/dolphin_trk_glue.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Os/dolphin/targcont.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Os/dolphin/target_options.c"),
+            Object(NonMatching, "debugger/embedded/MetroTRK/Os/dolphin/UDP_Stubs.c"),
+            Object(NonMatching, "gamedev/cust_connection/cc/exi2/GCN/EXI2_GDEV_GCN/main.c", extra_cflags=["-sdata 8"]),
+            Object(NonMatching, "gamedev/cust_connection/utils/common/CircleBuffer.c"),
+            Object(NonMatching, "gamedev/cust_connection/utils/gc/MWCriticalSection_gc.c"),
         ],
     ),
     RVLSDKLib(

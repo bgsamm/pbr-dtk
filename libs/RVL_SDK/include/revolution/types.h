@@ -52,4 +52,10 @@ typedef volatile uBOOL vuBOOL;
 #define ALIGN32 ATTRIBUTE_ALIGN(DEFAULT_ALIGN)
 #define ALIGN64 ATTRIBUTE_ALIGN(64)
 
+#ifdef __MWERKS__
+#define __REGISTER register
+#else
+#define __REGISTER
+#endif
+
 #endif // REVOLUTION_TYPES_H
