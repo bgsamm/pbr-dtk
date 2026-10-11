@@ -1,4 +1,5 @@
 #include ".unsorted/800C5968.hpp"
+#include ".unsorted/800B9E10.hpp"
 
 #include "common.hpp"
 
@@ -282,7 +283,6 @@ struct Arg5 { u8 pad[5]; u8 x5; };
 extern u8 lbl_8047D1D8[];
 void fn_80253E8C(void*, void*, int, void*);
 void fn_80253EB4(void*, void*, int, int);
-u16 fn_800BA578(void);
 void fn_802503D8(int, u8*);
 
 void fn_800D2A20(void* a, Arg5* b) {
@@ -400,7 +400,6 @@ public:
 
 extern "C" {
 
-extern f64* lbl_8063EED8;
 extern f32 lbl_80641078;
 extern f32 lbl_80641058;
 extern f32 lbl_80641064;
@@ -412,14 +411,13 @@ void fn_80253E4C(void*, int, void*);
 s16 fn_800BA98C(int);
 u16 fn_80253DE0(s16);
 void fn_80059A54(int, Rect8*);
-u16 fn_800BA5CC(void);
 void fn_80253E10(void*, int, f32);
 double cos(double);
 
 void fn_800D1BB4(void* a) {
     f32 y, x;
     GSrender* r = GSrender::sInstance;
-    f32 t = (f32)(r->mA0 / r->m59 - *lbl_8063EED8) / 0.25f;
+    f32 t = (f32)(r->mA0 / r->m59 - lbl_8063EED8->_00) / 0.25f;
     int flag;
     fn_80253E4C(a, 8, &flag);
     if (flag == 0) {
@@ -1665,7 +1663,7 @@ void fn_800D14A4(int a) {
     f32 t;
     int flag;
     GSrender* r = GSrender::sInstance;
-    t = (f32)(r->mA0 / r->m59 - *lbl_8063EED8) / 0.5f;
+    t = (f32)(r->mA0 / r->m59 - lbl_8063EED8->_00) / 0.5f;
     m = fn_800BA7EC(2);
     fn_80253E4C((void*)a, 8, &flag);
     if (flag == 0) {

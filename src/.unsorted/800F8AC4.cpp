@@ -4,6 +4,8 @@
 
 extern "C" {
 
+void fn_800F959C(void) { lbl_8063D530->_CC = 45; }
+
 void fn_800FD4D8(void) {}
 void fn_800FE8E4(void) {}
 void fn_800FEC90(void) {}
