@@ -28,9 +28,9 @@ This work builds on [bgsamm/pbr-dtk](https://github.com/bgsamm/pbr-dtk) (CC0), w
 | Game sound | 46 KiB | 0.8 % | `░░░░░░░░░░░░░░░░░░░░` |
 | Game networking | 51 KiB | 28.1 % | `██████░░░░░░░░░░░░░░` |
 | Revolution SDK | 627 KiB | 17.1 % | `███░░░░░░░░░░░░░░░░░` |
-| Other Nintendo libraries (VF, DWC, NW4R, HOME menu) | 554 KiB | 0.3 % | `░░░░░░░░░░░░░░░░░░░░` |
-| Battle engine (ported from the DS games) | 295 KiB | 23.7 % | `█████░░░░░░░░░░░░░░░` |
-| Pokémon data | 35 KiB | 75.5 % | `███████████████░░░░░` |
+| Other Nintendo libraries (VF, DWC, NW4R, HOME menu) | 602 KiB | 0.8 % | `░░░░░░░░░░░░░░░░░░░░` |
+| Battle engine (ported from the DS games) | 204 KiB | 19.5 % | `████░░░░░░░░░░░░░░░░` |
+| Pokémon data | 78 KiB | 68.9 % | `██████████████░░░░░░` |
 
 _Updated 2026-10-11 from the objdiff report of a local build._
 <!-- progress:end -->

@@ -1732,7 +1732,25 @@ src/.unsorted/8038A3D8.cpp:
 	.ctors      start:0x803E2280 end:0x803E2284
 
 src/.unsorted/8038F424.cpp:
-	.text       start:0x8038F424 end:0x803D9208
+	.text       start:0x8038F424 end:0x8039A068
+
+src/.unsorted/8039A068.cpp:
+	.text       start:0x8039A068 end:0x803A60D8
+
+src/.unsorted/803A60D8.cpp:
+	.text       start:0x803A60D8 end:0x803AF444
+
+src/ds/battle/battle_controller.cpp:
+	.text       start:0x803AF444 end:0x803B2AF8
+
+src/ds/battle/battle_controller_player.cpp:
+	.text       start:0x803B2AF8 end:0x803BA360
+
+src/ds/battle/battle_lib.cpp:
+	.text       start:0x803BA360 end:0x803C94CC
+
+src/ds/battle/battle_script.cpp:
+	.text       start:0x803C94CC end:0x803D9208
 	.ctors      start:0x803E2284 end:0x803E2288
 
 src/ds/DSbridge.cpp:

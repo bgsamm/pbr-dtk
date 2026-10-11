@@ -7,7 +7,7 @@ A map of the executable's modules, used to pick what to decompile next and to pr
 - Functions, sizes and names: `config/RPBP01/symbols.txt` (13,890 functions, 3.86 MiB of code).
 - Identification of unnamed areas: strings referenced by the code (through Ghidra) and the call graph.
 - Boundaries of areas without any known name are **approximate** (to within a few functions). Areas marked "to be confirmed" are inferences.
-  `splits.txt` makes 0x8038F424–0x803D9208 a single unit of DS-derived code (item data file readers, then the battle engine), so the end of area 16 and areas 17 and 18 below overlap it and must be redrawn. The README progress table uses its own boundaries from `tools/progress.py`, which already follow this unit, so its battle engine row (295 KiB) is larger than area 18 below (216 KiB).
+  The README progress table uses its own boundaries from `tools/progress.py`, kept in step with this map.
 - Libraries identified from their version banners: `RVL_SDK` (OS, GX, DVD, VI, AI, AX, DSP, EXI, SI, KPAD, WPAD, NAND, SC, MP, MPDL, NCD, SO, NWC24, THP, HBM, DWC, DWCDL), `NW4R - SND`, `REX-PPC 1.0.0.1 (RevoEX-1.0plus1)`, MetroTRK. The OS library is dated April 2007, DWC March 2007.
 
 ## Overview
@@ -34,10 +34,24 @@ Nintendo and Metrowerks libraries: about **1.5 MiB**, a large part of which a PC
 | 13 | RVL SDK: OS, PPC, GX, DVD, VI, MTX, MEM, PAD, KPAD, WPAD, Bluetooth stack (WUD/BTA/BTM/L2CAP/RFCOMM), IPC/IOS, NAND, SC, ARC, NCD, WD, MPDL, SO, NHTTP, SSL, NWC24, AI/AX/DSP | 80268228–80304DC4 | 2,472 | 627 KiB | — | High for OS/GX/MTX (reusable), low for the rest |
 | 14 | Unidentified standalone library (only calls MSL; string `NO NAME`: likely the VF FAT file system) | 80304DC4–80318000 | 222 | 77 KiB | MSL | Low |
 | 15 | DWC (Nintendo Wi-Fi Connection) and GameSpy (GP, SB, QR2, NatNeg, ghttp) | 80318000–80362000 | 908 | 296 KiB | SO, SSL, NHTTP | Low: **to be replaced**, not decompiled (service closed in 2014) |
-| 16 | NW4R: `db` (panic/trace), `snd` (plays `pbr_sound.brsar`), probably `ut`, `math`, `lyt` (to be confirmed) | 80362000–80398000 | 1,364 | 216 KiB | AX, DVD | Medium (reusable) |
-| 17 | HBM (HOME menu: `homeBtn.arc`, `.brlyt`/`.brlan` layouts) | 80398000–803A3000 | 136 | 44 KiB | 16 (lyt), WPAD | Very low (dropped in a port) |
-| 18 | **Battle engine, pure logic**: battle server command queue (`ServerQueSet`), damage calculation, move effects, inherited from the Gen 4 DS games | 803A3000–803D9208 | 856 | 216 KiB | 19, MSL | **Very high** (core of the game and of netplay) |
-| 19 | Pokémon data: parameters, growth, items, moves, Arceus type, `STRBUF` strings, checksums | 803D9208–803E3000 | 244 | 35 KiB | MSL | **Very high** |
+| 16 | NW4R: `db` (panic/trace), `snd` (plays `pbr_sound.brsar`), probably `ut`, `math`, `lyt` (to be confirmed) | 80362000–8038F424 | 952 | 181 KiB | AX, DVD | Medium (reusable) |
+| 17 | HBM (HOME menu: `homeBtn.arc`, `.brlyt`/`.brlan` layouts; string `RVL_SDK - HBM`) | 8039A068–803A60D8 | 142 | 48 KiB | 16 (lyt), WPAD | Very low (dropped in a port) |
+| 18 | **Battle engine** inherited from the Gen 4 DS games: battler I/O commands, battle system state and messages, server command queue (`ServerQueSet`), turn controller, damage calculation, move effects, battle script interpreter (see below) | 803A60D8–803D9208 | 757 | 204 KiB | 19, MSL | **Very high** (core of the game and of netplay) |
+| 19 | Pokémon data: parameters, growth, items, moves, Arceus type, `STRBUF` strings, checksums; record readers for the game's data files (8038F424–8039A068, called by `ItemTable_Load` and `SpeciesData_LoadSpecies`) | 8038F424–8039A068, 803D9208–803E3000 | 749 | 78 KiB | MSL | **Very high** |
+
+## Battle engine units
+
+Area 18 follows the structure of the Platinum battle code (as decompiled in pret/pokeplatinum), which gives the unit boundaries:
+
+| Unit | Addresses | Functions | Platinum counterpart | Evidence |
+|---|---|---|---|---|
+| `.unsorted/803A60D8.cpp` | 803A60D8–803AF444 | 233 | `battle_io_command.c`, `battle_system.c`, part of `battle_main.c` | 803A60D8 allocates the 0x194-byte battler data; 803A6138 dispatches through a table of 67 battler commands (0x80405048); battle system getters from 803AC820; message formatting with two 61-case switches. Boundaries inside this range are not settled yet. |
+| `ds/battle/battle_controller.cpp` | 803AF444–803B2AF8 | 79 | `battle_controller.c` | 803AF444 receives server messages (dequeues the I/O queue); 803AF5F0 sends them and has 73 callers, the emit functions. |
+| `ds/battle/battle_controller_player.cpp` | 803B2AF8–803BA360 | 59 | `battle_controller_player.c` | 803B2AF8 allocates the battle context; 803B2C3C runs a table of 44 control states (45 in Platinum). |
+| `ds/battle/battle_lib.cpp` | 803BA360–803C94CC | 140 | `battle_lib.c` | Starts with battler initialisation (803BA360) and the script stack; I/O queue with the `ServerQueSet` assertions at 803BAABC–803BABF0; a 112-entry table of three-byte records at 0x80405248, read by the type effectiveness code (the type chart in Platinum). Ends with functions only PBR has (803C90D0–803C94CC), called by the game code. |
+| `ds/battle/battle_script.cpp` | 803C94CC–803D9208 | 246 | `battle_script.c` | 803C94CC dispatches through the 222-entry command table at 0x804056D8; the unit's static initializer is the last function. |
+
+There is no trainer AI command table in this area.
 
 ## Game data
 
@@ -48,7 +62,7 @@ Nintendo and Metrowerks libraries: about **1.5 MiB**, a large part of which a PC
 ## What this means
 
 1. **Battles are split in two.** Pure logic (area 18, with the data in area 19) and presentation (areas 3 and 6).
-   The pure logic depends on little more than MSL, is small (about 250 KiB), deterministic, and descends from the Gen 4 DS games.
+   The pure logic depends on little more than MSL, is small (about 280 KiB with its data), deterministic, and descends from the Gen 4 DS games.
    It is the best target for lockstep netplay and can be built as a library testable on PC before the rest.
 2. **The online protocol is already there.** During Wi-Fi battles the consoles exchange "pseudo:" files (area 5: `fight/command`, `fight/turn_pokeparty.lz`, `fight/result`, `battle/battlepass`…).
    Understanding them gives the message format for a replacement server.

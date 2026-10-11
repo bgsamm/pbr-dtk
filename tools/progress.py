@@ -16,20 +16,20 @@ README = os.path.join(ROOT, "README.md")
 
 # Areas of main.dol, see docs/architecture.md (boundaries are approximate)
 AREAS = [
-    ("Startup", 0x80004000, 0x80006BC4),
-    ("Game entry point", 0x80006BC4, 0x80010000),
-    ("Battle presentation", 0x80010000, 0x80058000),
-    ("Scenes and menus", 0x80058000, 0x80158000),
-    ("Save data and Wi-Fi data", 0x80158000, 0x80169000),
-    ("Battle loop and camera", 0x80169000, 0x801C6C48),
-    ("Runtime, C library and MetroTRK", 0x801C6C48, 0x801DAA30),
-    ("gs engine", 0x801DAA30, 0x80250000),
-    ("Game sound", 0x80250000, 0x8025B6AC),
-    ("Game networking", 0x8025B6AC, 0x80268228),
-    ("Revolution SDK", 0x80268228, 0x80304DC4),
-    ("Other Nintendo libraries (VF, DWC, NW4R, HOME menu)", 0x80304DC4, 0x8038F424),
-    ("Battle engine (ported from the DS games)", 0x8038F424, 0x803D9208),
-    ("Pokémon data", 0x803D9208, 0x803E3000),
+    ("Startup", [(0x80004000, 0x80006BC4)]),
+    ("Game entry point", [(0x80006BC4, 0x80010000)]),
+    ("Battle presentation", [(0x80010000, 0x80058000)]),
+    ("Scenes and menus", [(0x80058000, 0x80158000)]),
+    ("Save data and Wi-Fi data", [(0x80158000, 0x80169000)]),
+    ("Battle loop and camera", [(0x80169000, 0x801C6C48)]),
+    ("Runtime, C library and MetroTRK", [(0x801C6C48, 0x801DAA30)]),
+    ("gs engine", [(0x801DAA30, 0x80250000)]),
+    ("Game sound", [(0x80250000, 0x8025B6AC)]),
+    ("Game networking", [(0x8025B6AC, 0x80268228)]),
+    ("Revolution SDK", [(0x80268228, 0x80304DC4)]),
+    ("Other Nintendo libraries (VF, DWC, NW4R, HOME menu)", [(0x80304DC4, 0x8038F424), (0x8039A068, 0x803A60D8)]),
+    ("Battle engine (ported from the DS games)", [(0x803A60D8, 0x803D9208)]),
+    ("Pokémon data", [(0x8038F424, 0x8039A068), (0x803D9208, 0x803E3000)]),
 ]
 
 
@@ -43,7 +43,7 @@ def main():
         report = json.load(f)
     measures = report["measures"]
 
-    totals = {name: [0, 0] for name, _, _ in AREAS}
+    totals = {name: [0, 0] for name, _ in AREAS}
     for unit in report["units"]:
         for func in unit.get("functions", []):
             address = func.get("metadata", {}).get("virtual_address")
@@ -52,8 +52,8 @@ def main():
             address = int(address)
             size = int(func.get("size", 0))
             matched = func.get("fuzzy_match_percent", 0) == 100
-            for name, start, end in AREAS:
-                if start <= address < end:
+            for name, ranges in AREAS:
+                if any(start <= address < end for start, end in ranges):
                     totals[name][0] += size
                     if matched:
                         totals[name][1] += size
@@ -74,7 +74,7 @@ def main():
         "| Area | Size | Matched | |",
         "|---|---:|---:|---|",
     ]
-    for name, _, _ in AREAS:
+    for name, _ in AREAS:
         total, matched = totals[name]
         percent = 100 * matched / total if total else 0.0
         lines.append(f"| {name} | {total / 1024:,.0f} KiB | {percent:.1f} % | `{bar(percent)}` |")
