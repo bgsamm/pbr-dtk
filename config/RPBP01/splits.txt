@@ -1116,8 +1116,50 @@ src/.unsorted/802674CC.cpp:
 	.text       start:0x802674CC end:0x80268228
 	.ctors      start:0x803E2240 end:0x803E2244
 
-src/.unsorted/80268228.cpp:
-	.text       start:0x80268228 end:0x8026FC90
+libs/RVL_SDK/src/base/PPCArch.c:
+	.text       start:0x80268228 end:0x80268398
+
+libs/RVL_SDK/src/os/OS.c:
+	.text       start:0x80268398 end:0x802696CC
+
+libs/RVL_SDK/src/os/OSAlarm.c:
+	.text       start:0x802696CC end:0x80269EB0
+
+libs/RVL_SDK/src/os/OSAlloc.c:
+	.text       start:0x80269EB0 end:0x8026A0CC
+
+libs/RVL_SDK/src/os/OSArena.c:
+	.text       start:0x8026A0CC end:0x8026A160
+
+libs/RVL_SDK/src/os/OSAudioSystem.c:
+	.text       start:0x8026A160 end:0x8026A614
+
+libs/RVL_SDK/src/os/OSCache.c:
+	.text       start:0x8026A614 end:0x8026AC14
+
+libs/RVL_SDK/src/os/OSContext.c:
+	.text       start:0x8026AC14 end:0x8026B49C
+
+src/.unsorted/8026B49C.cpp:
+	.text       start:0x8026B49C end:0x8026DA94
+
+libs/RVL_SDK/src/os/OSFont.c:
+	.text       start:0x8026DA94 end:0x8026E75C
+
+libs/RVL_SDK/src/os/OSInterrupt.c:
+	.text       start:0x8026E75C end:0x8026EEE0
+
+libs/RVL_SDK/src/os/OSLink.c:
+	.text       start:0x8026EEE0 end:0x8026EEF8
+
+libs/RVL_SDK/src/os/OSMessage.c:
+	.text       start:0x8026EEF8 end:0x8026F0FC
+
+libs/RVL_SDK/src/os/OSMemory.c:
+	.text       start:0x8026F0FC end:0x8026F910
+
+src/.unsorted/8026F910.cpp:
+	.text       start:0x8026F910 end:0x8026FC90
 
 libs/RVL_SDK/src/os/OSReset.c:
 	.text       start:0x8026FC90 end:0x802703DC
@@ -1140,8 +1182,212 @@ libs/RVL_SDK/src/os/OSThread.c:
 	.sdata      start:0x8063DAA0 end:0x8063DAA8
 	.sbss       start:0x8063FAE8 end:0x8063FAF8
 
-src/.unsorted/802727B8.cpp:
-	.text       start:0x802727B8 end:0x80363510
+libs/RVL_SDK/src/os/OSTime.c:
+	.text       start:0x802727B8 end:0x80272BCC
+
+src/.unsorted/80272BCC.cpp:
+	.text       start:0x80272BCC end:0x80272E6C
+
+libs/RVL_SDK/src/os/OSUtf.c:
+	.text       start:0x80272E6C end:0x802730A4
+
+libs/RVL_SDK/src/os/OSIpc.c:
+	.text       start:0x802730A4 end:0x802730CC
+
+libs/RVL_SDK/src/os/OSStateTM.c:
+	.text       start:0x802730CC end:0x8027380C
+
+libs/RVL_SDK/src/os/OSPlayRecord.c:
+	.text       start:0x8027380C end:0x80273F04
+
+libs/RVL_SDK/src/os/OSStateFlags.c:
+	.text       start:0x80273F04 end:0x80274110
+
+libs/RVL_SDK/src/os/OSNet.c:
+	.text       start:0x80274110 end:0x802741B4
+
+libs/RVL_SDK/src/os/OSNandbootInfo.c:
+	.text       start:0x802741B4 end:0x802744A4
+
+libs/RVL_SDK/src/os/__ppc_eabi_init.cpp:
+	.text       start:0x802744A4 end:0x80274558
+
+libs/RVL_SDK/src/exi/EXIBios.c:
+	.text       start:0x80274558 end:0x80275DEC
+
+src/.unsorted/80275DEC.cpp:
+	.text       start:0x80275DEC end:0x80275F64
+
+libs/RVL_SDK/src/exi/EXIUart.c:
+	.text       start:0x80275F64 end:0x80276120
+
+src/.unsorted/80276120.cpp:
+	.text       start:0x80276120 end:0x802772B4
+
+libs/RVL_SDK/src/si/SISamplingRate.c:
+	.text       start:0x802772B4 end:0x8027738C
+
+src/.unsorted/8027738C.cpp:
+	.text       start:0x8027738C end:0x80277394
+
+libs/RVL_SDK/src/db/db.c:
+	.text       start:0x80277394 end:0x80277498
+
+src/.unsorted/80277498.cpp:
+	.text       start:0x80277498 end:0x8027762C
+
+libs/RVL_SDK/src/vi/vi.c:
+	.text       start:0x8027762C end:0x80279E6C
+
+libs/RVL_SDK/src/vi/i2c.c:
+	.text       start:0x80279E6C end:0x8027A888
+
+libs/RVL_SDK/src/vi/vi3in1.c:
+	.text       start:0x8027A888 end:0x8027BF2C
+
+libs/RVL_SDK/src/mtx/mtx.c:
+	.text       start:0x8027BF2C end:0x8027C5C0
+
+src/.unsorted/8027C5C0.cpp:
+	.text       start:0x8027C5C0 end:0x8027C9FC
+
+libs/RVL_SDK/src/mtx/mtxvec.c:
+	.text       start:0x8027C9FC end:0x8027CA50
+
+src/.unsorted/8027CA50.cpp:
+	.text       start:0x8027CA50 end:0x8027CD28
+
+libs/RVL_SDK/src/mtx/vec.c:
+	.text       start:0x8027CD28 end:0x8027CE24
+
+src/.unsorted/8027CE24.cpp:
+	.text       start:0x8027CE24 end:0x8027D624
+
+libs/RVL_SDK/src/gx/GXInit.c:
+	.text       start:0x8027D624 end:0x8027E7EC
+
+libs/RVL_SDK/src/gx/GXFifo.c:
+	.text       start:0x8027E7EC end:0x8027F3F4
+
+libs/RVL_SDK/src/gx/GXAttr.c:
+	.text       start:0x8027F3F4 end:0x80280618
+
+libs/RVL_SDK/src/gx/GXMisc.c:
+	.text       start:0x80280618 end:0x80280ED0
+
+libs/RVL_SDK/src/gx/GXGeometry.c:
+	.text       start:0x80280ED0 end:0x8028146C
+
+libs/RVL_SDK/src/gx/GXFrameBuf.c:
+	.text       start:0x8028146C end:0x80281F38
+
+src/.unsorted/80281F38.cpp:
+	.text       start:0x80281F38 end:0x802821AC
+
+libs/RVL_SDK/src/gx/GXLight.c:
+	.text       start:0x802821AC end:0x80282610
+
+libs/RVL_SDK/src/gx/GXTexture.c:
+	.text       start:0x80282610 end:0x80283364
+
+libs/RVL_SDK/src/gx/GXBump.c:
+	.text       start:0x80283364 end:0x80283B40
+
+libs/RVL_SDK/src/gx/GXTev.c:
+	.text       start:0x80283B40 end:0x802841C0
+
+libs/RVL_SDK/src/gx/GXPixel.c:
+	.text       start:0x802841C0 end:0x80284950
+
+src/.unsorted/80284950.cpp:
+	.text       start:0x80284950 end:0x8028663C
+
+libs/RVL_SDK/src/gx/GXDisplayList.c:
+	.text       start:0x8028663C end:0x8028680C
+
+src/.unsorted/8028680C.cpp:
+	.text       start:0x8028680C end:0x80286994
+
+libs/RVL_SDK/src/gx/GXTransform.c:
+	.text       start:0x80286994 end:0x80286E50
+
+libs/RVL_SDK/src/gx/GXPerf.c:
+	.text       start:0x80286E50 end:0x8028768C
+
+libs/RVL_SDK/src/dvd/dvdfs.c:
+	.text       start:0x8028768C end:0x802880D4
+
+src/.unsorted/802880D4.cpp:
+	.text       start:0x802880D4 end:0x8028C98C
+
+libs/RVL_SDK/src/dvd/dvdqueue.c:
+	.text       start:0x8028C98C end:0x8028CB24
+
+src/.unsorted/8028CB24.cpp:
+	.text       start:0x8028CB24 end:0x80296938
+
+libs/RVL_SDK/src/mem/mem_expHeap.c:
+	.text       start:0x80296938 end:0x802973F8
+
+src/.unsorted/802973F8.cpp:
+	.text       start:0x802973F8 end:0x8029740C
+
+libs/RVL_SDK/src/mem/mem_frameHeap.c:
+	.text       start:0x8029740C end:0x802976F8
+
+libs/RVL_SDK/src/mem/mem_allocator.c:
+	.text       start:0x802976F8 end:0x8029777C
+
+libs/RVL_SDK/src/mem/mem_list.c:
+	.text       start:0x8029777C end:0x80297890
+
+src/.unsorted/80297890.cpp:
+	.text       start:0x80297890 end:0x802A270C
+
+libs/RVL_SDK/src/cx/CXUncompression.c:
+	.text       start:0x802A270C end:0x802A2880
+
+libs/RVL_SDK/src/ipc/ipcMain.c:
+	.text       start:0x802A2880 end:0x802A2904
+
+src/.unsorted/802A2904.cpp:
+	.text       start:0x802A2904 end:0x802A4004
+
+libs/RVL_SDK/src/ipc/memory.c:
+	.text       start:0x802A4004 end:0x802A4528
+
+libs/RVL_SDK/src/ipc/ipcProfile.c:
+	.text       start:0x802A4528 end:0x802A4660
+
+src/.unsorted/802A4660.cpp:
+	.text       start:0x802A4660 end:0x802A5B84
+
+libs/RVL_SDK/src/wpad/WPAD.c:
+	.text       start:0x802A5B84 end:0x802AD0D4
+
+src/.unsorted/802AD0D4.cpp:
+	.text       start:0x802AD0D4 end:0x802B1C70
+
+libs/RVL_SDK/src/wpad/WPADEncrypt.c:
+	.text       start:0x802B1C70 end:0x802B2D18
+
+src/.unsorted/802B2D18.cpp:
+	.text       start:0x802B2D18 end:0x802B3860
+
+libs/RVL_SDK/src/wpad/debug_msg.c:
+	.text       start:0x802B3860 end:0x802B38B0
+
+libs/RVL_SDK/src/euart/euart.c:
+	.text       start:0x802B38B0 end:0x802B3C20
+
+src/.unsorted/802B3C20.cpp:
+	.text       start:0x802B3C20 end:0x802E7450
+
+libs/RVL_SDK/src/nand/nand.c:
+	.text       start:0x802E7450 end:0x802E82F4
+
+src/.unsorted/802E82F4.cpp:
+	.text       start:0x802E82F4 end:0x80363510
 	.ctors      start:0x803E2244 end:0x803E2248
 
 src/.unsorted/80363510.cpp:
@@ -1208,6 +1454,9 @@ src/.unsorted/8038F424.cpp:
 	.text       start:0x8038F424 end:0x803D9208
 	.ctors      start:0x803E2284 end:0x803E2288
 
-src/.unsorted/803D9208.cpp:
+src/ds/DSbridge.cpp:
 	.text       start:0x803D9208 end:0x803D9EB4
 	.ctors      start:0x803E2288 end:0x803E228C
+
+src/.unsorted/803D9EB4.cpp:
+	.text       start:0x803D9EB4 end:0x803E1E54

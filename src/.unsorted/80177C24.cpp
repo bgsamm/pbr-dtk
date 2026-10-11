@@ -1,3 +1,4 @@
+#include "common.hpp"
 #include ".unsorted/80177C24.hpp"
 
 #include "gs/GScache.hpp"
