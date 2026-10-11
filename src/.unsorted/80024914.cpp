@@ -4,18 +4,13 @@
 
 extern "C" {
 
-void fn_80025360(u8 *p, u32 v) { *(u32 *)(p + 0xc) = v; }
-u32 fn_80025368(u8 *p) { return *(u32 *)(p + 0xc); }
-
+void fn_80024E40(void) {
+    if (lbl_8063E9B0 != NULL) {
+        fn_80025024(lbl_8063E9B0);
+    }
 }
 
-#include "common.hpp"
-
-extern "C" {
-
-extern u32 lbl_8063E9B0;
-void fn_80025024(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7);
-
-void fn_80024E40(void) { if (lbl_8063E9B0 != 0) { fn_80025024(lbl_8063E9B0, 0, 0, 0, 0, 0, 0, 0); } }
+void fn_80025360(Unk80024914 *obj, u32 v) { obj->_0C = v; }
+u32 fn_80025368(Unk80024914 *obj) { return obj->_0C; }
 
 }
