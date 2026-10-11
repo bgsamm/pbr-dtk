@@ -221,11 +221,9 @@ void *fn_803D9778(u32 heapId) {
     return work;
 }
 
-// TODO 98%: register allocation differs on the seed/count loads
 u16 DS_Rand() {
-    u32 seed = gDSRandSeed * 0x41C64E6D;
+    gDSRandSeed = gDSRandSeed * 0x41C64E6D + 0x6073;
     gDSRandCount++;
-    gDSRandSeed = seed + 0x6073;
     return gDSRandSeed >> 16;
 }
 
@@ -440,9 +438,9 @@ void *DSSystem_GetMsgManager() {
     return gDSSystem->mMsgManager;
 }
 
-// TODO 88%: the signed comparison operands come out swapped
+// TODO role not established: compares the battle message manager state against a constant 8
 BOOL fn_803D9E54() {
     s32 a = fn_803DEE9C(gDSSystem->mMsgManager);
     s32 b = fn_803AC830();
-    return b > a;
+    return a > b;
 }
