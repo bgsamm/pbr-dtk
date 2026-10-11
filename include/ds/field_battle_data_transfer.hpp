@@ -1,12 +1,12 @@
 #pragma once
 
 #include <revolution/types.h>
+#include "ds/battle/battle_constants.hpp"
 
 struct Bag;
 struct Party;
 struct TrainerInfo;
 
-#define MAX_BATTLERS 4
 
 // size: 0x17C
 struct FieldBattleDTO {

@@ -3,7 +3,18 @@
 // Declarations shared by the scaffolding of the units in 0x8038F424-0x803D9208.
 // Each unit moves to its own module header as it is decompiled.
 
+#include ".unsorted/8016E2B8.hpp"
+#include ".unsorted/803DEEA4.hpp"
 #include "ds/DSbridge.hpp"
+#include "ds/charcode_util.hpp"
+#include "ds/message.hpp"
+#include "ds/move_table.hpp"
+#include "ds/party.hpp"
+#include "ds/pokemon.hpp"
+#include "ds/strbuf.hpp"
+#include "ds/string_template.hpp"
+#include "ds/trainer_info.hpp"
+#include "ds/battle/battle_lib.hpp"
 
 extern "C" {
 extern u32 lbl_806405C0;
@@ -39,18 +50,14 @@ void fn_803A576C(void);
 void fn_803A61A8(void);
 void fn_803AA430(void);
 void fn_803AB1D0(void);
-u8 fn_803AB514(u8 *p);
 u8 fn_803AB51C(u8 *p);
 u8 *fn_803AB524(u8 *p);
 void fn_803AB52C(void);
 void fn_803AB530(void);
 void fn_803AC820(u32 v);
-u32 fn_803AC828(void);
+BattleSystem *fn_803AC828(void);
 s32 fn_803AC830(void);
 u32 fn_803AC838(u8 *p);
-u32 fn_803AC840(u8 *p);
-u32 fn_803AC848(u8 *p);
-u32 fn_803AC860(u8 *p);
 u32 fn_803ACA58(u8 *p);
 u32 fn_803ACA60(u8 *p);
 u32 fn_803ACA68(u8 *p);
@@ -66,7 +73,6 @@ u32 fn_803ADBAC(u8 *p);
 s32 fn_803ADBB4(u8 *a);
 s32 fn_803ADBBC(void);
 s32 fn_803ADBC4(void);
-u32 fn_803ADCB0(u8 *p);
 void fn_803ADCB8(u8 *p, u32 v);
 void fn_803ADCC0(u8 *p, u8 v);
 u8 fn_803ADCD8(u8 *p);
@@ -79,10 +85,6 @@ void fn_803B8798(void);
 void fn_803B8B50(void);
 void fn_803B9294(void);
 void fn_803B97BC(void);
-s32 fn_803C59F0(void);
-s32 fn_803C88E8(void);
-s32 fn_803C90E0(void);
-u8 *fn_803C9108(u8 *p);
 s32 fn_803D6B68(void);
 u8 *fn_8038FD10(u8 **h, s32 i);
 u16 fn_8038F804(u8 **h);
@@ -615,10 +617,8 @@ DataHdr **fn_80399CE8(DataHdr **h, s32 del);
 u32 fn_80399F14(u8 **h);
 void fn_803B2570(u32 a, u32 b, u32 c);
 void fn_8016E0A0(u8 *p);
-void fn_803DEF3C(u8 *p);
 void fn_803AF5F0(u8 *a, u32 b, u32 c, void *d, u32 e);
 void *fn_8016DF70(u32 a, u32 b);
-u32 fn_803DEF00(void *f, void *a, u32 b);
 u32 fn_803D6E6C(u8 *b);
 u32 fn_803D803C(u8 *a, u8 *b, u32 c);
 void fn_803A742C(u8 *a, u8 *b, u8 *c);
@@ -681,8 +681,6 @@ void fn_803B1798(u8 *a, u8 *b, u32 c);
 void fn_803B2118(u8 *a, u8 *b, u32 c);
 void fn_803B236C(u8 *a, u8 *b, u32 c);
 void fn_803B2440(u8 *a, u8 *b, u32 c);
-void fn_803BD39C(u8 *a, u8 *b, u32 c);
-void fn_803BD3C4(u8 *a, u8 *b, u32 c);
 s16 fn_80394020(u8 **h, s32 i, u32 j);
 s16 fn_803942A4(u8 **h, s32 i, u32 j);
 s16 fn_80394528(u8 **h, s32 i, u32 j);
@@ -777,7 +775,6 @@ s32 fn_803D6A80(u8 *a, u8 *b);
 extern u8 *lbl_8063E80C;
 extern const f32 lbl_80642FC4;
 void fn_803A3078(u8 *p);
-s32 fn_803BAA4C(u8 *p);
 void fn_803A2E70(u8 *p, u32 a);
 void fn_803A5F58(u8 *p, u32 a);
 u32 fn_803A60BC(u8 *p, u32 a);
@@ -799,8 +796,6 @@ void fn_803A53F4(u8 *p);
 void fn_803A5404(u8 *p);
 void fn_803A5514(u8 *p);
 void fn_803A575C(u8 *p);
-u32 fn_803AC850(u8 *p, s32 i);
-u8 fn_803ACCD4(u8 *p, s32 i);
 u8 *fn_803ADCC8(u8 *p, s32 i);
 struct BF_3_2_3 {
     u8 a : 3;
@@ -809,11 +804,6 @@ struct BF_3_2_3 {
 };
 
 void fn_803ADCE8(u8 *p, u32 v);
-void fn_803BAC68(u8 *p);
-u8 fn_803C5A34(u8 *p, s32 i);
-u8 *fn_803C90D0(u8 *p, s32 i);
-u8 *fn_803C90E8(u8 *p, u8 i);
-u8 *fn_803C90F8(u8 *p, s32 i);
 u8 *fn_803D915C(u8 *p, s32 i);
 u8 *fn_803D916C(u8 *p, s32 i);
 u8 *fn_803D91D4(u8 *p, s32 i);
@@ -822,9 +812,6 @@ void fn_803A53E0(u8 *p);
 void fn_803A7418(void);
 void fn_803B0D58(u8 *a, u32 b, void *c);
 void fn_803B9734(u8 *a, u8 *b);
-void fn_803BC450(u8 *p, u32 i);
-u32 fn_803BF32C(u8 *p, s32 i);
-void fn_803BA9D4(u8 *p, u32 a, u32 b);
 }
 struct VObj {
     virtual void v00();
@@ -858,20 +845,16 @@ struct U8Pair {
     u8 b;
 };
 
-extern U8Pair lbl_80405402[];
 extern u16 lbl_80405ACE[];
 extern void (*lbl_80405048[])(u8 *, u8 *);
 extern s32 (*lbl_804056D8[])(u8 *, u8 *);
-void fn_803BB744(u8 *p, u32 a, u32 b);
 void fn_803A57D4(void *p);
 void *OSGetAlarmUserData(void *a);
-void fn_803B1AC4(u8 *a, u8 *b, s32 c);
+void fn_803B1AC4(BattleSystem *battleSys, BattleContext *battleCtx, int battler);
 void fn_803A36B8(u8 *p);
 void fn_803A58C8(s32 *p);
 u32 fn_803A6070(u8 *p, s32 i);
 s32 fn_803ACD14(u8 *p);
-void fn_803BB728(u8 *p, s32 i, u32 a, u32 b);
-s32 fn_803C3DD8(u8 *p, s32 i);
 s32 fn_8039A3C8(void);
 void fn_803A37FC(u8 *p);
 void fn_803A3D44(u8 *p);
@@ -879,19 +862,13 @@ void fn_803A44C0(u8 *o, u8 *b);
 void fn_803A5888(s32 i, s32 a);
 u8 fn_803A58A8(s32 *p);
 void fn_803B0F68(u8 *a, u8 *b, u8 *c);
-void fn_803C04A4(u8 *a, u8 *b);
 s32 fn_803CC1C8(u8 *a, u8 *b);
 s32 fn_803CC6E8(u8 *a, u8 *b);
 u8 fn_803D4EE8(u32 i);
 void fn_8039DE00(void *a, void *b);
-s32 fn_803C0B68(s32 a, s32 b);
-u32 fn_803C5A44(u8 *p, s32 i);
-u32 fn_803C6154(u8 i, u32 v);
 u16 fn_803D5004(u32 i);
 u8 *fn_803D90A0(u8 *p, s32 i);
 void fn_803a6138(u8 *a, u8 *b);
-void fn_803BD374(u8 *a, u8 *b, s32 c);
-u32 fn_803C9158(void);
 s32 fn_803C94CC(u8 *a, u8 *b);
 void fn_803B1420(u8 *a);
 void fn_803B2008(u8 *a);
@@ -935,8 +912,6 @@ void fn_803A3EA4(u8 *p);
 u32 fn_803A3F9C(u8 *p, u32 x);
 void fn_803A4D68(u8 *p, VObj2 *o);
 void fn_803B8CD8(u8 *a, u8 *b);
-void fn_803BAC78(u8 *p, s32 i);
-void fn_803C90A4(u8 *p, u8 i);
 s32 fn_803D4C24(u8 *a, u8 *b);
 void fn_8039DEEC(s32 a, s32 b);
 void fn_803A4174(u8 *p, u32 m, f32 *v);
@@ -944,7 +919,6 @@ void fn_803A5B48(void);
 void fn_803A5D6C(void *a, void *b);
 void fn_803A5E60(void *a, void *b);
 u32 fn_803A608C(u8 *p, s32 i, s32 v);
-u32 fn_803ACCE4(u8 *p, s32 i);
 void fn_8039A4EC(void);
 struct S8 {
     u8 a, b, c, d;
@@ -953,18 +927,12 @@ struct S8 {
 };
 
 void fn_803A7C68(S8 *d, S8 *s);
-s32 fn_803BE72C(u8 *p, u32 v);
 extern u16 lbl_80473AB4[];
 void fn_80395B40(u8 **h, s32 i, u16 v);
 void fn_80396754(u8 **h, s32 i, u32 v);
 void fn_803A37C4(u8 *p, s32 m, f32 a, f32 b, f32 c);
 void fn_803B2CD4(u8 *p);
-u32 fn_803BFA40(u8 *p, s32 i);
-s32 fn_803C06A4(u8 *a, u8 *b, s32 c);
 u32 fn_803C06DC(u32 v);
-void fn_803C9490(u8 *p, u16 *s);
-u32 fn_803C877C(u8 *p, u16 a, u32 b);
-u8 *fn_803C9458(u8 *p, s32 i);
 s32 fn_803D3DA8(u8 *a, u8 *b);
 void fn_803D8004(u8 *a, u8 *b);
 void fn_803A6BA4(u8 *a, u8 *b);
@@ -994,34 +962,21 @@ void fn_803B24A8(u8 *a, u32 b, u32 c);
 void fn_803B13E0(u8 *a, u32 x, u32 c, u32 b);
 void fn_803B1D18(u8 *a, u32 b, u32 c, u32 d);
 void fn_803B2078(u8 *a, u32 b, u32 c, u32 d);
-void fn_803C421C(u8 *p, s32 i);
-u32 fn_803C59F8(u8 *p, s32 i);
 u8 *fn_8039B238(u8 *p, s32 del);
 u8 *fn_803A36D4(u8 *p, s32 del);
 u8 *fn_803A4440(u8 *p, s32 del);
 u8 *fn_803A4480(u8 *p, s32 del);
-u16 fn_803BF340(u8 *p, s32 i);
-bool fn_803C9180(u32 m);
 extern u16 lbl_80405398[];
 extern u16 lbl_8040543A[];
-extern u8 lbl_8048CE28[];
+extern Unk8048CE28 lbl_8048CE28;
 extern u16 lbl_804732E8[];
 extern u16 lbl_804053A4[];
 extern u8 lbl_80643000[5];
 void fn_8039BD7C(u8 *p, u32 a);
-u16 fn_803C3D6C(u8 *p, s32 i);
-u32 fn_803C8C48(u32 a, u32 b, u32 c, u32 d);
 void fn_803CACF0(u8 *a, u8 *b);
-u32 fn_803DD920(u32 a);
 void fn_803B24E4(u8 *a);
 s32 fn_8039A258(u32 a);
 void fn_803B6A64(u8 *a, u8 *b);
-u32 fn_803C0584(u8 *a, u8 *b, u32 c, s32 v);
-u32 fn_803C05C8(u8 *a, u8 *b, s32 c, s32 v);
-u32 fn_803C40BC(u8 *p, s32 i);
-u32 fn_803C4194(u8 *p, s32 i);
-u32 fn_803C41D8(u8 *p, s32 i);
-s32 fn_803C8688(u32 v);
 s32 fn_803CB100(u8 *a, u8 *b);
 void fn_803a6160(u8 *a, u8 *b, s32 c);
 static inline u32 bswap32(u32 x) {
@@ -1039,8 +994,6 @@ void fn_803B0E4C(u8 *a, u32 b, u32 x);
 void fn_803B1C60(u8 *a, u8 *b, u32 c, u16 d);
 void fn_803B2DE0(u8 *a, u8 *b);
 void fn_803B7E98(u8 *a, u8 *b);
-u8 fn_803C9110(void);
-u8 fn_803C93C4(u8 *p, u8 i, s32 j);
 s32 fn_803CAF20(u8 *a, u8 *b);
 s32 fn_803CBACC(u8 *a, u8 *b);
 s32 fn_803CBED0(u8 *a, u8 *b);
@@ -1048,11 +1001,6 @@ void fn_803ADC64(u8 *p, s32 i, u32 v);
 u16 fn_803AF3F0(u32 v);
 void fn_803B96E8(u8 *a, u8 *b);
 s32 fn_803BA074(u8 *a, u8 *b);
-u32 fn_803BF8E4(u32 v);
-u32 fn_803C4258(u8 *p, s32 i);
-u32 fn_803C42A4(u8 *p, s32 i);
-void fn_803C9378(u8 *p, u8 i, s32 j, u8 v);
-u8 *fn_803C940C(u8 *p, u32 x, s32 i, s32 j);
 s32 fn_803CD978(u8 *a, u8 *b);
 s32 fn_803D3D5C(u8 *a, u8 *b);
 s32 fn_803D5470(u8 *a, u8 *b);
@@ -1069,13 +1017,7 @@ u32 fn_8039A010(u8 **h, s32 i, u32 j);
 extern u32 lbl_80405AE8[];
 extern u16 lbl_80405470[];
 extern u16 lbl_8040547C[];
-void fn_803BA9EC(u8 *p, u32 a, u32 b);
-s32 fn_803BABF0(u8 *p);
 void fn_803A7940(u8 *a, u8 *b, u8 *c);
-void *fn_803E018C(u32 a, u16 b);
-void fn_803DFD28(u32 a, u32 b, void *s);
-void Strbuf_Free(void *s);
-u32 fn_803BE8B0(u8 *a, u8 *b, u32 c, u32 d, u32 e, u32 f, u32 g, u8 *h);
 void WPADSetConnectCallback(s32 ch, void *cb);
 void WPADSetExtensionCallback(s32 ch, void *cb);
 void fn_803A61AC(u8 *a, u8 *b);
@@ -1115,21 +1057,17 @@ struct Msg8 {
 s32 fn_803CAC9C(u8 *a, u8 *b);
 s32 fn_803D3B28(u8 *a, u8 *b);
 void fn_803A64B0(u8 *a, u8 *b);
-u32 fn_803C86CC(u8 *p, u16 x);
-u32 fn_803C8724(u8 *p, u16 x);
 void fn_803AF334(u8 *p, u32 a, u8 *c);
 void fn_803B621C(u8 *a, u8 *b);
 s32 fn_803D37FC(u8 *a, u8 *b);
 u32 fn_803D917C(u8 *a, u8 *b, s32 c);
 void fn_803B6334(u8 *a, u8 *b, u32 c, u32 d, u32 e);
 void fn_803B67D4(u8 *a, u8 *b, u32 c, u32 d, u32 e);
-u32 fn_803DEAC4(u8 *p, u32 a);
 void *memset(void *p, int c, unsigned long n);
 void fn_803B2784(u8 *a, u32 b, void *c, u32 d, u8 *e);
 void fn_803ADF40(u8 *a, u8 *b, u32 c);
 void fn_803AE378(u8 *a, u8 *b, u8 *c, u32 d);
 void fn_803B25C8(u8 *a, u8 *b, void *c, u32 d, u32 e, u32 f, u32 g, u32 h);
-s32 fn_803BC520(u8 *a, u8 *b, u32 *c);
 void fn_803D8444(u8 *b, void *c);
 void fn_803D8520(u8 *a, u8 *b, void *c, u8 *d);
 void fn_803A6BE0(u8 *a, u8 *b);
@@ -1180,8 +1118,6 @@ struct BF_344 {
     u32 rest : 23;
 };
 
-u32 fn_803BF1C4(u8 *p, s32 i);
-s32 fn_803C8448(u8 *p, s32 v);
 s32 fn_803CB144(u8 *a, u8 *b);
 s32 fn_803D43A8(u8 *a, u8 *b);
 u32 fn_803D903C(u8 *a, u8 *b, s32 c);
@@ -1199,14 +1135,9 @@ struct VObj3 {
 };
 
 extern "C" {
-u32 fn_803ACD38(u8 *a, s32 b);
-u8 fn_803BFB18(u8 *a, s32 b);
-u32 fn_803ACBCC(u8 *a, u32 b);
-void fn_803DA100(u8 *a, u32 b);
 u32 *fn_803D6E8C(u8 *a, u8 *b, u32 c);
 void fn_803B0E94(u8 *a, u8 *b, u32 c, u32 d, u32 e, u32 f, u32 g);
 void fn_803B0D6C(u8 *a, u8 *b, u32 c, u32 d, u32 e, u32 f);
-u32 fn_803C1B4C(u8 *a, u8 *b, u32 c);
 s32 WPADIsSpeakerEnabled(s32 ch);
 extern u8 *lbl_8063D070[];
 void fn_803A3E3C(u8 *p);
@@ -1235,32 +1166,14 @@ s32 fn_803D2E38(u8 *a, u8 *b);
 extern u8 lbl_80405168[];
 extern U8Pair lbl_80405A50[];
 extern u8 lbl_8063CED8[];
-u32 fn_803DA0D0(u8 *p);
-u8 fn_803DC804(u8 *p);
-u32 fn_803DA0F8(u8 *p);
-u8 *fn_803AC868(u8 *p, u32 a);
-void fn_803DC988(u8 *p);
-void fn_803DCB44(u8 *p);
-s32 fn_803C4DE8(u8 *a, u8 *b, u32 c);
-s32 fn_803C1BF8(u8 *a, u8 *b, u8 *c);
-s32 fn_803C3DF4(u8 *a, u8 *b, u8 *c);
-s32 fn_803C88F0(u8 *a, u8 *b, u8 *c);
 void fn_80379514(u32 a);
 void fn_803A5524(u32 a);
 void OSLockMutex(void *m);
 void OSUnlockMutex(void *m);
-void fn_803BA360(u8 *a, u8 *b, s32 c, u32 d);
-s32 fn_803BD46C(u8 *a, u8 *b);
-void fn_803C04C4(u8 *a, u8 *b);
 void fn_8016D1C0(u32 a, u32 b);
-u32 fn_803DD940(u32 a);
-s32 fn_803BFE5C(u8 *a, u8 *b, u32 c, u32 d);
 void fn_803ACE90(u8 *a, u32 b, u32 c, u32 d, u32 e);
-s32 fn_8016E430(u32 a);
 void fn_8016E2E4(u32 a);
-s32 fn_803BACA4(u8 *a, u32 b, u32 c, u32 d);
 void fn_803B1458(u8 *a, u32 b, u32 c);
-s32 fn_803C0B8C(u8 *a, u8 *b);
 void fn_803A6EA0(u8 *a, u8 *b);
 void fn_803A6F14(u8 *a, u8 *b);
 u32 fn_803ADDE8(u8 *a, u8 *b);
@@ -1282,7 +1195,6 @@ s32 fn_803CDE04(u8 *a, u8 *b);
 s32 fn_803D6AEC(u8 *a, u8 *b);
 s32 fn_803CD270(u8 *a, u8 *b);
 s32 fn_803CF3B4(u8 *a, u8 *b);
-void fn_803C8BC8(u8 *a, s32 b, s32 c);
 void fn_803D71CC(u8 *a, u8 *b);
 void fn_8017CED8(u8 *a);
 s32 WPADGetInfoAsync(s32 ch, void *info, void *cb);
@@ -1303,31 +1215,22 @@ void fn_803ADE6C(u8 *a, u8 *b, Rec24 *c);
 s32 fn_803D4C50(u8 *a, u8 *b);
 s32 fn_803D5898(u8 *a, u8 *b);
 s32 fn_803D5CF8(u8 *a, u8 *b);
-u32 fn_803BF7E8(u32 i, u8 *x, u8 *y, u8 *z);
-void fn_803C605C(u8 *a, u8 *b, s32 i, u32 c);
-s32 fn_803C01A0(u8 *a, u8 *b, u32 c);
 void fn_8017C9E0(u32 a, u32 b);
-s32 fn_803BF758(u8 *p, s32 i);
-u32 fn_803C9010(u8 *p, s32 i);
 s32 fn_803CAFE0(u8 *a, u8 *b);
 s32 fn_803CB070(u8 *a, u8 *b);
 s32 fn_803CC5B4(u8 *a, u8 *b);
 s32 fn_803D3F04(u8 *a, u8 *b);
-u32 fn_803C4100(u8 *p, s32 i, s32 c);
 void fn_803A9E68(u8 *a, u8 *m);
 s32 fn_803D11BC(u8 *a, u8 *b);
 s32 fn_803D5A68(u8 *a, u8 *b);
-void fn_803C5FCC(u8 *a, u8 *b);
-u32 fn_803BF9AC(u8 *a, u8 *b, s32 i);
 extern void (*lbl_80405178[])(u8 *, u8 *);
-extern u8 lbl_8048CDE8[];
+extern Unk8048CDE8 lbl_8048CDE8;
 void fn_803B1D58(u8 *a, u32 b);
-void fn_8016FA4C(u32 a, void *b);
+void fn_8016FA4C(u32 command, Unk8048CDE8 *args);
 static inline s32 SelIdx(u8 *p, s32 i) {
     return i;
 }
 
-u16 fn_803ACA98(u8 *p, u32 i);
 u32 fn_803ADBCC(u8 *p, u32 i);
 u8 *fn_803ACB30(u8 *p, u32 i);
 s32 fn_803B2C3C(u8 *a, u8 *b);
@@ -1353,43 +1256,28 @@ struct BF_2DC8 {
 
 s32 fn_803D1788(u8 *a, u8 *b);
 void fn_803ADCF8(u8 *p, u8 *out);
-s32 fn_803C87B4(u8 *a, u32 x, s32 v);
-u8 fn_803C91C0(u32 i, s32 j);
 s32 fn_803CA838(u8 *a, u8 *b);
 s32 fn_803ACC64(u8 *p, s32 v);
 void fn_803B1CA8(u8 *a, u32 b, u32 c, u32 d);
-u32 fn_803C02EC(u8 *a, s32 i);
-u32 fn_803C0434(u8 *a, u8 *b, u32 m);
 s32 fn_803D3F98(u8 *a, u8 *b);
 void fn_803B9748(u8 *a, u8 *b);
 s32 fn_803D1F84(u8 *a, u8 *b);
 s32 fn_803CBB14(u8 *a, u8 *b);
-u32 fn_803BF930(u8 *a, u32 mv, u32 c);
 s32 fn_803CDC28(u8 *a, u8 *b);
-s32 fn_803BF380(u8 *a, u8 *b, u32 c, u32 d, u32 e);
-u32 fn_803DE944(u8 *p);
 extern u8 lbl_80473058[];
-u32 fn_803AC900(u8 *p, u32 i);
-u8 fn_803C922C(s32 i, s32 j);
 u8 *fn_803A5C30(u8 *p, s32 del);
 s32 fn_803BA0C0(u8 *a, u8 *b);
 s32 fn_803D6894(u8 *a, u8 *b);
 s32 fn_803CC648(u8 *a, u8 *b);
 s32 fn_803D4DA8(u8 *a, u8 *b);
 s32 fn_803D67F4(u8 *a, u8 *b);
-u32 fn_803C84AC(u8 *b, u32 c, u32 d, u32 e, u32 f);
 s32 fn_803CC028(u8 *a, u8 *b);
 s32 fn_803CF434(u8 *a, u8 *b);
 void fn_803B3E70(u8 *a, u8 *b);
 void fn_803B616C(u8 *a, u8 *b);
 s32 fn_803CB1A8(u8 *a, u8 *b);
-u8 *fn_803DE94C(u8 *p, u32 v);
-u8 fn_803BBB80(u8 *a, u8 *b, u32 c, u32 d, u32 e);
 s32 fn_803D091C(u8 *a, u8 *b);
 s32 fn_803D19A0(u8 *a, u8 *b);
-u8 *fn_803AC9A4(u8 *p, u32 i, u32 v);
-s32 fn_803ACDD8(u8 *p, s32 i, s32 m);
-s32 fn_803BFB90(u8 *a, s32 b, s32 c, s32 d);
 s32 fn_803CF6A4(u8 *a, u8 *b);
 s32 fn_803CC708(u8 *a, u8 *b);
 struct BF_1C4 {
@@ -1400,15 +1288,11 @@ struct BF_1C4 {
 };
 
 s32 fn_803CEFFC(u8 *a, u8 *b);
-s32 fn_803BFCEC(u8 *a, u8 *b, u32 c);
-s32 fn_803C44DC(u8 *a, u8 *b, u32 c);
 void fn_803B12A4(u8 *a, u8 *b, u32 c);
-void fn_803BDD44(u8 *a, u8 *b, u32 c);
-u32 fn_803DA0C0(u8 *p);
-u32 fn_803DA0C8(u8 *p);
-u8 *fn_803DA0BC(u8 *p);
-u32 GetMonDataInternal(u8 *mon, u32 id, void *buf);
-s32 fn_803DECAC(u8 *a, void *b, u32 c);
+u32 fn_803DA0C0(TrainerInfo *trInfo); // TrainerInfo_ID
+u32 fn_803DA0C8(TrainerInfo *trInfo); // TrainerInfo_Gender
+const u16 *fn_803DA0BC(TrainerInfo *trInfo); // TrainerInfo_Name
+BOOL fn_803DECAC(const u16 *str1, const u16 *str2, u32 len); // CharCode_CompareNumChars
 s32 fn_803B6274(u8 *a, u8 *b);
 s32 fn_803D180C(u8 *a, u8 *b);
 s32 fn_803D2C80(u8 *a, u8 *b);
@@ -1417,7 +1301,6 @@ s32 fn_803D1B7C(u8 *a, u8 *b);
 s32 fn_803D48F8(u8 *a, u8 *b);
 s32 fn_803D514C(u8 *a, u8 *b);
 s32 fn_803D2AB4(u8 *a, u8 *b);
-u32 fn_803C5A68(u8 *a, u8 *mon);
 s32 fn_803D333C(u8 *a, u8 *b);
 s32 fn_803D4CDC(u8 *a, u8 *b);
 struct BF_1C8 {
@@ -1428,12 +1311,9 @@ struct BF_1C8 {
 
 s32 fn_803D0EC8(u8 *a, u8 *b);
 s32 fn_803D4528(u8 *a, u8 *b);
-void fn_803BD840(u8 *a, u8 *b);
-void fn_803C8820(u8 *a, u8 *b);
 s32 fn_803D0F94(u8 *a, u8 *b);
 s32 fn_803D4008(u8 *a, u8 *b);
 s32 fn_803CDE80(u8 *a, u8 *b, u32 c);
-void fn_803DA144(u8 *a, u32 b);
 s32 fn_803D5660(u8 *a, u8 *b);
 s32 fn_803D62F0(u8 *a, u8 *b);
 struct BF_1C4b {
@@ -1444,7 +1324,6 @@ struct BF_1C4b {
 };
 
 s32 fn_803D18CC(u8 *a, u8 *b);
-u32 fn_803C035C(u8 *a, u8 *b, s32 c, s32 mv);
 s32 fn_803CE014(u8 *a, u8 *b);
 s32 fn_803D1DFC(u8 *a, u8 *b);
 s32 fn_803D2168(u8 *a, u8 *b);
@@ -1460,20 +1339,15 @@ struct BF_1C4c {
 
 s32 fn_803D2D44(u8 *a, u8 *b);
 s32 fn_803D34C8(u8 *a, u8 *b);
-s32 fn_803DA018(u32 a);
-s32 fn_803C268C(u8 *b, u32 c, u32 d);
 s32 fn_803D5E64(u8 *a, u8 *b);
 s32 fn_803D5F64(u8 *a, u8 *b);
 s32 fn_803D5738(u8 *a, u8 *b);
 s32 fn_803D66F0(u8 *a, u8 *b);
 s32 fn_803D2634(u8 *a, u8 *b);
-void fn_803BD8FC(u8 *a, u8 *b, s32 c);
 s32 fn_803CC4B0(u8 *a, u8 *b);
 s32 fn_803D65D0(u8 *a, u8 *b);
 s32 fn_803D45F4(u8 *a, u8 *b);
 void fn_803AF780(u8 *a, u32 b);
-u32 fn_803BC964(u8 *a, u8 *b, u32 c, u32 d, u32 e, u32 f);
-void fn_803BCE18(u8 *a, u8 *b, u32 c, u32 d);
 s32 fn_803CB5B4(u8 *a, u8 *b);
 s32 fn_803CBF18(u8 *a, u8 *b);
 struct BF_2DC8b {
@@ -1492,7 +1366,4 @@ struct BF_2DCC {
     u32 lo : 5;
 };
 
-void fn_803C5828(u8 *a, u8 *b);
-void fn_803C590C(u8 *a, u8 *b);
-s32 fn_803C8F1C(u8 *b, u32 x, s32 m, s32 v, s32 f, u32 *p);
 }

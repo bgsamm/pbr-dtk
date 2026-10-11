@@ -28,9 +28,9 @@ void fn_803B2D0C(u8 *a, u8 *b, u32 c, u32 d, u32 e) {
 }
 
 void fn_803B2D68(u8 *a, u8 *b) {
-    s32 n = fn_803AC860(a);
+    s32 n = BattleSystem_GetMaxBattlers((BattleSystem *)a);
     for (s32 i = 0; i < n; i++) {
-        fn_803BA360(a, b, i, b[i + 0x219c]);
+        BattleSystem_InitBattleMon((BattleSystem *)a, (BattleContext *)b, i, b[i + 0x219c]);
     }
     *(u16 *)(b + 0x3122) = *(u32 *)(b + 0x2e4c);
     *(u32 *)(b + 8) = 1;
@@ -42,7 +42,7 @@ void fn_803B2D68(u8 *a, u8 *b) {
 extern "C" {
 
 void fn_803B2DE0(u8 *a, u8 *b) {
-    fn_803BA9D4(b, 2, 0);
+    BattleSystem_LoadScript((BattleContext *)b, 2, 0);
     *(u32 *)(b + 8) = 0x15;
     *(u32 *)(b + 0xc) = 2;
 }
@@ -55,14 +55,14 @@ void fn_803B2DE0(u8 *a, u8 *b) {
 extern "C" {
 
 void fn_803B2E28(u8 *a, u8 *b) {
-    if (fn_803BD46C(a, b)) {
-        fn_803BA9D4(b, 2, 0x29);
+    if (BattleSystem_CheckTrainerMessage((BattleSystem *)a, (BattleContext *)b)) {
+        BattleSystem_LoadScript((BattleContext *)b, 2, 0x29);
         *(u32 *)(b + 8) = 0x15;
         *(u32 *)(b + 0xc) = 3;
     } else {
         *(u32 *)(b + 8) = 3;
     }
-    fn_803C04C4(a, b);
+    BattleSystem_SortMonSpeedOrder((BattleSystem *)a, (BattleContext *)b);
 }
 }
 
@@ -71,13 +71,13 @@ void fn_803B2E28(u8 *a, u8 *b) {
 extern "C" {
 
 void fn_803B2EA0(u8 *a, u8 *b) {
-    s32 r = fn_803C0B8C(a, b);
+    s32 r = BattleSystem_TriggerEffectOnSwitch((BattleSystem *)a, (BattleContext *)b);
     if (r) {
-        fn_803BA9D4(b, 2, r);
+        BattleSystem_LoadScript((BattleContext *)b, 2, r);
         *(u32 *)(b + 0xc) = *(u32 *)(b + 8);
         *(u32 *)(b + 8) = 0x15;
     } else {
-        fn_803C04C4(a, b);
+        BattleSystem_SortMonSpeedOrder((BattleSystem *)a, (BattleContext *)b);
         *(u32 *)(b + 8) = 4;
         fn_8016E2E4(8);
     }
@@ -90,7 +90,7 @@ void fn_803B2EA0(u8 *a, u8 *b) {
 extern "C" {
 
 void fn_803B2F20(u8 *a, u8 *b) {
-    s32 n = fn_803AC860(a);
+    s32 n = BattleSystem_GetMaxBattlers((BattleSystem *)a);
     for (s32 i = 0; i < n; i++) {
         b[i] = 0;
         *(u32 *)(b + i * 0xc0 + 0x2dc4) = *(u32 *)(b + i * 0xc0 + 0x2dc0);
@@ -111,8 +111,8 @@ void fn_803B2F20(u8 *a, u8 *b) {
 extern "C" {
 
 void fn_803B3E70(u8 *a, u8 *b) {
-    s32 n = fn_803AC860(a);
-    fn_803C04C4(a, b);
+    s32 n = BattleSystem_GetMaxBattlers((BattleSystem *)a);
+    BattleSystem_SortMonSpeedOrder((BattleSystem *)a, (BattleContext *)b);
     if (*(s32 *)(b + 0xec) == n) {
         *(u32 *)(b + 0xec) = 0;
         *(u32 *)(b + 8) = 9;
@@ -121,8 +121,8 @@ void fn_803B3E70(u8 *a, u8 *b) {
     } else {
         u8 *q = b + *(u32 *)(b + 0xec);
         *(u32 *)(b + 8) = *(u32 *)(b + q[0x21e8] * 16 + 0x21a8);
-        *(u32 *)lbl_8048CDE8 = q[0x21e8];
-        fn_8016FA4C(3, lbl_8048CDE8);
+        *(u32 *)&lbl_8048CDE8 = q[0x21e8];
+        fn_8016FA4C(3, &lbl_8048CDE8);
     }
 }
 }
@@ -132,7 +132,7 @@ void fn_803B3E70(u8 *a, u8 *b) {
 extern "C" {
 
 void fn_803B608C(u8 *a, u8 *b) {
-    fn_803BA9D4(b, 2, 9);
+    BattleSystem_LoadScript((BattleContext *)b, 2, 9);
     u32 v = b[*(u32 *)(b + 0xec) + 0x21e8];
     *(u32 *)(b + 0x64) = v;
     *(u32 *)(b + 0x78) = v;
@@ -145,7 +145,7 @@ void fn_803B608C(u8 *a, u8 *b) {
 
 void fn_803B6104(u8 *a, u8 *b) {
     *(u32 *)(b + 0x64) = b[*(u32 *)(b + 0xec) + 0x21e8];
-    fn_803BA9D4(b, 2, 3);
+    BattleSystem_LoadScript((BattleContext *)b, 2, 3);
     *(u32 *)(b + 0xb4) = 0;
     *(u32 *)(b + 0x8) = 0x15;
     *(u32 *)(b + 0xc) = 0x2a;
@@ -163,7 +163,7 @@ void fn_803B6168(void) {}
 extern "C" {
 
 void fn_803B616C(u8 *a, u8 *b) {
-    fn_803BA9D4(b, 2, 0xe4);
+    BattleSystem_LoadScript((BattleContext *)b, 2, 0xe4);
     *(u32 *)(b + 0x64) = 0;
     *(u32 *)(b + 0x6c) = 1;
     *(u32 *)(b + 0x8) = 0x15;
@@ -186,7 +186,7 @@ void fn_803B616C(u8 *a, u8 *b) {
 extern "C" {
 
 void fn_803B621C(u8 *a, u8 *b) {
-    fn_803BA9D4(b, 2, 0xe5);
+    BattleSystem_LoadScript((BattleContext *)b, 2, 0xe5);
     *(u32 *)(b + 0x64) = 0;
     *(u32 *)(b + 0x6c) = 1;
     *(u32 *)(b + 0x8) = 0x15;
@@ -195,10 +195,10 @@ void fn_803B621C(u8 *a, u8 *b) {
 
 s32 fn_803B6274(u8 *a, u8 *b) {
     s32 r = 0;
-    if ((*(s32 *)(b + 0x6c) == 0xff && fn_803BF758(b, *(u32 *)(b + 0x3044)) == 0) ||
-        (*(s32 *)(b + 0x6c) == 0xff && fn_803BF758(b, *(u32 *)(b + 0x3044)) == 1 &&
+    if ((*(s32 *)(b + 0x6c) == 0xff && Move_IsMultiTurn((BattleContext *)b, *(u32 *)(b + 0x3044)) == 0) ||
+        (*(s32 *)(b + 0x6c) == 0xff && Move_IsMultiTurn((BattleContext *)b, *(u32 *)(b + 0x3044)) == 1 &&
          ((*(u32 *)(b + *(u32 *)(b + 0x64) * 0xc0 + 0x2db0) & 0x1000) || (*(u32 *)(b + 0x213c) & 0x200)))) {
-        fn_803BA9D4(b, 2, 0x119);
+        BattleSystem_LoadScript((BattleContext *)b, 2, 0x119);
         *(u32 *)(b + 0xc) = 0x26;
         r = 1;
         *(u32 *)(b + 8) = 0x15;
@@ -215,8 +215,8 @@ void fn_803B6A64(u8 *a, u8 *b) {
 
 void fn_803B7D48(u8 *a, u8 *b) {
     u32 v;
-    if (fn_803BC520(a, b, &v) == 1) {
-        fn_803BA9D4(b, 2, v);
+    if (BattleSystem_TriggerPrimaryEffect((BattleSystem *)a, (BattleContext *)b, (int *)(&v)) == 1) {
+        BattleSystem_LoadScript((BattleContext *)b, 2, v);
         *(u32 *)(b + 8) = 0x15;
         *(u32 *)(b + 0xc) = 0x19;
     } else {
@@ -225,7 +225,7 @@ void fn_803B7D48(u8 *a, u8 *b) {
 }
 
 void fn_803B7E98(u8 *a, u8 *b) {
-    fn_803BA9D4(b, 2, 1);
+    BattleSystem_LoadScript((BattleContext *)b, 2, 1);
     *(u32 *)(b + 8) = 0x15;
     *(u32 *)(b + 0xc) = 0x1b;
 }
@@ -245,9 +245,9 @@ void fn_803B8CD8(u8 *a, u8 *b) {
 void fn_803B8F64(u8 *a, u8 *b) {
     u32 v = *(u32 *)(b + 0x213c) & 0xf0000000;
     if (v) {
-        *(u32 *)(b + 0x74) = fn_803DD940(v >> 28);
+        *(u32 *)(b + 0x74) = LowestBit(v >> 28);
         *(u32 *)(b + 0x213c) &= 0x0fffffff;
-        fn_803BA9D4(b, 2, 0x115);
+        BattleSystem_LoadScript((BattleContext *)b, 2, 0x115);
         *(u32 *)(b + 0x8) = 0x15;
         *(u32 *)(b + 0xc) = 0x24;
     } else {
@@ -276,11 +276,11 @@ void fn_803B9734(u8 *a, u8 *b) {
 extern "C" {
 
 void fn_803B9748(u8 *a, u8 *b) {
-    u32 f = fn_803AC840(a) & 4;
+    u32 f = BattleSystem_GetBattleType((BattleSystem *)a) & 4;
     if (!f) {
-        u8 *x = fn_803AC868(a, 0);
-        fn_803DC988(x);
-        fn_803DCB44(x);
+        u8 *x = (u8 *)BattleSystem_GetParty((BattleSystem *)a, 0);
+        Pokemon_ApplyPokerus((Party *)x);
+        Pokemon_ValidatePokerus((Party *)x);
     }
     if (f) {
         fn_803D9844(0);
@@ -296,7 +296,7 @@ extern "C" {
 void fn_803B97BC(void) {}
 
 s32 fn_803BA074(u8 *a, u8 *b) {
-    fn_803BA9D4(b, 2, 0x10);
+    BattleSystem_LoadScript((BattleContext *)b, 2, 0x10);
     *(u32 *)(b + 0xc) = *(u32 *)(b + 8);
     *(u32 *)(b + 8) = 0x15;
     return 1;
@@ -315,7 +315,7 @@ s32 fn_803BA0C0(u8 *a, u8 *b) {
         }
     }
     if (r == 1) {
-        fn_803BA9D4(b, 2, 0x15);
+        BattleSystem_LoadScript((BattleContext *)b, 2, 0x15);
         *(u32 *)(b + 0xc) = *(u32 *)(b + 8);
         *(u32 *)(b + 8) = 0x15;
     }

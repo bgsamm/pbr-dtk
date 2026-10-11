@@ -22,7 +22,7 @@ s32 fn_803C94F4(u8 *a, u8 *b) {
 extern "C" {
 
 s32 fn_803C9528(u8 *a, u8 *b) {
-    s32 n = fn_803AC860(a);
+    s32 n = BattleSystem_GetMaxBattlers((BattleSystem *)a);
     (*(u32 *)(b + 0xb4))++;
     s32 i;
     switch (fn_803D6E6C(b)) {
@@ -36,7 +36,7 @@ s32 fn_803C9528(u8 *a, u8 *b) {
         case 3: break;
         case 4:
             for (i = 0; i < n; i++) {
-                if (((u8 *)fn_803AC850(a, i))[0x185] & 1) {
+                if (((u8 *)BattleSystem_GetBattlerData((BattleSystem *)a, i))[0x185] & 1) {
                     fn_803AF780(a, i);
                     fn_803ADE5C(a, i);
                 }
@@ -65,7 +65,7 @@ s32 fn_803C9F44(u8 *a, u8 *b) {
 extern "C" {
 
 s32 fn_803CA838(u8 *a, u8 *b) {
-    s32 n = fn_803AC860(a);
+    s32 n = BattleSystem_GetMaxBattlers((BattleSystem *)a);
     (*(u32 *)(b + 0xb4))++;
     for (s32 i = 0; i < n; i++) {
         fn_803B1BF0(a, i);
@@ -79,10 +79,10 @@ s32 fn_803CA838(u8 *a, u8 *b) {
 extern "C" {
 
 s32 fn_803CAC9C(u8 *a, u8 *b) {
-    if (fn_803BABF0(b)) {
+    if (BattleIO_QueueIsEmpty((BattleContext *)b)) {
         (*(u32 *)(b + 0xb4))++;
     } else {
-        fn_803BAC68(b);
+        BattleIO_UpdateTimeout((BattleContext *)b);
     }
     return 0;
 }
@@ -99,7 +99,7 @@ s32 fn_803CAEB8(u8 *a, u8 *b) {
         *(u32 *)(b + 0x2144) = 1;
     } else {
         fn_803CACF0(a, b);
-        *(s32 *)(b + 0x2144) = fn_803C8448(b, *(s32 *)(b + 0x2144)) * -1;
+        *(s32 *)(b + 0x2144) = BattleSystem_CalcDamageVariance((BattleContext *)b, *(s32 *)(b + 0x2144)) * -1;
     }
     return 0;
 }
@@ -129,8 +129,8 @@ s32 fn_803CAF68(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     if (!(*(u32 *)(b + 0x213c) & 1)) {
         fn_803B0F14(a, b);
-        *(u32 *)(lbl_8048CE28 + 4) = 7;
-        *(u32 *)(lbl_8048CE28 + 0xc) = *(u32 *)(b + 0x64);
+        lbl_8048CE28.pendingCommand = 7;
+        lbl_8048CE28._0C = *(u32 *)(b + 0x64);
     }
     *(u32 *)(b + 0x213c) |= 1;
     *(u32 *)(b + 0x2140) |= 4;
@@ -144,8 +144,8 @@ s32 fn_803CAFE0(u8 *a, u8 *b) {
     fn_803D8444(b, buf);
     fn_803D8520(a, b, buf, out);
     fn_803B0F68(a, b, out);
-    if (*(u32 *)(lbl_8048CE28 + 4) == 0) {
-        *(u32 *)(lbl_8048CE28 + 4) = 10;
+    if (lbl_8048CE28.pendingCommand == 0) {
+        lbl_8048CE28.pendingCommand = 10;
     }
     return 0;
 }
@@ -158,14 +158,14 @@ s32 fn_803CB070(u8 *a, u8 *b) {
     fn_803D8520(a, b, buf, out);
     out[1] |= 0x80;
     fn_803B0F68(a, b, out);
-    *(u32 *)(lbl_8048CE28 + 4) = 10;
+    lbl_8048CE28.pendingCommand = 10;
     return 0;
 }
 
 s32 fn_803CB100(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     fn_803B0F68(a, b, b + 0xf4);
-    *(u32 *)(lbl_8048CE28 + 4) = 10;
+    lbl_8048CE28.pendingCommand = 10;
     return 0;
 }
 
@@ -194,7 +194,7 @@ s32 fn_803CB1A8(u8 *a, u8 *b) {
     out[1] |= 0x40;
     *(u32 *)(out + 0x20) = fn_803D803C(a, b, n);
     fn_803B0F68(a, b, out);
-    *(u32 *)(lbl_8048CE28 + 4) = 10;
+    lbl_8048CE28.pendingCommand = 10;
     return 0;
 }
 
@@ -214,10 +214,10 @@ s32 fn_803CB438(u8 *a, u8 *b) {
     if ((!(*(u32 *)(b + 0x213c) & 0x4000) && fn_803ADBB4(a) == 1) || m == 0x90) {
         *(u32 *)(b + 0x213c) |= 0x4000;
         fn_803B0FF0(a, b, m, rx, ry);
-        *(u32 *)lbl_8048CDE8 = ry;
-        *(u32 *)(lbl_8048CDE8 + 4) = rx;
-        *(u32 *)(lbl_8048CDE8 + 8) = m;
-        fn_8016FA4C(0x10, lbl_8048CDE8);
+        *(u32 *)&lbl_8048CDE8 = ry;
+        *(u32 *)((u8 *)&lbl_8048CDE8 + 4) = rx;
+        *(u32 *)((u8 *)&lbl_8048CDE8 + 8) = m;
+        fn_8016FA4C(0x10, &lbl_8048CDE8);
     }
     return 0;
 }
@@ -248,20 +248,20 @@ s32 fn_803CB5B4(u8 *a, u8 *b) {
     } else if ((u32)nh > *(u32 *)(b + r * 0xc0 + 0x2d90)) {
         *(u32 *)(q + 0x2d8c) = *(u32 *)(b + r * 0xc0 + 0x2d90);
     }
-    fn_803BD374(a, b, r);
+    BattleMon_CopyToParty((BattleSystem *)a, (BattleContext *)b, r);
     return 0;
 }
 
 s32 fn_803CBA04(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     fn_803B12A4(a, b, *(u32 *)(b + 0x74));
-    *(u32 *)(b + 0x213c) &= (fn_803DD920(*(u32 *)(b + 0x74)) << 24) ^ 0xffffffff;
-    *(u32 *)(b + 0x2140) |= fn_803DD920(*(u32 *)(b + 0x74)) << 28;
+    *(u32 *)(b + 0x213c) &= (FlagIndex(*(u32 *)(b + 0x74)) << 24) ^ 0xffffffff;
+    *(u32 *)(b + 0x2140) |= FlagIndex(*(u32 *)(b + 0x74)) << 28;
     *(u32 *)(b + *(u32 *)(b + 0x74) * 16 + 0x21a8) = 0x27;
-    fn_803BDD44(a, b, *(u32 *)(b + 0x74));
+    BattleSystem_CleanupFaintedMon((BattleSystem *)a, (BattleContext *)b, *(u32 *)(b + 0x74));
     fn_8016E2E4(2);
-    *(u32 *)lbl_8048CDE8 = *(u32 *)(b + 0x74);
-    fn_8016FA4C(0xf, lbl_8048CDE8);
+    *(u32 *)&lbl_8048CDE8 = *(u32 *)(b + 0x74);
+    fn_8016FA4C(0xf, &lbl_8048CDE8);
     return 0;
 }
 
@@ -300,13 +300,13 @@ s32 fn_803CBE50(u8 *a, u8 *b) {
 
 s32 fn_803CBE80(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803BA9D4(b, 2, fn_803D6E6C(b));
+    BattleSystem_LoadScript((BattleContext *)b, 2, fn_803D6E6C(b));
     return 0;
 }
 
 s32 fn_803CBED0(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803BA9D4(b, 0x1f, *(u16 *)(b + *(u32 *)(b + 0x3044) * 16 + 0x3de));
+    BattleSystem_LoadScript((BattleContext *)b, 0x1f, *(u16 *)(b + *(u32 *)(b + 0x3044) * 16 + 0x3de));
     return 0;
 }
 
@@ -323,41 +323,37 @@ s32 fn_803CBF18(u8 *a, u8 *b) {
     ((BF_213C *)(b + 0x213c))->f0 = 0;
     ((BF_213C *)(b + 0x213c))->f14 = 0;
     if (n == 0) {
-        *(u32 *)(b + 0x6c) = fn_803BC964(a, b, *(u32 *)(b + 0x64), (u16) * (u32 *)(b + 0x3044), 1, 0);
-        fn_803BCE18(a, b, *(u32 *)(b + 0x64), (u16) * (u32 *)(b + 0x124));
+        *(u32 *)(b + 0x6c) = BattleSystem_Defender((BattleSystem *)a, (BattleContext *)b, *(u32 *)(b + 0x64), (u16) * (u32 *)(b + 0x3044), 1, 0);
+        BattleSystem_CheckRedirectionAbilities((BattleSystem *)a, (BattleContext *)b, *(u32 *)(b + 0x64), (u16) * (u32 *)(b + 0x124));
         *(u32 *)(b + *(u32 *)(b + 0x64) * 16 + 0x21ac) = *(u32 *)(b + 0x6c);
     }
     if (*(s32 *)(b + 0x6c) == 0xff) {
         *(u32 *)(b + 0xc) = 0x26;
-        fn_803BA9D4(b, 2, 0x119);
+        BattleSystem_LoadScript((BattleContext *)b, 2, 0x119);
     } else {
-        fn_803BA9D4(b, 1, *(u32 *)(b + 0x3044));
+        BattleSystem_LoadScript((BattleContext *)b, 1, *(u32 *)(b + 0x3044));
     }
-    *(u32 *)lbl_8048CDE8 = *(u32 *)(b + 0x64);
-    *(u32 *)(lbl_8048CDE8 + 4) = *(u32 *)(b + 0x3044);
-    fn_8016FA4C(0x19, lbl_8048CDE8);
+    *(u32 *)&lbl_8048CDE8 = *(u32 *)(b + 0x64);
+    *(u32 *)((u8 *)&lbl_8048CDE8 + 4) = *(u32 *)(b + 0x3044);
+    fn_8016FA4C(0x19, &lbl_8048CDE8);
     return 0;
 }
 
 s32 fn_803CC028(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    if ((fn_803AC840(a) & 0x400) || (fn_803ADB9C(a) & 1)) {
+    if ((BattleSystem_GetBattleType((BattleSystem *)a) & 0x400) || (fn_803ADB9C(a) & 1)) {
         *(u32 *)(b + 0x2150) = 1;
     } else if (*(s32 *)(b + 0x6c) == 0xff) {
         *(u32 *)(b + 0x2150) = 1;
     } else {
-        *(u32 *)(b + 0x2150) = fn_803C84AC(b,
-                                           *(u32 *)(b + 0x64),
-                                           *(u32 *)(b + 0x6c),
-                                           *(u32 *)(b + 0x214c),
-                                           fn_803C8C48((u32)a, (u32)b, 0, *(u32 *)(b + 0x6c)));
+        *(u32 *)(b + 0x2150) = BattleSystem_CalcCriticalMulti((BattleContext *)b, *(u32 *)(b + 0x64), *(u32 *)(b + 0x6c), *(u32 *)(b + 0x214c), BattleContext_Get((BattleSystem *)((u32)a), (BattleContext *)((u32)b), (enum BattleContextParam)0, *(u32 *)(b + 0x6c)));
     }
     return 0;
 }
 
 s32 fn_803CC0D8(u8 *a, u8 *b) {
-    fn_803AC840(a);
-    fn_803AC850(a, *(u32 *)(b + 0x74));
+    BattleSystem_GetBattleType((BattleSystem *)a);
+    (u32)BattleSystem_GetBattlerData((BattleSystem *)a, *(u32 *)(b + 0x74));
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
     *(u32 *)(b + 0xb4) += n;
@@ -371,7 +367,7 @@ s32 fn_803CC140(u8 *a, u8 *b) {
     *(u8 **)(*(u8 **)(b + 0x178) + 4) = b;
     *(u32 *)(*(u8 **)(b + 0x178) + 0x20) = 0;
     *(u32 *)(*(u8 **)(b + 0x178) + 0x40) = 0;
-    fn_803DEF00((void *)fn_803D71CC, *(u8 **)(b + 0x178), 0);
+    fn_803DEF00((Unk8063D230Func)((void *)fn_803D71CC), (void *)(*(u8 **)(b + 0x178)), 0);
     return 0;
 }
 
@@ -405,15 +401,15 @@ s32 fn_803CC4B0(u8 *a, u8 *b) {
         case 0x12: i = *(u32 *)(b + 0x6c); break;
     }
     *(u32 *)(b + i * 4 + 0x13c) &= ~1;
-    b[0x3108] &= fn_803DD920(i) ^ 0xffffffff;
+    b[0x3108] &= FlagIndex(i) ^ 0xffffffff;
     q = b + i;
     u8 v = q[0x21a0];
     q[0x219c] = v;
     q[0x21a0] = 6;
-    fn_803BA360(a, b, i, v);
-    fn_803C605C(a, b, i, q[0x219c]);
+    BattleSystem_InitBattleMon((BattleSystem *)a, (BattleContext *)b, i, v);
+    BattleSystem_SwitchSlots((BattleSystem *)a, (BattleContext *)b, i, q[0x219c]);
     *(u16 *)(b + 0x3122) = *(u32 *)(b + 0x2e4c);
-    fn_803BD8FC(a, b, i);
+    BattleSystem_UpdateAfterSwitch((BattleSystem *)a, (BattleContext *)b, i);
     return 0;
 }
 }
@@ -426,7 +422,7 @@ s32 fn_803CC4B0(u8 *a, u8 *b) {
 extern "C" {
 
 s32 fn_803CC5B4(u8 *a, u8 *b) {
-    s32 n = fn_803AC860(a);
+    s32 n = BattleSystem_GetMaxBattlers((BattleSystem *)a);
     (*(u32 *)(b + 0xb4))++;
     u32 m = fn_803D6E6C(b);
     for (s32 i = 0; i < n; i++) {
@@ -457,7 +453,7 @@ s32 fn_803CC648(u8 *a, u8 *b) {
     *(u32 *)(*(u8 **)(b + 0x178) + 0x20) = 0;
     *(u32 *)(*(u8 **)(b + 0x178) + 0x1c) = n;
     *(u32 *)(*(u8 **)(b + 0x178) + 0x24) = *(u32 *)(b + 0x128);
-    fn_803DEF00((void *)fn_803D8004, *(u8 **)(b + 0x178), 0);
+    fn_803DEF00((Unk8063D230Func)((void *)fn_803D8004), (void *)(*(u8 **)(b + 0x178)), 0);
     return 0;
 }
 }
@@ -486,7 +482,7 @@ s32 fn_803CC708(u8 *a, u8 *b) {
     u32 y = fn_803D6E6C(b);
     if (b[0x217d] == 0) {
         if (x == 0) {
-            if ((u8)fn_803BFB18(b, *(u32 *)(b + 0x64)) == 0x5c) {
+            if ((u8)Battler_Ability((BattleContext *)b, *(u32 *)(b + 0x64)) == 0x5c) {
                 x = 5;
             } else {
                 x = LCRNG_Next() & 3;
@@ -544,14 +540,14 @@ s32 fn_803CD978(u8 *a, u8 *b) {
 
 s32 fn_803CD9C4(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803BA9EC(b, 2, fn_803D6E6C(b));
+    BattleSystem_CallScript((BattleContext *)b, 2, fn_803D6E6C(b));
     return 0;
 }
 
 s32 fn_803CDA14(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 *r = fn_803D6E8C(a, b, fn_803D6E6C(b));
-    fn_803BA9EC(b, 2, *r);
+    BattleSystem_CallScript((BattleContext *)b, 2, *r);
     return 0;
 }
 }
@@ -564,7 +560,7 @@ extern "C" {
 
 s32 fn_803CDC28(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    s32 n = fn_803AC860(a);
+    s32 n = BattleSystem_GetMaxBattlers((BattleSystem *)a);
     s32 j;
     s32 i;
     for (i = 0; i < n; i++) {
@@ -583,13 +579,13 @@ extern "C" {
 
 s32 fn_803CDCB0(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803BD39C(a, b, fn_803D803C(a, b, fn_803D6E6C(b)));
+    Battler_LockMoveChoice((BattleSystem *)a, (BattleContext *)b, fn_803D803C(a, b, fn_803D6E6C(b)));
     return 0;
 }
 
 s32 fn_803CDD1C(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803BD3C4(a, b, fn_803D803C(a, b, fn_803D6E6C(b)));
+    Battler_UnlockMoveChoice((BattleSystem *)a, (BattleContext *)b, fn_803D803C(a, b, fn_803D6E6C(b)));
     return 0;
 }
 }
@@ -624,10 +620,10 @@ s32 fn_803CE014(u8 *a, u8 *b) {
         if ((*(u32 *)(a + 0x2c) & 0x10) || *(u32 *)(a + 0x2c) == 0x4b) {
             v += fn_803CDE80(a, b, 3);
         }
-        fn_803DA100((u8 *)fn_803ACBCC(a, 0), v);
+        TrainerInfo_GiveMoney((TrainerInfo *)((u8 *)BattleSystem_GetTrainerInfo((BattleSystem *)a, 0)), v);
     } else {
         v = fn_803ADDE8(*(u8 **)(a + 0x68), *(u8 **)(a + 0x48));
-        fn_803DA144((u8 *)fn_803ACBCC(a, 0), v);
+        TrainerInfo_TakeMoney((TrainerInfo *)((u8 *)BattleSystem_GetTrainerInfo((BattleSystem *)a, 0)), v);
     }
     if (v) {
         *(s32 *)(b + 0x130) = v;
@@ -681,7 +677,7 @@ s32 fn_803CED18(u8 *a, u8 *b) {
     if (v > 0xffff) {
         *(s32 *)(b + 0x130) = 0xffff;
     }
-    fn_803DA100((u8 *)fn_803ACBCC(a, 0), *(u32 *)(b + 0x130));
+    TrainerInfo_GiveMoney((TrainerInfo *)((u8 *)BattleSystem_GetTrainerInfo((BattleSystem *)a, 0)), *(u32 *)(b + 0x130));
     return 0;
 }
 }
@@ -695,7 +691,7 @@ extern "C" {
 s32 fn_803CEFFC(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    u32 k = (u8)fn_803ACCE4(a, *(u32 *)(b + 0x64));
+    u32 k = (u8)BattleSystem_GetBattlerSide((BattleSystem *)a, *(u32 *)(b + 0x64));
     u32 *q = (u32 *)(b + k * 4 + 0x1bc);
     if (*q & 0x40) {
         *(u32 *)(b + 0xb4) += n;
@@ -714,7 +710,7 @@ s32 fn_803CF3B4(u8 *a, u8 *b) {
     u32 x = fn_803D6E6C(b);
     u32 y = fn_803D6E6C(b);
     u32 *r = fn_803D6E8C(a, b, x);
-    *r = fn_803C0B68(*r, y);
+    *r = BattleSystem_Divide(*r, y);
     return 0;
 }
 
@@ -747,7 +743,7 @@ s32 fn_803CF6A4(u8 *a, u8 *b) {
                 }
             }
         } while (i != 4);
-    } while (fn_803C8688(v) == 0);
+    } while (Move_CanBeMetronomed(v) == 0);
     *(u32 *)(b + 0x124) = v;
     return 0;
 }
@@ -760,7 +756,7 @@ extern "C" {
 s32 fn_803CF758(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    s32 j = fn_803BE72C(b + *(u32 *)(b + 0x6c) * 0xc0 + 0x2d40, *(u16 *)(b + *(u32 *)(b + 0x6c) * 2 + 0x307c));
+    s32 j = Battler_SlotForMove((BattleMon *)(b + *(u32 *)(b + 0x6c) * 0xc0 + 0x2d40), *(u16 *)(b + *(u32 *)(b + 0x6c) * 2 + 0x307c));
     u8 *q = b + *(u32 *)(b + 0x6c) * 0xc0;
     u16 m;
     if (*(u16 *)(q + 0x2de8) == 0 && j != 4 && q[j + 0x2d6c] != 0 &&
@@ -798,7 +794,7 @@ s32 fn_803D02D8(u8 *a, u8 *b) {
     u32 i6c = *(u32 *)(b + 0x6c);
     u16 mv = *(u16 *)(b + i6c * 2 + 0x307c);
     if (mv) {
-        s32 j = fn_803BE72C(b + i6c * 0xc0 + 0x2d40, mv);
+        s32 j = Battler_SlotForMove((BattleMon *)(b + i6c * 0xc0 + 0x2d40), mv);
         u8 pp;
         if (j == 4 || (pp = b[*(u32 *)(b + 0x6c) * 0xc0 + j + 0x2d6c]) == 0) {
             *(u32 *)(b + 0xb4) += n;
@@ -810,7 +806,7 @@ s32 fn_803D02D8(u8 *a, u8 *b) {
             *(u32 *)(b + 0x124) = *(u16 *)(b + *(u32 *)(b + 0x6c) * 2 + 0x307c);
             *(s32 *)(b + 0x130) = d;
             b[*(u32 *)(b + 0x6c) * 0xc0 + j + 0x2d6c] -= d;
-            fn_803BD374(a, b, *(u32 *)(b + 0x6c));
+            BattleMon_CopyToParty((BattleSystem *)a, (BattleContext *)b, *(u32 *)(b + 0x6c));
         }
     } else {
         *(u32 *)(b + 0xb4) += n;
@@ -826,7 +822,7 @@ extern "C" {
 s32 fn_803D091C(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    s32 q = fn_803C0B68(*(s32 *)(b + *(u32 *)(b + 0x64) * 0xc0 + 0x2d90), 4);
+    s32 q = BattleSystem_Divide(*(s32 *)(b + *(u32 *)(b + 0x64) * 0xc0 + 0x2d90), 4);
     u8 *p = b + *(u32 *)(b + 0x64) * 0xc0;
     if (*(s32 *)(p + 0x2d8c) <= q) {
         *(u32 *)(b + 0xb4) += n;
@@ -850,7 +846,7 @@ s32 fn_803D0EC8(u8 *a, u8 *b) {
     BF_1C8 *f;
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    k = (u8)fn_803ACCE4(a, *(u32 *)(b + 0x64)) ^ 1;
+    k = (u8)BattleSystem_GetBattlerSide((BattleSystem *)a, *(u32 *)(b + 0x64)) ^ 1;
     f = (BF_1C8 *)(b + k * 8 + 0x1c8);
     if (f->t == 3) {
         *(u32 *)(b + *(u32 *)(b + 0x64) * 0x1c + 0x2d4) |= 0x80000000;
@@ -867,13 +863,13 @@ s32 fn_803D0F94(u8 *a, u8 *b) {
     u32 x = fn_803D6E6C(b);
     u32 y = fn_803D6E6C(b);
     u32 r = fn_803D803C(a, b, x);
-    u32 t = *(u32 *)(b + (u8)fn_803ACCE4(a, r) * 8 + 0x1c8) >> 30;
+    u32 t = *(u32 *)(b + (u8)BattleSystem_GetBattlerSide((BattleSystem *)a, r) * 8 + 0x1c8) >> 30;
     u8 *q;
     if (t && *(u32 *)((q = b + r * 0xc0) + 0x2d8c)) {
         *(s32 *)(b + 0x215c) = (5 - t) * 2;
         s32 m = *(s32 *)(q + 0x2d90);
         m *= -1;
-        *(s32 *)(b + 0x215c) = fn_803C0B68(m, *(s32 *)(b + 0x215c));
+        *(s32 *)(b + 0x215c) = BattleSystem_Divide(m, *(s32 *)(b + 0x215c));
     } else {
         *(u32 *)(b + 0xb4) += y;
     }
@@ -883,13 +879,13 @@ s32 fn_803D0F94(u8 *a, u8 *b) {
 s32 fn_803D1064(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    s32 cnt = fn_803AC860(a);
+    s32 cnt = BattleSystem_GetMaxBattlers((BattleSystem *)a);
     *(s32 *)(b + 0x134) = cnt;
     s32 k = 0;
     for (s32 i = 0; i < cnt; i++) {
         u8 *q = b + i * 0xc0;
         if ((*(u32 *)(q + 0x2dc0) & 0x20) || *(u32 *)(q + 0x2d8c) == 0 ||
-            fn_803BFB90(b, *(u32 *)(b + 0x64), i, 0x2b) == 1) {
+            Battler_IgnorableAbility((BattleContext *)b, *(u32 *)(b + 0x64), i, 0x2b) == 1) {
             k++;
         } else {
             *(u32 *)(q + 0x2dc0) |= 0x20;
@@ -926,7 +922,7 @@ s32 fn_803D11BC(u8 *a, u8 *b) {
     u32 x = fn_803D6E6C(b);
     u32 y = fn_803D6E6C(b);
     u32 *r = fn_803D6E8C(a, b, x);
-    if (*r < (u32)fn_803AC860(a)) {
+    if (*r < (u32)BattleSystem_GetMaxBattlers((BattleSystem *)a)) {
         *(u32 *)(b + 0xb4) += y;
     }
     return 0;
@@ -960,7 +956,7 @@ s32 fn_803D180C(u8 *a, u8 *b) {
     if (ky == kx || (*(u32 *)(px + 0x2db0) & 0xf0000) || ky == 2 || kx == 2) {
         *(u32 *)(b + 0xb4) += n;
     } else {
-        *(u32 *)(b + *(u32 *)(b + 0x94) * 0xc0 + 0x2db0) |= fn_803DD920(y) << 16;
+        *(u32 *)(b + *(u32 *)(b + 0x94) * 0xc0 + 0x2db0) |= FlagIndex(y) << 16;
     }
     return 0;
 }
@@ -975,7 +971,7 @@ extern "C" {
 s32 fn_803D18CC(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    u32 k = (u8)fn_803ACCE4(a, *(u32 *)(b + 0x64));
+    u32 k = (u8)BattleSystem_GetBattlerSide((BattleSystem *)a, *(u32 *)(b + 0x64));
     u32 *q = (u32 *)(b + k * 4 + 0x1bc);
     if (*q & 8) {
         *(u32 *)(b + 0xb4) += n;
@@ -1008,7 +1004,7 @@ s32 fn_803D19A0(u8 *a, u8 *b) {
     } else if (r < 0xcc) {
         *(u32 *)(b + 0x2154) = 120;
     } else {
-        *(s32 *)(b + 0x215c) = fn_803C0B68(*(s32 *)(b + *(u32 *)(b + 0x6c) * 0xc0 + 0x2d90), 4);
+        *(s32 *)(b + 0x215c) = BattleSystem_Divide(*(s32 *)(b + *(u32 *)(b + 0x6c) * 0xc0 + 0x2d90), 4);
         *(u32 *)(b + 0xb4) += n;
     }
     return 0;
@@ -1059,7 +1055,7 @@ s32 fn_803D1B7C(u8 *a, u8 *b) {
     s32 y = fn_803D6E6C(b);
     u32 z = fn_803D6E6C(b);
     x = fn_803D803C(a, b, x);
-    if (fn_803BFCEC(a, b, x) == 0) {
+    if (BattleSystem_AnyReplacementMons((BattleSystem *)a, (BattleContext *)b, x) == 0) {
         *(u32 *)(b + 0xb4) += z;
     } else if (y == 1) {
         *(u32 *)(b + x * 4 + 0x13c) |= 1;
@@ -1074,12 +1070,12 @@ extern "C" {
 
 s32 fn_803D1DFC(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    if ((*(u32 *)(b + 0x180) & 0x80ff) == 0 || fn_803BF380(a, b, 8, 0, 0xd) || fn_803BF380(a, b, 8, 0, 0x4c)) {
+    if ((*(u32 *)(b + 0x180) & 0x80ff) == 0 || BattleSystem_CountAbility((BattleSystem *)a, (BattleContext *)b, (enum CountAbilityMode)8, 0, 0xd) || BattleSystem_CountAbility((BattleSystem *)a, (BattleContext *)b, (enum CountAbilityMode)8, 0, 0x4c)) {
         *(u32 *)(b + 0x215c) = *(u32 *)(b + *(u32 *)(b + 0x64) * 0xc0 + 0x2d90) >> 1;
     } else if (*(u32 *)(b + 0x180) & 0x30) {
-        *(s32 *)(b + 0x215c) = fn_803C0B68(*(s32 *)(b + *(u32 *)(b + 0x64) * 0xc0 + 0x2d90) * 20, 30);
+        *(s32 *)(b + 0x215c) = BattleSystem_Divide(*(s32 *)(b + *(u32 *)(b + 0x64) * 0xc0 + 0x2d90) * 20, 30);
     } else {
-        *(s32 *)(b + 0x215c) = fn_803C0B68(*(s32 *)(b + *(u32 *)(b + 0x64) * 0xc0 + 0x2d90), 4);
+        *(s32 *)(b + 0x215c) = BattleSystem_Divide(*(s32 *)(b + *(u32 *)(b + 0x64) * 0xc0 + 0x2d90), 4);
     }
     return 0;
 }
@@ -1111,8 +1107,8 @@ s32 fn_803D2168(u8 *a, u8 *b) {
     fn_803B2D0C(a, b, w, x, (u32)fn_803D90A0(b, y));
     if (*(u32 *)(b + 0x216c) & 0x1fd849) {
         *(u32 *)(b + 0xb4) += z;
-        *(u32 *)lbl_8048CDE8 = x;
-        fn_8016FA4C(0xb, lbl_8048CDE8);
+        *(u32 *)&lbl_8048CDE8 = x;
+        fn_8016FA4C(0xb, &lbl_8048CDE8);
     }
     return 0;
 }
@@ -1120,7 +1116,7 @@ s32 fn_803D2168(u8 *a, u8 *b) {
 s32 fn_803D225C(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    if (fn_803BFE5C(a, b, *(u32 *)(b + 0x64), 0)) {
+    if (Battler_IsTrappedMsg((BattleSystem *)a, (BattleContext *)b, *(u32 *)(b + 0x64), (BattleMessage *)0)) {
         *(u32 *)(b + 0xb4) += n;
     }
     return 0;
@@ -1133,7 +1129,7 @@ extern "C" {
 
 s32 fn_803D25D4(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    u8 *q = b + (u8)fn_803ACCE4(a, *(u32 *)(b + 0x64)) * 8;
+    u8 *q = b + (u8)BattleSystem_GetBattlerSide((BattleSystem *)a, *(u32 *)(b + 0x64)) * 8;
     ((BF_2700 *)(q + 0x1c4))->sel = 1;
     ((BF_2700 *)(q + 0x1c4))->who = *(u32 *)(b + 0x64);
     return 0;
@@ -1149,9 +1145,9 @@ extern "C" {
 s32 fn_803D2634(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    if (fn_803AC840(a) & 2) {
+    if (BattleSystem_GetBattleType((BattleSystem *)a) & 2) {
         u32 r = fn_803D803C(a, b, 0x10);
-        if (!(b[0x3108] & fn_803DD920(r)) && *(u32 *)(b + r * 16 + 0x21a8) != 0x27 && *(u32 *)(b + r * 0xc0 + 0x2d8c) &&
+        if (!(b[0x3108] & FlagIndex(r)) && *(u32 *)(b + r * 16 + 0x21a8) != 0x27 && *(u32 *)(b + r * 0xc0 + 0x2d8c) &&
             !((*(u32 *)(b + *(u32 *)(b + 0x64) * 64 + 0x1d4) >> 28) & 1) &&
             !((*(u32 *)(b + r * 64 + 0x1d4) >> 28) & 1)) {
             *(u32 *)(b + 0x118) = r;
@@ -1196,7 +1192,7 @@ s32 fn_803D2AB4(u8 *a, u8 *b) {
     u32 n = fn_803D6E6C(b);
     s32 i;
     s32 c = 0;
-    for (i = 0; i < (s32)fn_803AC860(a); i++) {
+    for (i = 0; i < (s32)BattleSystem_GetMaxBattlers((BattleSystem *)a); i++) {
         if (*(u32 *)(b + i * 0xc0 + 0x2d8c)) {
             c++;
         }
@@ -1218,9 +1214,9 @@ s32 fn_803D2C80(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 o = *(u32 *)(b + 0x64) * 64;
     if ((*(u32 *)(b + o + *(u32 *)(b + 0x6c) * 4 + 0x1d8) != 0 &&
-         (*(u32 *)(b + o + 0x1ec) & fn_803DD920(*(u32 *)(b + 0x6c)))) ||
+         (*(u32 *)(b + o + 0x1ec) & FlagIndex(*(u32 *)(b + 0x6c)))) ||
         (*(u32 *)(b + o + *(u32 *)(b + 0x6c) * 4 + 0x1f0) != 0 &&
-         (*(u32 *)(b + *(u32 *)(b + 0x64) * 64 + 0x204) & fn_803DD920(*(u32 *)(b + 0x6c))))) {
+         (*(u32 *)(b + *(u32 *)(b + 0x64) * 64 + 0x204) & FlagIndex(*(u32 *)(b + 0x6c))))) {
         *(u32 *)(b + 0x2158) = 20;
     } else {
         *(u32 *)(b + 0x2158) = 10;
@@ -1238,14 +1234,14 @@ extern "C" {
 s32 fn_803D2D44(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    u32 k = (u8)fn_803ACCE4(a, *(u32 *)(b + 0x6c));
-    *(u32 *)(lbl_8048CE28 + 0x20) = 0;
+    u32 k = (u8)BattleSystem_GetBattlerSide((BattleSystem *)a, *(u32 *)(b + 0x6c));
+    lbl_8048CE28._20 = 0;
     u32 *q = (u32 *)(b + k * 4 + 0x1bc);
     if (*q & 1) {
-        *(u32 *)(lbl_8048CE28 + 0x20) |= 1;
+        lbl_8048CE28._20 |= 1;
     }
     if (*q & 2) {
-        *(u32 *)(lbl_8048CE28 + 0x20) |= 2;
+        lbl_8048CE28._20 |= 2;
     }
     if ((*q & 1) || (*q & 2)) {
         *q &= ~3;
@@ -1299,7 +1295,7 @@ s32 fn_803D333C(u8 *a, u8 *b) {
     u32 n = fn_803D6E6C(b);
     s32 i;
     s32 c = 0;
-    for (i = 0; i < (s32)fn_803AC860(a); i++) {
+    for (i = 0; i < (s32)BattleSystem_GetMaxBattlers((BattleSystem *)a); i++) {
         if (*(u32 *)(b + i * 0xc0 + 0x2d8c)) {
             c++;
         }
@@ -1319,7 +1315,7 @@ extern "C" {
 
 s32 fn_803D34C8(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    if (fn_803BF380(a, b, 8, 0, 0xd) == 0 && fn_803BF380(a, b, 8, 0, 0x4c) == 0) {
+    if (BattleSystem_CountAbility((BattleSystem *)a, (BattleContext *)b, (enum CountAbilityMode)8, 0, 0xd) == 0 && BattleSystem_CountAbility((BattleSystem *)a, (BattleContext *)b, (enum CountAbilityMode)8, 0, 0x4c) == 0) {
         u32 fl = *(u32 *)(b + 0x180);
         if (fl & 0x80ff) {
             *(u32 *)(b + 0x2154) = b[*(u32 *)(b + 0x3044) * 16 + 0x3e1] * 2;
@@ -1344,14 +1340,7 @@ s32 fn_803D34C8(u8 *a, u8 *b) {
 
 s32 fn_803D37FC(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    *(u32 *)(b + 0x2144) = fn_803BE8B0(a,
-                                       b,
-                                       *(u32 *)(b + 0x3044),
-                                       *(u32 *)(b + 0x2160),
-                                       *(u32 *)(b + 0x64),
-                                       *(u32 *)(b + 0x6c),
-                                       *(u32 *)(b + 0x2144),
-                                       b + 0x216c);
+    *(u32 *)(b + 0x2144) = BattleSystem_ApplyTypeChart((BattleSystem *)a, (BattleContext *)b, *(u32 *)(b + 0x3044), *(u32 *)(b + 0x2160), *(u32 *)(b + 0x64), *(u32 *)(b + 0x6c), *(u32 *)(b + 0x2144), (u32 *)(b + 0x216c));
     return 0;
 }
 
@@ -1398,8 +1387,8 @@ s32 fn_803D3DA8(u8 *a, u8 *b) {
 s32 fn_803D3F04(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    if (fn_803BF8E4((u16) * (u32 *)(b + 0x3048)) == 0 && *(u32 *)(b + 0x3048) != 0 &&
-        fn_803C8688((u16) * (u32 *)(b + 0x3048)) == 1) {
+    if (Move_IsInvoker((u16) * (u32 *)(b + 0x3048)) == 0 && *(u32 *)(b + 0x3048) != 0 &&
+        Move_CanBeMetronomed((u16) * (u32 *)(b + 0x3048)) == 1) {
         *(u32 *)(b + 0x124) = *(u32 *)(b + 0x3048);
     } else {
         *(u32 *)(b + 0xb4) += n;
@@ -1444,7 +1433,7 @@ s32 fn_803D4008(u8 *a, u8 *b) {
     u32 m = *(u16 *)(q + 0x2dec);
     if (m != 0 && m == *(u16 *)(q + *(u16 *)(q + 0x2dee) * 2 + 0x2d4c)) {
     } else {
-        m = (u16)fn_803BF340(b, *(u32 *)(b + 0x6c));
+        m = (u16)Battler_SelectedMove((BattleContext *)b, *(u32 *)(b + 0x6c));
     }
     if (*(u32 *)(b + *(u32 *)(b + 0x6c) * 16 + 0x21a8) == 0x27 ||
         (b[m * 16 + 0x3e1] == 0 && !(*(u32 *)(b + *(u32 *)(b + 0x6c) * 64 + 0x1d4) >> 31))) {
@@ -1483,7 +1472,7 @@ extern "C" {
 s32 fn_803D4494(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    s32 k = fn_803C06A4(a, b, *(u32 *)(b + 0x64));
+    s32 k = Battler_CountMoves((BattleSystem *)a, (BattleContext *)b, *(u32 *)(b + 0x64));
     if (((*(u32 *)(b + *(u32 *)(b + 0x64) * 0xc0 + 0x2dcc) >> 19) & 7) < (u32)(k - 1) || k < 2) {
         *(u32 *)(b + 0xb4) += n;
     }
@@ -1495,7 +1484,7 @@ s32 fn_803D4528(u8 *a, u8 *b) {
     BF_1C8 *f;
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    k = (u8)fn_803ACCE4(a, *(u32 *)(b + 0x64)) ^ 1;
+    k = (u8)BattleSystem_GetBattlerSide((BattleSystem *)a, *(u32 *)(b + 0x64)) ^ 1;
     f = (BF_1C8 *)(b + k * 8 + 0x1c8);
     if (f->u == 2) {
         *(u32 *)(b + *(u32 *)(b + 0x64) * 0x1c + 0x2d4) |= 0x80000000;
@@ -1512,14 +1501,14 @@ s32 fn_803D45F4(u8 *a, u8 *b) {
     u32 x = fn_803D6E6C(b);
     u32 y = fn_803D6E6C(b);
     u32 r = fn_803D803C(a, b, x);
-    u32 k = (u8)fn_803ACCE4(a, r);
+    u32 k = (u8)BattleSystem_GetBattlerSide((BattleSystem *)a, r);
     BF_1C8 *f = (BF_1C8 *)(b + k * 8 + 0x1c8);
     u32 t = f->u;
     if (t) {
         *(u32 *)(b + 0x134) = t;
         *(u32 *)(b + 0x88) = 6;
         *(u32 *)(b + 0x94) = r;
-        if (fn_803BACA4(b, *(u32 *)(b + 0x78), 0x1b, 0) == 3 || fn_803BACA4(b, *(u32 *)(b + 0x78), 0x1c, 0) == 3) {
+        if (BattleMon_Get((BattleContext *)b, *(u32 *)(b + 0x78), (enum BattleMonParam)0x1b, (void *)0) == 3 || BattleMon_Get((BattleContext *)b, *(u32 *)(b + 0x78), (enum BattleMonParam)0x1c, (void *)0) == 3) {
             *(u32 *)(b + k * 4 + 0x1bc) &= ~0x400;
             f->u = 0;
             *(u32 *)(b + 0x134) = 0;
@@ -1536,8 +1525,8 @@ s32 fn_803D48F8(u8 *a, u8 *b) {
     u32 y = fn_803D6E6C(b);
     u32 z = fn_803D6E6C(b);
     u32 r1 = fn_803D803C(a, b, x);
-    u32 k = (u8)fn_803ACCE4(a, fn_803D803C(a, b, y));
-    if ((u8)fn_803ACCE4(a, r1) == k) {
+    u32 k = (u8)BattleSystem_GetBattlerSide((BattleSystem *)a, fn_803D803C(a, b, y));
+    if ((u8)BattleSystem_GetBattlerSide((BattleSystem *)a, r1) == k) {
         *(u32 *)(b + 0xb4) += z;
     }
     return 0;
@@ -1565,7 +1554,7 @@ s32 fn_803D4C50(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 x = fn_803D6E6C(b);
     u32 y = fn_803D6E6C(b);
-    if (fn_803C3DD8(b, fn_803D803C(a, b, x)) == 1) {
+    if (Battler_MovedThisTurn((BattleContext *)b, fn_803D803C(a, b, x)) == 1) {
         *(u32 *)(b + 0xb4) += y;
     }
     return 0;
@@ -1579,11 +1568,11 @@ s32 fn_803D4CDC(u8 *a, u8 *b) {
     u32 z = fn_803D6E6C(b);
     u32 r = fn_803D803C(a, b, x);
     if (w == 0) {
-        if (y == (s32)fn_803C40BC(b, r)) {
+        if (y == (s32)Battler_HeldItemEffect((BattleContext *)b, r)) {
             *(u32 *)(b + 0xb4) += z;
         }
     } else {
-        if (y != (s32)fn_803C40BC(b, r)) {
+        if (y != (s32)Battler_HeldItemEffect((BattleContext *)b, r)) {
             *(u32 *)(b + 0xb4) += z;
         }
     }
@@ -1595,7 +1584,7 @@ s32 fn_803D4DA8(u8 *a, u8 *b) {
     u32 x = fn_803D6E6C(b);
     u32 y = fn_803D6E6C(b);
     u32 *r = fn_803D6E8C(a, b, y);
-    *r = fn_803C877C(b, fn_803C3D6C(b, fn_803D803C(a, b, x)), 1);
+    *r = BattleSystem_GetItemData((BattleContext *)b, Battler_HeldItem((BattleContext *)b, fn_803D803C(a, b, x)), (enum ItemDataParam)1);
     return 0;
 }
 }
@@ -1621,12 +1610,12 @@ extern "C" {
 s32 fn_803D4F08(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    if ((u8)fn_803BFB18(b, *(u32 *)(b + 0x64)) == 0x79) {
+    if ((u8)Battler_Ability((BattleContext *)b, *(u32 *)(b + 0x64)) == 0x79) {
         *(u32 *)(b + 0xb4) += n;
         return 0;
     }
     s32 t = lbl_80405AC1[fn_803ACD14(a)];
-    if (t != fn_803BACA4(b, *(u32 *)(b + 0x64), 0x1b, 0) && t != fn_803BACA4(b, *(u32 *)(b + 0x64), 0x1c, 0)) {
+    if (t != BattleMon_Get((BattleContext *)b, *(u32 *)(b + 0x64), (enum BattleMonParam)0x1b, (void *)0) && t != BattleMon_Get((BattleContext *)b, *(u32 *)(b + 0x64), (enum BattleMonParam)0x1c, (void *)0)) {
         b[*(u32 *)(b + 0x64) * 0xc0 + 0x2d64] = t;
         b[*(u32 *)(b + 0x64) * 0xc0 + 0x2d65] = t;
         *(s32 *)(b + 0x130) = t;
@@ -1663,10 +1652,10 @@ s32 fn_803D5078(u8 *a, u8 *b) {
 s32 fn_803D50C8(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    u32 r = fn_803C4194(b, *(u32 *)(b + 0x64));
+    u32 r = Battler_NaturalGiftPower((BattleContext *)b, *(u32 *)(b + 0x64));
     if (r) {
         *(u32 *)(b + 0x2154) = r;
-        *(u32 *)(b + 0x2160) = fn_803C41D8(b, *(u32 *)(b + 0x64));
+        *(u32 *)(b + 0x2160) = Battler_NaturalGiftType((BattleContext *)b, *(u32 *)(b + 0x64));
     } else {
         *(u32 *)(b + 0xb4) += n;
     }
@@ -1685,9 +1674,9 @@ s32 fn_803D514C(u8 *a, u8 *b) {
     u32 x = fn_803D6E6C(b);
     u32 y = fn_803D6E6C(b);
     if (*(u16 *)(b + *(u32 *)(b + 0x6c) * 0xc0 + 0x2db8) != 0 &&
-        fn_803BFB90(b, *(u32 *)(b + 0x64), *(u32 *)(b + 0x6c), 0x3c) == 1) {
+        Battler_IgnorableAbility((BattleContext *)b, *(u32 *)(b + 0x64), *(u32 *)(b + 0x6c), 0x3c) == 1) {
         *(u32 *)(b + 0xb4) += x;
-    } else if (fn_803C44DC(a, b, *(u32 *)(b + 0x6c)) != 1) {
+    } else if (BattleSystem_PluckBerry((BattleSystem *)a, (BattleContext *)b, *(u32 *)(b + 0x6c)) != 1) {
         *(u32 *)(b + 0xb4) += y;
     }
     return 0;
@@ -1696,7 +1685,7 @@ s32 fn_803D514C(u8 *a, u8 *b) {
 s32 fn_803D520C(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    if (fn_803C4DE8(a, b, *(u32 *)(b + 0x64)) != 1) {
+    if (BattleSystem_FlingItem((BattleSystem *)a, (BattleContext *)b, *(u32 *)(b + 0x64)) != 1) {
         *(u32 *)(b + 0xb4) += n;
     }
     return 0;
@@ -1721,7 +1710,7 @@ s32 fn_803D5280(u8 *a, u8 *b) {
 extern "C" {
 
 s32 fn_803D52EC(u8 *a, u8 *b) {
-    u8 v = fn_803C5A34(b, 0);
+    u8 v = BattleContext_IOBufferVal((BattleContext *)b, 0);
     if (v) {
         (*(u32 *)(b + 0xb4))++;
         u32 x = fn_803D6E6C(b);
@@ -1741,7 +1730,7 @@ s32 fn_803D52EC(u8 *a, u8 *b) {
 extern "C" {
 
 s32 fn_803D5380(u8 *a, u8 *b) {
-    fn_803AC860(a);
+    BattleSystem_GetMaxBattlers((BattleSystem *)a);
     (*(u32 *)(b + 0xb4))++;
     fn_803B0D6C(a, b, 0, 0, 0, 6);
     *(u32 *)(b + 0x78) = 0;
@@ -1749,7 +1738,7 @@ s32 fn_803D5380(u8 *a, u8 *b) {
 }
 
 s32 fn_803D53EC(u8 *a, u8 *b) {
-    u8 v = fn_803C5A34(b, 0);
+    u8 v = BattleContext_IOBufferVal((BattleContext *)b, 0);
     if (v) {
         (*(u32 *)(b + 0xb4))++;
         u32 n = fn_803D6E6C(b);
@@ -1764,7 +1753,7 @@ s32 fn_803D53EC(u8 *a, u8 *b) {
 
 s32 fn_803D5470(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    if (fn_803AC840(a) & 4) {
+    if (BattleSystem_GetBattleType((BattleSystem *)a) & 4) {
         fn_803B24E4(a);
     }
     return 0;
@@ -1781,7 +1770,7 @@ s32 fn_803D5660(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
     u16 v;
-    if ((u8)fn_803BFB18(b, *(u32 *)(b + 0x64)) == 0x20) {
+    if ((u8)Battler_Ability((BattleContext *)b, *(u32 *)(b + 0x64)) == 0x20) {
         v = b[*(u32 *)(b + 0x3044) * 16 + 0x3e5] * 2;
     } else {
         v = b[*(u32 *)(b + 0x3044) * 16 + 0x3e5];
@@ -1800,7 +1789,7 @@ s32 fn_803D5738(u8 *a, u8 *b) {
     if (*(u16 *)(q + 0x2d40) == 0x1b9 && *(u32 *)(b + *(u32 *)(b + 0x6c) * 0xc0 + 0x2d8c) &&
         !(*(u32 *)(q + 0x2db0) & 0x200000)) {
         s32 p;
-        switch (fn_803DA018(fn_803ADBCC(a, *(u32 *)(b + 0x64)))) {
+        switch (fn_803DA018((const TrainerInfo *)(fn_803ADBCC(a, *(u32 *)(b + 0x64))))) {
             case 0:
             default: p = 0; break;
             case 1:  p = 10; break;
@@ -1823,7 +1812,7 @@ extern "C" {
 s32 fn_803D583C(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 v = fn_803D6E6C(b);
-    *(u32 *)(b + 0x134) = fn_803DEAC4(b + *(u32 *)(b + 0x3044) * 16 + 0x3de, v);
+    *(u32 *)(b + 0x134) = MoveTable_Get((MoveTable *)(b + *(u32 *)(b + 0x3044) * 16 + 0x3de), v);
     return 0;
 }
 }
@@ -1852,9 +1841,9 @@ s32 fn_803D5924(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 r = fn_803D803C(a, b, fn_803D6E6C(b));
     fn_803B1D58(a, r);
-    *(u32 *)lbl_8048CDE8 = r;
-    *(u32 *)(lbl_8048CDE8 + 4) = ((*(u8 **)(a + 0x30))[r * 0xc0 + 0x2d66] >> 3) & 0x1f;
-    fn_8016FA4C(0x16, lbl_8048CDE8);
+    *(u32 *)&lbl_8048CDE8 = r;
+    *(u32 *)((u8 *)&lbl_8048CDE8 + 4) = ((*(u8 **)(a + 0x30))[r * 0xc0 + 0x2d66] >> 3) & 0x1f;
+    fn_8016FA4C(0x16, &lbl_8048CDE8);
     return 0;
 }
 
@@ -1882,7 +1871,7 @@ s32 fn_803D5A68(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 x = fn_803D6E6C(b);
     u32 y = fn_803D6E6C(b);
-    if (fn_803C01A0(a, b, fn_803D803C(a, b, x))) {
+    if (Battler_CanEscape((BattleSystem *)a, (BattleContext *)b, fn_803D803C(a, b, x))) {
         *(u32 *)(b + 0xb4) += y;
     }
     return 0;
@@ -1966,28 +1955,28 @@ extern "C" {
 s32 fn_803D5DF0(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    if (fn_803C1BF8(a, b, b + 0x138) == 0) {
+    if (BattleSystem_TriggerAbilityOnHit((BattleSystem *)a, (BattleContext *)b, (int *)(b + 0x138)) == 0) {
         *(u32 *)(b + 0xb4) += n;
     }
     return 0;
 }
 
 s32 fn_803D5E64(u8 *a, u8 *b) {
-    s32 n = fn_803AC860(a);
+    s32 n = BattleSystem_GetMaxBattlers((BattleSystem *)a);
     (*(u32 *)(b + 0xb4))++;
     s32 c = fn_803D6E6C(b);
     s32 i;
     switch (c) {
         case 3:
             for (i = 0; i < n; i++) {
-                if (!(((u8 *)fn_803AC850(a, i))[0x185] & 1)) {
+                if (!(((u8 *)BattleSystem_GetBattlerData((BattleSystem *)a, i))[0x185] & 1)) {
                     fn_803B21EC(a, i);
                 }
             }
             break;
         case 4:
             for (i = 0; i < n; i++) {
-                if (((u8 *)fn_803AC850(a, i))[0x185] & 1) {
+                if (((u8 *)BattleSystem_GetBattlerData((BattleSystem *)a, i))[0x185] & 1) {
                     fn_803B21EC(a, i);
                 }
             }
@@ -1998,21 +1987,21 @@ s32 fn_803D5E64(u8 *a, u8 *b) {
 }
 
 s32 fn_803D5F64(u8 *a, u8 *b) {
-    s32 n = fn_803AC860(a);
+    s32 n = BattleSystem_GetMaxBattlers((BattleSystem *)a);
     (*(u32 *)(b + 0xb4))++;
     s32 c = fn_803D6E6C(b);
     s32 i;
     switch (c) {
         case 3:
             for (i = 0; i < n; i++) {
-                if (!(((u8 *)fn_803AC850(a, i))[0x185] & 1)) {
+                if (!(((u8 *)BattleSystem_GetBattlerData((BattleSystem *)a, i))[0x185] & 1)) {
                     fn_803B2224(a, i);
                 }
             }
             break;
         case 4:
             for (i = 0; i < n; i++) {
-                if (((u8 *)fn_803AC850(a, i))[0x185] & 1) {
+                if (((u8 *)BattleSystem_GetBattlerData((BattleSystem *)a, i))[0x185] & 1) {
                     fn_803B2224(a, i);
                 }
             }
@@ -2052,7 +2041,7 @@ s32 fn_803D63CC(u8 *a, u8 *b) {
     u32 r = fn_803D803C(a, b, fn_803D6E6C(b));
     *(u16 *)(b + r * 2 + 0x3124) = *(u16 *)(b + r * 0xc0 + 0x2db8);
     *(u16 *)(b + r * 0xc0 + 0x2db8) = 0;
-    fn_803BD374(a, b, r);
+    BattleMon_CopyToParty((BattleSystem *)a, (BattleContext *)b, r);
     return 0;
 }
 }
@@ -2079,7 +2068,7 @@ s32 fn_803D6458(u8 *a, u8 *b) {
 s32 fn_803D64CC(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    if (fn_803C3DF4(a, b, b + 0x138) == 0) {
+    if (BattleSystem_TriggerHeldItemOnHit((BattleSystem *)a, (BattleContext *)b, (int *)(b + 0x138)) == 0) {
         *(u32 *)(b + 0xb4) += n;
     }
     return 0;
@@ -2120,8 +2109,8 @@ s32 fn_803D65D0(u8 *a, u8 *b) {
     s32 hit = 0;
     (*(u32 *)(b + 0xb4))++;
     r = fn_803D803C(a, b, fn_803D6E6C(b));
-    s32 ab = fn_803C40BC(b, r);
-    s32 v = fn_803C4100(b, r, 0);
+    s32 ab = Battler_HeldItemEffect((BattleContext *)b, r);
+    s32 v = Battler_HeldItemPower((BattleContext *)b, r, (enum HeldItemPowerOp)0);
     if (ab == 0x40 && (s32)LCRNG_Next() % 100 < v) {
         hit = 1;
     }
@@ -2133,7 +2122,7 @@ s32 fn_803D65D0(u8 *a, u8 *b) {
         if (*(s32 *)(b + 0x215c) + hp <= 0) {
             *(s32 *)(b + 0x215c) = -(hp - 1);
             *(u32 *)(b + 0x216c) |= 0x100;
-            *(u32 *)(lbl_8048CE28 + 0x1c) = 1;
+            *(u32 *)((u8 *)&lbl_8048CE28 + 0x1c) = 1;
         }
     }
     return 0;
@@ -2146,10 +2135,10 @@ s32 fn_803D66F0(u8 *a, u8 *b) {
     u32 r = fn_803D803C(a, b, x);
     u32 o = r * 0xc0;
     if (*(u32 *)(b + o + 0x2d8c) && b[r + 0x219c] != 6) {
-        u8 *m = fn_803AC9A4(a, r, b[r + 0x219c]);
-        u32 v1 = GetMonDataInternal(m, 10, 0);
-        u32 v2 = GetMonDataInternal(m, 0x9f, 0);
-        if ((b + o)[0x2d67] != 0x1e && fn_803C268C(b, v1, v2) == 0) {
+        u8 *m = (u8 *)BattleSystem_GetPartyPokemon((BattleSystem *)a, r, b[r + 0x219c]);
+        u32 v1 = Pokemon_GetValue((Pokemon *)m, 10, (void *)0);
+        u32 v2 = Pokemon_GetValue((Pokemon *)m, 0x9f, (void *)0);
+        if ((b + o)[0x2d67] != 0x1e && Ability_ForbidsStatus((BattleContext *)b, v1, v2) == 0) {
             *(u32 *)(b + 0xb4) += y;
         }
     } else {
@@ -2172,7 +2161,7 @@ s32 fn_803D67F4(u8 *a, u8 *b) {
 s32 fn_803D6894(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    if (fn_803BF380(a, b, 8, 0, 0xd) || fn_803BF380(a, b, 8, 0, 0x4c)) {
+    if (BattleSystem_CountAbility((BattleSystem *)a, (BattleContext *)b, (enum CountAbilityMode)8, 0, 0xd) || BattleSystem_CountAbility((BattleSystem *)a, (BattleContext *)b, (enum CountAbilityMode)8, 0, 0x4c)) {
         *(u32 *)(b + 0xb4) += n;
     }
     return 0;
@@ -2185,7 +2174,7 @@ extern "C" {
 
 s32 fn_803D6930(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    *(u32 *)(b + 0x6c) = fn_803C1B4C(a, b, fn_803D803C(a, b, fn_803D6E6C(b)));
+    *(u32 *)(b + 0x6c) = BattleSystem_RandomOpponent((BattleSystem *)a, (BattleContext *)b, fn_803D803C(a, b, fn_803D6E6C(b)));
     return 0;
 }
 }
@@ -2199,7 +2188,7 @@ extern "C" {
 s32 fn_803D69A0(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
-    if (fn_803C88F0(a, b, b + 0x138) == 0) {
+    if (BattleSystem_TriggerHeldItemOnPivotMove((BattleSystem *)a, (BattleContext *)b, (int *)(b + 0x138)) == 0) {
         *(u32 *)(b + 0xb4) += n;
     }
     return 0;
@@ -2247,12 +2236,12 @@ s32 fn_803D6B68(void) {
 }
 
 void fn_803D6B70(u8 *a, u8 *b) {
-    fn_803BAA4C(b);
+    BattleSystem_PopScript((BattleContext *)b);
 }
 
 s32 fn_803D6B78(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    *(u32 *)(lbl_8048CE28 + 0xc) = fn_803D803C(a, b, fn_803D6E6C(b));
+    lbl_8048CE28._0C = fn_803D803C(a, b, fn_803D6E6C(b));
     return 0;
 }
 
@@ -2271,7 +2260,7 @@ u32 fn_803D6E6C(u8 *p) {
 
 void fn_803D8004(u8 *a, u8 *b) {
     fn_8016E0A0(b);
-    fn_803DEF3C(a);
+    fn_803DEF3C((Unk8063D230 *)a);
 }
 
 u32 fn_803D903C(u8 *a, u8 *b, s32 c) {

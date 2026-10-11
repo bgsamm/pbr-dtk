@@ -24,7 +24,7 @@ void fn_803AFF40(u8 *a, u32 b, u32 c) {
     Msg4 m;
     m.a = c;
     m.cmd = 9;
-    u32 k = fn_803ACD38(a, b);
+    u32 k = BattleSystem_GetPartner((BattleSystem *)a, b);
     m.b = (*(u8 **)(a + 0x30))[k + 0x219c];
     fn_803AF5F0(a, 1, b, &m, 4);
 }
@@ -80,7 +80,7 @@ void fn_803B0E4C(u8 *a, u32 b, u32 x) {
 extern "C" {
 
 void fn_803B0E94(u8 *a, u8 *b, u32 c, u32 d, u32 e, u32 f, u32 g) {
-    fn_803BAC78(b, c);
+    BattleIO_ClearBuffer((BattleContext *)b, c);
     struct {
         u8 cmd;
         u8 e;
@@ -207,7 +207,7 @@ void fn_803B1798(u8 *a, u8 *b, u32 c) {
     u8 m[8];
     m[0] = 0x23;
     u8 *q = m;
-    for (s32 i = 0; i < (s32)fn_803AC860(a); i++) {
+    for (s32 i = 0; i < (s32)BattleSystem_GetMaxBattlers((BattleSystem *)a); i++) {
         q[i + 4] = b[i + 0x219c];
     }
     fn_803AF5F0(a, 1, c, m, 8);
@@ -254,7 +254,7 @@ void fn_803B1C60(u8 *a, u8 *b, u32 c, u16 d) {
 extern "C" {
 
 void fn_803B1CA8(u8 *a, u32 b, u32 c, u32 d) {
-    fn_803BAC78((u8 *)fn_803AC848(a), b);
+    BattleIO_ClearBuffer((BattleContext *)((u8 *)BattleSystem_GetBattleContext((BattleSystem *)a)), b);
     Msg4 m;
     m.b = c;
     m.cmd = 0x2b;
@@ -329,7 +329,7 @@ void fn_803B2078(u8 *a, u32 b, u32 c, u32 d) {
 
 void fn_803B20B8(u8 *a, u32 b) {
     u32 v = 0x37000000;
-    if (fn_803AC840(a) & 4) {
+    if (BattleSystem_GetBattleType((BattleSystem *)a) & 4) {
         fn_803AF5F0(a, 1, b, &v, 4);
     }
 }
@@ -360,9 +360,9 @@ void fn_803B2294(u8 *a, u8 *b) {
     Msg4 m;
     m.cmd = 0x3c;
     m.a = 0;
-    for (s32 i = 0; i < (s32)fn_803AC860(a); i++) {
+    for (s32 i = 0; i < (s32)BattleSystem_GetMaxBattlers((BattleSystem *)a); i++) {
         if (*(u32 *)(b + i * 16 + 0x21a8) == 0x10) {
-            m.a |= fn_803DD920(i);
+            m.a |= FlagIndex(i);
         }
     }
     fn_803AF5F0(a, 1, 0, &m, 4);

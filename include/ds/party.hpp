@@ -18,4 +18,3 @@ Pokemon *fn_803DE8F0(Pokemon *dst, const Pokemon *src);
 s32 Party_GetCurrentCount(const Party *party);
 Pokemon *Party_GetPokemonBySlotIndex(const Party *party, s32 slot);
 void Party_Copy(const Party *src, Party *dst);
-Party *fn_803DE994();

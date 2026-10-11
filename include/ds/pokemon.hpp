@@ -1,6 +1,9 @@
 #pragma once
 
 #include "decomp.h"
+#include "ds/constants/abilities.hpp"
+#include "ds/constants/moves.hpp"
+#include "ds/constants/species.hpp"
 
 #include <revolution/types.h>
 
@@ -23,15 +26,12 @@
 #define SPECIES_SHEDINJA 292
 #define SPECIES_DEOXYS 386
 #define SPECIES_WORMADAM 413
-#define SPECIES_ARCEUS 493
 #define SPECIES_EGG 494
 #define SPECIES_BAD_EGG 495
 
-#define MOVE_NONE 0
 #define MOVE_TABLE_FULL 0xFFFF
 #define MOVE_ALREADY_KNOWN 0xFFFE
 
-#define ABILITY_MULTITYPE 121
 #define HOLD_EFFECT_FRIENDSHIP_UP 52
 
 #define NUM_NATURES 25

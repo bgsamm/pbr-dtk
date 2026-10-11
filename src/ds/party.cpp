@@ -1,5 +1,7 @@
 #include "ds/party.hpp"
 
+#include "ds/trainer_data.hpp"
+
 #include <cstring>
 
 // TODO Replace with proper imports
@@ -57,8 +59,7 @@ Pokemon *Party_GetPokemonBySlotIndex(const Party *party, s32 slot) {
 void Party_Copy(const Party *src, Party *dst) {
     *dst = *src;
 }
-// TODO Returns NULL where the DS version returns the party of the save data.
-
-Party *fn_803DE994() {
-    return NULL;
+// This game has no trainer messages in the DS data: the battle engine never finds one.
+BOOL Trainer_HasMessageType(int trainerID, int msgType, int heapID) {
+    return FALSE;
 }

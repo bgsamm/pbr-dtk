@@ -473,7 +473,7 @@ int fn_801C133C(void* t, void* p, void* r);
 u8 fn_801C2F40(void* p, u8 i);
 u32 fn_8017CE00(u32 a, u8 j);
 u8 fn_801C1A88(void);
-int fn_803C6154(u8 a, u32 b);
+extern "C++" u32 ApplyStatStage(u8 stage, u32 stat);
 u16 fn_801810F4(void* t, void* p, u16* a, s16* b, u32 mode);
 u8 fn_801C6664(u32 a, int b);
 int fn_801C6A48(u16 v, u32 a, u32 c);
@@ -576,7 +576,7 @@ int fn_80180D1C(void* t, void* p, void* q) {
     int b = fn_8018028C(fn_801C3AC8(q));
     u8 c = fn_80180DA8(p);
     u8 d = fn_80180DA8(q);
-    return fn_803C6154(c, a) - fn_803C6154(d, b);
+    return ApplyStatStage(c, a) - ApplyStatStage(d, b);
 }
 
 int fn_801812F0(void* t, void* p, u32 key, s16* out) {
@@ -1575,7 +1575,7 @@ void fn_8018563C(void* t, Unk82A74* arr, u8* count, u32 mv, u32 mode) {
             sp[j] = fn_8018028C(fn_801C3AC8((void*)e->a[j]));
             u8 l = fn_80180DA8((void*)e->a[j]);
             lv[j] = l;
-            if (lv[j] != 6) eff[j] = fn_803C6154(lv[j], sp[j]);
+            if (lv[j] != 6) eff[j] = ApplyStatStage(lv[j], sp[j]);
             else eff[j] = sp[j];
         }
         if (mode == 1) {

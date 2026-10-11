@@ -632,7 +632,7 @@ config.libs = [
             Object(NonMatching, "main.cpp"),
             Object(NonMatching, "ds/battle/battle_controller.cpp"),
             Object(NonMatching, "ds/battle/battle_controller_player.cpp"),
-            Object(NonMatching, "ds/battle/battle_lib.cpp"),
+            Object(NonMatching, "ds/battle/battle_lib.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
             Object(NonMatching, "ds/battle/battle_script.cpp"),
             Object(Matching, "ds/DSbridge.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
             Object(NonMatching, ".unsorted/800559D4.cpp"),

@@ -1,4 +1,5 @@
 #include "ds/DSbridge.hpp"
+#include "ds/battle/battle_system.hpp"
 
 #include ".unsorted/80035CB0.hpp"
 #include ".unsorted/803DEEA4.hpp"

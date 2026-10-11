@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ds/battle/battle_system.hpp"
+#include "ds/battle/battle_constants.hpp"
 
 #include <revolution/types.h>
 
@@ -13,6 +14,8 @@
  */
 
 struct ApplicationManager;
+struct BattleMessage;
+struct BattleSystem;
 struct FieldBattleDTO;
 struct Pokemon;
 struct Strbuf;
@@ -24,8 +27,6 @@ struct Strbuf;
 
 #define NARC_INDEX_ITEM_DATA 16
 
-#define BATTLE_TYPE_DOUBLES (1 << 1)
-#define BATTLE_TYPE_2vs2 (1 << 3)
 
 enum ItemDataParam {
     ITEM_PARAM_PRICE,
@@ -209,9 +210,12 @@ struct Unk8048CE28 {
     /* 0x4 */ u32 pendingCommand;
     /* 0x8 */ u8 unk8[0x4];
     /* 0xC */ u32 _0C;
-    /* 0x10 */ u8 unk10[0x8];
+    /* 0x10 */ u8 unk10[0x4];
+    /* 0x14 */ u32 _14;
     /* 0x18 */ u32 _18;
-    /* 0x1C */ u8 unk1C[0x24];
+    /* 0x1C */ u8 unk1C[0x4];
+    /* 0x20 */ u32 _20;
+    /* 0x24 */ u8 unk24[0x1C];
 };
 
 // TODO Arguments of the battle commands sent to fn_8016FA4C; the layout depends on the command.

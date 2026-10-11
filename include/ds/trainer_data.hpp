@@ -7,6 +7,7 @@
 
 BOOL Trainer_Load(u32 trainerID, void *trainerData);
 BOOL Trainer_LoadParty(u32 trainerID, void *trainerParty);
+BOOL Trainer_HasMessageType(int trainerID, int msgType, int heapID);
 
 // Only the name is used so far (pokeplatinum Trainer).
 // size: unknown
