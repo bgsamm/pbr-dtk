@@ -47,6 +47,18 @@ static inline u8 f32tou8(f32 arg) {
     return ret;
 }
 
+static inline f32 s16tof32(s16 arg) {
+    f32 ret;
+    OSs16tof32(&arg, &ret);
+    return ret;
+}
+
+static inline s16 f32tos16(f32 arg) {
+    s16 ret;
+    OSf32tos16(&arg, &ret);
+    return ret;
+}
+
 #define PI 3.14159265f
 #define DEG_TO_RAD (PI / 180f)
 

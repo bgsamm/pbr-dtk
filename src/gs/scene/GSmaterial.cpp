@@ -96,13 +96,7 @@ GSmaterial::GSmaterial(GSmaterialData *matData, GSmeshRenderSettings *renderSett
 }
 
 GSmaterial::~GSmaterial() {
-    if (mOrigMatData->_50) {
-        if (_14 && (_28 & (1 << 0))) {
-            _14->fn_8023E2D0();
-            _28 &= ~(1 << 0);
-        }
-        _14 = NULL;
-    }
+    releaseTexture();
 
     if (mMatData != mOrigMatData) {
         u16 i, _unk1;
@@ -120,6 +114,138 @@ GSmaterial::~GSmaterial() {
     if (_18) {
         delete[] _18;
     }
+}
+
+static const Vec2 sSpotPositions[4] = {
+    {0.046875f, 0.0546875f},
+    {0.7109375f, 0.046875f},
+    {0.234375f, 0.5078125f},
+    {0.53125f, 0.5078125f},
+};
+
+void GSmaterial::fn_801E6F78(GStexture *baseTex, GStexture *spotTex, u32 spotOffsets, const bool *darken) {
+    u8 *dstData = NULL;
+    u8 *srcData = NULL;
+
+    if (!mOrigMatData->_50) {
+        return;
+    }
+
+    releaseTexture();
+
+    if (baseTex->getTextureFormat() == GS_TF_RGB565 && baseTex->getPaletteFormat() == GS_TF_C4 &&
+        baseTex->getMipmapLevels() == 0 && spotTex->getTextureFormat() == GS_TF_RGB565 &&
+        spotTex->getPaletteFormat() == GS_TF_C4 && spotTex->getMipmapLevels() == 0) {
+        s16 width = baseTex->getWidth();
+        s16 height = baseTex->getHeight();
+        s16 spotWidth = spotTex->getWidth();
+        s16 spotHeight = spotTex->getHeight();
+
+        if (spotWidth <= (width >> 1) && spotHeight <= (height >> 1)) {
+            _14 = fn_8023D974((u16)width, (u16)height, GS_TF_RGB565, 0, 0, 0);
+            if (!_14) {
+                return;
+            }
+            _28 |= (1 << 0);
+
+            dstData = fn_8023E434(_14, 0);
+            if (dstData) {
+                srcData = fn_8023E434(baseTex, 0);
+                if (srcData) {
+                    u32 size = width * height * 2;
+                    memcpy(dstData, srcData, size);
+                    DCFlushRange(dstData, size);
+                    baseTex->flush();
+
+                    fn_8023E6F0(_14);
+                    fn_8023E6F0(spotTex);
+
+                    srcData = fn_8023E434(spotTex, 0);
+                    if (srcData) {
+                        f32 scaleX = 3.4f * s16tof32(width) / 128.f;
+                        f32 scaleY = 3.4f * s16tof32(height) / 128.f;
+                        s32 centerX = (32 - spotWidth) / 2;
+                        s32 centerY = (32 - spotHeight) / 2;
+
+                        for (s32 i = 0; i < 4; i++) {
+                            s16 offsetX = f32tos16(0.5f + scaleX * (s16)((spotOffsets & 0xF) - 8));
+                            spotOffsets >>= 4;
+                            s16 offsetY = f32tos16(0.5f + scaleY * (s16)((spotOffsets & 0xF) - 8));
+                            spotOffsets >>= 4;
+
+                            s16 x = offsetX + f32tos16(0.5f + width * sSpotPositions[i].x) + centerX;
+                            s16 y = offsetY + f32tos16(0.5f + height * sSpotPositions[i].y) + centerY;
+
+                            s16 startX = (x < 0) ? -x : 0;
+                            s16 endX = (x + spotWidth > width) ? width - x : spotWidth;
+                            s16 startY = (y < 0) ? -y : 0;
+                            s16 endY = (y + spotHeight > height) ? height - y : spotHeight;
+                            s16 dstStart = y * width + x + startX;
+
+                            for (s16 row = startY; row < endY; row++) {
+                                u16 *src = (u16 *)srcData + (row * spotWidth + startX);
+                                u16 *dst = (u16 *)dstData + (dstStart + row * width);
+                                for (s16 col = startX; col < endX; col++) {
+                                    u16 dstPixel = *dst;
+                                    u16 srcPixel = *src;
+
+                                    u32 r = (dstPixel >> 8) & 0xF8;
+                                    u32 g = (dstPixel >> 3) & 0xFC;
+                                    u32 b = (dstPixel & 0x1F) << 3;
+                                    u32 srcR = (srcPixel >> 8) & 0xF8;
+                                    u32 srcG = (srcPixel >> 3) & 0xFC;
+                                    u32 srcB = (srcPixel & 0x1F) << 3;
+
+                                    if (darken[0]) {
+                                        if (r > srcR) {
+                                            r = srcR;
+                                        }
+                                    } else if (r < srcR) {
+                                        r = srcR;
+                                    }
+
+                                    if (darken[1]) {
+                                        if (g > srcG) {
+                                            g = srcG;
+                                        }
+                                    } else if (g < srcG) {
+                                        g = srcG;
+                                    }
+
+                                    if (darken[2]) {
+                                        if (b > srcB) {
+                                            b = srcB;
+                                        }
+                                    } else if (b < srcB) {
+                                        b = srcB;
+                                    }
+
+                                    *dst = ((r << 8) & 0xF800) | ((g << 3) & 0x7E0) | ((b >> 3) & 0x1F);
+                                    src++;
+                                    dst++;
+                                }
+                            }
+                        }
+
+                        _14->flush();
+                        spotTex->flush();
+                        fn_8023E88C(spotTex);
+                        fn_8023E88C(_14);
+                        GSrender::sInstance->invalidateTextureCache();
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    if (dstData) {
+        _14->flush();
+    }
+    if (srcData) {
+        spotTex->flush();
+    }
+    releaseTexture();
 }
 
 void GSmaterial::fn_801E74B0(_UnkMaterialData_1 *arg0) {

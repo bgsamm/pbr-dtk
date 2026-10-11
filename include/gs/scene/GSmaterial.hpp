@@ -64,11 +64,22 @@ protected:
     /* 0x2C */ GScolor _2c;
     /* 0x30 */ GScolor mBaseColor;
 
+    void releaseTexture() {
+        if (mOrigMatData->_50) {
+            if (_14 && (_28 & (1 << 0))) {
+                _14->fn_8023E2D0();
+                _28 &= ~(1 << 0);
+            }
+            _14 = NULL;
+        }
+    }
+
 public:
     GSmaterial(GSmaterialData *data, GSmeshRenderSettings *arg1);
 
     /* 0x8 */ virtual ~GSmaterial();
 
+    void fn_801E6F78(GStexture *baseTex, GStexture *spotTex, u32 spotOffsets, const bool *darken);
     void fn_801E74B0(_UnkMaterialData_1 *arg0);
     void fn_801E7FA4(_UnkMaterialStruct_3 *arg0, GSmatrix *arg1, u32 arg2);
     void fn_801E8858(bool useTexture);

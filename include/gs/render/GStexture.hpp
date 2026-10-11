@@ -82,3 +82,5 @@ GStexture *fn_8023D6CC(void *arg0);
 GStexture *fn_8023D974(u32 arg0, u32 arg1, u32 arg2, u32 arg3, u32 arg4, u32 arg5);
 void fn_8023E3C8(GStexture *texture, GXTexFilter minFilter, GXTexFilter magFilter, u32 flags);
 u8 *fn_8023E434(GStexture *texture, u32 arg1);
+void fn_8023E6F0(GStexture *texture);
+void fn_8023E88C(GStexture *texture);
