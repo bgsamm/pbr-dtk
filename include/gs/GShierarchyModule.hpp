@@ -94,6 +94,14 @@ public:
         return _118;
     }
 
+    static GSlight *get_11c() {
+        return sInstance->_11c;
+    }
+
+    static GSlight *get_120() {
+        return sInstance->_120;
+    }
+
     GStexture *get_128() const {
         return _128;
     }

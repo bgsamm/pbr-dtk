@@ -31,6 +31,12 @@ struct _UnkMaterialStruct_3 {
     /* 0x1AC */ GSvec3 _1ac;
     /* 0x1B8 */ GSvec3 _1b8;
     /* 0x1C4 */ GSvec3 _1c4;
+    /* 0x1D0 */ u8 _pad_1d0[0x4];
+    /* 0x1D4 */ GSmatrix _1d4;
+
+    GSmatrix *get_1d4() {
+        return &_1d4;
+    }
 };
 
 // NOTE(samm) Name known from RTTI
@@ -64,6 +70,12 @@ public:
     /* 0x8 */ virtual ~GSmaterial();
 
     void fn_801E74B0(_UnkMaterialData_1 *arg0);
+    void fn_801E7FA4(_UnkMaterialStruct_3 *arg0, GSmatrix *arg1, u32 arg2);
+    void fn_801E8858(bool useTexture);
+    void fn_801E8BA4(bool useTexture);
+    void fn_801E9114(_UnkMaterialStruct_3 *arg0, bool useTexture);
+    void fn_801E98E0();
+    void fn_801E9C18(_UnkMaterialStruct_3 *arg0);
     GSmatrix *fn_801E9C74(u8 arg0, _UnkMaterialData_2 *arg1);
     void fn_801E9DCC(const _UnkMaterialStruct_3 *arg0, GSmatrix *arg1);
     void fn_801EA44C();
