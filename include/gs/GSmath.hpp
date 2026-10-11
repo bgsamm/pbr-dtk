@@ -222,6 +222,21 @@ public:
         MTXScaleApply(mMatrix, mMatrix, vec.x, vec.y, vec.z);
     }
 
+    void scaleApply(const GSmatrix &src, f32 scale) {
+        MTXScaleApply(src, mMatrix, scale, scale, scale);
+    }
+
+    GSmatrix &preConcat(const GSmatrix &other) {
+        MTXConcat(other, mMatrix, mMatrix);
+        return *this;
+    }
+
+    void clearTranslation() {
+        mMatrix[0][3] = 0.f;
+        mMatrix[1][3] = 0.f;
+        mMatrix[2][3] = 0.f;
+    }
+
     void setScale(GSvec3 vec) {
         MTXScale(mMatrix, vec.x, vec.y, vec.z);
     }

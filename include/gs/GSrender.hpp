@@ -519,10 +519,10 @@ public:
         mState->_0 |= (1 << 2);
     }
 
-    void setTevColor(u8 reg, GStevColorType type, GScolor *color) {
+    void setTevColor(u8 reg, const GScolor &color) {
         GStevColor *tevColor = &mState->mCurr.mTevColors[reg];
-        tevColor->mType = type;
-        static_cast<GScolor &>(tevColor->mColor) = *color;
+        tevColor->mType = GS_TEV_COLOR_U8;
+        static_cast<GScolor &>(tevColor->mColor) = color;
         mState->mTevColorFlags |= (1 << reg);
         mState->_0 |= (1 << 3);
     }
@@ -810,6 +810,20 @@ public:
         tevAlphaIn->mArgD = argD;
         mState->mTevAlphaInFlags |= (1 << stage);
         mState->_0 |= (1 << 3);
+    }
+
+    void setNormalMtx(GSmatrix *mtx);
+
+    void setBumpTexGen(u8 texCoord, u8 srcCoord, GSrenderLight *light) {
+        GStexGen *texGen = &mState->mCurr.mTexCoordGens[texCoord];
+        texGen->mType = GX_TG_BUMP0;
+        texGen->mSrc = (GXTexGenSrc)(srcCoord + GX_TG_TEXCOORD0);
+        texGen->mTexMtx = GX_IDENTITY;
+        texGen->mNormalize = GX_FALSE;
+        texGen->mPostMtx = GX_PTIDENTITY;
+        texGen->mLight = light;
+        mState->mTexGenFlags |= (1 << texCoord);
+        mState->_0 |= (1 << 0);
     }
 
     void fn_802310C0();

@@ -27,6 +27,10 @@ public:
         return (_104 & flag) == flag;
     }
 
+    u32 isEnabled() const {
+        return _104 & (1 << 0);
+    }
+
     u32 get_10c() const {
         return _10c;
     }
