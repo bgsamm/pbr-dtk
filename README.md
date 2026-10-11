@@ -6,7 +6,7 @@ The build produces a `main.dol` that is byte-for-byte identical to the original 
 
 This repository contains **no game data and no assembly**. You need your own copy of the game.
 
-This work builds on [bgsamm/pbr-dtk](https://github.com/bgsamm/pbr-dtk) (CC0), which set up the project and decompiled part of the `gs` engine. Parts of the Revolution SDK come from [koopthekoopa/wii-ipl](https://github.com/koopthekoopa/wii-ipl) (CC0); each imported file names its source.
+This work builds on [bgsamm/pbr-dtk](https://github.com/bgsamm/pbr-dtk) (CC0), which set up the project and decompiled part of the `gs` engine. Parts of the Revolution SDK come from [koopthekoopa/wii-ipl](https://github.com/koopthekoopa/wii-ipl) (CC0), and the C library and MetroTRK from [SMGCommunity/Petari](https://github.com/SMGCommunity/Petari) (CC0); the files imported in this repository name their source on their first line. Names and structures in the code ported from the DS games follow [pret/pokeplatinum](https://github.com/pret/pokeplatinum) and [pret/pokediamond](https://github.com/pret/pokediamond).
 
 ## Status
 
@@ -75,4 +75,4 @@ Steps:
 
 ## License
 
-CC0, like the projects it builds on.
+CC0, like the projects it builds on, except the Bluetooth stack headers in `libs/RVL_SDK/include/private/bte/`, which derive from bluedroid and are under the Apache License 2.0 (see `LICENSE` and `NOTICE` in that directory).
