@@ -9,9 +9,9 @@ This repository contains no game data and no assembly. You need your own copy of
 ## Progress
 
 <!-- progress:start -->
-![Code matched](https://img.shields.io/badge/code%20matched-15.7%25-blue) ![Functions](https://img.shields.io/badge/functions-5705%2F13890-blue) ![Linked](https://img.shields.io/badge/linked-1.2%25-green)
+![Code matched](https://img.shields.io/badge/code%20matched-15.7%25-blue) ![Functions](https://img.shields.io/badge/functions-5707%2F13890-blue) ![Linked](https://img.shields.io/badge/linked-1.2%25-green)
 
-**15.69 %** of the code matches the original (5,705 of 13,890 functions). **1.23 %** is in finished units linked into the build.
+**15.72 %** of the code matches the original (5,707 of 13,890 functions). **1.23 %** is in finished units linked into the build.
 
 | Area | Size | Matched | |
 |---|---:|---:|---|
@@ -27,7 +27,7 @@ This repository contains no game data and no assembly. You need your own copy of
 | Game networking | 51 KiB | 28.6 % | `██████░░░░░░░░░░░░░░` |
 | Revolution SDK | 627 KiB | 18.4 % | `████░░░░░░░░░░░░░░░░` |
 | Other Nintendo libraries (VF, DWC, NW4R, HOME menu) | 602 KiB | 0.8 % | `░░░░░░░░░░░░░░░░░░░░` |
-| Battle engine (ported from the DS games) | 204 KiB | 42.3 % | `████████░░░░░░░░░░░░` |
+| Battle engine (ported from the DS games) | 204 KiB | 42.9 % | `█████████░░░░░░░░░░░` |
 | Pokémon data | 78 KiB | 70.2 % | `██████████████░░░░░░` |
 
 _Updated 2026-10-11 from the objdiff report of a local build._

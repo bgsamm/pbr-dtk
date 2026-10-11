@@ -87,6 +87,16 @@ int BattleSystem_GetFieldWeather(BattleSystem *battleSys);
 TrainerInfo *BattleSystem_GetTrainerInfo(BattleSystem *battleSys, int battler);
 u8 fn_803ADCD8(BattleSystem *battleSys); // BattleSystem_GetResultMask
 void BattleSystem_SetResultMask(BattleSystem *battleSys, u8 resultMask);
+BOOL BattleSystem_UseBagItem(BattleSystem *battleSys, int battler, int partySlot, int moveSlot, int item);
+void BattleMessage_Print(BattleSystem *battleSys, MessageLoader *msgLoader, BattleMessage *battleMsg);
+void fn_803ADEF0(BattleMessage *dst, BattleMessage *src);
+void BattleMessage_CheckSide(BattleSystem *battleSys, BattleMessage *battleMsg, int swapSides);
+void BattleMessage_FillFormatBuffers(BattleSystem *battleSys,
+                                     BattleMessage *battleMsg,
+                                     MessageLoader *msgLoader,
+                                     int swapSides);
+void BattleMessage_Format(BattleSystem *battleSys, MessageLoader *msgLoader, BattleMessage *battleMsg);
+void fn_803AF38C(BattleSystem *battleSys, BattleMessage *battleMsg, MessageLoader *msgLoader);
 Trainer *fn_803ACB30(BattleSystem *battleSys, int battler);
 int BattleSystem_GetBattlerOfType(BattleSystem *battleSys, int type);
 void *BattleSystem_GetChatotCry(BattleSystem *battleSys, int battler);

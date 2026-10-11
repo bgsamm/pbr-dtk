@@ -27,7 +27,6 @@ void fn_8017CC8C(u32 battleType);
 Unk80035CB0 *fn_80035D9C();
 void fn_80035E60(Unk80035CB0 *config, u32 enable);
 void fn_80035E70(Unk80035CB0 *config, u32 mode);
-void fn_803AF38C(BattleSystem *battleSys, BattleMessage *battleMsg, void *msgLoader);
 s32 fn_803AC830();
 u32 fn_803AB534();
 
@@ -377,7 +376,7 @@ s32 fn_803D9A44(Strbuf *str, void *param) {
 #pragma dont_inline on
 const u16 *fn_803D9AEC(BattleMessage *battleMsg, u32 *size) {
     const u16 *text;
-    void *msgLoader;
+    MessageLoader *msgLoader;
     BattleSystem *battleSys;
 
     battleSys = (BattleSystem *)ApplicationManager_Data(fn_803D9E48());

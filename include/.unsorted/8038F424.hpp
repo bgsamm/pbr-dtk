@@ -1005,16 +1005,7 @@ struct Inner18 {
     u32 w[6];
 };
 
-struct Rec24 {
-    u8 a;
-    u8 b;
-    u16 c;
-    Inner18 d;
-    u32 e;
-    u32 f;
-};
 
-void fn_803ADEF0(Rec24 *d, Rec24 *s);
 void fn_803B16B4(u8 *a, u8 *b, u32 c, u8 d);
 s32 fn_803CBE80(u8 *a, u8 *b);
 s32 fn_803CD9C4(u8 *a, u8 *b);
@@ -1037,7 +1028,6 @@ struct Msg8 {
 s32 fn_803CAC9C(u8 *a, u8 *b);
 s32 fn_803D3B28(u8 *a, u8 *b);
 void fn_803A64B0(u8 *a, u8 *b);
-void fn_803AF334(u8 *p, u32 a, u8 *c);
 void fn_803B621C(u8 *a, u8 *b);
 s32 fn_803D37FC(u8 *a, u8 *b);
 u32 fn_803D917C(u8 *a, u8 *b, s32 c);
@@ -1045,8 +1035,6 @@ void fn_803B6334(u8 *a, u8 *b, u32 c, u32 d, u32 e);
 void fn_803B67D4(u8 *a, u8 *b, u32 c, u32 d, u32 e);
 void *memset(void *p, int c, unsigned long n);
 void fn_803B2784(u8 *a, u32 b, void *c, u32 d, u8 *e);
-void fn_803ADF40(u8 *a, u8 *b, u32 c);
-void fn_803AE378(u8 *a, u8 *b, u8 *c, u32 d);
 void fn_803B25C8(u8 *a, u8 *b, void *c, u32 d, u32 e, u32 f, u32 g, u32 h);
 void fn_803D8444(u8 *b, void *c);
 void fn_803D8520(u8 *a, u8 *b, void *c, u8 *d);
@@ -1082,7 +1070,6 @@ struct BF_2700 {
 
 s32 fn_803D25D4(u8 *a, u8 *b);
 void fn_803A5770(s32 *p);
-void fn_803AF38C(u8 *a, u8 *b, u8 *c);
 void fn_803B1650(u8 *a, u8 *b, u32 c, u32 d, u32 e);
 void fn_803B7D48(u8 *a, u8 *b);
 struct BF_344 {
@@ -1150,7 +1137,6 @@ void fn_803A5524(u32 a);
 void OSLockMutex(void *m);
 void OSUnlockMutex(void *m);
 void fn_8016D1C0(u32 a, u32 b);
-void fn_803ACE90(u8 *a, u32 b, u32 c, u32 d, u32 e);
 void fn_8016E2E4(u32 a);
 void fn_803B1458(u8 *a, u32 b, u32 c);
 void fn_803A6EA0(u8 *a, u8 *b);
@@ -1188,7 +1174,6 @@ s32 fn_803D440C(u8 *a, u8 *b);
 u8 *fn_803A50E8(u8 *p, s32 del);
 s32 fn_803D63CC(u8 *a, u8 *b);
 void fn_803B2F20(u8 *a, u8 *b);
-void fn_803ADE6C(u8 *a, u8 *b, Rec24 *c);
 s32 fn_803D4C50(u8 *a, u8 *b);
 s32 fn_803D5898(u8 *a, u8 *b);
 s32 fn_803D5CF8(u8 *a, u8 *b);

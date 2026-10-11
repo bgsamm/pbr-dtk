@@ -1856,7 +1856,7 @@ s32 fn_803D59BC(u8 *a, u8 *b) {
 s32 fn_803D59F0(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 r = fn_803D803C(a, b, fn_803D6E6C(b));
-    fn_803ACE90(a, r, b[r + 0x219c], 0, *(u32 *)(b + 0x128));
+    BattleSystem_UseBagItem((BattleSystem *)a, r, b[r + 0x219c], 0, *(u32 *)(b + 0x128));
     return 0;
 }
 }

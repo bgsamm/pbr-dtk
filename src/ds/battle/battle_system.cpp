@@ -1,5 +1,7 @@
 #include ".unsorted/8038F424.hpp"
 
+extern u32 lbl_806405C8;
+
 extern "C" {
 
 void fn_803AC820(u32 v) {
@@ -386,13 +388,14 @@ void fn_803ADE60(u8 *p, u32 a) {
 
 extern "C" {
 
-void fn_803ADE6C(u8 *a, u8 *b, Rec24 *c) {
-    Rec24 tmp;
-    fn_803ADEF0(&tmp, c);
-    fn_803ADF40(a, (u8 *)c, 0);
-    fn_803AE378(a, (u8 *)c, b, 0);
-    fn_803AF334(a, (u32)b, (u8 *)c);
-    fn_803D9A44(*(Strbuf **)(a + 0x18), &tmp);
+void BattleMessage_Print(BattleSystem *battleSys, MessageLoader *msgLoader, BattleMessage *battleMsg) {
+    BattleMessage message;
+
+    fn_803ADEF0(&message, battleMsg);
+    BattleMessage_CheckSide(battleSys, battleMsg, 0);
+    BattleMessage_FillFormatBuffers(battleSys, battleMsg, msgLoader, 0);
+    BattleMessage_Format(battleSys, msgLoader, battleMsg);
+    fn_803D9A44(battleSys->msgBuffer, &message);
 }
 }
 
@@ -400,21 +403,205 @@ void fn_803ADE6C(u8 *a, u8 *b, Rec24 *c) {
 
 extern "C" {
 
-void fn_803ADEF0(Rec24 *d, Rec24 *s) {
-    d->a = s->a;
-    d->b = s->b;
-    d->c = s->c;
-    d->d = s->d;
-    d->e = s->e;
-    d->f = s->f;
+// TODO Copies a battle message; Platinum has no such function.
+void fn_803ADEF0(BattleMessage *dst, BattleMessage *src) {
+    *dst = *src;
 }
 
-void fn_803AF334(u8 *p, u32 a, u8 *c) {
-    void *s = MessageLoader_GetNewString((const MessageLoader *)a, *(u16 *)(c + 2));
-    StringTemplate_Format((const StringTemplate *)(*(u32 *)(p + 0x14)),
-                          (Strbuf *)(*(u32 *)(p + 0x18)),
-                          (const Strbuf *)s);
-    Strbuf_Free((Strbuf *)s);
+// swapSides compares the side of the opposite battler. With BATTLE_TYPE_UNK_19, some messages are replaced
+// (see fn_803AF3F0) and get the side as a parameter instead of a different message per side.
+void BattleMessage_CheckSide(BattleSystem *battleSys, BattleMessage *battleMsg, int swapSides) {
+    u32 battleType = BattleSystem_GetBattleType(battleSys);
+
+    if (battleMsg->tags & TAG_GLOBAL_MESSAGE) {
+        return;
+    }
+
+    if (battleMsg->tags & TAG_SIDE_LOCAL_MESSAGE) {
+        if ((battleType & BATTLE_TYPE_UNK_19) && battleMsg->id == 0x120) {
+            battleMsg->id = 0x5140;
+            battleMsg->params[1] = battleMsg->params[0];
+
+            if (BattleSystem_GetBattlerSide(battleSys, battleMsg->battler ^ swapSides)) {
+                battleMsg->params[0] = TRUE;
+            } else {
+                battleMsg->params[0] = FALSE;
+            }
+        } else if (BattleSystem_GetBattlerSide(battleSys, battleMsg->battler ^ swapSides)) {
+            battleMsg->id++;
+        }
+
+        return;
+    }
+
+    switch (battleMsg->tags & BATTLE_MESSAGE_TAGS) {
+        case TAG_NONE:
+        case TAG_MOVE:
+        case TAG_STAT:
+        case TAG_ITEM:
+        case TAG_NUMBER:
+        case TAG_NUMBERS:
+        case TAG_TRNAME:
+        case TAG_MOVE_MOVE:
+        case TAG_ITEM_MOVE:
+        case TAG_NUMBER_NUMBER:
+        case TAG_TRNAME_TRNAME:
+        case TAG_TRNAME_NICKNAME:
+        case TAG_TRNAME_ITEM:
+        case TAG_TRNAME_NUM:
+        case TAG_TRCLASS_TRNAME:
+        case TAG_TRNAME_NICKNAME_NICKNAME:
+        case TAG_TRCLASS_TRNAME_NICKNAME:
+        case TAG_TRCLASS_TRNAME_ITEM:
+        case TAG_TRNAME_NICKNAME_TRNAME_NICKNAME:
+        case TAG_TRCLASS_TRNAME_NICKNAME_NICKNAME:
+        case TAG_TRCLASS_TRNAME_NICKNAME_TRNAME:
+        case TAG_TRCLASS_TRNAME_TRCLASS_TRNAME:
+        case TAG_TRCLASS_TRNAME_NICKNAME_TRCLASS_TRNAME_NICKNAME: break;
+
+        case TAG_NONE_SIDE_CONSCIOUS:
+            if (battleType & BATTLE_TYPE_UNK_19) {
+                battleMsg->id = fn_803AF3F0(battleMsg->id);
+
+                if (BattleSystem_GetBattlerSide(battleSys, (battleMsg->params[0] & 0xFF) ^ swapSides)) {
+                    battleMsg->params[1] = TRUE;
+                } else {
+                    battleMsg->params[1] = FALSE;
+                }
+            } else if (BattleSystem_GetBattlerSide(battleSys, (battleMsg->params[0] & 0xFF) ^ swapSides)) {
+                battleMsg->id++;
+            }
+            break;
+
+        case TAG_NICKNAME:
+        case TAG_NICKNAME_MOVE:
+        case TAG_NICKNAME_ABILITY:
+        case TAG_NICKNAME_STAT:
+        case TAG_NICKNAME_TYPE:
+        case TAG_NICKNAME_POKE:
+        case TAG_NICKNAME_ITEM:
+        case TAG_NICKNAME_POFFIN:
+        case TAG_NICKNAME_NUM:
+        case TAG_NICKNAME_TRNAME:
+        case TAG_NICKNAME_BOX:
+        case TAG_NICKNAME_MOVE_MOVE:
+        case TAG_NICKNAME_MOVE_NUMBER:
+        case TAG_NICKNAME_ABILITY_MOVE:
+        case TAG_NICKNAME_ABILITY_ITEM:
+        case TAG_NICKNAME_ABILITY_STAT:
+        case TAG_NICKNAME_ABILITY_TYPE:
+        case TAG_NICKNAME_ABILITY_STATUS:
+        case TAG_NICKNAME_ABILITY_NUMBER:
+        case TAG_NICKNAME_ITEM_MOVE:
+        case TAG_NICKNAME_ITEM_STAT:
+        case TAG_NICKNAME_ITEM_STATUS:
+        case TAG_NICKNAME_BOX_BOX:
+            if ((battleType & BATTLE_TYPE_UNK_19) == FALSE) {
+                if (BattleSystem_GetBattlerSide(battleSys, (battleMsg->params[0] & 0xFF) ^ swapSides)) {
+                    battleMsg->id++;
+
+                    if (battleType & BATTLE_TYPE_TRAINER) {
+                        battleMsg->id++;
+                    }
+                }
+            } else if (battleMsg->commandCode == 0x14) {
+                battleMsg->id++;
+            } else if (battleMsg->id != 0x260 && battleMsg->id != 0x264 && lbl_806405C8 == 0) {
+                battleMsg->id++;
+            }
+            break;
+
+        case TAG_MOVE_SIDE:
+            if (battleType & BATTLE_TYPE_UNK_19) {
+                battleMsg->id = fn_803AF3F0(battleMsg->id);
+
+                if (BattleSystem_GetBattlerSide(battleSys, (battleMsg->params[1] & 0xFF) ^ swapSides)) {
+                    battleMsg->params[2] = TRUE;
+                } else {
+                    battleMsg->params[2] = FALSE;
+                }
+            } else if (BattleSystem_GetBattlerSide(battleSys, (battleMsg->params[1] & 0xFF) ^ swapSides)) {
+                battleMsg->id++;
+            }
+            break;
+
+        case TAG_MOVE_NICKNAME:
+        case TAG_ABILITY_NICKNAME:
+        case TAG_ITEM_NICKNAME_FLAVOR:
+            if ((battleType & BATTLE_TYPE_UNK_19) == FALSE) {
+                if (BattleSystem_GetBattlerSide(battleSys, (battleMsg->params[1] & 0xFF) ^ swapSides)) {
+                    battleMsg->id++;
+
+                    if (battleType & BATTLE_TYPE_TRAINER) {
+                        battleMsg->id++;
+                    }
+                }
+            } else {
+                battleMsg->id++;
+            }
+            break;
+
+        case TAG_NICKNAME_NICKNAME:
+        case TAG_NICKNAME_NICKNAME_MOVE:
+        case TAG_NICKNAME_NICKNAME_ABILITY:
+        case TAG_NICKNAME_NICKNAME_ITEM:
+            if (battleType & BATTLE_TYPE_UNK_19) {
+                battleMsg->id++;
+            } else if (BattleSystem_GetBattlerSide(battleSys, (battleMsg->params[0] & 0xFF) ^ swapSides)) {
+                battleMsg->id += 3;
+
+                if (battleType & BATTLE_TYPE_TRAINER) {
+                    battleMsg->id += 2;
+                }
+
+                if (BattleSystem_GetBattlerSide(battleSys, (battleMsg->params[1] & 0xFF) ^ swapSides)) {
+                    battleMsg->id++;
+                }
+            } else if (BattleSystem_GetBattlerSide(battleSys, (battleMsg->params[1] & 0xFF) ^ swapSides)) {
+                battleMsg->id++;
+
+                if (battleType & BATTLE_TYPE_TRAINER) {
+                    battleMsg->id++;
+                }
+            }
+            break;
+
+        case TAG_NICKNAME_ABILITY_NICKNAME:
+        case TAG_NICKNAME_ITEM_NICKNAME:
+        case TAG_NICKNAME_ABILITY_NICKNAME_MOVE:
+        case TAG_NICKNAME_ABILITY_NICKNAME_ABILITY:
+        case TAG_NICKNAME_ABILITY_NICKNAME_STAT:
+        case TAG_NICKNAME_ITEM_NICKNAME_ITEM:
+            if (battleType & BATTLE_TYPE_UNK_19) {
+                battleMsg->id++;
+            } else if (BattleSystem_GetBattlerSide(battleSys, (battleMsg->params[0] & 0xFF) ^ swapSides)) {
+                battleMsg->id += 3;
+
+                if (battleType & BATTLE_TYPE_TRAINER) {
+                    battleMsg->id += 2;
+                }
+
+                if (BattleSystem_GetBattlerSide(battleSys, (battleMsg->params[2] & 0xFF) ^ swapSides)) {
+                    battleMsg->id++;
+                }
+            } else if (BattleSystem_GetBattlerSide(battleSys, (battleMsg->params[2] & 0xFF) ^ swapSides)) {
+                battleMsg->id++;
+
+                if (battleType & BATTLE_TYPE_TRAINER) {
+                    battleMsg->id++;
+                }
+            }
+            break;
+
+        default: fn_803D989C(FALSE, "\x91\xb6\x8d\xdd\x82\xb5\x82\xc8\x82\xa2TAG\x82\xc5\x82\xb7\x81I\n"); break;
+    }
+}
+
+void BattleMessage_Format(BattleSystem *battleSys, MessageLoader *msgLoader, BattleMessage *battleMsg) {
+    Strbuf *string = MessageLoader_GetNewString(msgLoader, battleMsg->id);
+
+    StringTemplate_Format(battleSys->strFormatter, battleSys->msgBuffer, string);
+    Strbuf_Free(string);
 }
 }
 
@@ -424,17 +611,22 @@ void fn_803AF334(u8 *p, u32 a, u8 *c) {
 
 extern "C" {
 
-void fn_803AF38C(u8 *a, u8 *b, u8 *c) {
-    fn_803ADF40(a, b, 1);
-    fn_803AE378(a, b, c, 1);
-    fn_803AF334(a, (u32)c, b);
+// TODO Formats a message into the message buffer without printing it (called by DSbridge).
+void fn_803AF38C(BattleSystem *battleSys, BattleMessage *battleMsg, MessageLoader *msgLoader) {
+    BattleMessage_CheckSide(battleSys, battleMsg, 1);
+    BattleMessage_FillFormatBuffers(battleSys, battleMsg, msgLoader, 1);
+    BattleMessage_Format(battleSys, msgLoader, battleMsg);
 }
 
+// TODO Maps a message to the one used with BATTLE_TYPE_UNK_19, from a table of pairs.
 u16 fn_803AF3F0(u32 v) {
-    for (s32 i = 0; lbl_804732E8[i] != 0; i += 2) {
+    int i = 0;
+
+    while (lbl_804732E8[i] != 0) {
         if (v == lbl_804732E8[i]) {
             return lbl_804732E8[i + 1];
         }
+        i += 2;
     }
 }
 }
