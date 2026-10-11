@@ -49,6 +49,15 @@ u32 DSPCheckMailFromDSP();
 u32 DSPReadMailFromDSP();
 void DSPSendMailToDSP(u32 mail);
 
+// From doldecomp/ogws (CC0), include/revolution/DSP/dsp_task.h
+#define DSP_SEND_MAIL_SYNC(mail)                                               \
+    do {                                                                       \
+        DSPSendMailToDSP(mail);                                                \
+        while (DSPCheckMailToDSP()) {                                          \
+            ;                                                                  \
+        }                                                                      \
+    } while (0)
+
 void DSPInit();
 BOOL DSPCheckInit();
 

@@ -11,7 +11,7 @@
 #include <revolution/ax/AXPB.h>
 #include <revolution/ax/AXVPB.h>
 
-void AXInit();
-void AXInitEx(u32 outputBufferMode);
+void AXInit(void);
+BOOL AXIsInit(void);
 
 #endif  // REVOLUTION_AX_H

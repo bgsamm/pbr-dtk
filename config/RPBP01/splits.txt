@@ -1621,8 +1621,35 @@ libs/RVL_SDK/src/dvd/dvdFatal.c:
 libs/RVL_SDK/src/dvd/dvd_broadway.c:
 	.text       start:0x8028D118 end:0x8028EB04
 
-src/.unsorted/8028EB04.cpp:
-	.text       start:0x8028EB04 end:0x80296938
+libs/RVL_SDK/src/ai/ai.c:
+	.text       start:0x8028EB04 end:0x8028F038
+
+libs/RVL_SDK/src/ax/AX.c:
+	.text       start:0x8028F038 end:0x8028F094
+
+libs/RVL_SDK/src/ax/AXAlloc.c:
+	.text       start:0x8028F094 end:0x8028F54C
+
+libs/RVL_SDK/src/ax/AXAux.c:
+	.text       start:0x8028F54C end:0x8028FD64
+
+libs/RVL_SDK/src/ax/AXCL.c:
+	.text       start:0x8028FD64 end:0x802907F0
+
+libs/RVL_SDK/src/ax/AXOut.c:
+	.text       start:0x802907F0 end:0x80290FDC
+
+libs/RVL_SDK/src/ax/AXSPB.c:
+	.text       start:0x80290FDC end:0x802913FC
+
+libs/RVL_SDK/src/ax/AXVPB.c:
+	.text       start:0x802913FC end:0x80292324
+
+libs/RVL_SDK/src/ax/AXProf.c:
+	.text       start:0x80292324 end:0x80292364
+
+src/.unsorted/80292364.cpp:
+	.text       start:0x80292364 end:0x80296938
 
 libs/RVL_SDK/src/mem/mem_expHeap.c:
 	.text       start:0x80296938 end:0x802973F8

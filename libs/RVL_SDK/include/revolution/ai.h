@@ -1,35 +1,31 @@
+// Imported from doldecomp/ogws (CC0), include/revolution/AI/ai.h
 #ifndef REVOLUTION_AI_H
 #define REVOLUTION_AI_H
-
 #include <revolution/types.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef void (*AIDCallback)();
+// Forward declarations
+typedef struct OSContext OSContext;
 
-enum {
-    AI_DSP_SAMPLE_RATE_32KHZ = 0,
-    AI_DSP_SAMPLE_RATE_48KHZ,
-};
+typedef void (*AIDMACallback)(void);
 
-AIDCallback AIRegisterDMACallback(AIDCallback callback);
+typedef enum {
+    AI_DSP_32KHZ,
+    AI_DSP_48KHZ,
+} AIDSPSampleRate;
 
-void AIInitDMA(u32 startAddr, u32 length);
-u32 AIGetDMALength();
-u32 AIGetDMAStartAddr();
-
-void AIStartDMA();
-void AIStopDMA();
-
+AIDMACallback AIRegisterDMACallback(AIDMACallback callback);
+void AIInitDMA(void* buffer, u32 length);
+void AIStartDMA(void);
+u32 AIGetDMABytesLeft(void);
 void AISetDSPSampleRate(u32 rate);
-u32 AIGetDSPSampleRate();
-
-u32 AIGetDMABytesLeft();
+u32 AIGetDSPSampleRate(void);
+void AIInit(void* stack);
+void __AIDHandler(s16 intr, OSContext* ctx);
 
 #ifdef __cplusplus
 }
 #endif
-
-#endif  // REVOLUTION_AI_H
+#endif

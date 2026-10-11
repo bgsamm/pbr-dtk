@@ -553,6 +553,25 @@ config.libs = [
         ],
     ),
     RVLSDKLib(
+        "ai",
+        [
+            Object(NonMatching, "ai/ai.c"),
+        ],
+    ),
+    RVLSDKLib(
+        "ax",
+        [
+            Object(NonMatching, "ax/AX.c"),
+            Object(NonMatching, "ax/AXAlloc.c"),
+            Object(NonMatching, "ax/AXAux.c"),
+            Object(NonMatching, "ax/AXCL.c"),
+            Object(NonMatching, "ax/AXOut.c"),
+            Object(NonMatching, "ax/AXSPB.c"),
+            Object(NonMatching, "ax/AXVPB.c"),
+            Object(NonMatching, "ax/AXProf.c"),
+        ],
+    ),
+    RVLSDKLib(
         "mtx",
         [
             Object(NonMatching, "mtx/mtx.c"),
@@ -940,7 +959,7 @@ config.libs = [
             Object(NonMatching, ".unsorted/80281F38.cpp"),
             Object(NonMatching, ".unsorted/80284950.cpp"),
             Object(NonMatching, ".unsorted/8028680C.cpp"),
-            Object(NonMatching, ".unsorted/8028EB04.cpp"),
+            Object(NonMatching, ".unsorted/80292364.cpp"),
             Object(NonMatching, ".unsorted/802973F8.cpp"),
             Object(NonMatching, ".unsorted/80297890.cpp"),
             Object(NonMatching, ".unsorted/802A2904.cpp"),
