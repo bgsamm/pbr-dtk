@@ -1,4 +1,5 @@
 #include ".unsorted/8038F424.hpp"
+#include "ds/constants/items.hpp"
 
 extern u32 lbl_806405C8;
 
@@ -254,6 +255,335 @@ int BattleSystem_GetEnemyInSlot(BattleSystem *battleSys, int battler, int slot) 
         }
     }
     return j;
+}
+
+// The game inlines the battle system getters here.
+// TODO The map header is loaded before Pokemon_GetValue in the game.
+BOOL BattleSystem_UseBagItem(BattleSystem *battleSys, int battler, int partySlot, int moveSlot, int item) {
+    // must maintain this order of declarations to match
+    BattleContext *battleCtx = battleSys->battleCtx;
+    Pokemon *mon;
+    BOOL result = FALSE;
+    int param;
+    int selectedSlot = BattleContext_Get(battleSys, battleCtx, BATTLECTX_SELECTED_PARTY_SLOT, battler);
+
+    int targetSlot;
+    if (battleSys->battleType == BATTLE_TYPE_TRAINER_DOUBLES ||
+        ((battleSys->battleType & BATTLE_TYPE_TAG) &&
+         (BattlerData_GetBattlerType(battleSys->battlers[battler]) & BATTLER_TYPE_SOLO_ENEMY) == FALSE)) {
+        targetSlot = BattleContext_Get(battleSys,
+                                       battleCtx,
+                                       BATTLECTX_SELECTED_PARTY_SLOT,
+                                       BattleSystem_GetPartner(battleSys, battler));
+        if (targetSlot == partySlot) {
+            battler = BattleSystem_GetPartner(battleSys, battler);
+        }
+    } else {
+        targetSlot = selectedSlot;
+    }
+
+    mon = BattleSystem_GetPartyPokemon(battleSys, battler, partySlot);
+    int friendship = 0;
+
+    if (Item_LoadParam(item, ITEM_PARAM_HEAL_SLEEP, HEAP_ID_BATTLE)) {
+        param = Pokemon_GetValue(mon, MON_DATA_STATUS, NULL);
+        if (param & MON_CONDITION_SLEEP) {
+            param &= ~MON_CONDITION_SLEEP;
+            Pokemon_SetValue(mon, MON_DATA_STATUS, &param);
+
+            if (selectedSlot == partySlot || targetSlot == partySlot) {
+                param = BattleMon_Get(battleCtx, battler, BATTLEMON_STATUS, NULL);
+                param &= ~MON_CONDITION_SLEEP;
+                BattleMon_Set(battleCtx, battler, BATTLEMON_STATUS, &param);
+
+                param = BattleMon_Get(battleCtx, battler, BATTLEMON_VOLATILE_STATUS, NULL);
+                param &= ~VOLATILE_CONDITION_NIGHTMARE;
+                BattleMon_Set(battleCtx, battler, BATTLEMON_VOLATILE_STATUS, &param);
+            }
+
+            result = TRUE;
+        }
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_HEAL_POISON, HEAP_ID_BATTLE)) {
+        param = Pokemon_GetValue(mon, MON_DATA_STATUS, NULL);
+        if (param & MON_CONDITION_ANY_POISON) {
+            param &= ~MON_CONDITION_ANY_POISON;
+            Pokemon_SetValue(mon, MON_DATA_STATUS, &param);
+
+            if (selectedSlot == partySlot || targetSlot == partySlot) {
+                param = BattleMon_Get(battleCtx, battler, BATTLEMON_STATUS, NULL);
+                param &= ~MON_CONDITION_ANY_POISON;
+                BattleMon_Set(battleCtx, battler, BATTLEMON_STATUS, &param);
+            }
+
+            result = TRUE;
+        }
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_HEAL_BURN, HEAP_ID_BATTLE)) {
+        param = Pokemon_GetValue(mon, MON_DATA_STATUS, NULL);
+        if (param & MON_CONDITION_BURN) {
+            param &= ~MON_CONDITION_BURN;
+            Pokemon_SetValue(mon, MON_DATA_STATUS, &param);
+
+            if (selectedSlot == partySlot || targetSlot == partySlot) {
+                param = BattleMon_Get(battleCtx, battler, BATTLEMON_STATUS, NULL);
+                param &= ~MON_CONDITION_BURN;
+                BattleMon_Set(battleCtx, battler, BATTLEMON_STATUS, &param);
+            }
+
+            result = TRUE;
+        }
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_HEAL_FREEZE, HEAP_ID_BATTLE)) {
+        param = Pokemon_GetValue(mon, MON_DATA_STATUS, NULL);
+        if (param & MON_CONDITION_FREEZE) {
+            param &= ~MON_CONDITION_FREEZE;
+            Pokemon_SetValue(mon, MON_DATA_STATUS, &param);
+
+            if (selectedSlot == partySlot || targetSlot == partySlot) {
+                param = BattleMon_Get(battleCtx, battler, BATTLEMON_STATUS, NULL);
+                param &= ~MON_CONDITION_FREEZE;
+                BattleMon_Set(battleCtx, battler, BATTLEMON_STATUS, &param);
+            }
+
+            result = TRUE;
+        }
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_HEAL_PARALYSIS, HEAP_ID_BATTLE)) {
+        param = Pokemon_GetValue(mon, MON_DATA_STATUS, NULL);
+        if (param & MON_CONDITION_PARALYSIS) {
+            param &= ~MON_CONDITION_PARALYSIS;
+            Pokemon_SetValue(mon, MON_DATA_STATUS, &param);
+
+            if (selectedSlot == partySlot || targetSlot == partySlot) {
+                param = BattleMon_Get(battleCtx, battler, BATTLEMON_STATUS, NULL);
+                param &= ~MON_CONDITION_PARALYSIS;
+                BattleMon_Set(battleCtx, battler, BATTLEMON_STATUS, &param);
+            }
+
+            result = TRUE;
+        }
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_HEAL_CONFUSION, HEAP_ID_BATTLE) &&
+        (selectedSlot == partySlot || targetSlot == partySlot)) {
+        param = BattleMon_Get(battleCtx, battler, BATTLEMON_VOLATILE_STATUS, NULL);
+        if (param & VOLATILE_CONDITION_CONFUSION) {
+            param &= ~VOLATILE_CONDITION_CONFUSION;
+            BattleMon_Set(battleCtx, battler, BATTLEMON_VOLATILE_STATUS, &param);
+            result = TRUE;
+        }
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_HEAL_ATTRACT, HEAP_ID_BATTLE) &&
+        (selectedSlot == partySlot || targetSlot == partySlot)) {
+        param = BattleMon_Get(battleCtx, battler, BATTLEMON_VOLATILE_STATUS, NULL);
+        if (param & VOLATILE_CONDITION_ATTRACT) {
+            param &= ~VOLATILE_CONDITION_ATTRACT;
+            BattleMon_Set(battleCtx, battler, BATTLEMON_VOLATILE_STATUS, &param);
+            result = TRUE;
+        }
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_GUARD_SPEC, HEAP_ID_BATTLE)) {
+        param = BattleContext_Get(battleSys, battleCtx, BATTLECTX_SIDE_MIST_TURNS, battler);
+        if (param == 0) {
+            param = BattleContext_Get(battleSys, battleCtx, BATTLECTX_SIDE_CONDITIONS_MASK, battler);
+            param |= SIDE_CONDITION_MIST;
+
+            BattleContext_Set(battleSys, battleCtx, BATTLECTX_SIDE_CONDITIONS_MASK, battler, param);
+            BattleContext_Set(battleSys, battleCtx, BATTLECTX_SIDE_MIST_TURNS, battler, 5);
+            result = TRUE;
+        }
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_ATK_STAGES, HEAP_ID_BATTLE) &&
+        (selectedSlot == partySlot || targetSlot == partySlot) &&
+        BattleMon_Get(battleCtx, battler, BATTLEMON_ATTACK_STAGE, NULL) < MAX_STAT_STAGE) {
+        Battler_AddVal(battleCtx, battler, BATTLEMON_ATTACK_STAGE, 1);
+        result = TRUE;
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_DEF_STAGES, HEAP_ID_BATTLE) &&
+        (selectedSlot == partySlot || targetSlot == partySlot) &&
+        BattleMon_Get(battleCtx, battler, BATTLEMON_DEFENSE_STAGE, NULL) < MAX_STAT_STAGE) {
+        Battler_AddVal(battleCtx, battler, BATTLEMON_DEFENSE_STAGE, 1);
+        result = TRUE;
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_SPATK_STAGES, HEAP_ID_BATTLE) &&
+        (selectedSlot == partySlot || targetSlot == partySlot) &&
+        BattleMon_Get(battleCtx, battler, BATTLEMON_SP_ATTACK_STAGE, NULL) < MAX_STAT_STAGE) {
+        Battler_AddVal(battleCtx, battler, BATTLEMON_SP_ATTACK_STAGE, 1);
+        result = TRUE;
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_SPDEF_STAGES, HEAP_ID_BATTLE) &&
+        (selectedSlot == partySlot || targetSlot == partySlot) &&
+        BattleMon_Get(battleCtx, battler, BATTLEMON_SP_DEFENSE_STAGE, NULL) < MAX_STAT_STAGE) {
+        Battler_AddVal(battleCtx, battler, BATTLEMON_SP_DEFENSE_STAGE, 1);
+        result = TRUE;
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_SPEED_STAGES, HEAP_ID_BATTLE) &&
+        (selectedSlot == partySlot || targetSlot == partySlot) &&
+        BattleMon_Get(battleCtx, battler, BATTLEMON_SPEED_STAGE, NULL) < MAX_STAT_STAGE) {
+        Battler_AddVal(battleCtx, battler, BATTLEMON_SPEED_STAGE, 1);
+        result = TRUE;
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_ACC_STAGES, HEAP_ID_BATTLE) &&
+        (selectedSlot == partySlot || targetSlot == partySlot) &&
+        BattleMon_Get(battleCtx, battler, BATTLEMON_ACCURACY_STAGE, NULL) < MAX_STAT_STAGE) {
+        Battler_AddVal(battleCtx, battler, BATTLEMON_ACCURACY_STAGE, 1);
+        result = TRUE;
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_CRIT_STAGES, HEAP_ID_BATTLE) &&
+        (selectedSlot == partySlot || targetSlot == partySlot)) {
+        param = BattleMon_Get(battleCtx, battler, BATTLEMON_VOLATILE_STATUS, NULL);
+
+        if ((param & VOLATILE_CONDITION_FOCUS_ENERGY) == FALSE) {
+            param |= VOLATILE_CONDITION_FOCUS_ENERGY;
+            BattleMon_Set(battleCtx, battler, BATTLEMON_VOLATILE_STATUS, &param);
+            result = TRUE;
+        }
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_PP_RESTORE, HEAP_ID_BATTLE)) {
+        param = Item_LoadParam(item, ITEM_PARAM_PP_RESTORED, HEAP_ID_BATTLE);
+
+        if (Pokemon_GetValue(mon, MON_DATA_MOVE1_PP + moveSlot, NULL) !=
+            Pokemon_GetValue(mon, MON_DATA_MOVE1_MAX_PP + moveSlot, NULL)) {
+            Pokemon_IncreaseValue(mon, MON_DATA_MOVE1_PP + moveSlot, param);
+
+            // Don't permit restoring PP on copied moves
+            if ((selectedSlot == partySlot || targetSlot == partySlot) &&
+                (BattleMon_Get(battleCtx, battler, BATTLEMON_VOLATILE_STATUS, NULL) & VOLATILE_CONDITION_TRANSFORM) ==
+                    FALSE &&
+                (BattleMon_Get(battleCtx, battler, BATTLEMON_MIMICKED_MOVE_SLOT, NULL) & FlagIndex(moveSlot)) ==
+                    FALSE) {
+                Battler_AddVal(battleCtx, battler, (enum BattleMonParam)(BATTLEMON_CUR_PP_1 + moveSlot), param);
+            }
+
+            result = TRUE;
+        }
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_PP_RESTORE_ALL, HEAP_ID_BATTLE)) {
+        param = Item_LoadParam(item, ITEM_PARAM_PP_RESTORED, HEAP_ID_BATTLE);
+
+        for (moveSlot = 0; moveSlot < LEARNED_MOVES_MAX; moveSlot++) {
+            if (Pokemon_GetValue(mon, MON_DATA_MOVE1_PP + moveSlot, NULL) !=
+                Pokemon_GetValue(mon, MON_DATA_MOVE1_MAX_PP + moveSlot, NULL)) {
+                Pokemon_IncreaseValue(mon, MON_DATA_MOVE1_PP + moveSlot, param);
+
+                if ((selectedSlot == partySlot || targetSlot == partySlot) &&
+                    (BattleMon_Get(battleCtx, battler, BATTLEMON_VOLATILE_STATUS, NULL) &
+                     VOLATILE_CONDITION_TRANSFORM) == FALSE &&
+                    (BattleMon_Get(battleCtx, battler, BATTLEMON_MIMICKED_MOVE_SLOT, NULL) & FlagIndex(moveSlot)) ==
+                        FALSE) {
+                    Battler_AddVal(battleCtx, battler, (enum BattleMonParam)(BATTLEMON_CUR_PP_1 + moveSlot), param);
+                }
+
+                result = TRUE;
+            }
+        }
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_HP_RESTORE, HEAP_ID_BATTLE)) {
+        param = 0;
+
+        if (Item_LoadParam(item, ITEM_PARAM_REVIVE, HEAP_ID_BATTLE)) {
+            if (Pokemon_GetValue(mon, MON_DATA_HP, NULL) == 0) {
+                param = 1;
+            }
+        } else {
+            param = Pokemon_GetValue(mon, MON_DATA_HP, NULL);
+        }
+
+        if (param && Pokemon_GetValue(mon, MON_DATA_HP, NULL) != Pokemon_GetValue(mon, MON_DATA_MAX_HP, NULL)) {
+            param = Item_LoadParam(item, ITEM_PARAM_HP_RESTORED, HEAP_ID_BATTLE);
+
+            switch (param) {
+                case 0xFF: param = Pokemon_GetValue(mon, MON_DATA_MAX_HP, NULL); break;
+
+                case 0xFE:
+                    param = Pokemon_GetValue(mon, MON_DATA_MAX_HP, NULL) / 2;
+
+                    if (param == 0) {
+                        param = 1;
+                    }
+                    break;
+
+                case 0xFD:
+                    param = Pokemon_GetValue(mon, MON_DATA_MAX_HP, NULL) * 25 / 100;
+
+                    if (param == 0) {
+                        param = 1;
+                    }
+                    break;
+
+                default: break;
+            }
+
+            Pokemon_IncreaseValue(mon, MON_DATA_HP, param);
+
+            if (Item_LoadParam(item, ITEM_PARAM_REVIVE, HEAP_ID_BATTLE) == FALSE) {
+                if ((BattlerData_GetBattlerType(battleSys->battlers[battler]) & 1)) {
+                    BattleMon_Set(battleCtx, battler, BATTLEMON_ITEM_HP_RECOVERY, &param);
+                } else if (selectedSlot == partySlot || targetSlot == partySlot) {
+                    Battler_AddVal(battleCtx, battler, BATTLEMON_CUR_HP, param);
+                }
+            }
+
+            result = TRUE;
+        }
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_GIVE_FRIENDSHIP_LOW, HEAP_ID_BATTLE) &&
+        Pokemon_GetValue(mon, MON_DATA_FRIENDSHIP, NULL) < 100 && result == TRUE) {
+        friendship = Item_LoadParam(item, ITEM_PARAM_FRIENDSHIP_LOW, HEAP_ID_BATTLE);
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_GIVE_FRIENDSHIP_MED, HEAP_ID_BATTLE) &&
+        Pokemon_GetValue(mon, MON_DATA_FRIENDSHIP, NULL) >= 100 &&
+        Pokemon_GetValue(mon, MON_DATA_FRIENDSHIP, NULL) < 200 && result == TRUE) {
+        friendship = Item_LoadParam(item, ITEM_PARAM_FRIENDSHIP_MED, HEAP_ID_BATTLE);
+    }
+
+    if (Item_LoadParam(item, ITEM_PARAM_GIVE_FRIENDSHIP_HIGH, HEAP_ID_BATTLE) &&
+        Pokemon_GetValue(mon, MON_DATA_FRIENDSHIP, NULL) >= 200 && result == TRUE) {
+        friendship = Item_LoadParam(item, ITEM_PARAM_FRIENDSHIP_HIGH, HEAP_ID_BATTLE);
+    }
+
+    if (friendship) {
+        if (friendship > 0) {
+            if (Pokemon_GetValue(mon, MON_DATA_POKEBALL, NULL) == ITEM_LUXURY_BALL) {
+                friendship++;
+            }
+
+            if (Pokemon_GetValue(mon, MON_DATA_EGG_LOCATION, NULL) == battleSys->mapHeader) {
+                friendship++;
+            }
+
+            param = Pokemon_GetValue(mon, MON_DATA_HELD_ITEM, NULL);
+            if (Item_LoadParam(item, ITEM_PARAM_HOLD_EFFECT, HEAP_ID_BATTLE) == HOLD_EFFECT_FRIENDSHIP_UP) {
+                friendship = friendship * 150 / 100;
+            }
+        }
+
+        Pokemon_IncreaseValue(mon, MON_DATA_FRIENDSHIP, friendship);
+        if (selectedSlot == partySlot || targetSlot == partySlot) {
+            Battler_AddVal(battleCtx, battler, BATTLEMON_FRIENDSHIP, friendship);
+        }
+    }
+
+    return result;
 }
 }
 

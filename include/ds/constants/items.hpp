@@ -4,3 +4,4 @@
 
 #define ITEM_NONE 0
 #define ITEM_GRISEOUS_ORB 112
+#define ITEM_LUXURY_BALL 11
