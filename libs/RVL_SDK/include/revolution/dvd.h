@@ -147,6 +147,10 @@ typedef struct DVDErrorInfo {
     DVDCommandInfo lastCommand[DVD_ERROR_CMD_MAX];  // 0x1C
 } DVDErrorInfo;
 
+typedef void (*DVDErrorCallback)(s32 result, s32 arg1);
+
+extern DVDErrorInfo __ErrorInfo;
+
 void DVDInit(void);
 
 BOOL DVDReadAbsAsyncPrio(DVDCommandBlock* block, void* addr, s32 length, u32 offset, DVDCommandCallback callback, s32 prio);

@@ -1602,10 +1602,22 @@ src/.unsorted/802880D4.cpp:
 	.text       start:0x802880D4 end:0x8028C98C
 
 libs/RVL_SDK/src/dvd/dvdqueue.c:
-	.text       start:0x8028C98C end:0x8028CB24
+	.text       start:0x8028C98C end:0x8028CBE4
 
-src/.unsorted/8028CB24.cpp:
-	.text       start:0x8028CB24 end:0x80296938
+libs/RVL_SDK/src/dvd/dvderror.c:
+	.text       start:0x8028CBE4 end:0x8028CEEC
+
+libs/RVL_SDK/src/dvd/dvdidutils.c:
+	.text       start:0x8028CEEC end:0x8028CFDC
+
+libs/RVL_SDK/src/dvd/dvdFatal.c:
+	.text       start:0x8028CFDC end:0x8028D118
+
+libs/RVL_SDK/src/dvd/dvd_broadway.c:
+	.text       start:0x8028D118 end:0x8028EB04
+
+src/.unsorted/8028EB04.cpp:
+	.text       start:0x8028EB04 end:0x80296938
 
 libs/RVL_SDK/src/mem/mem_expHeap.c:
 	.text       start:0x80296938 end:0x802973F8

@@ -1,4 +1,4 @@
-#include ".unsorted/8028CB24.hpp"
+#include ".unsorted/8028EB04.hpp"
 
 #include "common.hpp"
 
@@ -22,7 +22,6 @@ void fn_80294F48();
 void fn_802959F8();
 void fn_80295E18();
 
-s32 fn_8028EAFC(void) { return 0; }
 u32 fn_8028F08C(void) { return lbl_8063FDD0; }
 u32 fn_8028FD64(void) { return lbl_8063FE34; }
 void fn_80290798(u32 v) { lbl_8063FE38 = v; }
@@ -55,7 +54,6 @@ extern "C" {
 extern u8 lbl_8051B7E0[];
 extern u32 lbl_8063FE70;
 
-u32 fn_8028E804(void) { return *(u32 *)(lbl_8051B7E0 + 0x4); }
 void fn_80290AF4(void) { lbl_8063FE70 = 0x1; }
 
 }
