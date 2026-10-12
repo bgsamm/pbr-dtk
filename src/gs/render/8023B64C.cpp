@@ -2,12 +2,13 @@
 
 #include "common.hpp"
 
-struct _UnkStruct8023B64C_1 {
+struct Unk8023B64C {
     /* 0x0 */ u16 _0;
     /* 0x2 */ u16 _2;
     /* 0x4 */ GXDrawSyncCallback mCallback;
+    // size: 0x8
 };
-static _UnkStruct8023B64C_1 lbl_804967A0[4];
+static Unk8023B64C lbl_804967A0[4];
 
 static u16 sNextToken;
 static u16 lbl_8063F740;
@@ -17,26 +18,30 @@ static u16 sMaxToken;
 static u16 lbl_8063F748;
 static u8 lbl_8063F74A;
 
+// TODO role: draw-sync callback; hands the token to the callback whose range contains it, else stores it
 static void fn_8023B64C(u16 token) {
     if (!GSrender::sInstance) {
         return;
     }
 
-    u8 _unk1 = lbl_8063F74A;
-    for (u8 i = 0; i < _unk1; i++) {
-        _UnkStruct8023B64C_1 *_unk2 = &lbl_804967A0[i];
-        if (_unk2->_0 <= token && _unk2->_2 >= token) {
-            _unk2->mCallback(token);
+    u8 count = lbl_8063F74A;
+    for (u8 i = 0; i < count; i++) {
+        Unk8023B64C *p = &lbl_804967A0[i];
+        if (p->_0 <= token && p->_2 >= token) {
+            p->mCallback(token);
             return;
         }
     }
 
     lbl_8063F744 = token;
 }
+
+// TODO role: restores the stored token from the one at 0x8063F740
 void GSrender::fn_8023B6B0() {
     lbl_8063F744 = lbl_8063F740;
 }
 
+// TODO role: advances the counter and recomputes the token limit
 void GSrender::fn_8023B6BC() {
     if (lbl_8063F748 != 0xFFFF) {
         lbl_8063F748++;
@@ -52,6 +57,7 @@ void GSrender::fn_8023B6BC() {
     }
 }
 
+// TODO role: resets the token state and registers fn_8023B64C as draw-sync callback
 void GSrender::fn_8023B704() {
     lbl_8063F744 = 0;
     sNextToken = 1;
@@ -69,6 +75,7 @@ void GSrender::fn_8023B704() {
     GXSetDrawSyncCallback(fn_8023B64C);
 }
 
+// TODO role: tests whether a token lies past the next token and up to end, wrapping
 static bool fn_8023B774(u16 token, u16 end) {
     if (sNextToken > end) {
         if (token <= end || token > sNextToken) {
@@ -82,16 +89,17 @@ static bool fn_8023B774(u16 token, u16 end) {
     return false;
 }
 
-static bool fn_8023B7B8(u32 arg0) {
-    u16 token = arg0 & 0xFFFF;
-    u16 _unk2 = arg0 >> 16;
+// TODO role: tests a packed (counter, token) value against the current draw-sync state
+static bool fn_8023B7B8(u32 packed) {
+    u16 token = packed & 0xFFFF;
+    u16 high = packed >> 16;
 
-    if (lbl_8063F748 < _unk2) {
-        if (0xFFFF - _unk2 + lbl_8063F748 > 1) {
+    if (lbl_8063F748 < high) {
+        if (0xFFFF - high + lbl_8063F748 > 1) {
             return true;
         }
     } else {
-        if (lbl_8063F748 - _unk2 > 1) {
+        if (lbl_8063F748 - high > 1) {
             return true;
         }
     }
@@ -108,24 +116,26 @@ static bool fn_8023B7B8(u32 arg0) {
     return fn_8023B774(token, currToken);
 }
 
-bool GSrender::fn_8023B864(u32 arg0) {
-    if (!arg0 || _1718) {
+// TODO role: wrapper of fn_8023B7B8 that answers true for 0 or when _1718 is set
+bool GSrender::fn_8023B864(u32 packed) {
+    if (!packed || _1718) {
         return true;
     }
-    return fn_8023B7B8(arg0);
+    return fn_8023B7B8(packed);
 }
 
-void GSrender::fn_8023B88C(u32 arg0) {
-    if (!arg0 || _1718) {
+// TODO role: waits until fn_8023B7B8 holds for the packed value or the GP is idle
+void GSrender::fn_8023B88C(u32 packed) {
+    if (!packed || _1718) {
         return;
     }
 
-    u32 _unk1;
-    fn_802311AC(&_unk1);
+    u32 retraceCount;
+    fn_802311AC(&retraceCount);
 
     GXBool readIdle, dummy;
-    while (!fn_8023B7B8(arg0)) {
-        fn_802311BC(&_unk1);
+    while (!fn_8023B7B8(packed)) {
+        fn_802311BC(&retraceCount);
 
         if (_1718 || _1719) {
             break;
@@ -138,19 +148,20 @@ void GSrender::fn_8023B88C(u32 arg0) {
         }
     }
 
-    fn_8023125C(&_unk1);
+    fn_8023125C(&retraceCount);
 }
 
-u32 GSrender::fn_8023B948(void *arg0) {
+// TODO role: issues the next draw-sync token and returns it with the counter
+u32 GSrender::fn_8023B948(void *) {
     if (_1718) {
         return 0;
     }
 
-    u16 _unk1 = lbl_8063F742;
+    u16 limit = lbl_8063F742;
     u16 nextToken = sNextToken;
 
-    if (nextToken == _unk1) {
-        return (lbl_8063F748 << 16) | _unk1;
+    if (nextToken == limit) {
+        return (lbl_8063F748 << 16) | limit;
     }
 
     GXSetDrawSync(nextToken);

@@ -1,8 +1,9 @@
-
 #include "common.hpp"
 
 extern "C" {
 
-s32 fn_801E07E8(void) { return 0; }
-
+// TODO role: always returns 0
+s32 fn_801E07E8(void) {
+    return 0;
+}
 }

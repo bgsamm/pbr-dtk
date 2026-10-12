@@ -1,14 +1,12 @@
 #include "gs/GSvideo.hpp"
 
+#include ".unsorted/8025B6AC.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GSrender.hpp"
 
 #include <cstring>
 
 #include "common.hpp"
-
-extern void fn_8025B6B4(u32);
-extern void fn_8025B6B8(f32 *, f32 *);
 
 extern f32 lbl_8063D988;
 

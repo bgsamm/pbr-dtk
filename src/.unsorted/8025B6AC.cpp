@@ -2,13 +2,14 @@
 
 #include "common.hpp"
 
+// TODO role: empty functions and a function that zeroes two floats
 void fn_8025B6AC() {}
 
 void fn_8025B6B0() {}
 
-void fn_8025B6B4(u32 param1) {}
+void fn_8025B6B4(u32) {}
 
-void fn_8025B6B8(f32 *param1, f32 *param2) {
-    *param1 = 0.f;
-    *param2 = 0.f;
+void fn_8025B6B8(f32 *first, f32 *second) {
+    *first = 0.f;
+    *second = 0.f;
 }

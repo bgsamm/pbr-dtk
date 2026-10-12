@@ -796,9 +796,9 @@ public:
     void fn_8023B6B0();
     void fn_8023B6BC();
     void fn_8023B704();
-    bool fn_8023B864(u32 arg0);
-    void fn_8023B88C(u32 arg0);
-    u32 fn_8023B948(void *arg0);
+    bool fn_8023B864(u32 packed);
+    void fn_8023B88C(u32 packed);
+    u32 fn_8023B948(void *);
 
     /* NOTE(samm)
      * As far as I can tell, this should indeed be public; using
