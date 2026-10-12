@@ -1711,8 +1711,26 @@ src/.unsorted/802B3C20.cpp:
 libs/RVL_SDK/src/nand/nand.c:
 	.text       start:0x802E7450 end:0x802E82F4
 
-src/.unsorted/802E82F4.cpp:
-	.text       start:0x802E82F4 end:0x80363510
+libs/RVL_SDK/src/nand/NANDOpenClose.c:
+	.text       start:0x802E82F4 end:0x802E8FE8
+
+libs/RVL_SDK/src/nand/NANDCore.c:
+	.text       start:0x802E8FE8 end:0x802EA66C
+
+src/.unsorted/802EA66C.cpp:
+	.text       start:0x802EA66C end:0x802EA94C
+
+libs/RVL_SDK/src/sc/scsystem.c:
+	.text       start:0x802EA94C end:0x802EC320
+
+libs/RVL_SDK/src/sc/scapi.c:
+	.text       start:0x802EC320 end:0x802EC78C
+
+libs/RVL_SDK/src/sc/scapi_prdinfo.c:
+	.text       start:0x802EC78C end:0x802EC97C
+
+src/.unsorted/802EC97C.cpp:
+	.text       start:0x802EC97C end:0x80363510
 	.ctors      start:0x803E2244 end:0x803E2248
 
 src/.unsorted/80363510.cpp:

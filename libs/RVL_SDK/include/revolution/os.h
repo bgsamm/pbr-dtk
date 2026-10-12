@@ -15,6 +15,7 @@ extern "C" {
 #define OS_CONSOLE_MASK_RVL (0x0000 << 16)
 #define OS_CONSOLE_MASK_DEV (0x1000 << 16)
 #define OS_CONSOLE_MASK_TDEV (0x2000 << 16)
+#define OS_CONSOLE_MASK_EMU 0x10000000 /* From doldecomp/ogws (CC0), include/revolution/OS/OS.h */
 
 #define OS_CONSOLE_RVL_PP_0 (OS_CONSOLE_MASK_RVL + 0x0010)
 #define OS_CONSOLE_RVL_PP_1 (OS_CONSOLE_MASK_RVL + 0x0011)

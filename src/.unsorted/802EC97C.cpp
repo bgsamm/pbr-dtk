@@ -1,4 +1,4 @@
-#include ".unsorted/802E82F4.hpp"
+#include ".unsorted/802EC97C.hpp"
 
 #include "common.hpp"
 
@@ -14,7 +14,6 @@ extern u32 lbl_806402E8;
 extern u32 lbl_80640364;
 extern u8 lbl_80445BB0[];
 extern u8 lbl_8057AAB8[];
-void fn_802EAE60();
 void fn_802ED628();
 void fn_802F7FC0();
 void fn_803191E0();
@@ -26,7 +25,6 @@ void fn_8034953C();
 void fn_8034CC6C();
 void fn_8035A5CC();
 
-void fn_802EAF9C(void) { fn_802EAE60(); }
 u32 fn_802ED060(u8 *p) { return *(u32 *)(p + 0x8); }
 s32 fn_802ED068(void) { return 1; }
 s32 fn_802ED1FC(void) { return 1; }

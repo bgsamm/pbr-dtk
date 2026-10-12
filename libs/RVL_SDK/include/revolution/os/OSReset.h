@@ -9,6 +9,17 @@ extern "C" {
 
 typedef BOOL (*OSShutdownFunction)(BOOL, u32);
 
+// From doldecomp/ogws (CC0), include/revolution/OS/OSReset.h
+typedef enum {
+    OS_SD_EVENT_FATAL,
+    OS_SD_EVENT_1,
+    OS_SD_EVENT_SHUTDOWN,
+    OS_SD_EVENT_3,
+    OS_SD_EVENT_RESTART,
+    OS_SD_EVENT_RETURN_TO_MENU,
+    OS_SD_EVENT_LAUNCH_APP,
+} OSShutdownEvent;
+
 typedef struct OSShutdownFunctionInfo OSShutdownFunctionInfo;
 struct OSShutdownFunctionInfo {
     OSShutdownFunction func;  // 0x00

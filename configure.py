@@ -550,6 +550,16 @@ config.libs = [
         "nand",
         [
             Object(NonMatching, "nand/nand.c"),
+            Object(NonMatching, "nand/NANDOpenClose.c"),
+            Object(NonMatching, "nand/NANDCore.c"),
+        ],
+    ),
+    RVLSDKLib(
+        "sc",
+        [
+            Object(NonMatching, "sc/scsystem.c"),
+            Object(NonMatching, "sc/scapi.c"),
+            Object(NonMatching, "sc/scapi_prdinfo.c"),
         ],
     ),
     RVLSDKLib(
@@ -967,7 +977,8 @@ config.libs = [
             Object(NonMatching, ".unsorted/802AD0D4.cpp"),
             Object(NonMatching, ".unsorted/802B2D18.cpp"),
             Object(NonMatching, ".unsorted/802B3C20.cpp"),
-            Object(NonMatching, ".unsorted/802E82F4.cpp"),
+            Object(NonMatching, ".unsorted/802EA66C.cpp"),
+            Object(NonMatching, ".unsorted/802EC97C.cpp"),
             Object(Matching, ".unsorted/803D9EB4.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
             Object(Matching, "ds/trainer_info.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
             Object(Matching, "ds/field_battle_data_transfer.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
