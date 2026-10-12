@@ -1,5 +1,6 @@
 #include ".unsorted/8013F044.hpp"
 
+#include ".unsorted/8000ADC0.hpp"
 #include ".unsorted/800559D4.hpp"
 #include ".unsorted/80164E3C.hpp"
 #include "gs/GScache.hpp"
@@ -56,7 +57,6 @@ void fn_800E7044();
 void fn_8009FC9C();
 void fn_802502D4(u16);
 void fn_800598F8(int, int);
-void fn_8000B170(int, int, f32);
 void fn_801558F0(void *, void *);
 f64 fn_8015F7A0();
 u32 fn_80059A6C(int, int, int, int);
@@ -87,7 +87,6 @@ void fn_8012D640(int, void *, u8, int);
 void fn_8005B328(s16, Unk8014FC0C *, int, int);
 int fn_8005AC60(int, int);
 Unk8015F6E0 *fn_8015F6E0();
-Unk8011C974 *fn_8011C974();
 Unk8015F690 *fn_8015F690();
 s16 fn_80253C38(void *, void *, void *, void *, int, int, int, int);
 int fn_80253F6C(int, void *, int);

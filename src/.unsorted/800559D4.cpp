@@ -1,5 +1,7 @@
 #include ".unsorted/800559D4.hpp"
 
+#include ".unsorted/8000ADC0.hpp"
+#include ".unsorted/8011C974.hpp"
 #include "gs/GScache.hpp"
 #include "gs/GSfile.hpp"
 #include "gs/GSfsys.hpp"
@@ -18,13 +20,6 @@
 #include <revolution/os/OSFastCast.h>
 
 #include "common.hpp"
-
-// size: unknown
-struct Unk8011C974 {
-    /* 0x00 */ u8 unk00[0x92];
-    /* 0x92 */ u16 _92;
-    /* 0x94 */ u16 _94;
-};
 
 // size: unknown
 struct Unk8015F690 {
@@ -58,11 +53,7 @@ void fn_8015C4F4(u8, u32);
 Unk8015F690 *fn_8015F690();
 double fn_8015F7A0();
 void fn_8015F758(double);
-Unk8011C974 *fn_8011C974();
-void fn_8000B570(int);
-void fn_8000B170(int, int, f32);
 int fn_8000708C();
-int fn_8000B4C0(int);
 u32 fn_80164BA8();
 int fn_80164D78();
 int fn_80164DA8();
@@ -1275,11 +1266,11 @@ void fn_800584D4() {
 // TODO Starts the first countdown from the value of fn_8011C974.
 void fn_800584E8() {
     Unk8011C974 *p = fn_8011C974();
-    if (p->_94 == 0) {
+    if (p->_0094 == 0) {
         lbl_8063D4A0->_0008.b10 = 0;
     } else {
         lbl_8063D4A0->_0008.b10 = 1;
-        lbl_8063D4A0->_108c = lbl_80640B84 * p->_94;
+        lbl_8063D4A0->_108c = lbl_80640B84 * p->_0094;
         lbl_8063D4A0->_1088 = lbl_80640B60;
         lbl_8063D4A0->_0008.b5 = 0;
     }
@@ -1288,11 +1279,11 @@ void fn_800584E8() {
 // TODO Starts the second countdown from the value of fn_8011C974.
 void fn_80058580() {
     Unk8011C974 *p = fn_8011C974();
-    if (p->_92 == 0) {
+    if (p->_0092 == 0) {
         lbl_8063D4A0->_0008.b8 = 0;
     } else {
         lbl_8063D4A0->_0008.b8 = 1;
-        lbl_8063D4A0->_1094 = p->_92;
+        lbl_8063D4A0->_1094 = p->_0092;
         lbl_8063D4A0->_1090 = lbl_80640B60;
         lbl_8063D4A0->_0008.b4 = 0;
     }
@@ -1300,7 +1291,7 @@ void fn_80058580() {
 
 // TODO Whether the first countdown is over.
 BOOL fn_80058610() {
-    if (fn_8011C974()->_94 == 0) {
+    if (fn_8011C974()->_0094 == 0) {
         return 0;
     }
     return lbl_8063D4A0->_1088 >= lbl_8063D4A0->_108c;
@@ -1308,7 +1299,7 @@ BOOL fn_80058610() {
 
 // TODO Whether the second countdown is over.
 BOOL fn_80058660() {
-    if (fn_8011C974()->_92 == 0) {
+    if (fn_8011C974()->_0092 == 0) {
         return 0;
     }
     return lbl_8063D4A0->_1090 >= lbl_8063D4A0->_1094;
@@ -1316,7 +1307,7 @@ BOOL fn_80058660() {
 
 // TODO Time left in the first countdown.
 int fn_800586B0() {
-    if (fn_8011C974()->_94 == 0) {
+    if (fn_8011C974()->_0094 == 0) {
         return 0;
     }
     if (lbl_8063D4A0->_1088 >= lbl_8063D4A0->_108c) {
@@ -1327,7 +1318,7 @@ int fn_800586B0() {
 
 // TODO Time left in the second countdown.
 int fn_80058714() {
-    if (fn_8011C974()->_92 == 0) {
+    if (fn_8011C974()->_0092 == 0) {
         return 0;
     }
     if (lbl_8063D4A0->_1090 >= lbl_8063D4A0->_1094) {

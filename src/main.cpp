@@ -1,3 +1,4 @@
+#include ".unsorted/8000ADC0.hpp"
 #include ".unsorted/80249BA0.hpp"
 #include "gs/GScache.hpp"
 #include "gs/GSfsys.hpp"
@@ -34,11 +35,6 @@ void fn_8000A73C();
 void fn_8000A77C();
 void fn_8000A790();
 void fn_8000AC94();
-void fn_8000ADC0(char *, MEMHeapHandle);
-void fn_8000AE8C();
-void fn_8000AEB0(u8);
-void fn_8000C764();
-void fn_8000C7E8();
 void fn_80055D94();
 u8 fn_80058B10(bool);
 void fn_80059208();

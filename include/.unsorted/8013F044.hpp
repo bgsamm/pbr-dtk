@@ -1,5 +1,7 @@
 #pragma once
 
+#include ".unsorted/8011C974.hpp"
+
 #include <revolution/types.h>
 
 struct Unk80058EA0;
@@ -28,25 +30,6 @@ struct Unk8014FC0C {
     /* 0x4C */ f32 _4c;
     /* 0x50 */ f32 _50;
     /* 0x54 */ f32 _54;
-};
-
-// Object returned by fn_8011C974.
-// size: unknown
-struct Unk8011C974 {
-    /* 0x0000 */ u8 unk0000[0x4];
-    /* 0x0004 */ u32 _0004;
-    /* 0x0008 */ s32 _0008;
-    /* 0x000C */ u8 unk000c[0x4];
-    /* 0x0010 */ s32 _0010;
-    /* 0x0014 */ u8 unk0014[0x76];
-    /* 0x008A */ u8 _008a[0x6];
-    /* 0x0090 */ u16 _0090;
-    /* 0x0092 */ u8 unk0092[0x1F6A];
-    /* 0x1FFC */ u8 _1ffc[0x1FC];
-    /* 0x21F8 */ u8 _21f8[0x2CD4];
-    /* 0x4ECC */ u8 _4ecc[0x4];
-    /* 0x4ED0 */ u8 unk4ed0[0x7738];
-    /* 0xC608 */ u8 _c608[3][0x6EC];
 };
 
 // Object returned by fn_8015F690.
