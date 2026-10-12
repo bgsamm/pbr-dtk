@@ -5,17 +5,29 @@
 struct Unk80250F18;
 typedef void (*Unk80250F18Callback)(Unk80250F18 *obj);
 
+struct Unk80250F18_04 {
+    /* 0x00 */ u8 unk00[0xE];
+    /* 0x0E */ u16 _0E;
+    /* 0x10 */ u8 unk10[0x1C];
+    // size: 0x2C
+};
+
 struct Unk80250F18_08 {
     /* 0x00 */ u8 unk00[6];
     /* 0x06 */ u8 _06;
-    /* 0x07 */ u8 unk07[0xB9];
+    /* 0x07 */ u8 unk07[9];
+    /* 0x10 */ s16 _10;
+    /* 0x12 */ s16 _12;
+    /* 0x14 */ u8 unk14[0xA];
+    /* 0x1E */ s16 _1E;
+    /* 0x20 */ u8 unk20[0xA0];
     // size: 0xC0
 };
 
 struct Unk80250F18 {
     /* 0x000 */ u16 _00;
     /* 0x002 */ u16 _02;
-    /* 0x004 */ void *_04;
+    /* 0x004 */ Unk80250F18_04 *_04;
     /* 0x008 */ Unk80250F18_08 *_08;
     /* 0x00C */ void *_0C;
     /* 0x010 */ u8 unk010[0x14];
@@ -37,10 +49,6 @@ extern "C" {
 // TODO Replace with proper imports
 void fn_80250FF8(Unk80250F18 *obj, u16 count);
 void fn_80251AF8(Unk80250F18 *obj, s16 a);
-void fn_80253A74(Unk80250F18 *obj, u32 a, u32 b, u32 c);
-void fn_80253ABC(Unk80250F18 *obj, s16 a);
-void fn_80253AEC(Unk80250F18 *obj, s16 a);
-void fn_80253B2C(Unk80250F18 *obj, u32 a, u32 b, u32 c);
 void fn_80254260(Unk80250F18 *obj, u32 a, u32 b, u32 c);
 void fn_80254334(Unk80250F18 *obj, u32 a, u32 b, u32 c);
 }

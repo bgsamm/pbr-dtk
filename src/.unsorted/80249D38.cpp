@@ -6,7 +6,39 @@
 
 extern "C" {
 
+/* lbl_803FD8C8 */ extern s16 lbl_803FD8C8[10];
 extern f32 lbl_8063F8D8;
+
+// TODO role: index of the first free entry of the table at 0x64F54, or -1
+s32 fn_8024AEC0(Unk80249D38 *obj) {
+    for (s32 i = 0; i < 8; i++) {
+        if (obj->_64F54[i] == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+// TODO role: clears the member at 0x04 of each of the eight tracks and releases their children
+void fn_8024B3D4(Unk80249D38 *obj) {
+    for (s32 i = 0; i < 8; i++) {
+        obj->_64F94[i]._04 = 0;
+        fn_8024C440(obj, &obj->_64F94[i]);
+    }
+}
+
+// TODO role: finds the track whose member at 0x04 equals the argument, clears it and releases its children; returns 1
+// when found
+u32 fn_8024B440(Unk80249D38 *obj, u32 value) {
+    for (s32 i = 0; i < 8; i++) {
+        if (obj->_64F94[i]._04 == value) {
+            obj->_64F94[i]._04 = 0;
+            fn_8024C440(obj, &obj->_64F94[i]);
+            return 1;
+        }
+    }
+    return 0;
+}
 
 void fn_8024B4B0(void) {
     fn_8024BB74();
@@ -18,6 +50,17 @@ void fn_8024C434(void) {}
 void fn_8024C438(void) {}
 void fn_8024C43C(void) {}
 
+// TODO role: frees the eight child tracks of a track, recursively
+void fn_8024C440(Unk80249D38 *obj, Unk8015AAF0 *track) {
+    for (s32 i = 0; i < 8; i++) {
+        if (track->_68[i] != NULL) {
+            fn_8024C440(obj, track->_68[i]);
+            fn_8024FF4C(obj, track->_68[i]);
+            track->_68[i] = NULL;
+        }
+    }
+}
+
 // TODO role: 8-bit field stored shifted by 5 at 0xD54, with its getter
 void fn_8024F958(Unk80249D38 *obj, u8 v) {
     obj->_D54 = v << 5;
@@ -27,12 +70,26 @@ u8 fn_8024F964(Unk80249D38 *obj) {
     return (obj->_D54 >> 5) & 0xFF;
 }
 
+// TODO role: stores the index in the track and, when its member at 0x26 is 0, loads it from a table chosen by the
+// member at 0x28
+void fn_8024F970(Unk80249D38 *obj, Unk8015AAF0 *track, u8 index) {
+    track->_18 = index;
+    if (track->_26 != 0) {
+        return;
+    }
+    if (track->_28 != 0) {
+        track->_26 = lbl_803FD8C8[index];
+    } else {
+        track->_26 = obj->_D6C[index];
+    }
+}
+
 // TODO role: setters on a second record (0x34 as a signed byte; 0x64, 0x1E and 0x20 reset)
-void fn_8024F9B8(Unk80249D38 *, Unk8024F9B8 *arg, s32 value) {
+void fn_8024F9B8(Unk80249D38 *, Unk8015AAF0 *arg, s32 value) {
     arg->_34 = (s8)value;
 }
 
-void fn_8024FA5C(Unk80249D38 *, Unk8024F9B8 *arg) {
+void fn_8024FA5C(Unk80249D38 *, Unk8015AAF0 *arg) {
     arg->_64 = 0;
     arg->_1E = -1;
     arg->_20 = -1;
@@ -99,12 +156,12 @@ void fn_80250360(void *block) {
     fn_8024FF4C(&lbl_80497FEC, block);
 }
 
-void fn_80250370(u32 a, u32 b) {
-    fn_8024F970(&lbl_80497FEC, a, b);
+void fn_80250370(Unk8015AAF0 *track, u8 index) {
+    fn_8024F970(&lbl_80497FEC, track, index);
 }
 
-void fn_80250388(void *a) {
-    fn_8024C440(&lbl_80497FEC, a);
+void fn_80250388(Unk8015AAF0 *track) {
+    fn_8024C440(&lbl_80497FEC, track);
 }
 
 void fn_80250398(u32 a, u32 b, u32 c) {
