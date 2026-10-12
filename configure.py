@@ -636,7 +636,7 @@ config.libs = [
         "objects": [
             Object(NonMatching, "main.cpp"),
             Object(Matching, "ds/battle/battle_io_command.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
-            Object(NonMatching, "ds/battle/battle_display.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
+            Object(Matching, "ds/battle/battle_display.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
             Object(NonMatching, "ds/battle/battle_main.cpp"),
             Object(NonMatching, "ds/battle/battle_system.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
             Object(Matching, "ds/battle/battle_controller.cpp", extra_cflags=["-O4,s", "-inline noauto"]),

@@ -239,13 +239,13 @@ BOOL fn_803D97E4(void *, u16) {
     return TRUE;
 }
 
-BOOL fn_803D97EC() {
+BOOL fn_803D97EC(int printerID) {
     return FALSE;
 }
 
 void fn_803D97F4() {}
 
-void fn_803D97F8() {}
+void fn_803D97F8(int seqID) {}
 
 s32 fn_803D97FC(u32, u32) {
     return FALSE;
@@ -261,23 +261,23 @@ u8 fn_803D9810(int battlerType, u32 battleType) {
     return FALSE;
 }
 
-BOOL fn_803D9818() {
+BOOL fn_803D9818(void *btlSubscreen) {
     return TRUE;
 }
 
-BOOL fn_803D9820() {
+BOOL fn_803D9820(void *btlSubscreen) {
     return TRUE;
 }
 
-BOOL fn_803D9828() {
+int fn_803D9828(void *btlSubscreen) {
     return FALSE;
 }
 
-void fn_803D9830() {}
+void fn_803D9830(void *btlSubscreen, int param1) {}
 
-void fn_803D9834() {}
+void fn_803D9834(void *btlSubscreen, int menuConfigIndex, int forceRedraw, void *battleDisplayData) {}
 
-void fn_803D9838() {}
+void fn_803D9838(void *btlSubscreen) {}
 
 int fn_803D983C(int netId) {
     return FALSE;
@@ -355,7 +355,7 @@ void *NARC_AllocAndReadFromMemberByIndexPair(u32 narcId, u32 memberIndex, u32 he
 }
 
 // TODO Sends a string to the Wii message window when a command is pending.
-s32 fn_803D9A44(Strbuf *str, void *param) {
+u8 fn_803D9A44(Strbuf *str, void *param) {
     fn_8016E2DC();
     if (lbl_8048CE28.pendingCommand != 0) {
         lbl_8048CDE8.message.text = Strbuf_GetData(str);

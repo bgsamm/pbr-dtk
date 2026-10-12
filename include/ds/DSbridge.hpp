@@ -259,21 +259,30 @@ u16 LCRNG_Next();
 
 // Stubs of DS hardware and system calls
 BOOL fn_803D97E4(void *, u16);
-BOOL fn_803D97EC();
+// TODO probably Text_IsPrinterActive (pret). The printer id is an int here: battle_script passes a word without
+// truncating it.
+BOOL fn_803D97EC(int printerID);
 void fn_803D97F4();
-void fn_803D97F8();
+// TODO probably Sound_PlayEffect (pret). It returns nothing here: the stub is a single blr.
+void fn_803D97F8(int seqID);
 s32 fn_803D97FC(u32, u32);
 void fn_803D9804(u32);
 void fn_803D9808(void *);
 void fn_803D980C(void *);
 // TODO probably HealthBox_Type (pret)
 u8 fn_803D9810(int battlerType, u32 battleType);
-BOOL fn_803D9818();
-BOOL fn_803D9820();
-BOOL fn_803D9828();
-void fn_803D9830();
-void fn_803D9834();
-void fn_803D9838();
+// TODO probably useless_0226BCD0 (pret), the end of the subscreen transition
+BOOL fn_803D9818(void *btlSubscreen);
+// TODO probably BattleSubscreen_IsReady (pret)
+BOOL fn_803D9820(void *btlSubscreen);
+// TODO probably BattleSystem_MenuInput (pret)
+int fn_803D9828(void *btlSubscreen);
+// TODO probably ov16_Dummy3 (pret)
+void fn_803D9830(void *btlSubscreen, int param1);
+// TODO probably BattleSubscreen_SetupBackground (pret), without the NARC arguments
+void fn_803D9834(void *btlSubscreen, int menuConfigIndex, int forceRedraw, void *battleDisplayData);
+// TODO probably BattleSubscreen_HideBallSprites (pret)
+void fn_803D9838(void *btlSubscreen);
 // TODO probably the link position of a network id (pret BattleSystem_GetLinkPlayerPositionForBattler)
 int fn_803D983C(int netId);
 void fn_803D9844(u32);
@@ -292,7 +301,7 @@ void fn_803D989C(BOOL cond, const char *fmt, ...);
 BOOL NARC_ReadWholeMemberByIndexPair(void *dest, u32 narcId, u32 memberIndex);
 void NARC_ReadFromMemberByIndexPair(void *dest, u32 narcId, u32 memberIndex, u32 offset, u32 bytesToRead);
 void *NARC_AllocAndReadFromMemberByIndexPair(u32 narcId, u32 memberIndex, u32 heapId, u32 offset, u32 bytesToRead);
-s32 fn_803D9A44(Strbuf *str, void *param);
+u8 fn_803D9A44(Strbuf *str, void *param);
 const u16 *fn_803D9AEC(BattleMessage *battleMsg, u32 *size);
 void *fn_803D9BAC();
 void fn_803D9BB4(void *data);

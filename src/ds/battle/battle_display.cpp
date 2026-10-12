@@ -1,11 +1,12 @@
 #include "ds/battle/battle_display.hpp"
 
-#include ".unsorted/8038F424.hpp"
+#include ".unsorted/8016E2B8.hpp"
 #include ".unsorted/803D9EB4.hpp"
 #include "ds/DSbridge.hpp"
 #include "ds/battle/battle_common.hpp"
 #include "ds/battle/battle_constants.hpp"
 #include "ds/battle/battle_controller.hpp"
+#include "ds/battle/battle_lib.hpp"
 #include "ds/battle/battle_strings.hpp"
 #include "ds/party.hpp"
 #include "ds/pokemon.hpp"
@@ -155,6 +156,12 @@ struct MoveSelectMenuData {
     /* 0x22 */ u16 invalidMoves;
 };
 
+// pokeplatinum GiveUpMoveData
+// size: 0x2
+struct GiveUpMoveData {
+    /* 0x0 */ u16 move;
+};
+
 // TODO What the target selection request sends to the Wii controls (see fn_8016E330).
 // size: 0x10
 struct Unk803AA178 {
@@ -189,11 +196,22 @@ struct TargetSelectMenuData {
     /* 0x34 */ Unk803AA178 request;
 };
 
-// Only the fields used so far (pokeplatinum BattlePartyContext).
-// size: 0x38
+// Only the fields used so far (pokeplatinum BattlePartyContext; the player party task sends it to the Wii controls).
+// size: 0x28
 struct BattlePartyContext {
     /* 0x0 */ Party *party;
-    /* 0x4 */ u8 unk4[0x34];
+    /* 0x4 */ BattleSystem *battleSys;
+    /* 0x8 */ u8 unk8;
+    /* 0x9 */ u8 doubleBattleFirstSelectedPartySlot;
+    /* 0xA */ u8 playerPokemonPartySlot;
+    /* 0xB */ u8 partnerPokemonPartySlot;
+    /* 0xC */ u8 selectedPartyIndex;
+    /* 0xD */ u8 unkD[0xB];
+    /* 0x18 */ u16 selectedBattleBagItem;
+    /* 0x1A */ u16 moveToLearn;
+    /* 0x1C */ u32 battler;
+    /* 0x20 */ u8 pokemonPartySlots[MAX_PARTY_SIZE];
+    /* 0x26 */ u8 unk26[0x2];
 };
 
 // Only the fields used so far (pokeplatinum PartyMenuData).
@@ -234,12 +252,12 @@ struct BagMenuData {
     /* 0x30 */ u8 embargoTurns[MAX_BATTLERS];
 };
 
-// Only the fields used so far (pokeplatinum YesNoMenuData).
+// pokeplatinum YesNoMenuData
 // size: 0x1C
 struct YesNoMenuData {
     /* 0x0 */ BattleSystem *battleSys;
     /* 0x4 */ HealthBox *healthbox;
-    /* 0x8 */ u8 unk8[0x4];
+    /* 0x8 */ int input;
     /* 0xC */ u8 command;
     /* 0xD */ u8 battler;
     /* 0xE */ u8 state;
@@ -247,7 +265,7 @@ struct YesNoMenuData {
     /* 0x10 */ int promptMsg;
     /* 0x14 */ int nickname;
     /* 0x18 */ u16 move;
-    /* 0x1A */ u8 unk1A[0x2];
+    /* 0x1A */ u16 msgIdx;
 };
 
 // pokeplatinum BattleMessageWaitTask
@@ -395,8 +413,9 @@ struct Unk8063D080 {
     /* 0x12 */ u8 unk12[0x6];
 };
 
+/* lbl_8063D080 */ static Unk8063D080 sUnk8063D080;
+
 // TODO Replace with proper imports
-extern Unk8063D080 lbl_8063D080;
 extern "C" {
 void *fn_8016DF70(u32 heapId, u32 size);
 void fn_8016E0A0(void *ptr);
@@ -1068,7 +1087,9 @@ void BattleDisplay_InitTaskShowBagMenu(BattleSystem *battleSys, BattlerData *bat
 
     bagMenuData->partyMenuData = (PartyMenuData *)fn_8016DF70(HEAP_ID_BATTLE, sizeof(PartyMenuData));
     bagMenuData->partyMenuData->battlePartyCtx =
-        (BattlePartyContext *)fn_8016DF70(HEAP_ID_BATTLE, sizeof(BattlePartyContext));
+        // TODO This game allocates 0x38 bytes here, exactly sizeof(BattlePartyContext) in pokeplatinum, but 0x28 for
+        // the player party task.
+        (BattlePartyContext *)fn_8016DF70(HEAP_ID_BATTLE, 0x38);
     bagMenuData->partyMenuData->battlePartyCtx->party = Party_New(HEAP_ID_BATTLE);
     bagMenuData->state = 0;
     bagMenuData->battleSys = battleSys;
@@ -1690,12 +1711,6 @@ static void Task_SlideHealthBoxOut(Unk8063D230 *task, void *data) {
     fn_803DEF3C(task);
 }
 
-// TODO Player tasks for the party and yes/no menus; not decompiled yet.
-extern "C" {
-void fn_803AA4D0(Unk8063D230 *task, void *data);
-void fn_803AAAEC(Unk8063D230 *task, void *data);
-}
-
 // The player tasks send a request to the Wii controls (unit 8016E2B8) and wait for the answer.
 static void Task_PlayerSetCommandSelection(Unk8063D230 *task, void *data) {
     CommandSetData *commandSetData = (CommandSetData *)data;
@@ -1775,14 +1790,14 @@ static void Task_PlayerShowMoveSelectMenu(Unk8063D230 *task, void *data) {
     switch (moveSelectMenuData->state) {
         case 0:
             for (i = 0; i < LEARNED_MOVES_MAX; i++) {
-                lbl_8063D080.moves[i] = moveSelectMenuData->moves[i];
-                lbl_8063D080.ppCur[i] = moveSelectMenuData->ppCur[i];
-                lbl_8063D080.ppMax[i] = moveSelectMenuData->ppMax[i];
+                sUnk8063D080.moves[i] = moveSelectMenuData->moves[i];
+                sUnk8063D080.ppCur[i] = moveSelectMenuData->ppCur[i];
+                sUnk8063D080.ppMax[i] = moveSelectMenuData->ppMax[i];
             }
 
-            lbl_8063D080.partySlot = moveSelectMenuData->partySlot;
+            sUnk8063D080.partySlot = moveSelectMenuData->partySlot;
 
-            fn_8016E330(2, moveSelectMenuData->battler, fn_803A9EFC_inline(moveSelectMenuData), &lbl_8063D080);
+            fn_8016E330(2, moveSelectMenuData->battler, fn_803A9EFC_inline(moveSelectMenuData), &sUnk8063D080);
             moveSelectMenuData->state++;
             break;
         case 1:
@@ -1943,6 +1958,145 @@ static void Task_TrainerShowBagMenu(Unk8063D230 *task, void *data) {
     fn_803DEF3C(task);
 }
 
+static void Task_PlayerShowPartyMenu(Unk8063D230 *task, void *data) {
+    PartyMenuData *partyMenuData = (PartyMenuData *)data;
+    u32 battleType = BattleSystem_GetBattleType(partyMenuData->battleSys);
+    Party *unused = BattleSystem_GetParty(partyMenuData->battleSys, partyMenuData->battler);
+    BattlePartyContext *battlePartyCtx;
+    int result;
+
+    switch (partyMenuData->state) {
+        case 0: {
+            int i;
+            int battler;
+            int battler1, battler2;
+            Pokemon *monSrc, *monDst;
+
+            battlePartyCtx = (BattlePartyContext *)fn_8016DF70(HEAP_ID_BATTLE, sizeof(BattlePartyContext));
+            memset(battlePartyCtx, 0, sizeof(BattlePartyContext));
+            partyMenuData->battlePartyCtx = battlePartyCtx;
+            battlePartyCtx->party = Party_New(HEAP_ID_BATTLE);
+
+            if ((BattleSystem_GetBattleType(partyMenuData->battleSys) & (BATTLE_TYPE_LINK | BATTLE_TYPE_2vs2)) ==
+                    (BATTLE_TYPE_LINK | BATTLE_TYPE_2vs2) ||
+                BattleSystem_GetBattleType(partyMenuData->battleSys) == BATTLE_TYPE_FRONTIER_WITH_AI_PARTNER) {
+                if (BattleSystem_GetBattlerType(partyMenuData->battleSys, partyMenuData->battler) ==
+                    BATTLER_TYPE_PLAYER_SIDE_SLOT_1) {
+                    battler1 = partyMenuData->battler;
+                    battler2 = BattleSystem_GetPartner(partyMenuData->battleSys, partyMenuData->battler);
+                } else {
+                    battler1 = BattleSystem_GetPartner(partyMenuData->battleSys, partyMenuData->battler);
+                    battler2 = partyMenuData->battler;
+                }
+
+                monSrc = Pokemon_New(HEAP_ID_BATTLE);
+
+                for (i = 0; i < MAX_PARTY_SIZE; i++) {
+                    Party_AddPokemon(battlePartyCtx->party, monSrc);
+                }
+
+                fn_8016E0A0(monSrc);
+
+                for (i = 0; i < BattleSystem_GetPartyCount(partyMenuData->battleSys, battler1); i++) {
+                    monSrc = BattleSystem_GetPartyPokemon(partyMenuData->battleSys,
+                                                          battler1,
+                                                          partyMenuData->partyOrder[battler1][i]);
+                    monDst = Party_GetPokemonBySlotIndex(battlePartyCtx->party, i * 2);
+                    Pokemon_Copy(monSrc, monDst);
+                    battlePartyCtx->pokemonPartySlots[i * 2] = partyMenuData->partyOrder[battler1][i];
+                }
+
+                for (i = 0; i < BattleSystem_GetPartyCount(partyMenuData->battleSys, battler2); i++) {
+                    monSrc = BattleSystem_GetPartyPokemon(partyMenuData->battleSys,
+                                                          battler2,
+                                                          partyMenuData->partyOrder[battler2][i]);
+                    monDst = Party_GetPokemonBySlotIndex(battlePartyCtx->party, i * 2 + 1);
+                    Pokemon_Copy(monSrc, monDst);
+                    battlePartyCtx->pokemonPartySlots[i * 2 + 1] = partyMenuData->partyOrder[battler2][i];
+                }
+
+                if (BattleSystem_GetBattlerType(partyMenuData->battleSys, partyMenuData->battler) ==
+                    BATTLER_TYPE_PLAYER_SIDE_SLOT_2) {
+                    battlePartyCtx->selectedPartyIndex = 1;
+                } else {
+                    battlePartyCtx->selectedPartyIndex = 0;
+                }
+            } else {
+                if (BattleSystem_GetBattleType(partyMenuData->battleSys) & BATTLE_TYPE_DOUBLES &&
+                    (BattleSystem_GetBattleType(partyMenuData->battleSys) & BATTLE_TYPE_2vs2) == FALSE) {
+                    battler = partyMenuData->battler & 1;
+                } else {
+                    battler = partyMenuData->battler;
+                }
+
+                int battlerType = BattleSystem_GetBattlerType(partyMenuData->battleSys, partyMenuData->battler);
+                battlePartyCtx->selectedPartyIndex =
+                    battlerType == BATTLER_TYPE_PLAYER_SIDE_SLOT_2 || battlerType == BATTLER_TYPE_ENEMY_SIDE_SLOT_2;
+
+                Party *party = BattleSystem_GetParty(partyMenuData->battleSys, partyMenuData->battler);
+
+                for (i = 0; i < Party_GetCurrentCount(party); i++) {
+                    monSrc = BattleSystem_GetPartyPokemon(partyMenuData->battleSys,
+                                                          battler,
+                                                          partyMenuData->partyOrder[battler][i]);
+                    Party_AddPokemon(battlePartyCtx->party, monSrc);
+                    battlePartyCtx->pokemonPartySlots[i] = partyMenuData->partyOrder[battler][i];
+                }
+            }
+
+            battlePartyCtx->battleSys = partyMenuData->battleSys;
+            battlePartyCtx->moveToLearn = partyMenuData->canSwitch;
+            battlePartyCtx->doubleBattleFirstSelectedPartySlot = partyMenuData->doublesSelection;
+            battlePartyCtx->selectedBattleBagItem = partyMenuData->selectedBattleBagItem;
+            battlePartyCtx->battler = partyMenuData->battler;
+
+            if ((partyMenuData->battlersSwitchingMask & FlagIndex(partyMenuData->battler)) == 0) {
+                battlePartyCtx->playerPokemonPartySlot = partyMenuData->partySlots[partyMenuData->battler];
+            } else {
+                battlePartyCtx->playerPokemonPartySlot = MAX_PARTY_SIZE;
+            }
+
+            if (BattleSystem_GetBattleType(partyMenuData->battleSys) & BATTLE_TYPE_2vs2) {
+                battlePartyCtx->partnerPokemonPartySlot = MAX_PARTY_SIZE;
+            } else if ((partyMenuData->battlersSwitchingMask &
+                        FlagIndex(BattleSystem_GetPartner(partyMenuData->battleSys, partyMenuData->battler))) == 0) {
+                battlePartyCtx->partnerPokemonPartySlot =
+                    partyMenuData->partySlots[BattleSystem_GetPartner(partyMenuData->battleSys,
+                                                                      partyMenuData->battler)];
+            } else {
+                battlePartyCtx->partnerPokemonPartySlot = MAX_PARTY_SIZE;
+            }
+
+            fn_8016E330(4, partyMenuData->battler, 0xFF, battlePartyCtx);
+            partyMenuData->state++;
+            break;
+        }
+        case 1:
+            if (fn_8016E430(partyMenuData->battler) != 0xFF) {
+                fn_8016E2E4(9);
+                break;
+            }
+
+            result = fn_8016E478(partyMenuData->battler);
+            battlePartyCtx = partyMenuData->battlePartyCtx;
+
+            if (result == 0xFF) {
+                BattleController_EmitPartyMenuResult(partyMenuData->battleSys, partyMenuData->battler, 0xFF);
+            } else {
+                BattleController_EmitPartyMenuResult(partyMenuData->battleSys,
+                                                     partyMenuData->battler,
+                                                     battlePartyCtx->pokemonPartySlots[result] + 1);
+            }
+
+            BattleController_EmitClearCommand(partyMenuData->battleSys, partyMenuData->battler, partyMenuData->command);
+            fn_8016E0A0(battlePartyCtx->party);
+            fn_8016E0A0(battlePartyCtx);
+            fn_8016E0A0(data);
+            fn_803DEF3C(task);
+            break;
+    }
+}
+
 static void Task_TrainerShowPartyMenu(Unk8063D230 *task, void *data) {
     PartyMenuData *partyMenuData = (PartyMenuData *)data;
     u32 battleType = BattleSystem_GetBattleType(partyMenuData->battleSys);
@@ -1995,6 +2149,104 @@ static void Task_TrainerShowPartyMenu(Unk8063D230 *task, void *data) {
 
     fn_8016E0A0(data);
     fn_803DEF3C(task);
+}
+
+static void Task_PlayerShowYesNoMenu(Unk8063D230 *task, void *data) {
+    YesNoMenuData *yesNoMenuData = (YesNoMenuData *)data;
+    void *bgConfig = BattleSystem_GetBgConfig(yesNoMenuData->battleSys);
+    void *btlSubscreen = fn_803ACA58(yesNoMenuData->battleSys);
+    int partner;
+    HealthBox *healthbox;
+    BattlerData *battlerData = BattleSystem_GetBattlerData(yesNoMenuData->battleSys, yesNoMenuData->battler);
+    partner = BattleSystem_GetPartner(yesNoMenuData->battleSys, yesNoMenuData->battler);
+
+    if (partner != yesNoMenuData->battler) {
+        healthbox = BattleSystem_GetHealthBox(yesNoMenuData->battleSys, partner);
+    } else {
+        healthbox = NULL;
+    }
+
+    switch (yesNoMenuData->state) {
+        case 0:
+            if (fn_803D9820(btlSubscreen) == FALSE) {
+                break;
+            }
+
+            if (yesNoMenuData->promptMsg) {
+                MessageLoader *msgLoader = BattleSystem_GetMessageLoader(yesNoMenuData->battleSys);
+                BattleMessage battleMsg;
+
+                if (yesNoMenuData->yesNoType == 5) {
+                    battleMsg.tags = TAG_NICKNAME | 0x80;
+                    battleMsg.params[0] = yesNoMenuData->nickname;
+                } else {
+                    battleMsg.tags = TAG_NONE;
+                }
+
+                battleMsg.id = yesNoMenuData->promptMsg;
+                yesNoMenuData->msgIdx = BattleMessage_Print(yesNoMenuData->battleSys,
+                                                            msgLoader,
+                                                            &battleMsg,
+                                                            BattleSystem_GetTextSpeed(yesNoMenuData->battleSys));
+            }
+
+            yesNoMenuData->state = 1;
+            break;
+        case 1:
+            if (fn_803D97EC(yesNoMenuData->msgIdx) == FALSE || yesNoMenuData->promptMsg == 0) {
+                GiveUpMoveData giveUpMoveData;
+
+                fn_803D9838(btlSubscreen);
+
+                giveUpMoveData.move = yesNoMenuData->move;
+
+                switch (yesNoMenuData->yesNoType) {
+                    case 0:
+                    case 5: fn_803D9834(btlSubscreen, 13, 0, &giveUpMoveData); break;
+                    case 1: fn_803D9834(btlSubscreen, 14, 0, &giveUpMoveData); break;
+                    case 2: fn_803D9834(btlSubscreen, 15, 0, &giveUpMoveData); break;
+                    case 3: fn_803D9834(btlSubscreen, 16, 0, &giveUpMoveData); break;
+                    case 4: fn_803D9834(btlSubscreen, 17, 0, &giveUpMoveData); break;
+                }
+
+                yesNoMenuData->state = 2;
+            }
+            break;
+        case 2:
+            yesNoMenuData->input = fn_803D9828(btlSubscreen);
+
+            if (yesNoMenuData->input != 0) {
+                fn_803D97F8(7);
+                yesNoMenuData->state = 3;
+            }
+            break;
+        case 3:
+            if (fn_803D9820(btlSubscreen) == TRUE) {
+                fn_803D980C(yesNoMenuData->healthbox);
+                fn_803D9850(battlerData);
+                fn_803D9838(btlSubscreen);
+                fn_803D9834(btlSubscreen, 0, 0, NULL);
+
+                if (yesNoMenuData->input == 1) {
+                    fn_803D9830(btlSubscreen, 0);
+                }
+
+                yesNoMenuData->state = 4;
+            }
+            break;
+        case 4:
+            if (fn_803D9818(btlSubscreen) == TRUE) {
+                BattleController_EmitSelectedCommand(yesNoMenuData->battleSys,
+                                                     yesNoMenuData->battler,
+                                                     yesNoMenuData->input);
+                BattleController_EmitClearCommand(yesNoMenuData->battleSys,
+                                                  yesNoMenuData->battler,
+                                                  yesNoMenuData->command);
+                fn_8016E0A0(data);
+                fn_803DEF3C(task);
+            }
+            break;
+    }
 }
 
 static void Task_TrainerShowYesNoMenu(Unk8063D230 *task, void *data) {
@@ -2174,8 +2426,8 @@ void BattlerData_SetTaskFuncs(BattleSystem *battleSys, BattlerData *battlerData)
         battlerData->taskFuncs.showMoveSelectMenu = Task_PlayerShowMoveSelectMenu;
         battlerData->taskFuncs.showTargetSelectMenu = Task_PlayerShowTargetSelectMenu;
         battlerData->taskFuncs.showBagMenu = Task_PlayerShowBagMenu;
-        battlerData->taskFuncs.showPartyMenu = fn_803AA4D0;
-        battlerData->taskFuncs.showYesNoMenu = fn_803AAAEC;
+        battlerData->taskFuncs.showPartyMenu = Task_PlayerShowPartyMenu;
+        battlerData->taskFuncs.showYesNoMenu = Task_PlayerShowYesNoMenu;
         battlerData->bootState = BATTLER_BOOT_STATE_NORMAL;
     } else if (battleType & BATTLE_TYPE_UNK_14) {
         if (battlerData->battlerType & BATTLER_THEM) {
@@ -2191,8 +2443,8 @@ void BattlerData_SetTaskFuncs(BattleSystem *battleSys, BattlerData *battlerData)
             battlerData->taskFuncs.showMoveSelectMenu = Task_PlayerShowMoveSelectMenu;
             battlerData->taskFuncs.showTargetSelectMenu = Task_PlayerShowTargetSelectMenu;
             battlerData->taskFuncs.showBagMenu = Task_PlayerShowBagMenu;
-            battlerData->taskFuncs.showPartyMenu = fn_803AA4D0;
-            battlerData->taskFuncs.showYesNoMenu = fn_803AAAEC;
+            battlerData->taskFuncs.showPartyMenu = Task_PlayerShowPartyMenu;
+            battlerData->taskFuncs.showYesNoMenu = Task_PlayerShowYesNoMenu;
             battlerData->bootState = BATTLER_BOOT_STATE_NORMAL;
         }
     } else if (battleType & BATTLE_TYPE_UNK_17) {

@@ -72,6 +72,7 @@ struct BattleSystem {
 
 // TODO Defined in unit 803A60D8, which is not decompiled yet
 extern "C" {
+void *BattleSystem_GetBgConfig(BattleSystem *battleSys);
 u32 BattleSystem_GetBattleType(BattleSystem *battleSys);
 BattleContext *BattleSystem_GetBattleContext(BattleSystem *battleSys);
 BattlerData *BattleSystem_GetBattlerData(BattleSystem *battleSys, int battler);
@@ -91,7 +92,7 @@ u8 fn_803ADCD8(BattleSystem *battleSys); // BattleSystem_GetResultMask
 void BattleSystem_SetResultMask(BattleSystem *battleSys, u8 resultMask);
 HealthBox *BattleSystem_GetHealthBox(BattleSystem *battleSys, int battler);
 BOOL BattleSystem_UseBagItem(BattleSystem *battleSys, int battler, int partySlot, int moveSlot, int item);
-int BattleMessage_Print(BattleSystem *battleSys, MessageLoader *msgLoader, BattleMessage *battleMsg, int renderDelay);
+u8 BattleMessage_Print(BattleSystem *battleSys, MessageLoader *msgLoader, BattleMessage *battleMsg, int renderDelay);
 void fn_803ADEF0(BattleMessage *dst, BattleMessage *src);
 void BattleMessage_CheckSide(BattleSystem *battleSys, BattleMessage *battleMsg, int swapSides);
 void BattleMessage_FillFormatBuffers(BattleSystem *battleSys,

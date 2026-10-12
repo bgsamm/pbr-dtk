@@ -53,7 +53,6 @@ void fn_803AA430(void);
 void fn_803AC820(u32 v);
 BattleSystem *fn_803AC828(void);
 s32 fn_803AC830(void);
-u32 fn_803AC838(u8 *p);
 s32 fn_803ADBB4(u8 *a);
 s32 fn_803ADBC4(void);
 void fn_803ADE5C(u8 *a, u32 b);

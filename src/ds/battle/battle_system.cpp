@@ -17,8 +17,8 @@ s32 fn_803AC830(void) {
     return 8;
 }
 
-u32 fn_803AC838(u8 *p) {
-    return *(u32 *)(p + 0x4);
+void *BattleSystem_GetBgConfig(BattleSystem *battleSys) {
+    return battleSys->bgConfig;
 }
 
 u32 BattleSystem_GetBattleType(BattleSystem *battleSys) {
@@ -712,7 +712,7 @@ BOOL BattleSystem_HasCaughtSpecies(BattleSystem *battleSys, int species) {
 extern "C" {
 
 // renderDelay is not used in this game.
-int BattleMessage_Print(BattleSystem *battleSys, MessageLoader *msgLoader, BattleMessage *battleMsg, int renderDelay) {
+u8 BattleMessage_Print(BattleSystem *battleSys, MessageLoader *msgLoader, BattleMessage *battleMsg, int renderDelay) {
     BattleMessage message;
 
     fn_803ADEF0(&message, battleMsg);
