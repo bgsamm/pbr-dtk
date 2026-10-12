@@ -257,7 +257,7 @@ void fn_803D9808(void *) {}
 
 void fn_803D980C(void *) {}
 
-BOOL fn_803D9810() {
+u8 fn_803D9810(int battlerType, u32 battleType) {
     return FALSE;
 }
 
@@ -279,13 +279,13 @@ void fn_803D9834() {}
 
 void fn_803D9838() {}
 
-BOOL fn_803D983C() {
+int fn_803D983C(int netId) {
     return FALSE;
 }
 
 void fn_803D9844(u32) {}
 
-u8 fn_803D9848(u32, u32) {
+u16 fn_803D9848() {
     return FALSE;
 }
 

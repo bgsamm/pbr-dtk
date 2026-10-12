@@ -3,6 +3,7 @@
 #include "ds/DSbridge.hpp"
 #include "ds/battle/battle_constants.hpp"
 #include "ds/battle/battle_controller.hpp"
+#include "ds/battle/battle_display.hpp"
 #include "ds/constants/abilities.hpp"
 #include "ds/constants/moves.hpp"
 #include "ds/party.hpp"
@@ -14,112 +15,6 @@
 extern "C" {
 void *fn_8016DF70(u32 heapId, u32 size);
 void fn_8016E0A0(void *ptr);
-// BattleDisplay_InitTaskSetupUI
-void fn_803A7418(void);
-// BattleDisplay_InitTaskSetEncounter
-void fn_803A742C(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskShowEncounter
-void fn_803A74B8(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskShowPokemon
-void fn_803A7524(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskReturnPokemon
-void fn_803A75A0(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskOpenCaptureBall
-void fn_803A7628(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskSetTrainerEncounter
-void fn_803A7694(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskThrowTrainerBall
-void fn_803A7708(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskSlideTrainerOut
-void fn_803A7774(BattleSystem *battleSys, BattlerData *battlerData);
-// BattleDisplay_InitTaskSlideTrainerIn
-void fn_803A77E4(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskSlideHealthBoxIn
-void fn_803A7858(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskSlideHealthBoxOut
-void fn_803A78CC(BattleSystem *battleSys, BattlerData *battlerData);
-// BattleDisplay_InitTaskSetCommandSelection
-void fn_803A7940(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskShowMoveSelectMenu
-void fn_803A7AB8(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskShowTargetSelectMenu
-void fn_803A7B88(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskShowBagMenu
-void fn_803A7C9C(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskShowPartyMenu
-void fn_803A7DC8(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskShowYesNoMenu
-void fn_803A7EAC(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_PrintAttackMessage
-void fn_803A7F44(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_PrintMessage
-void fn_803A8010(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskSetMoveAnimation
-void fn_803A80A8(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskFlickerBattler
-void fn_803A828C(BattleSystem *battleSys, BattlerData *battlerData);
-// BattleDisplay_InitTaskUpdateHPGauge
-void fn_803A82EC(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskUpdateExpGauge
-void fn_803A83B4(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskPlayFaintingSequence
-void fn_803A8444(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_PlaySound
-void fn_803A84C0(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskFadeOut
-void fn_803A84CC(BattleSystem *battleSys, BattlerData *battlerData);
-// BattleDisplay_InitTaskToggleVanish
-void fn_803A853C(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_SetStatusIcon
-void fn_803A85A8(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_PrintTrainerMessage
-void fn_803A85B4(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_PrintRecallMessage
-void fn_803A8620(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_PrintSendOutMessage
-void fn_803A87D0(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_PrintBattleStartMessage
-void fn_803A8980(BattleSystem *battleSys, BattlerData *battlerData);
-// BattleDisplay_PrintLeadMonMessage
-void fn_803A8B14(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskPlayLevelUpAnimation
-void fn_803A9068(BattleSystem *battleSys, BattlerData *battlerData);
-// BattleDisplay_SetAlertMessage
-void fn_803A90D0(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_RefreshHPGauge
-void fn_803A9264(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskForgetMove
-void fn_803A9270(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskSetMosaic
-void fn_803A92F4(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskShowBattleStartPartyGauge
-void fn_803A9360(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskHideBattleStartPartyGauge
-void fn_803A93CC(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskShowPartyGauge
-void fn_803A9438(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskHidePartyGauge
-void fn_803A94A4(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_PrintLinkWaitMessage
-void fn_803A9510(BattleSystem *battleSys, BattlerData *battlerData);
-// BattleDisplay_RestoreSprite
-void fn_803A951C(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_InitTaskSpriteToOAM
-void fn_803A9528(BattleSystem *battleSys, BattlerData *battlerData);
-// BattleDisplay_InitTaskOAMToSprite
-void fn_803A9590(BattleSystem *battleSys, BattlerData *battlerData);
-// BattleDisplay_PrintResultMessage
-void fn_803A95A4(BattleSystem *battleSys, BattlerData *battlerData);
-// BattleDisplay_PrintEscapeMessage
-void fn_803A975C(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_PrintForfeitMessage
-void fn_803A989C(BattleSystem *battleSys, BattlerData *battlerData);
-// BattleDisplay_RefreshSprite
-void fn_803A99A0(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_FlyMoveHitSoundEffect
-void fn_803A99AC(BattleSystem *battleSys, BattlerData *battlerData, void *message);
-// BattleDisplay_PlayMusic
-void fn_803A99B8(BattleSystem *battleSys, BattlerData *battlerData, void *message);
 }
 
 static void BtlIOCmd_None(BattleSystem *battleSys, BattlerData *battlerData);
@@ -283,7 +178,7 @@ void BattleSystem_ExecuteBattlerCommand(BattleSystem *battleSys, BattlerData *ba
 
 void BattlerData_Delete(BattleSystem *battleSys, BattlerData *battlerData, int renderMode) {
     if (renderMode != 2) {
-        fn_803D9808(battlerData->healthbox);
+        fn_803D9808(&battlerData->healthbox);
     }
 
     fn_803D9850(battlerData);
@@ -295,33 +190,38 @@ static void BtlIOCmd_None(BattleSystem *battleSys, BattlerData *battlerData) {
 }
 
 static void BtlIOCmd_SetupUI(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A7418();
+    BattleDisplay_InitTaskSetupUI();
     BattleController_EmitClearCommand(battleSys, battlerData->battler, BATTLE_COMMAND_SETUP_UI);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_SetEncounter(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A742C(battleSys, battlerData, battlerData->data);
+    MonEncounterMessage *message = (MonEncounterMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskSetEncounter(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_ShowEncounter(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A74B8(battleSys, battlerData, battlerData->data);
+    MonShowMessage *message = (MonShowMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskShowEncounter(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_ShowPokemon(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A7524(battleSys, battlerData, battlerData->data);
+    MonShowMessage *message = (MonShowMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskShowPokemon(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_ReturnPokemon(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A75A0(battleSys, battlerData, battlerData->data);
+    MonReturnMessage *message = (MonReturnMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskReturnPokemon(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_OpenCaptureBall(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A7628(battleSys, battlerData, battlerData->data);
+    OpenCaptureBallMessage *message = (OpenCaptureBallMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskOpenCaptureBall(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
@@ -332,32 +232,36 @@ static void BtlIOCmd_DeletePokemon(BattleSystem *battleSys, BattlerData *battler
 }
 
 static void BtlIOCmd_SetTrainerEncounter(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A7694(battleSys, battlerData, battlerData->data);
+    TrainerEncounterMessage *message = (TrainerEncounterMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskSetTrainerEncounter(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_ThrowTrainerBall(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A7708(battleSys, battlerData, battlerData->data);
+    TrainerThrowBallMessage *message = (TrainerThrowBallMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskThrowTrainerBall(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_SlideTrainerOut(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A7774(battleSys, battlerData);
+    BattleDisplay_InitTaskSlideTrainerOut(battleSys, battlerData);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_SlideTrainerIn(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A77E4(battleSys, battlerData, battlerData->data);
+    TrainerSlideInMessage *message = (TrainerSlideInMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskSlideTrainerIn(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_SlideHealthBoxIn(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A7858(battleSys, battlerData, battlerData->data);
+    HealthBoxData *healthboxData = (HealthBoxData *)&battlerData->data[0];
+    BattleDisplay_InitTaskSlideHealthBoxIn(battleSys, battlerData, healthboxData);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_SlideHealthBoxOut(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A78CC(battleSys, battlerData);
+    BattleDisplay_InitTaskSlideHealthBoxOut(battleSys, battlerData);
     ZeroDataBuffer(battlerData);
 }
 
@@ -365,47 +269,55 @@ static void BtlIOCmd_SetCommandSelection(BattleSystem *battleSys, BattlerData *b
     CommandSetMessage *message = (CommandSetMessage *)&battlerData->data[0];
 
     BattleSystem_SetUnread_2440(battleSys, message->switchingOrCanPickCommandMask);
-    fn_803A7940(battleSys, battlerData, message);
+    BattleDisplay_InitTaskSetCommandSelection(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_ShowMoveSelectMenu(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A7AB8(battleSys, battlerData, battlerData->data);
+    MoveSelectMenuMessage *message = (MoveSelectMenuMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskShowMoveSelectMenu(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_ShowTargetSelectMenu(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A7B88(battleSys, battlerData, battlerData->data);
+    TargetSelectMenuMessage *message = (TargetSelectMenuMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskShowTargetSelectMenu(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_ShowBagMenu(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A7C9C(battleSys, battlerData, battlerData->data);
+    BagMenuMessage *message = (BagMenuMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskShowBagMenu(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_ShowPartyMenu(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A7DC8(battleSys, battlerData, battlerData->data);
+    PartyMenuMessage *message = (PartyMenuMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskShowPartyMenu(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_ShowYesNoMenu(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A7EAC(battleSys, battlerData, battlerData->data);
+    YesNoMenuMessage *message = (YesNoMenuMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskShowYesNoMenu(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_PrintAttackMessage(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A7F44(battleSys, battlerData, battlerData->data);
+    AttackMsgMessage *message = (AttackMsgMessage *)&battlerData->data[0];
+    BattleDisplay_PrintAttackMessage(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_PrintBattleMessage(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A8010(battleSys, battlerData, battlerData->data);
+    BattleMessage *battleMsg = (BattleMessage *)&battlerData->data[0];
+    BattleDisplay_PrintMessage(battleSys, battlerData, battleMsg);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_SetMoveAnimation(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A80A8(battleSys, battlerData, battlerData->data);
+    MoveAnimation *moveAnim = (MoveAnimation *)&battlerData->data[0];
+    BattleDisplay_InitTaskSetMoveAnimation(battleSys, battlerData, moveAnim);
     ZeroDataBuffer(battlerData);
 }
 
@@ -413,84 +325,96 @@ static void BtlIOCmd_FlickerBattler(BattleSystem *battleSys, BattlerData *battle
     if (fn_803D97FC(battlerData->monSprite, MON_SPRITE_HIDE) == TRUE) {
         BattleController_EmitClearCommand(battleSys, battlerData->battler, BATTLE_COMMAND_FLICKER_BATTLER);
     } else {
-        fn_803A828C(battleSys, battlerData);
+        BattleDisplay_InitTaskFlickerBattler(battleSys, battlerData);
     }
 
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_UpdateHPGauge(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A82EC(battleSys, battlerData, battlerData->data);
+    HPGaugeUpdateMessage *message = (HPGaugeUpdateMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskUpdateHPGauge(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_UpdateExpGauge(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A83B4(battleSys, battlerData, battlerData->data);
+    ExpGaugeUpdateMessage *message = (ExpGaugeUpdateMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskUpdateExpGauge(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_PlayFaintingSequence(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A8444(battleSys, battlerData, battlerData->data);
+    FaintingSequenceMessage *message = (FaintingSequenceMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskPlayFaintingSequence(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_PlaySound(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A84C0(battleSys, battlerData, battlerData->data);
+    PlaySoundMessage *message = (PlaySoundMessage *)&battlerData->data[0];
+    BattleDisplay_PlaySound(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_FadeOut(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A84CC(battleSys, battlerData);
+    BattleDisplay_InitTaskFadeOut(battleSys, battlerData);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_ToggleVanish(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A853C(battleSys, battlerData, battlerData->data);
+    ToggleVanishMessage *message = (ToggleVanishMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskToggleVanish(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_SetStatusIcon(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A85A8(battleSys, battlerData, battlerData->data);
+    SetStatusIconMessage *message = (SetStatusIconMessage *)&battlerData->data[0];
+    BattleDisplay_SetStatusIcon(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_PrintTrainerMessage(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A85B4(battleSys, battlerData, battlerData->data);
+    TrainerMsgMessage *message = (TrainerMsgMessage *)&battlerData->data[0];
+    BattleDisplay_PrintTrainerMessage(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_PrintRecallMessage(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A8620(battleSys, battlerData, battlerData->data);
+    RecallMsgMessage *message = (RecallMsgMessage *)&battlerData->data[0];
+    BattleDisplay_PrintRecallMessage(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_PrintSendOutMessage(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A87D0(battleSys, battlerData, battlerData->data);
+    SendOutMsgMessage *message = (SendOutMsgMessage *)&battlerData->data[0];
+    BattleDisplay_PrintSendOutMessage(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_PrintBattleStartMessage(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A8980(battleSys, battlerData);
+    BattleDisplay_PrintBattleStartMessage(battleSys, battlerData);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_PrintLeadMonMessage(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A8B14(battleSys, battlerData, battlerData->data);
+    LeadMonMsgMessage *message = (LeadMonMsgMessage *)&battlerData->data[0];
+    BattleDisplay_PrintLeadMonMessage(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_PlayLevelUpAnimation(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A9068(battleSys, battlerData);
+    BattleDisplay_InitTaskPlayLevelUpAnimation(battleSys, battlerData);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_SetAlertMessage(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A90D0(battleSys, battlerData, battlerData->data);
+    AlertMsgMessage *message = (AlertMsgMessage *)&battlerData->data[0];
+    BattleDisplay_SetAlertMessage(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_RefreshHPGauge(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A9264(battleSys, battlerData, battlerData->data);
+    RefreshHPGaugeMessage *message = (RefreshHPGaugeMessage *)&battlerData->data[0];
+    BattleDisplay_RefreshHPGauge(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
@@ -532,7 +456,7 @@ static void BtlIOCmd_SlideInPanel(BattleSystem *battleSys, BattlerData *battlerD
 }
 
 static void BtlIOCmd_StopGaugeAnimation(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803D980C(battlerData->healthbox);
+    fn_803D980C(&battlerData->healthbox);
     fn_803D9850(battlerData);
     BattleController_EmitClearCommand(battleSys, battlerData->battler, battlerData->data[0]);
     ZeroDataBuffer(battlerData);
@@ -564,12 +488,14 @@ static void BtlIOCmd_RefreshPartyStatus(BattleSystem *battleSys, BattlerData *ba
 }
 
 static void BtlIOCmd_ForgetMove(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A9270(battleSys, battlerData, battlerData->data);
+    ForgetMoveMessage *message = (ForgetMoveMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskForgetMove(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_SetMosaic(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A92F4(battleSys, battlerData, battlerData->data);
+    MosaicSetMessage *message = (MosaicSetMessage *)&battlerData->data[0];
+    BattleDisplay_InitTaskSetMosaic(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
@@ -589,12 +515,14 @@ static void BtlIOCmd_ClearTouchScreen(BattleSystem *battleSys, BattlerData *batt
 }
 
 static void BtlIOCmd_ShowBattleStartPartyGauge(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A9360(battleSys, battlerData, battlerData->data);
+    PartyGaugeData *data = (PartyGaugeData *)&battlerData->data[0];
+    BattleDisplay_InitTaskShowBattleStartPartyGauge(battleSys, battlerData, data);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_HideBattleStartPartyGauge(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A93CC(battleSys, battlerData, battlerData->data);
+    PartyGaugeData *data = (PartyGaugeData *)&battlerData->data[0];
+    BattleDisplay_InitTaskHideBattleStartPartyGauge(battleSys, battlerData, data);
     ZeroDataBuffer(battlerData);
 }
 
@@ -602,7 +530,7 @@ static void BtlIOCmd_ShowPartyGauge(BattleSystem *battleSys, BattlerData *battle
     PartyGaugeData *data = (PartyGaugeData *)&battlerData->data[0];
 
     if (BattleSystem_GetBattlerSide(battleSys, battlerData->battler)) {
-        fn_803A9438(battleSys, battlerData, data);
+        BattleDisplay_InitTaskShowPartyGauge(battleSys, battlerData, data);
     } else {
         BattleController_EmitClearCommand(battleSys, battlerData->battler, BATTLE_COMMAND_SHOW_PARTY_GAUGE);
     }
@@ -614,7 +542,7 @@ static void BtlIOCmd_HidePartyGauge(BattleSystem *battleSys, BattlerData *battle
     PartyGaugeData *data = (PartyGaugeData *)&battlerData->data[0];
 
     if (BattleSystem_GetBattlerSide(battleSys, battlerData->battler)) {
-        fn_803A94A4(battleSys, battlerData, data);
+        BattleDisplay_InitTaskHidePartyGauge(battleSys, battlerData, data);
     } else {
         BattleController_EmitClearCommand(battleSys, battlerData->battler, BATTLE_COMMAND_HIDE_PARTY_GAUGE);
     }
@@ -638,52 +566,57 @@ static void BtlIOCmd_IncrementRecord(BattleSystem *battleSys, BattlerData *battl
 }
 
 static void BtlIOCmd_PrintLinkWaitMessage(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A9510(battleSys, battlerData);
+    BattleDisplay_PrintLinkWaitMessage(battleSys, battlerData);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_RestoreSprite(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A951C(battleSys, battlerData, battlerData->data);
+    MoveAnimation *moveAnim = (MoveAnimation *)&battlerData->data[0];
+    BattleDisplay_RestoreSprite(battleSys, battlerData, moveAnim);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_SpriteToOAM(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A9528(battleSys, battlerData);
+    BattleDisplay_InitTaskSpriteToOAM(battleSys, battlerData);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_OAMToSprite(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A9590(battleSys, battlerData);
+    BattleDisplay_InitTaskOAMToSprite(battleSys, battlerData);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_PrintResultMessage(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A95A4(battleSys, battlerData);
+    BattleDisplay_PrintResultMessage(battleSys, battlerData);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_PrintEscapeMessage(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A975C(battleSys, battlerData, battlerData->data);
+    EscapeMsgMessage *message = (EscapeMsgMessage *)&battlerData->data[0];
+    BattleDisplay_PrintEscapeMessage(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_PrintForfeitMessage(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A989C(battleSys, battlerData);
+    BattleDisplay_PrintForfeitMessage(battleSys, battlerData);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_RefreshSprite(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A99A0(battleSys, battlerData, battlerData->data);
+    MoveAnimation *moveAnim = (MoveAnimation *)&battlerData->data[0];
+    BattleDisplay_RefreshSprite(battleSys, battlerData, moveAnim);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_FlyMoveHitSoundEffect(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A99AC(battleSys, battlerData, battlerData->data);
+    MoveHitSoundMessage *message = (MoveHitSoundMessage *)&battlerData->data[0];
+    BattleDisplay_FlyMoveHitSoundEffect(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 
 static void BtlIOCmd_PlayMusic(BattleSystem *battleSys, BattlerData *battlerData) {
-    fn_803A99B8(battleSys, battlerData, battlerData->data);
+    MusicPlayMessage *message = (MusicPlayMessage *)&battlerData->data[0];
+    BattleDisplay_PlayMusic(battleSys, battlerData, message);
     ZeroDataBuffer(battlerData);
 }
 

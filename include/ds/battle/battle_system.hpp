@@ -4,6 +4,7 @@
 #include "ds/trainer_data.hpp"
 
 struct BattlerData;
+struct HealthBox;
 struct Party;
 struct Pokemon;
 struct Strbuf;
@@ -88,8 +89,9 @@ int BattleSystem_GetFieldWeather(BattleSystem *battleSys);
 TrainerInfo *BattleSystem_GetTrainerInfo(BattleSystem *battleSys, int battler);
 u8 fn_803ADCD8(BattleSystem *battleSys); // BattleSystem_GetResultMask
 void BattleSystem_SetResultMask(BattleSystem *battleSys, u8 resultMask);
+HealthBox *BattleSystem_GetHealthBox(BattleSystem *battleSys, int battler);
 BOOL BattleSystem_UseBagItem(BattleSystem *battleSys, int battler, int partySlot, int moveSlot, int item);
-void BattleMessage_Print(BattleSystem *battleSys, MessageLoader *msgLoader, BattleMessage *battleMsg);
+int BattleMessage_Print(BattleSystem *battleSys, MessageLoader *msgLoader, BattleMessage *battleMsg, int renderDelay);
 void fn_803ADEF0(BattleMessage *dst, BattleMessage *src);
 void BattleMessage_CheckSide(BattleSystem *battleSys, BattleMessage *battleMsg, int swapSides);
 void BattleMessage_FillFormatBuffers(BattleSystem *battleSys,
@@ -120,7 +122,12 @@ int BattleSystem_GetMapHeader(BattleSystem *battleSys);
 u32 BattleSystem_GetBattleStatusMask(BattleSystem *battleSys);
 u8 BattleSystem_IsInitialized(BattleSystem *battleSys);
 int BattleSystem_GetNumSafariBalls(BattleSystem *battleSys);
+u8 BattleSystem_GetTextSpeed(BattleSystem *battleSys);
 void BattleSystem_SetCommandSelectionFlags(BattleSystem *battleSys, u32 flags);
 void BattleSystem_SetUnread_2440(BattleSystem *battleSys, u8 value);
 void BattleSystem_SetRedHPSoundFlag(BattleSystem *battleSys, u8 flag);
 }
+
+// TODO Set by BattleDisplay_SetAlertMessage while it prints for some battle types; BattleMessage_CheckSide then
+// keeps the message as it is.
+extern u32 lbl_806405C8;

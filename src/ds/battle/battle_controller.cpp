@@ -416,7 +416,7 @@ void fn_803B2538(u8 *a) {
 void BattleController_EmitClearCommand(BattleSystem *battleSys, int battler, int command) {
     Msg4 m;
     m.cmd = command;
-    m.a = fn_803D9848((u32)battleSys, battler);
+    m.a = fn_803D9848();
     fn_803AF5F0((u8 *)battleSys, 2, battler, &m, 4);
 }
 

@@ -1,7 +1,7 @@
 #include ".unsorted/8038F424.hpp"
+#include "ds/battle/battle_common.hpp"
+#include "ds/battle/battle_display.hpp"
 #include "ds/constants/items.hpp"
-
-extern u32 lbl_806405C8;
 
 extern "C" {
 
@@ -231,30 +231,23 @@ int BattleSystem_GetPartner(BattleSystem *battleSys, int battler) {
     return i;
 }
 
-// TODO Raw accesses: the pokeplatinum version does not match yet, the game inlines the getters and the
-// side comparison is allocated differently.
 int BattleSystem_GetEnemyInSlot(BattleSystem *battleSys, int battler, int slot) {
-    u8 *p = (u8 *)battleSys;
-    s32 i = (s32)battler;
-    s32 m = (s32)slot;
-    s32 n = *(s32 *)(p + 0x44);
-    if (!(*(u32 *)(p + 0x2c) & 2)) {
-        return i ^ 1;
+    int i;
+    int maxBattlers = battleSys->maxBattlers;
+
+    if ((battleSys->battleType & BATTLE_TYPE_DOUBLES) == FALSE) {
+        return battler ^ 1;
     }
-    u8 **pi = (u8 **)(p + i * 4);
-    s32 j;
-    for (j = 0; j < n; j++) {
-        if (j != i) {
-            u8 **pj = (u8 **)(p + j * 4);
-            if (m == (BattlerData_GetBattlerType((BattlerData *)(pj[0x34 / 4])) & 2)) {
-                u32 x = BattlerData_GetBattlerType((BattlerData *)(pi[0x34 / 4])) & 1;
-                if ((u32)(BattlerData_GetBattlerType((BattlerData *)(pj[0x34 / 4])) & 1) != x) {
-                    break;
-                }
-            }
+
+    for (i = 0; i < maxBattlers; i++) {
+        if (i != battler && (BattlerData_GetBattlerType(battleSys->battlers[i]) & 2) == slot &&
+            (u32)(BattlerData_GetBattlerType(battleSys->battlers[i]) & BATTLER_THEM) !=
+                (u32)(BattlerData_GetBattlerType(battleSys->battlers[battler]) & BATTLER_THEM)) {
+            break;
         }
     }
-    return j;
+
+    return i;
 }
 
 // The game inlines the battle system getters here.
@@ -607,7 +600,7 @@ s32 fn_803ADBB4(u8 *a) {
     return 1;
 }
 
-s32 fn_803ADBBC(void) {
+u8 BattleSystem_GetTextSpeed(BattleSystem *battleSys) {
     return 0;
 }
 
@@ -645,8 +638,8 @@ void BattleSystem_SetUnread_2440(BattleSystem *battleSys, u8 value) {
     battleSys->unk2408 = value;
 }
 
-u8 *fn_803ADCC8(u8 *p, s32 i) {
-    return fn_803AB524(*(u8 **)(p + i * 4 + 0x34));
+HealthBox *BattleSystem_GetHealthBox(BattleSystem *battleSys, int battler) {
+    return BattlerData_GetHealthBox(battleSys->battlers[battler]);
 }
 
 u8 fn_803ADCD8(BattleSystem *battleSys) {
@@ -718,14 +711,15 @@ void fn_803ADE60(u8 *p, u32 a) {
 
 extern "C" {
 
-void BattleMessage_Print(BattleSystem *battleSys, MessageLoader *msgLoader, BattleMessage *battleMsg) {
+// renderDelay is not used in this game.
+int BattleMessage_Print(BattleSystem *battleSys, MessageLoader *msgLoader, BattleMessage *battleMsg, int renderDelay) {
     BattleMessage message;
 
     fn_803ADEF0(&message, battleMsg);
     BattleMessage_CheckSide(battleSys, battleMsg, 0);
     BattleMessage_FillFormatBuffers(battleSys, battleMsg, msgLoader, 0);
     BattleMessage_Format(battleSys, msgLoader, battleMsg);
-    fn_803D9A44(battleSys->msgBuffer, &message);
+    return fn_803D9A44(battleSys->msgBuffer, &message);
 }
 }
 

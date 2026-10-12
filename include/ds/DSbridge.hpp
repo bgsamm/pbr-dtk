@@ -266,16 +266,19 @@ s32 fn_803D97FC(u32, u32);
 void fn_803D9804(u32);
 void fn_803D9808(void *);
 void fn_803D980C(void *);
-BOOL fn_803D9810();
+// TODO probably HealthBox_Type (pret)
+u8 fn_803D9810(int battlerType, u32 battleType);
 BOOL fn_803D9818();
 BOOL fn_803D9820();
 BOOL fn_803D9828();
 void fn_803D9830();
 void fn_803D9834();
 void fn_803D9838();
-BOOL fn_803D983C();
+// TODO probably the link position of a network id (pret BattleSystem_GetLinkPlayerPositionForBattler)
+int fn_803D983C(int netId);
 void fn_803D9844(u32);
-u8 fn_803D9848(u32, u32);
+// TODO probably CommSys_CurNetId (pret)
+u16 fn_803D9848();
 void fn_803D9850(void *);
 void fn_803D9854();
 void fn_803D9858();
