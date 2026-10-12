@@ -1769,7 +1769,139 @@ libs/RVL_SDK/src/sc/scapi_prdinfo.c:
 	.text       start:0x802EC78C end:0x802EC97C
 
 src/.unsorted/802EC97C.cpp:
-	.text       start:0x802EC97C end:0x80363510
+	.text       start:0x802EC97C end:0x80304E94
+
+libs/RVL_SDK/src/vf/pf_clib.c:
+	.text       start:0x80304E94 end:0x80305194
+
+libs/RVL_SDK/src/vf/pf_code.c:
+	.text       start:0x80305194 end:0x803051B0
+
+libs/RVL_SDK/src/vf/pf_service.c:
+	.text       start:0x803051B0 end:0x803052D8
+
+libs/RVL_SDK/src/vf/pf_str.c:
+	.text       start:0x803052D8 end:0x80305860
+
+libs/RVL_SDK/src/vf/pf_w_clib.c:
+	.text       start:0x80305860 end:0x803058F4
+
+libs/RVL_SDK/src/vf/pf_driver.c:
+	.text       start:0x803058F4 end:0x803062C4
+
+libs/RVL_SDK/src/vf/pdm_bpb.c:
+	.text       start:0x803062C4 end:0x80306B20
+
+libs/RVL_SDK/src/vf/pdm_disk.c:
+	.text       start:0x80306B20 end:0x803078E0
+
+libs/RVL_SDK/src/vf/pdm_partition.c:
+	.text       start:0x803078E0 end:0x803087F0
+
+libs/RVL_SDK/src/vf/pdm_mbr.c:
+	.text       start:0x803087F0 end:0x80308DB0
+
+libs/RVL_SDK/src/vf/pdm_dskmng.c:
+	.text       start:0x80308DB0 end:0x80308ED8
+
+libs/RVL_SDK/src/vf/pf_cache.c:
+	.text       start:0x80308ED8 end:0x8030AD80
+
+libs/RVL_SDK/src/vf/pf_cluster.c:
+	.text       start:0x8030AD80 end:0x8030B238
+
+libs/RVL_SDK/src/vf/pf_dir.c:
+	.text       start:0x8030B238 end:0x8030B2C8
+
+libs/RVL_SDK/src/vf/pf_entry.c:
+	.text       start:0x8030B2C8 end:0x8030CBFC
+
+libs/RVL_SDK/src/vf/pf_entry_iterator.c:
+	.text       start:0x8030CBFC end:0x8030E538
+
+libs/RVL_SDK/src/vf/pf_fat.c:
+	.text       start:0x8030E538 end:0x80311170
+
+libs/RVL_SDK/src/vf/pf_fat12.c:
+	.text       start:0x80311170 end:0x80311C58
+
+libs/RVL_SDK/src/vf/pf_fat16.c:
+	.text       start:0x80311C58 end:0x803121D0
+
+libs/RVL_SDK/src/vf/pf_fat32.c:
+	.text       start:0x803121D0 end:0x80312814
+
+libs/RVL_SDK/src/vf/pf_file.c:
+	.text       start:0x80312814 end:0x80315C30
+
+libs/RVL_SDK/src/vf/pf_path.c:
+	.text       start:0x80315C30 end:0x80318970
+
+libs/RVL_SDK/src/vf/pf_sector.c:
+	.text       start:0x80318970 end:0x80319060
+
+libs/RVL_SDK/src/vf/pf_volume.c:
+	.text       start:0x80319060 end:0x8031A024
+
+libs/RVL_SDK/src/vf/pf_cp932.c:
+	.text       start:0x8031A024 end:0x8031A110
+
+libs/RVL_SDK/src/vf/pf_api_util.c:
+	.text       start:0x8031A110 end:0x8031A258
+
+libs/RVL_SDK/src/vf/pf_errnum.c:
+	.text       start:0x8031A258 end:0x8031A27C
+
+libs/RVL_SDK/src/vf/pf_fclose.c:
+	.text       start:0x8031A27C end:0x8031A2A0
+
+libs/RVL_SDK/src/vf/pf_finfo.c:
+	.text       start:0x8031A2A0 end:0x8031A2C4
+
+libs/RVL_SDK/src/vf/pf_fopen.c:
+	.text       start:0x8031A2C4 end:0x8031A360
+
+libs/RVL_SDK/src/vf/pf_fread.c:
+	.text       start:0x8031A360 end:0x8031A388
+
+libs/RVL_SDK/src/vf/pf_fseek.c:
+	.text       start:0x8031A388 end:0x8031A3AC
+
+libs/RVL_SDK/src/vf/pf_fwrite.c:
+	.text       start:0x8031A3AC end:0x8031A3D4
+
+libs/RVL_SDK/src/vf/pf_init_prfile2.c:
+	.text       start:0x8031A3D4 end:0x8031A414
+
+libs/RVL_SDK/src/vf/pf_filelock.c:
+	.text       start:0x8031A414 end:0x8031A428
+
+libs/RVL_SDK/src/vf/pf_system.c:
+	.text       start:0x8031A428 end:0x8031A4A0
+
+libs/RVL_SDK/src/vf/d_vf.c:
+	.text       start:0x8031A4A0 end:0x8031AA6C
+
+libs/RVL_SDK/src/vf/d_vf_sys.c:
+	.text       start:0x8031AA6C end:0x8031B730
+
+libs/RVL_SDK/src/vf/d_hash.c:
+	.text       start:0x8031B730 end:0x8031BB50
+
+libs/RVL_SDK/src/vf/d_time.c:
+	.text       start:0x8031BB50 end:0x8031BBE0
+
+libs/RVL_SDK/src/vf/d_common.c:
+	.text       start:0x8031BBE0 end:0x8031BE1C
+
+libs/RVL_SDK/src/vf/nand_drv.c:
+	.text       start:0x8031BE1C end:0x8031C120
+
+libs/RVL_SDK/src/vf/sd_drv.c:
+	.text       start:0x8031C120 end:0x8031C124
+
+src/.unsorted/8031C124.cpp:
+	.text       start:0x8031C124 end:0x80363510
 	.ctors      start:0x803E2244 end:0x803E2248
 
 src/.unsorted/80363510.cpp:
