@@ -1,4 +1,5 @@
 #include ".unsorted/8013F044.hpp"
+#include ".unsorted/80164E3C.hpp"
 
 #include "common.hpp"
 #include "gs/GSfsys.hpp"
@@ -1107,7 +1108,6 @@ void fn_8014F5A4(void) {
 
 extern "C" {
 
-u64 fn_80164F58(void);
 extern u64 lbl_8041D468[];
 
 void fn_8014DA84(s16 a, int b) {

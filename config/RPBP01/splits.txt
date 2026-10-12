@@ -148,6 +148,7 @@ src/.unsorted/80044F28.cpp:
 src/.unsorted/800477E8.cpp:
 	.text       start:0x800477E8 end:0x800478C0
 	.ctors      start:0x803E1EE4 end:0x803E1EE8
+	.sbss       start:0x8063EAC0 end:0x8063EAC8
 
 src/.unsorted/800478C0.cpp:
 	.text       start:0x800478C0 end:0x80048728
@@ -384,6 +385,7 @@ src/.unsorted/80164CE8.cpp:
 src/.unsorted/80164E3C.cpp:
 	.text       start:0x80164E3C end:0x80164FA0
 	.ctors      start:0x803E1FD0 end:0x803E1FD4
+	.sbss       start:0x8063F098 end:0x8063F0A8
 
 src/.unsorted/80164FA0.cpp:
 	.text       start:0x80164FA0 end:0x80165534
@@ -408,6 +410,7 @@ src/.unsorted/80167820.cpp:
 src/.unsorted/80167994.cpp:
 	.text       start:0x80167994 end:0x801679F8
 	.ctors      start:0x803E1FE8 end:0x803E1FEC
+	.sbss       start:0x8063F0E0 end:0x8063F0E8
 
 src/.unsorted/801679F8.cpp:
 	.text       start:0x801679F8 end:0x801682D0
