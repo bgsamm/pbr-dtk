@@ -94,6 +94,8 @@ void BattleDisplay_FlyMoveHitSoundEffect(BattleSystem *battleSys,
                                          MoveHitSoundMessage *message);
 void BattleDisplay_PlayMusic(BattleSystem *battleSys, BattlerData *battlerData, MusicPlayMessage *message);
 
+void BattlerData_SetTaskFuncs(BattleSystem *battleSys, BattlerData *battlerData);
+
 extern "C" {
 u8 BattlerData_GetBootState(BattlerData *battlerData);
 HealthBox *BattlerData_GetHealthBox(BattlerData *battlerData);

@@ -18,6 +18,14 @@
 #define BATTLE_TYPE_UNK_11 (1 << 11)
 // TODO Battle type flag only this game has; with BATTLE_TYPE_UNK_19, BattleDisplay_SetAlertMessage sets lbl_806405C8.
 #define BATTLE_TYPE_UNK_12 (1 << 12)
+// TODO Battle type flag only this game has; with it, the battlers of the enemy side are controlled by the AI.
+#define BATTLE_TYPE_UNK_14 (1 << 14)
+// TODO Battle type flag only this game has; with it, all the battlers are controlled by the player.
+#define BATTLE_TYPE_UNK_15 (1 << 15)
+// TODO Battle type flag only this game has; with it, all the battlers are controlled by the player.
+#define BATTLE_TYPE_UNK_16 (1 << 16)
+// TODO Battle type flag only this game has; with it, all the battlers are controlled by the AI.
+#define BATTLE_TYPE_UNK_17 (1 << 17)
 // TODO Battle type flag only this game has; with it, BattleMessage_CheckSide replaces some messages.
 #define BATTLE_TYPE_UNK_19 (1 << 19)
 #define BATTLE_TYPE_2vs2_TAG (BATTLE_TYPE_2vs2 | BATTLE_TYPE_TAG)
@@ -660,6 +668,7 @@ enum HoldEffect {
 #define STOCK_STATUS_MON_FAINTED 2
 #define PARTY_GAUGE_COUNT 2
 #define HP_CALC_INSTANT_ZERO 0x7FFF
+#define BATTLER_BOOT_STATE_NORMAL 0
 #define BATTLER_BOOT_STATE_AI 1
 #define FACE_BACK 0
 #define FACE_FRONT 2

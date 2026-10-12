@@ -992,7 +992,6 @@ void fn_803B2F20(u8 *a, u8 *b);
 s32 fn_803D4C50(u8 *a, u8 *b);
 s32 fn_803D5898(u8 *a, u8 *b);
 s32 fn_803D5CF8(u8 *a, u8 *b);
-void fn_8017C9E0(u32 a, u32 b);
 s32 fn_803CAFE0(u8 *a, u8 *b);
 s32 fn_803CB070(u8 *a, u8 *b);
 s32 fn_803CC5B4(u8 *a, u8 *b);

@@ -1,6 +1,7 @@
 #include "ds/battle/battle_display.hpp"
 
 #include ".unsorted/8038F424.hpp"
+#include ".unsorted/803D9EB4.hpp"
 #include "ds/DSbridge.hpp"
 #include "ds/battle/battle_common.hpp"
 #include "ds/battle/battle_constants.hpp"
@@ -120,7 +121,7 @@ struct CommandSetData {
     /* 0x9 */ u8 battler;
     /* 0xA */ u8 state;
     /* 0xB */ s8 unused_0B;
-    /* 0xC */ u8 unkC[0x4];
+    /* 0xC */ int input;
     /* 0x10 */ u8 ballStatus[PARTY_GAUGE_COUNT][MAX_PARTY_SIZE];
     /* 0x1C */ u8 expPercents[MAX_PARTY_SIZE];
     /* 0x22 */ u8 unk22;
@@ -154,7 +155,24 @@ struct MoveSelectMenuData {
     /* 0x22 */ u16 invalidMoves;
 };
 
-// pokeplatinum TargetSelectMenuData, 0x10 bytes longer in this game.
+// TODO What the target selection request sends to the Wii controls (see fn_8016E330).
+// size: 0x10
+struct Unk803AA178 {
+    /* 0x0 */ u8 battlerTypes[MAX_BATTLERS];
+    /* 0x4 */ u8 partySlots[MAX_BATTLERS];
+    /* 0x8 */ u8 targetingLayout;
+    /* 0x9 */ u8 unk9[0x7];
+};
+
+// pokeplatinum TargetSelectData, local to the target selection.
+// size: 0x22
+struct TargetSelectData {
+    /* 0x0 */ TargetMonData targetMonData[MAX_BATTLERS];
+    /* 0x20 */ u8 battlerType;
+    /* 0x21 */ u8 targetingLayout;
+};
+
+// pokeplatinum TargetSelectMenuData, with the request of this game at the end.
 // size: 0x44
 struct TargetSelectMenuData {
     /* 0x0 */ BattleSystem *battleSys;
@@ -167,7 +185,8 @@ struct TargetSelectMenuData {
     /* 0x10 */ TargetMonData targetMon[MAX_BATTLERS];
     /* 0x30 */ u16 range;
     /* 0x32 */ u8 shouldHidePanel;
-    /* 0x33 */ u8 unk33[0x11];
+    /* 0x33 */ u8 unk33;
+    /* 0x34 */ Unk803AA178 request;
 };
 
 // Only the fields used so far (pokeplatinum BattlePartyContext).
@@ -366,11 +385,26 @@ struct OAMToSpriteData {
     /* 0xD */ u8 battler;
 };
 
+// TODO What the move selection request sends to the Wii controls (see fn_8016E330).
+// size: 0x18
+struct Unk8063D080 {
+    /* 0x0 */ u16 moves[LEARNED_MOVES_MAX];
+    /* 0x8 */ u8 ppCur[LEARNED_MOVES_MAX];
+    /* 0xC */ u8 ppMax[LEARNED_MOVES_MAX];
+    /* 0x10 */ u16 partySlot;
+    /* 0x12 */ u8 unk12[0x6];
+};
+
 // TODO Replace with proper imports
+extern Unk8063D080 lbl_8063D080;
 extern "C" {
 void *fn_8016DF70(u32 heapId, u32 size);
 void fn_8016E0A0(void *ptr);
 void fn_8016E394(u8 battler, BattleMessage *battleMsg, const u16 *text, u32 size);
+void fn_8016E330(int request, u8 battler, int defaultChoice, void *data);
+u32 fn_8016E478(u8 battler);
+void fn_8017C9E0(BattleSystem *battleSys, int battler);
+u8 fn_8017CB14(BattleSystem *battleSys, int battler);
 }
 
 static void Task_SetEncounter(Unk8063D230 *task, void *data);
@@ -1656,31 +1690,320 @@ static void Task_SlideHealthBoxOut(Unk8063D230 *task, void *data) {
     fn_803DEF3C(task);
 }
 
+// TODO Player tasks for the party and yes/no menus; not decompiled yet.
 extern "C" {
+void fn_803AA4D0(Unk8063D230 *task, void *data);
+void fn_803AAAEC(Unk8063D230 *task, void *data);
+}
 
-// TODO Probably Task_TrainerSetCommandSelection (pret): fn_803AB378 gives it to the AI battlers.
-void fn_803A9E68(u8 *a, u8 *m) {
-    fn_8017C9E0(*(u32 *)m, m[9]);
-    BattleSystem_GetBattleContext(*(BattleSystem **)m);
-    s32 v = fn_803C93C4(*(BattleSystem **)m, m[9], 0);
-    if (v == 0xff) {
-        v = 1;
+// The player tasks send a request to the Wii controls (unit 8016E2B8) and wait for the answer.
+static void Task_PlayerSetCommandSelection(Unk8063D230 *task, void *data) {
+    CommandSetData *commandSetData = (CommandSetData *)data;
+
+    BattleSystem_GetBattlerData(commandSetData->battleSys, commandSetData->battler);
+    BattleSystem_GetBattleType(commandSetData->battleSys);
+
+    switch (commandSetData->state) {
+        case 0: commandSetData->state = 1; break;
+        case 1: commandSetData->state = 4; break;
+        case 4:
+            fn_8016E330(1, commandSetData->battler, 1, NULL);
+            commandSetData->state = 5;
+            break;
+        case 5:
+            if (fn_8016E430(commandSetData->battler) != 0xFF) {
+                fn_8016E2E4(9);
+            } else {
+                commandSetData->input = fn_8016E478(commandSetData->battler);
+                commandSetData->state = 9;
+            }
+            break;
+        case 9:
+            BattleController_EmitSelectedCommand(commandSetData->battleSys,
+                                                 commandSetData->battler,
+                                                 commandSetData->input);
+            BattleController_EmitClearCommand(commandSetData->battleSys,
+                                              commandSetData->battler,
+                                              commandSetData->command);
+            fn_8016E0A0(data);
+            fn_803DEF3C(task);
+            break;
     }
-    BattleController_EmitSelectedCommand((BattleSystem *)(*(u8 **)m), m[9], v);
-    BattleController_EmitClearCommand((BattleSystem *)(*(u32 *)m), m[9], m[8]);
-    fn_8016E0A0(m);
-    fn_803DEF3C((Unk8063D230 *)a);
 }
 
-// TODO Probably Task_PlayerShowBagMenu (pret), empty in this game: fn_803AB378 gives it to the player battlers.
-void fn_803AA430(void) {}
+static void Task_TrainerSetCommandSelection(Unk8063D230 *task, void *data) {
+    CommandSetData *commandSetData = (CommandSetData *)data;
 
-// TODO Probably Task_TrainerShowYesNoMenu (pret): fn_803AB378 gives it to the AI battlers.
-void fn_803AADCC(u8 *a, u8 *b) {
-    BattleController_EmitClearCommand((BattleSystem *)(*(u32 *)b), b[0xd], b[0xc]);
-    fn_8016E0A0(b);
-    fn_803DEF3C((Unk8063D230 *)a);
+    fn_8017C9E0(commandSetData->battleSys, commandSetData->battler);
+    BattleSystem_GetBattleContext(commandSetData->battleSys);
+
+    int command = fn_803C93C4(commandSetData->battleSys, commandSetData->battler, 0);
+
+    if (command == 0xFF) {
+        command = 1;
+    }
+
+    BattleController_EmitSelectedCommand(commandSetData->battleSys, commandSetData->battler, command);
+    BattleController_EmitClearCommand(commandSetData->battleSys, commandSetData->battler, commandSetData->command);
+
+    fn_8016E0A0(data);
+    fn_803DEF3C(task);
 }
+
+// TODO first usable move (BattleSystem_CanUseMove), counted from 1, or 0. Inlined in Task_PlayerShowMoveSelectMenu.
+static inline int fn_803A9EFC_inline(MoveSelectMenuData *moveSelectMenuData) {
+    BattleMessage battleMsg;
+
+    for (int i = 0; i < LEARNED_MOVES_MAX; i++) {
+        if ((moveSelectMenuData->invalidMoves & FlagIndex(i)) == FALSE &&
+            BattleSystem_CanUseMove(moveSelectMenuData->battleSys,
+                                    BattleSystem_GetBattleContext(moveSelectMenuData->battleSys),
+                                    moveSelectMenuData->battler,
+                                    i,
+                                    &battleMsg)) {
+            return i + 1;
+        }
+    }
+
+    return 0;
+}
+
+static void Task_PlayerShowMoveSelectMenu(Unk8063D230 *task, void *data) {
+    MoveSelectMenuData *moveSelectMenuData = (MoveSelectMenuData *)data;
+    int i;
+
+    switch (moveSelectMenuData->state) {
+        case 0:
+            for (i = 0; i < LEARNED_MOVES_MAX; i++) {
+                lbl_8063D080.moves[i] = moveSelectMenuData->moves[i];
+                lbl_8063D080.ppCur[i] = moveSelectMenuData->ppCur[i];
+                lbl_8063D080.ppMax[i] = moveSelectMenuData->ppMax[i];
+            }
+
+            lbl_8063D080.partySlot = moveSelectMenuData->partySlot;
+
+            fn_8016E330(2, moveSelectMenuData->battler, fn_803A9EFC_inline(moveSelectMenuData), &lbl_8063D080);
+            moveSelectMenuData->state++;
+            break;
+        case 1:
+            if (fn_8016E430(moveSelectMenuData->battler) != 0xFF) {
+                fn_8016E2E4(9);
+            } else {
+                moveSelectMenuData->input = fn_8016E478(moveSelectMenuData->battler);
+                moveSelectMenuData->state++;
+            }
+            break;
+        case 2:
+            BattleController_EmitSelectedMove(moveSelectMenuData->battleSys,
+                                              moveSelectMenuData->battler,
+                                              moveSelectMenuData->input);
+            moveSelectMenuData->state++;
+            break;
+        case 3:
+            BattleController_EmitClearCommand(moveSelectMenuData->battleSys,
+                                              moveSelectMenuData->battler,
+                                              moveSelectMenuData->command);
+            fn_8016E0A0(data);
+            fn_803DEF3C(task);
+            break;
+    }
+}
+
+static void Task_TrainerShowMoveSelectMenu(Unk8063D230 *task, void *data) {
+    MoveSelectMenuData *moveSelectMenuData = (MoveSelectMenuData *)data;
+    BattleSystem_GetBattleType(moveSelectMenuData->battleSys);
+    int action = (u8)fn_803C93C4(moveSelectMenuData->battleSys, moveSelectMenuData->battler, 2) + 1;
+
+    if (action - 1 == 0xFF || moveSelectMenuData->moves[action - 1] == MOVE_NONE) {
+        do {
+            action = LCRNG_Next() % LEARNED_MOVES_MAX + 1;
+        } while (moveSelectMenuData->moves[action - 1] == MOVE_NONE);
+    }
+
+    BattleController_EmitSelectedMove(moveSelectMenuData->battleSys, moveSelectMenuData->battler, action);
+    BattleController_EmitClearCommand(moveSelectMenuData->battleSys,
+                                      moveSelectMenuData->battler,
+                                      moveSelectMenuData->command);
+
+    fn_8016E0A0(data);
+    fn_803DEF3C(task);
+}
+
+static void Task_PlayerShowTargetSelectMenu(Unk8063D230 *task, void *data) {
+    TargetSelectMenuData *targetSelectMenuData = (TargetSelectMenuData *)data;
+    TargetSelectData targetSelectData;
+    u8 battlersByType[6];
+    int i;
+    int target;
+    u32 battleType;
+
+    switch (targetSelectMenuData->state) {
+        case 0:
+            memset(&targetSelectMenuData->request, 0, sizeof(Unk803AA178));
+            BattleSystem_SetBattlerTypes(targetSelectMenuData->battleSys, targetSelectMenuData->request.battlerTypes);
+
+            for (i = 0; i < MAX_BATTLERS; i++) {
+                targetSelectData.targetMonData[i] = targetSelectMenuData->targetMon[i];
+
+                if (targetSelectMenuData->targetMon[i].isPresent) {
+                    targetSelectMenuData->request.partySlots[i] = targetSelectMenuData->targetMon[i].partySlot;
+                } else {
+                    targetSelectMenuData->request.partySlots[i] = 0xFF;
+                }
+            }
+
+            targetSelectData.battlerType = targetSelectMenuData->battlerType;
+            targetSelectData.targetingLayout =
+                fn_803D9EB4(targetSelectMenuData->range, targetSelectMenuData->battlerType);
+            targetSelectMenuData->request.targetingLayout = targetSelectData.targetingLayout;
+
+            fn_8016E330(3,
+                        targetSelectMenuData->battler,
+                        BattleSystem_Defender(
+                            targetSelectMenuData->battleSys,
+                            BattleSystem_GetBattleContext(targetSelectMenuData->battleSys),
+                            targetSelectMenuData->battler,
+                            Battler_SelectedMove(BattleSystem_GetBattleContext(targetSelectMenuData->battleSys),
+                                                 targetSelectMenuData->battler),
+                            TRUE,
+                            0) +
+                            1,
+                        &targetSelectMenuData->request);
+            targetSelectMenuData->state++;
+            break;
+        case 1:
+            if (fn_8016E430(targetSelectMenuData->battler) != 0xFF) {
+                fn_8016E2E4(9);
+                break;
+            }
+
+            target = fn_8016E478(targetSelectMenuData->battler);
+            battleType = BattleSystem_GetBattleType(targetSelectMenuData->battleSys);
+
+            if (target != 0xFF) {
+                BattleSystem_SetBattlersByType(targetSelectMenuData->battleSys, battlersByType);
+
+                if (battleType & BATTLE_TYPE_DOUBLES) {
+                    target = battlersByType[target + 1] + 1;
+                } else {
+                    target = battlersByType[target - 1] + 1;
+                }
+            }
+
+            BattleController_EmitSelectedTarget(targetSelectMenuData->battleSys, targetSelectMenuData->battler, target);
+            BattleController_EmitClearCommand(targetSelectMenuData->battleSys,
+                                              targetSelectMenuData->battler,
+                                              targetSelectMenuData->command);
+            fn_8016E0A0(data);
+            fn_803DEF3C(task);
+            break;
+    }
+}
+
+static void Task_TrainerShowTargetSelectMenu(Unk8063D230 *task, void *data) {
+    TargetSelectMenuData *targetSelectMenuData = (TargetSelectMenuData *)data;
+    BattleContext *battleCtx = BattleSystem_GetBattleContext(targetSelectMenuData->battleSys);
+    int selectedTarget = (u8)fn_803C93C4(targetSelectMenuData->battleSys, targetSelectMenuData->battler, 1) + 1;
+
+    if (selectedTarget - 1 == 0xFF) {
+        selectedTarget = BattleContext_Get(targetSelectMenuData->battleSys,
+                                           battleCtx,
+                                           BATTLECTX_AICTX_SELECTED_TARGET,
+                                           targetSelectMenuData->battler) +
+                         1;
+    }
+
+    fn_803D989C(selectedTarget < 5, "tp_ret\x82\xaa\x95s\x90\xb3\x82\xc5\x82\xb7:%d\n", selectedTarget);
+
+    BattleController_EmitSelectedTarget(targetSelectMenuData->battleSys, targetSelectMenuData->battler, selectedTarget);
+    BattleController_EmitClearCommand(targetSelectMenuData->battleSys,
+                                      targetSelectMenuData->battler,
+                                      targetSelectMenuData->command);
+
+    fn_8016E0A0(data);
+    fn_803DEF3C(task);
+}
+
+// Empty in this game.
+static void Task_PlayerShowBagMenu(Unk8063D230 *task, void *data) {}
+
+static void Task_TrainerShowBagMenu(Unk8063D230 *task, void *data) {
+    BagMenuData *bagMenuData = (BagMenuData *)data;
+    BattleItemUse used;
+
+    used.item = 1;
+
+    BattleController_EmitSelectedBagItem(bagMenuData->battleSys, bagMenuData->battler, used);
+    BattleController_EmitClearCommand(bagMenuData->battleSys, bagMenuData->battler, bagMenuData->command);
+
+    fn_8016E0A0(bagMenuData->partyMenuData->battlePartyCtx->party);
+    fn_8016E0A0(bagMenuData->partyMenuData->battlePartyCtx);
+    fn_8016E0A0(bagMenuData->partyMenuData);
+    fn_8016E0A0(data);
+    fn_803DEF3C(task);
+}
+
+static void Task_TrainerShowPartyMenu(Unk8063D230 *task, void *data) {
+    PartyMenuData *partyMenuData = (PartyMenuData *)data;
+    u32 battleType = BattleSystem_GetBattleType(partyMenuData->battleSys);
+    int battler = partyMenuData->battler;
+    Pokemon *mon;
+    int slot;
+    Party *party;
+    int partner;
+
+    if (battleType & BATTLE_TYPE_TAG || battleType & BATTLE_TYPE_2vs2) {
+        partner = battler;
+    } else {
+        partner = BattleSystem_GetPartner(partyMenuData->battleSys, battler);
+    }
+
+    slot = fn_803C93C4(partyMenuData->battleSys, battler, 2);
+
+    if (fn_803C93C4(partyMenuData->battleSys, battler, 0) != 3 || slot == 0xFF) {
+        slot = fn_8017CB14(partyMenuData->battleSys, battler);
+    }
+
+    if (battler >= 0 && battler < MAX_BATTLERS && slot >= 0 && slot < MAX_PARTY_SIZE) {
+        if (Pokemon_GetValue(BattleSystem_GetPartyPokemon(partyMenuData->battleSys, battler, slot),
+                             MON_DATA_HP,
+                             NULL) == 0 ||
+            partyMenuData->partySlots[battler] == slot || partyMenuData->partySlots[partner] == slot) {
+            slot = 0xFF;
+        }
+    }
+
+    if (slot == 0xFF) {
+        slot = MAX_PARTY_SIZE;
+    }
+
+    if (slot == MAX_PARTY_SIZE) {
+        party = BattleSystem_GetParty(partyMenuData->battleSys, partyMenuData->battler);
+
+        for (slot = 0; slot < Party_GetCurrentCount(party); slot++) {
+            mon = BattleSystem_GetPartyPokemon(partyMenuData->battleSys, partyMenuData->battler, slot);
+
+            if (Pokemon_GetValue(mon, MON_DATA_HP, NULL) && partyMenuData->partySlots[battler] != slot &&
+                partyMenuData->partySlots[partner] != slot) {
+                break;
+            }
+        }
+    }
+
+    BattleController_EmitPartyMenuResult(partyMenuData->battleSys, partyMenuData->battler, slot + 1);
+    BattleController_EmitClearCommand(partyMenuData->battleSys, partyMenuData->battler, partyMenuData->command);
+
+    fn_8016E0A0(data);
+    fn_803DEF3C(task);
+}
+
+static void Task_TrainerShowYesNoMenu(Unk8063D230 *task, void *data) {
+    YesNoMenuData *yesNoMenuData = (YesNoMenuData *)data;
+
+    BattleController_EmitClearCommand(yesNoMenuData->battleSys, yesNoMenuData->battler, yesNoMenuData->command);
+
+    fn_8016E0A0(data);
+    fn_803DEF3C(task);
 }
 
 static void Task_SetMoveAnimation(Unk8063D230 *task, void *data) {
@@ -1841,6 +2164,46 @@ static void Task_OAMToSprite(Unk8063D230 *task, void *data) {
 
     fn_8016E0A0(data);
     fn_803DEF3C(task);
+}
+
+void BattlerData_SetTaskFuncs(BattleSystem *battleSys, BattlerData *battlerData) {
+    u32 battleType = BattleSystem_GetBattleType(battleSys);
+
+    if (battleType & (BATTLE_TYPE_UNK_15 | BATTLE_TYPE_UNK_16)) {
+        battlerData->taskFuncs.setCommandSelection = Task_PlayerSetCommandSelection;
+        battlerData->taskFuncs.showMoveSelectMenu = Task_PlayerShowMoveSelectMenu;
+        battlerData->taskFuncs.showTargetSelectMenu = Task_PlayerShowTargetSelectMenu;
+        battlerData->taskFuncs.showBagMenu = Task_PlayerShowBagMenu;
+        battlerData->taskFuncs.showPartyMenu = fn_803AA4D0;
+        battlerData->taskFuncs.showYesNoMenu = fn_803AAAEC;
+        battlerData->bootState = BATTLER_BOOT_STATE_NORMAL;
+    } else if (battleType & BATTLE_TYPE_UNK_14) {
+        if (battlerData->battlerType & BATTLER_THEM) {
+            battlerData->taskFuncs.setCommandSelection = Task_TrainerSetCommandSelection;
+            battlerData->taskFuncs.showMoveSelectMenu = Task_TrainerShowMoveSelectMenu;
+            battlerData->taskFuncs.showTargetSelectMenu = Task_TrainerShowTargetSelectMenu;
+            battlerData->taskFuncs.showBagMenu = Task_TrainerShowBagMenu;
+            battlerData->taskFuncs.showPartyMenu = Task_TrainerShowPartyMenu;
+            battlerData->taskFuncs.showYesNoMenu = Task_TrainerShowYesNoMenu;
+            battlerData->bootState = BATTLER_BOOT_STATE_AI;
+        } else {
+            battlerData->taskFuncs.setCommandSelection = Task_PlayerSetCommandSelection;
+            battlerData->taskFuncs.showMoveSelectMenu = Task_PlayerShowMoveSelectMenu;
+            battlerData->taskFuncs.showTargetSelectMenu = Task_PlayerShowTargetSelectMenu;
+            battlerData->taskFuncs.showBagMenu = Task_PlayerShowBagMenu;
+            battlerData->taskFuncs.showPartyMenu = fn_803AA4D0;
+            battlerData->taskFuncs.showYesNoMenu = fn_803AAAEC;
+            battlerData->bootState = BATTLER_BOOT_STATE_NORMAL;
+        }
+    } else if (battleType & BATTLE_TYPE_UNK_17) {
+        battlerData->taskFuncs.setCommandSelection = Task_TrainerSetCommandSelection;
+        battlerData->taskFuncs.showMoveSelectMenu = Task_TrainerShowMoveSelectMenu;
+        battlerData->taskFuncs.showTargetSelectMenu = Task_TrainerShowTargetSelectMenu;
+        battlerData->taskFuncs.showBagMenu = Task_TrainerShowBagMenu;
+        battlerData->taskFuncs.showPartyMenu = Task_TrainerShowPartyMenu;
+        battlerData->taskFuncs.showYesNoMenu = Task_TrainerShowYesNoMenu;
+        battlerData->bootState = BATTLER_BOOT_STATE_AI;
+    }
 }
 
 extern "C" {
