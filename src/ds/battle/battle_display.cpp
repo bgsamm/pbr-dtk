@@ -1354,7 +1354,7 @@ void BattleDisplay_SetAlertMessage(BattleSystem *battleSys, BattlerData *battler
     Strbuf *msgBuffer;
 
     if (battlerData->bootState == BATTLER_BOOT_STATE_AI) {
-        fn_803B1908((u8 *)battleSys, battlerData->battler);
+        BattleController_EmitAlertMessageAck(battleSys, battlerData->battler);
         BattleController_EmitClearCommand(battleSys, battlerData->battler, message->command);
     } else {
         msgLoader = BattleSystem_GetMessageLoader(battleSys);
@@ -1666,7 +1666,7 @@ void fn_803A9E68(u8 *a, u8 *m) {
     if (v == 0xff) {
         v = 1;
     }
-    fn_803B07B4(*(u8 **)m, m[9], v);
+    BattleController_EmitSelectedCommand((BattleSystem *)(*(u8 **)m), m[9], v);
     BattleController_EmitClearCommand((BattleSystem *)(*(u32 *)m), m[9], m[8]);
     fn_8016E0A0(m);
     fn_803DEF3C((Unk8063D230 *)a);
@@ -1779,7 +1779,7 @@ static void Task_WaitForAlertMessagePrint(Unk8063D230 *task, void *data) {
     AlertMsgData *alertMsgData = (AlertMsgData *)data;
 
     if (fn_8016E430(alertMsgData->battler) == 0xFF) {
-        fn_803B1908((u8 *)alertMsgData->battleSys, alertMsgData->battler);
+        BattleController_EmitAlertMessageAck(alertMsgData->battleSys, alertMsgData->battler);
         BattleController_EmitClearCommand(alertMsgData->battleSys, alertMsgData->battler, alertMsgData->command);
         fn_8016E0A0(data);
         fn_803DEF3C(task);

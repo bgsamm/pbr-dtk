@@ -1569,7 +1569,7 @@ void BattleMon_CopyToParty(BattleSystem *battleSys, BattleContext *battleCtx, in
         BattleAI_ClearKnownItem(battleCtx, battler);
     }
 
-    fn_803B1AC4((BattleSystem *)battleSys, (BattleContext *)battleCtx, battler);
+    BattleController_EmitUpdatePartyMon(battleSys, battleCtx, battler);
 }
 
 void Battler_LockMoveChoice(BattleSystem *battleSys, BattleContext *battleCtx, int battler) {

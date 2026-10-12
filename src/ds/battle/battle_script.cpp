@@ -10,7 +10,7 @@ s32 fn_803C94CC(u8 *a, u8 *b) {
 
 s32 fn_803C94F4(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803AF748(a, 0);
+    BattleController_EmitSetupBattleUI((BattleSystem *)a, 0);
     return 0;
 }
 }
@@ -29,7 +29,7 @@ s32 fn_803C9528(u8 *a, u8 *b) {
         case 0:
         default:
             for (i = 0; i < n; i++) {
-                fn_803AF780(a, i);
+                BattleController_EmitSetEncounter((BattleSystem *)a, i);
                 fn_803ADE5C(a, i);
             }
             break;
@@ -37,7 +37,7 @@ s32 fn_803C9528(u8 *a, u8 *b) {
         case 4:
             for (i = 0; i < n; i++) {
                 if (((u8 *)BattleSystem_GetBattlerData((BattleSystem *)a, i))[0x185] & 1) {
-                    fn_803AF780(a, i);
+                    BattleController_EmitSetEncounter((BattleSystem *)a, i);
                     fn_803ADE5C(a, i);
                 }
             }
@@ -53,7 +53,7 @@ extern "C" {
 
 s32 fn_803C9F44(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803AFEB4(a, fn_803D803C(a, b, fn_803D6E6C(b)));
+    BattleController_EmitDeletePokemon((BattleSystem *)a, fn_803D803C(a, b, fn_803D6E6C(b)));
     return 0;
 }
 }
@@ -68,7 +68,7 @@ s32 fn_803CA838(u8 *a, u8 *b) {
     s32 n = BattleSystem_GetMaxBattlers((BattleSystem *)a);
     (*(u32 *)(b + 0xb4))++;
     for (s32 i = 0; i < n; i++) {
-        fn_803B1BF0(a, i);
+        BattleController_EmitSlideInPanel((BattleSystem *)a, i);
     }
     return 0;
 }
@@ -128,7 +128,7 @@ extern "C" {
 s32 fn_803CAF68(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     if (!(*(u32 *)(b + 0x213c) & 1)) {
-        fn_803B0F14(a, b);
+        BattleController_EmitPrintAttackMessage((BattleSystem *)a, (BattleContext *)b);
         lbl_8048CE28.pendingCommand = 7;
         lbl_8048CE28._0C = *(u32 *)(b + 0x64);
     }
@@ -143,7 +143,7 @@ s32 fn_803CAFE0(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     fn_803D8444(b, buf);
     fn_803D8520(a, b, buf, out);
-    fn_803B0F68(a, b, out);
+    BattleController_EmitPrintMessage((BattleSystem *)a, (BattleContext *)b, (BattleMessage *)out);
     if (lbl_8048CE28.pendingCommand == 0) {
         lbl_8048CE28.pendingCommand = 10;
     }
@@ -157,14 +157,14 @@ s32 fn_803CB070(u8 *a, u8 *b) {
     fn_803D8444(b, buf);
     fn_803D8520(a, b, buf, out);
     out[1] |= 0x80;
-    fn_803B0F68(a, b, out);
+    BattleController_EmitPrintMessage((BattleSystem *)a, (BattleContext *)b, (BattleMessage *)out);
     lbl_8048CE28.pendingCommand = 10;
     return 0;
 }
 
 s32 fn_803CB100(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B0F68(a, b, b + 0xf4);
+    BattleController_EmitPrintMessage((BattleSystem *)a, (BattleContext *)b, (BattleMessage *)(b + 0xf4));
     lbl_8048CE28.pendingCommand = 10;
     return 0;
 }
@@ -193,7 +193,7 @@ s32 fn_803CB1A8(u8 *a, u8 *b) {
     fn_803D8520(a, b, buf, out);
     out[1] |= 0x40;
     *(u32 *)(out + 0x20) = fn_803D803C(a, b, n);
-    fn_803B0F68(a, b, out);
+    BattleController_EmitPrintMessage((BattleSystem *)a, (BattleContext *)b, (BattleMessage *)out);
     lbl_8048CE28.pendingCommand = 10;
     return 0;
 }
@@ -213,7 +213,7 @@ s32 fn_803CB438(u8 *a, u8 *b) {
     u32 ry = fn_803D803C(a, b, y);
     if ((!(*(u32 *)(b + 0x213c) & 0x4000) && fn_803ADBB4(a) == 1) || m == 0x90) {
         *(u32 *)(b + 0x213c) |= 0x4000;
-        fn_803B0FF0(a, b, m, rx, ry);
+        BattleController_EmitPlayMoveAnimationA2D((BattleSystem *)a, (BattleContext *)b, m, rx, ry);
         *(u32 *)&lbl_8048CDE8 = ry;
         *(u32 *)((u8 *)&lbl_8048CDE8 + 4) = rx;
         *(u32 *)((u8 *)&lbl_8048CDE8 + 8) = m;
@@ -254,7 +254,7 @@ s32 fn_803CB5B4(u8 *a, u8 *b) {
 
 s32 fn_803CBA04(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B12A4(a, b, *(u32 *)(b + 0x74));
+    BattleController_EmitPlayFaintingSequence((BattleSystem *)a, (BattleContext *)b, *(u32 *)(b + 0x74));
     *(u32 *)(b + 0x213c) &= (FlagIndex(*(u32 *)(b + 0x74)) << 24) ^ 0xffffffff;
     *(u32 *)(b + 0x2140) |= FlagIndex(*(u32 *)(b + 0x74)) << 28;
     *(u32 *)(b + *(u32 *)(b + 0x74) * 16 + 0x21a8) = 0x27;
@@ -283,7 +283,7 @@ s32 fn_803CBB14(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 x = fn_803D6E6C(b);
     u32 y = fn_803D6E6C(b);
-    fn_803B13E0(a, (u32)b, y, fn_803D803C(a, b, x));
+    BattleController_EmitPlaySound((BattleSystem *)a, (BattleContext *)b, y, fn_803D803C(a, b, x));
     return 0;
 }
 }
@@ -294,7 +294,7 @@ extern "C" {
 
 s32 fn_803CBE50(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B1420(a);
+    BattleController_EmitFadeOut((BattleSystem *)a);
     return 0;
 }
 
@@ -512,7 +512,7 @@ s32 fn_803CD2F0(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 x = fn_803D6E6C(b);
     u32 y = fn_803D6E6C(b);
-    fn_803B1458(a, fn_803D803C(a, b, x), y);
+    BattleController_EmitToggleVanish((BattleSystem *)a, fn_803D803C(a, b, x), y);
     return 0;
 }
 
@@ -600,7 +600,7 @@ s32 fn_803CDD88(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 x = fn_803D6E6C(b);
     u32 y = fn_803D6E6C(b);
-    fn_803B1570(a, fn_803D803C(a, b, x), y);
+    BattleController_EmitSetStatusIcon((BattleSystem *)a, fn_803D803C(a, b, x), y);
     return 0;
 }
 
@@ -608,7 +608,7 @@ s32 fn_803CDE04(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 x = fn_803D6E6C(b);
     u32 y = fn_803D6E6C(b);
-    fn_803B15AC(a, fn_803D803C(a, b, x), y);
+    BattleController_EmitTrainerMessage((BattleSystem *)a, fn_803D803C(a, b, x), y);
     return 0;
 }
 
@@ -636,14 +636,14 @@ s32 fn_803CE014(u8 *a, u8 *b) {
 s32 fn_803CE560(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 r = fn_803D803C(a, b, fn_803D6E6C(b));
-    fn_803B16B4(a, b, r, b[r + 0x219c]);
+    BattleController_EmitRecallMessage((BattleSystem *)a, (BattleContext *)b, r, b[r + 0x219c]);
     return 0;
 }
 
 s32 fn_803CE5D4(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 r = fn_803D803C(a, b, fn_803D6E6C(b));
-    fn_803B1704(a, b, r, b[r + 0x219c]);
+    BattleController_EmitSendOutMessage((BattleSystem *)a, (BattleContext *)b, r, b[r + 0x219c]);
     return 0;
 }
 }
@@ -654,19 +654,19 @@ extern "C" {
 
 s32 fn_803CE648(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B1764(a, b, fn_803D803C(a, b, fn_803D6E6C(b)));
+    BattleController_EmitBattleStartMessage((BattleSystem *)a, (BattleContext *)b, fn_803D803C(a, b, fn_803D6E6C(b)));
     return 0;
 }
 
 s32 fn_803CE6B4(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B1798(a, b, fn_803D803C(a, b, fn_803D6E6C(b)));
+    BattleController_EmitLeadMonMessage((BattleSystem *)a, (BattleContext *)b, fn_803D803C(a, b, fn_803D6E6C(b)));
     return 0;
 }
 
 s32 fn_803CE720(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B15AC(a, fn_803D803C(a, b, fn_803D6E6C(b)), *(u32 *)(b + 0x130));
+    BattleController_EmitTrainerMessage((BattleSystem *)a, fn_803D803C(a, b, fn_803D6E6C(b)), *(u32 *)(b + 0x130));
     return 0;
 }
 
@@ -1698,7 +1698,7 @@ extern "C" {
 
 s32 fn_803D5280(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B0E94(a, b, 0, 0, fn_803D6E6C(b), 0, 0);
+    BattleController_EmitShowYesNoMenu((BattleSystem *)a, (BattleContext *)b, 0, 0, fn_803D6E6C(b), 0, 0);
     return 0;
 }
 }
@@ -1732,7 +1732,7 @@ extern "C" {
 s32 fn_803D5380(u8 *a, u8 *b) {
     BattleSystem_GetMaxBattlers((BattleSystem *)a);
     (*(u32 *)(b + 0xb4))++;
-    fn_803B0D6C(a, b, 0, 0, 0, 6);
+    BattleController_EmitShowPartyMenu((BattleSystem *)a, (BattleContext *)b, 0, 0, 0, 6);
     *(u32 *)(b + 0x78) = 0;
     return 0;
 }
@@ -1754,7 +1754,7 @@ s32 fn_803D53EC(u8 *a, u8 *b) {
 s32 fn_803D5470(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     if (BattleSystem_GetBattleType((BattleSystem *)a) & 4) {
-        fn_803B24E4(a);
+        BattleController_EmitSubmitResult((BattleSystem *)a);
     }
     return 0;
 }
@@ -1828,7 +1828,7 @@ s32 fn_803D5898(u8 *a, u8 *b) {
     u32 x = fn_803D6E6C(b);
     u32 y = fn_803D6E6C(b);
     u32 z = fn_803D6E6C(b);
-    fn_803B1D18(a, fn_803D803C(a, b, x), y, z);
+    BattleController_EmitSetMosaic((BattleSystem *)a, fn_803D803C(a, b, x), y, z);
     return 0;
 }
 }
@@ -1840,7 +1840,7 @@ extern "C" {
 s32 fn_803D5924(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 r = fn_803D803C(a, b, fn_803D6E6C(b));
-    fn_803B1D58(a, r);
+    BattleController_EmitChangeWeatherForm((BattleSystem *)a, r);
     *(u32 *)&lbl_8048CDE8 = r;
     *(u32 *)((u8 *)&lbl_8048CDE8 + 4) = ((*(u8 **)(a + 0x30))[r * 0xc0 + 0x2d66] >> 3) & 0x1f;
     fn_8016FA4C(0x16, &lbl_8048CDE8);
@@ -1849,7 +1849,7 @@ s32 fn_803D5924(u8 *a, u8 *b) {
 
 s32 fn_803D59BC(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B1E18(a, 0);
+    BattleController_EmitUpdateBG((BattleSystem *)a, 0);
     return 0;
 }
 
@@ -1884,37 +1884,37 @@ extern "C" {
 
 s32 fn_803D5AF8(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B1E88(a, fn_803D803C(a, b, fn_803D6E6C(b)));
+    BattleController_EmitShowBattleStartPartyGauge((BattleSystem *)a, fn_803D803C(a, b, fn_803D6E6C(b)));
     return 0;
 }
 
 s32 fn_803D5B60(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B1EE8(a, fn_803D803C(a, b, fn_803D6E6C(b)));
+    BattleController_EmitHideBattleStartPartyGauge((BattleSystem *)a, fn_803D803C(a, b, fn_803D6E6C(b)));
     return 0;
 }
 
 s32 fn_803D5BC8(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B1F48(a, fn_803D803C(a, b, fn_803D6E6C(b)));
+    BattleController_EmitShowPartyGauge((BattleSystem *)a, fn_803D803C(a, b, fn_803D6E6C(b)));
     return 0;
 }
 
 s32 fn_803D5C30(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B1FA8(a, fn_803D803C(a, b, fn_803D6E6C(b)));
+    BattleController_EmitHidePartyGauge((BattleSystem *)a, fn_803D803C(a, b, fn_803D6E6C(b)));
     return 0;
 }
 
 s32 fn_803D5C98(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B2008(a);
+    BattleController_EmitLoadPartyGaugeGraphics((BattleSystem *)a);
     return 0;
 }
 
 s32 fn_803D5CC8(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B2040(a);
+    BattleController_EmitFreePartyGaugeGraphics((BattleSystem *)a);
     return 0;
 }
 }
@@ -1930,7 +1930,7 @@ s32 fn_803D5CF8(u8 *a, u8 *b) {
     u32 x = fn_803D6E6C(b);
     u32 y = fn_803D6E6C(b);
     u32 z = fn_803D6E6C(b);
-    fn_803B2078(a, fn_803D803C(a, b, x), y, z);
+    BattleController_EmitIncrementRecord((BattleSystem *)a, fn_803D803C(a, b, x), y, z);
     return 0;
 }
 }
@@ -1941,7 +1941,7 @@ extern "C" {
 
 s32 fn_803D5D84(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B2118(a, b, fn_803D803C(a, b, fn_803D6E6C(b)));
+    BattleController_EmitRestoreSprite((BattleSystem *)a, (BattleContext *)b, fn_803D803C(a, b, fn_803D6E6C(b)));
     return 0;
 }
 }
@@ -1970,18 +1970,18 @@ s32 fn_803D5E64(u8 *a, u8 *b) {
         case 3:
             for (i = 0; i < n; i++) {
                 if (!(((u8 *)BattleSystem_GetBattlerData((BattleSystem *)a, i))[0x185] & 1)) {
-                    fn_803B21EC(a, i);
+                    BattleController_EmitSpriteToOAM((BattleSystem *)a, i);
                 }
             }
             break;
         case 4:
             for (i = 0; i < n; i++) {
                 if (((u8 *)BattleSystem_GetBattlerData((BattleSystem *)a, i))[0x185] & 1) {
-                    fn_803B21EC(a, i);
+                    BattleController_EmitSpriteToOAM((BattleSystem *)a, i);
                 }
             }
             break;
-        default: fn_803B21EC(a, fn_803D803C(a, b, c)); break;
+        default: BattleController_EmitSpriteToOAM((BattleSystem *)a, fn_803D803C(a, b, c)); break;
     }
     return 0;
 }
@@ -1995,18 +1995,18 @@ s32 fn_803D5F64(u8 *a, u8 *b) {
         case 3:
             for (i = 0; i < n; i++) {
                 if (!(((u8 *)BattleSystem_GetBattlerData((BattleSystem *)a, i))[0x185] & 1)) {
-                    fn_803B2224(a, i);
+                    BattleController_EmitOAMToSprite((BattleSystem *)a, i);
                 }
             }
             break;
         case 4:
             for (i = 0; i < n; i++) {
                 if (((u8 *)BattleSystem_GetBattlerData((BattleSystem *)a, i))[0x185] & 1) {
-                    fn_803B2224(a, i);
+                    BattleController_EmitOAMToSprite((BattleSystem *)a, i);
                 }
             }
             break;
-        default: fn_803B2224(a, fn_803D803C(a, b, c)); break;
+        default: BattleController_EmitOAMToSprite((BattleSystem *)a, fn_803D803C(a, b, c)); break;
     }
     return 0;
 }
@@ -2081,19 +2081,19 @@ extern "C" {
 
 s32 fn_803D6540(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B225C(a);
+    BattleController_EmitResultMessage((BattleSystem *)a);
     return 0;
 }
 
 s32 fn_803D6570(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B2294(a, b);
+    BattleController_EmitEscapeMessage((BattleSystem *)a, (BattleContext *)b);
     return 0;
 }
 
 s32 fn_803D65A0(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B2334(a);
+    BattleController_EmitForfeitMessage((BattleSystem *)a);
     return 0;
 }
 }
@@ -2201,13 +2201,14 @@ extern "C" {
 
 s32 fn_803D6A14(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B236C(a, b, fn_803D803C(a, b, fn_803D6E6C(b)));
+    BattleController_EmitRefreshSprite((BattleSystem *)a, (BattleContext *)b, fn_803D803C(a, b, fn_803D6E6C(b)));
     return 0;
 }
 
 s32 fn_803D6A80(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
-    fn_803B2440(a, b, fn_803D803C(a, b, fn_803D6E6C(b)));
+    BattleController_EmitPlayMoveHitSoundEffect((BattleSystem *)a, (BattleContext *)b,
+                                                fn_803D803C(a, b, fn_803D6E6C(b)));
     return 0;
 }
 }
@@ -2222,7 +2223,7 @@ s32 fn_803D6AEC(u8 *a, u8 *b) {
     (*(u32 *)(b + 0xb4))++;
     u32 x = fn_803D6E6C(b);
     u32 y = fn_803D6E6C(b);
-    fn_803B24A8(a, fn_803D803C(a, b, x), y);
+    BattleController_EmitPlayMusic((BattleSystem *)a, fn_803D803C(a, b, x), y);
     return 0;
 }
 }

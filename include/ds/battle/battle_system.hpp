@@ -36,7 +36,7 @@ struct BattleSystem {
     /* 0x78 */ void *chatotCries[MAX_BATTLERS];
     /* 0x88 */ u8 unk88[0x18];
     /* 0xA0 */ u16 trainerIDs[MAX_BATTLERS];
-    /* 0xA8 */ u8 unkA8[0x4];
+    /* 0xA8 */ u8 unwritten[MAX_BATTLERS];
     /* 0xAC */ Trainer trainers[MAX_BATTLERS];
     /* 0x15C */ u8 unk15C[0x8];
     /* 0x164 */ void *unk164;
@@ -122,6 +122,7 @@ int BattleSystem_GetMapHeader(BattleSystem *battleSys);
 u32 BattleSystem_GetBattleStatusMask(BattleSystem *battleSys);
 u8 BattleSystem_IsInitialized(BattleSystem *battleSys);
 int BattleSystem_GetNumSafariBalls(BattleSystem *battleSys);
+BOOL BattleSystem_HasCaughtSpecies(BattleSystem *battleSys, int species);
 u8 BattleSystem_GetTextSpeed(BattleSystem *battleSys);
 void BattleSystem_SetCommandSelectionFlags(BattleSystem *battleSys, u32 flags);
 void BattleSystem_SetUnread_2440(BattleSystem *battleSys, u8 value);

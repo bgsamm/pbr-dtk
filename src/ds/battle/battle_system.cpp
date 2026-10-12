@@ -700,8 +700,8 @@ extern "C" {
 
 void fn_803ADE5C(u8 *a, u32 b) {}
 
-void fn_803ADE60(u8 *p, u32 a) {
-    fn_803D97E4(*(u8 **)(p + 0x60), (u16)a);
+BOOL BattleSystem_HasCaughtSpecies(BattleSystem *battleSys, int species) {
+    return fn_803D97E4(battleSys->pokedex, species);
 }
 }
 

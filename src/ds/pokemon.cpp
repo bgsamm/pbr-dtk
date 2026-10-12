@@ -936,9 +936,9 @@ u8 BoxPokemon_IsShiny(BoxPokemon *boxMon) {
 u8 Pokemon_IsPersonalityShiny(u32 otID, u32 personality) {
     return (((personality & 0xFFFF) ^ (personality >> 16)) ^ ((otID >> 16) ^ (otID & 0xFFFF))) < 8;
 }
-// TODO Returns 0; sits between the shiny and the structure size functions.
 
-s32 fn_803DC160() {
+// TODO probably LoadPokemonSpriteYOffset (pret), empty in this game.
+u8 fn_803DC160(u16 species, u8 gender, int face, u8 formNum, u32 personality) {
     return 0;
 }
 

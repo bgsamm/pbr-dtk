@@ -378,7 +378,9 @@ u8 Pokemon_GetGenderOf(u16 species, u32 personality);
 u8 SpeciesData_GetGenderOf(SpeciesData *speciesData, u16 species, u32 personality);
 u8 BoxPokemon_IsShiny(BoxPokemon *boxMon);
 u8 Pokemon_IsPersonalityShiny(u32 otID, u32 personality);
-s32 fn_803DC160();
+// TODO probably LoadPokemonSpriteYOffset (pret): the battle controller passes it a species, gender, face, form
+// and personality.
+u8 fn_803DC160(u16 species, u8 gender, int face, u8 formNum, u32 personality);
 u32 Pokemon_GetStructSize();
 u8 Pokemon_GetUnownLetterOf(u32 personality);
 BoxPokemon *Pokemon_GetBoxPokemon(Pokemon *mon);

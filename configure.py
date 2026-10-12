@@ -639,7 +639,7 @@ config.libs = [
             Object(NonMatching, "ds/battle/battle_display.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
             Object(NonMatching, "ds/battle/battle_main.cpp"),
             Object(NonMatching, "ds/battle/battle_system.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
-            Object(NonMatching, "ds/battle/battle_controller.cpp"),
+            Object(Matching, "ds/battle/battle_controller.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
             Object(NonMatching, "ds/battle/battle_controller_player.cpp"),
             Object(NonMatching, "ds/battle/battle_lib.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
             Object(NonMatching, "ds/battle/battle_script.cpp"),
