@@ -9,8 +9,8 @@ extern "C" {
 void *fn_8016DF70(u32 heapId, u32 size);
 void fn_8016E0A0(void *ptr);
 }
-// TODO Always returns 0; the battle code switches on the result.
 
+// TODO Always returns 0; the battle code switches on the result.
 s32 fn_803DA018(const TrainerInfo *info) {
     return 0;
 }

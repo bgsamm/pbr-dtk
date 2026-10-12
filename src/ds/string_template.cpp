@@ -196,14 +196,14 @@ void StringTemplate_Format(const StringTemplate *strTemplate, Strbuf *dst, const
         }
     }
 }
-// TODO Returns the string of argument idx.
 
+// TODO Returns the string of argument idx.
 Strbuf *fn_803DFE0C(const StringTemplate *strTemplate, u32 idx) {
     return strTemplate->args[idx].string;
 }
-// TODO Empty.
 
+// TODO Empty.
 void fn_803DFE20() {}
-// TODO Empty.
 
+// TODO Empty.
 void fn_803DFE24() {}

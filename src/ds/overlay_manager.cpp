@@ -58,8 +58,8 @@ BOOL ApplicationManager_Exec(ApplicationManager *appMan) {
     }
     return FALSE;
 }
-// TODO Returns the manager's procState; there is no such accessor in the DS games.
 
+// TODO Returns the manager's procState; there is no such accessor in the DS games.
 s32 fn_803DEE9C(ApplicationManager *appMan) {
     return appMan->procState;
 }

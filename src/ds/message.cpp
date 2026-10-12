@@ -11,8 +11,8 @@ const u16 *fn_802502F4(u32 textID);
 s32 fn_80176EB4(u16 *dst, const u16 *src, u32 maxLength);
 void *fn_8016E008(u32 heapId, u32 size);
 }
-// TODO Index of an entry of a message bank in the game's text table; 0 for an unknown bank.
 
+// TODO Index of an entry of a message bank in the game's text table; 0 for an unknown bank.
 u32 fn_803DFE28(u32 bankID, u32 entryID) {
     switch (bankID) {
         case 2:  return entryID + 0xA;
@@ -28,8 +28,8 @@ u32 fn_803DFE28(u32 bankID, u32 entryID) {
     }
     return 0;
 }
-// TODO Gets the text and length of a bank entry; FALSE when it does not exist.
 
+// TODO Gets the text and length of a bank entry; FALSE when it does not exist.
 BOOL fn_803DFEAC(u32 bankID, u32 entryID, const u16 **text, s32 *length) {
     u32 textID = fn_803DFE28(bankID, entryID);
     if (textID == 0) {
@@ -42,8 +42,8 @@ BOOL fn_803DFEAC(u32 bankID, u32 entryID, const u16 **text, s32 *length) {
     *length = fn_803E022C(*text, 0xFF) + 1;
     return TRUE;
 }
-// TODO Copies a bank entry into str.
 
+// TODO Copies a bank entry into str.
 void fn_803DFF20(u32 bankID, u32 entryID, Strbuf *str) {
     const u16 *text;
     s32 length;
@@ -56,8 +56,8 @@ void fn_803DFF20(u32 bankID, u32 entryID, Strbuf *str) {
         fn_8016E0A0(chars);
     }
 }
-// TODO Returns a new Strbuf holding a bank entry.
 
+// TODO Returns a new Strbuf holding a bank entry.
 Strbuf *fn_803DFFA8(u32 bankID, u32 entryID, u32 heapId) {
     const u16 *text;
     s32 length;
@@ -132,8 +132,8 @@ void MessageLoader_GetSpeciesName(u32 species, u32 heapId, u16 *dst) {
     MessageLoader_Get(loader, species, dst);
     MessageLoader_Free(loader);
 }
-// TODO Length of a text, stopping at a 0 or at two terminators in a row.
 
+// TODO Length of a text, stopping at a 0 or at two terminators in a row.
 s32 fn_803E022C(const u16 *text, u32 maxLength) {
     u16 previous;
     s32 i;

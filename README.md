@@ -11,9 +11,9 @@ This project is not affiliated with or endorsed by Nintendo, Game Freak, Creatur
 ## Progress
 
 <!-- progress:start -->
-![Code matched](https://img.shields.io/badge/code%20matched-18.0%25-blue) ![Functions](https://img.shields.io/badge/functions-5997%2F13890-blue) ![Linked](https://img.shields.io/badge/linked-2.2%25-green)
+![Code matched](https://img.shields.io/badge/code%20matched-18.0%25-blue) ![Functions](https://img.shields.io/badge/functions-5998%2F13890-blue) ![Linked](https://img.shields.io/badge/linked-2.2%25-green)
 
-**17.98 %** of the code matches the original (5,997 of 13,890 functions). **2.20 %** is in finished units linked into the build.
+**18.00 %** of the code matches the original (5,998 of 13,890 functions). **2.20 %** is in finished units linked into the build.
 
 | Area | Size | Matched | |
 |---|---:|---:|---|
@@ -30,7 +30,7 @@ This project is not affiliated with or endorsed by Nintendo, Game Freak, Creatur
 | Revolution SDK | 627 KiB | 23.1 % | `█████░░░░░░░░░░░░░░░` |
 | Other Nintendo libraries (VF, DWC, NW4R, HOME menu) | 602 KiB | 0.8 % | `░░░░░░░░░░░░░░░░░░░░` |
 | Battle engine (ported from the DS games) | 204 KiB | 66.5 % | `█████████████░░░░░░░` |
-| Pokémon data | 78 KiB | 78.4 % | `████████████████░░░░` |
+| Pokémon data | 78 KiB | 79.8 % | `████████████████░░░░` |
 
 _Updated 2026-10-12 from the objdiff report of a local build._
 <!-- progress:end -->

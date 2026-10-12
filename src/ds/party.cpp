@@ -39,8 +39,8 @@ BOOL Party_AddPokemon(Party *party, Pokemon *mon) {
     party->currentCount++;
     return TRUE;
 }
-// TODO Copies a Pokemon (box, then party data) and returns dst, like an implicit operator=.
 
+// TODO Copies a Pokemon (box, then party data) and returns dst, like an implicit operator=.
 Pokemon *fn_803DE8F0(Pokemon *dst, const Pokemon *src) {
     *dst = *src;
     return dst;

@@ -381,14 +381,14 @@ void Pokemon_CalcStats(Pokemon *mon) {
     }
     Pokemon_ExitDecryptionContext(mon, reencrypt);
 }
-// TODO Copies a BoxPokemon member by member and returns dst, like an implicit operator=.
 
+// TODO Copies a BoxPokemon member by member and returns dst, like an implicit operator=.
 BoxPokemon *fn_803DAE24(BoxPokemon *dst, const BoxPokemon *src) {
     *dst = *src;
     return dst;
 }
-// TODO Reads a value of a Pokemon in a battle party; side and slot come from the battle code.
 
+// TODO Reads a value of a Pokemon in a battle party; side and slot come from the battle code.
 u32 fn_803DAE64(u32 side, s32 slot, u32 param, void *dest) {
     Party *party;
     if (side > 3) {
@@ -467,53 +467,53 @@ u32 BoxPokemon_GetDataInternal(BoxPokemon *boxMon, s32 param, void *dest) {
                 result = blockA->species;
             }
             break;
-        case MON_DATA_HELD_ITEM:                result = blockA->heldItem; break;
-        case MON_DATA_OT_ID:                    result = blockA->otID; break;
-        case MON_DATA_EXPERIENCE:               result = blockA->exp; break;
-        case MON_DATA_FRIENDSHIP:               result = blockA->friendship; break;
-        case MON_DATA_ABILITY:                  result = blockA->ability; break;
-        case MON_DATA_MARKINGS:                 result = blockA->markings; break;
-        case MON_DATA_LANGUAGE:                 result = blockA->originLanguage; break;
-        case MON_DATA_HP_EV:                    result = blockA->hpEV; break;
-        case MON_DATA_ATK_EV:                   result = blockA->atkEV; break;
-        case MON_DATA_DEF_EV:                   result = blockA->defEV; break;
-        case MON_DATA_SPEED_EV:                 result = blockA->speedEV; break;
-        case MON_DATA_SPATK_EV:                 result = blockA->spAtkEV; break;
-        case MON_DATA_SPDEF_EV:                 result = blockA->spDefEV; break;
-        case MON_DATA_COOL:                     result = blockA->cool; break;
-        case MON_DATA_BEAUTY:                   result = blockA->beauty; break;
-        case MON_DATA_CUTE:                     result = blockA->cute; break;
-        case MON_DATA_SMART:                    result = blockA->smart; break;
-        case MON_DATA_TOUGH:                    result = blockA->tough; break;
-        case MON_DATA_SHEEN:                    result = blockA->sheen; break;
+        case MON_DATA_HELD_ITEM:             result = blockA->heldItem; break;
+        case MON_DATA_OT_ID:                 result = blockA->otID; break;
+        case MON_DATA_EXPERIENCE:            result = blockA->exp; break;
+        case MON_DATA_FRIENDSHIP:            result = blockA->friendship; break;
+        case MON_DATA_ABILITY:               result = blockA->ability; break;
+        case MON_DATA_MARKINGS:              result = blockA->markings; break;
+        case MON_DATA_LANGUAGE:              result = blockA->originLanguage; break;
+        case MON_DATA_HP_EV:                 result = blockA->hpEV; break;
+        case MON_DATA_ATK_EV:                result = blockA->atkEV; break;
+        case MON_DATA_DEF_EV:                result = blockA->defEV; break;
+        case MON_DATA_SPEED_EV:              result = blockA->speedEV; break;
+        case MON_DATA_SPATK_EV:              result = blockA->spAtkEV; break;
+        case MON_DATA_SPDEF_EV:              result = blockA->spDefEV; break;
+        case MON_DATA_COOL:                  result = blockA->cool; break;
+        case MON_DATA_BEAUTY:                result = blockA->beauty; break;
+        case MON_DATA_CUTE:                  result = blockA->cute; break;
+        case MON_DATA_SMART:                 result = blockA->smart; break;
+        case MON_DATA_TOUGH:                 result = blockA->tough; break;
+        case MON_DATA_SHEEN:                 result = blockA->sheen; break;
         case MON_DATA_SINNOH_CHAMP_RIBBON:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 1:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 2:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 3:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 4:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 5:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 6:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 7:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 8:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 9:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 10:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 11:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 12:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 13:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 14:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 15:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 16:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 17:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 18:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 19:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 20:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 21:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 22:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 23:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 24:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 25:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 26:
-        case MON_DATA_UNUSED_RIBBON_53:         {
+        case MON_DATA_ABILITY_RIBBON:
+        case MON_DATA_GREAT_ABILITY_RIBBON:
+        case MON_DATA_DOUBLE_ABILITY_RIBBON:
+        case MON_DATA_MULTI_ABILITY_RIBBON:
+        case MON_DATA_PAIR_ABILITY_RIBBON:
+        case MON_DATA_WORLD_ABILITY_RIBBON:
+        case MON_DATA_ALERT_RIBBON:
+        case MON_DATA_SHOCK_RIBBON:
+        case MON_DATA_DOWNCAST_RIBBON:
+        case MON_DATA_CARELESS_RIBBON:
+        case MON_DATA_RELAX_RIBBON:
+        case MON_DATA_SNOOZE_RIBBON:
+        case MON_DATA_SMILE_RIBBON:
+        case MON_DATA_GORGEOUS_RIBBON:
+        case MON_DATA_ROYAL_RIBBON:
+        case MON_DATA_GORGEOUS_ROYAL_RIBBON:
+        case MON_DATA_FOOTPRINT_RIBBON:
+        case MON_DATA_RECORD_RIBBON:
+        case MON_DATA_HISTORY_RIBBON:
+        case MON_DATA_LEGEND_RIBBON:
+        case MON_DATA_RED_RIBBON:
+        case MON_DATA_GREEN_RIBBON:
+        case MON_DATA_BLUE_RIBBON:
+        case MON_DATA_FESTIVAL_RIBBON:
+        case MON_DATA_CARNIVAL_RIBBON:
+        case MON_DATA_CLASSIC_RIBBON:
+        case MON_DATA_UNUSED_RIBBON_53:      {
             u64 mask = (u64)1 << (param - MON_DATA_SINNOH_CHAMP_RIBBON);
             result = (blockA->ribbonsDS1 & mask) != 0;
         } break;
@@ -550,39 +550,39 @@ u32 BoxPokemon_GetDataInternal(BoxPokemon *boxMon, s32 param, void *dest) {
                 result = blockB->isEgg;
             }
             break;
-        case MON_DATA_HAS_NICKNAME:     result = blockB->hasNickname; break;
+        case MON_DATA_HAS_NICKNAME:         result = blockB->hasNickname; break;
         case MON_DATA_COOL_RIBBON:
-        case MON_DATA_COOL_RIBBON + 1:
-        case MON_DATA_COOL_RIBBON + 2:
-        case MON_DATA_COOL_RIBBON + 3:
-        case MON_DATA_COOL_RIBBON + 4:
-        case MON_DATA_COOL_RIBBON + 5:
-        case MON_DATA_COOL_RIBBON + 6:
-        case MON_DATA_COOL_RIBBON + 7:
-        case MON_DATA_COOL_RIBBON + 8:
-        case MON_DATA_COOL_RIBBON + 9:
-        case MON_DATA_COOL_RIBBON + 10:
-        case MON_DATA_COOL_RIBBON + 11:
-        case MON_DATA_COOL_RIBBON + 12:
-        case MON_DATA_COOL_RIBBON + 13:
-        case MON_DATA_COOL_RIBBON + 14:
-        case MON_DATA_COOL_RIBBON + 15:
-        case MON_DATA_COOL_RIBBON + 16:
-        case MON_DATA_COOL_RIBBON + 17:
-        case MON_DATA_COOL_RIBBON + 18:
-        case MON_DATA_COOL_RIBBON + 19:
-        case MON_DATA_COOL_RIBBON + 20:
-        case MON_DATA_COOL_RIBBON + 21:
-        case MON_DATA_COOL_RIBBON + 22:
-        case MON_DATA_COOL_RIBBON + 23:
-        case MON_DATA_COOL_RIBBON + 24:
-        case MON_DATA_COOL_RIBBON + 25:
-        case MON_DATA_COOL_RIBBON + 26:
-        case MON_DATA_COOL_RIBBON + 27:
-        case MON_DATA_COOL_RIBBON + 28:
-        case MON_DATA_COOL_RIBBON + 29:
-        case MON_DATA_COOL_RIBBON + 30:
-        case MON_DATA_WORLD_RIBBON:     {
+        case MON_DATA_COOL_RIBBON_SUPER:
+        case MON_DATA_COOL_RIBBON_HYPER:
+        case MON_DATA_COOL_RIBBON_MASTER:
+        case MON_DATA_BEAUTY_RIBBON:
+        case MON_DATA_BEAUTY_RIBBON_SUPER:
+        case MON_DATA_BEAUTY_RIBBON_HYPER:
+        case MON_DATA_BEAUTY_RIBBON_MASTER:
+        case MON_DATA_CUTE_RIBBON:
+        case MON_DATA_CUTE_RIBBON_SUPER:
+        case MON_DATA_CUTE_RIBBON_HYPER:
+        case MON_DATA_CUTE_RIBBON_MASTER:
+        case MON_DATA_SMART_RIBBON:
+        case MON_DATA_SMART_RIBBON_SUPER:
+        case MON_DATA_SMART_RIBBON_HYPER:
+        case MON_DATA_SMART_RIBBON_MASTER:
+        case MON_DATA_TOUGH_RIBBON:
+        case MON_DATA_TOUGH_RIBBON_SUPER:
+        case MON_DATA_TOUGH_RIBBON_HYPER:
+        case MON_DATA_TOUGH_RIBBON_MASTER:
+        case MON_DATA_CHAMPION_RIBBON:
+        case MON_DATA_WINNING_RIBBON:
+        case MON_DATA_VICTORY_RIBBON:
+        case MON_DATA_ARTIST_RIBBON:
+        case MON_DATA_EFFORT_RIBBON:
+        case MON_DATA_MARINE_RIBBON:
+        case MON_DATA_LAND_RIBBON:
+        case MON_DATA_SKY_RIBBON:
+        case MON_DATA_COUNTRY_RIBBON:
+        case MON_DATA_NATIONAL_RIBBON:
+        case MON_DATA_EARTH_RIBBON:
+        case MON_DATA_WORLD_RIBBON:         {
             u64 mask = (u64)1 << (param - MON_DATA_COOL_RIBBON);
             result = (blockB->ribbonsGBA & mask) != 0;
         } break;
@@ -612,29 +612,29 @@ u32 BoxPokemon_GetDataInternal(BoxPokemon *boxMon, s32 param, void *dest) {
                 Strbuf_CopyChars((Strbuf *)dest, blockC->nickname);
             }
             break;
-        case MON_DATA_UNUSED_120:             result = blockC->unused; break;
-        case MON_DATA_MET_GAME:               result = blockC->originGame; break;
+        case MON_DATA_UNUSED_120:                 result = blockC->unused; break;
+        case MON_DATA_MET_GAME:                   result = blockC->originGame; break;
         case MON_DATA_SUPER_COOL_RIBBON:
-        case MON_DATA_SUPER_COOL_RIBBON + 1:
-        case MON_DATA_SUPER_COOL_RIBBON + 2:
-        case MON_DATA_SUPER_COOL_RIBBON + 3:
-        case MON_DATA_SUPER_COOL_RIBBON + 4:
-        case MON_DATA_SUPER_COOL_RIBBON + 5:
-        case MON_DATA_SUPER_COOL_RIBBON + 6:
-        case MON_DATA_SUPER_COOL_RIBBON + 7:
-        case MON_DATA_SUPER_COOL_RIBBON + 8:
-        case MON_DATA_SUPER_COOL_RIBBON + 9:
-        case MON_DATA_SUPER_COOL_RIBBON + 10:
-        case MON_DATA_SUPER_COOL_RIBBON + 11:
-        case MON_DATA_SUPER_COOL_RIBBON + 12:
-        case MON_DATA_SUPER_COOL_RIBBON + 13:
-        case MON_DATA_SUPER_COOL_RIBBON + 14:
-        case MON_DATA_SUPER_COOL_RIBBON + 15:
-        case MON_DATA_SUPER_COOL_RIBBON + 16:
-        case MON_DATA_SUPER_COOL_RIBBON + 17:
-        case MON_DATA_SUPER_COOL_RIBBON + 18:
-        case MON_DATA_SUPER_COOL_RIBBON + 19:
-        case MON_DATA_UNUSED_RIBBON_142:      {
+        case MON_DATA_SUPER_COOL_RIBBON_GREAT:
+        case MON_DATA_SUPER_COOL_RIBBON_ULTRA:
+        case MON_DATA_SUPER_COOL_RIBBON_MASTER:
+        case MON_DATA_SUPER_BEAUTY_RIBBON:
+        case MON_DATA_SUPER_BEAUTY_RIBBON_GREAT:
+        case MON_DATA_SUPER_BEAUTY_RIBBON_ULTRA:
+        case MON_DATA_SUPER_BEAUTY_RIBBON_MASTER:
+        case MON_DATA_SUPER_CUTE_RIBBON:
+        case MON_DATA_SUPER_CUTE_RIBBON_GREAT:
+        case MON_DATA_SUPER_CUTE_RIBBON_ULTRA:
+        case MON_DATA_SUPER_CUTE_RIBBON_MASTER:
+        case MON_DATA_SUPER_SMART_RIBBON:
+        case MON_DATA_SUPER_SMART_RIBBON_GREAT:
+        case MON_DATA_SUPER_SMART_RIBBON_ULTRA:
+        case MON_DATA_SUPER_SMART_RIBBON_MASTER:
+        case MON_DATA_SUPER_TOUGH_RIBBON:
+        case MON_DATA_SUPER_TOUGH_RIBBON_GREAT:
+        case MON_DATA_SUPER_TOUGH_RIBBON_ULTRA:
+        case MON_DATA_SUPER_TOUGH_RIBBON_MASTER:
+        case MON_DATA_UNUSED_RIBBON_142:          {
             u64 mask = (u64)1 << (param - MON_DATA_SUPER_COOL_RIBBON);
             result = (blockC->ribbonsDS2 & mask) != 0;
         } break;
@@ -1297,8 +1297,8 @@ u8 Pokemon_GetArceusTypeOf(u16 holdEffect) {
     }
     return 0;
 }
-// TODO Loads the level-up moves of a form index from the data file.
 
+// TODO Loads the level-up moves of a form index from the data file.
 void fn_803DCD20(s32 index, u16 *moves) {
     for (u8 i = 0; i < 20; i++) {
         u8 level = fn_80392820(&lbl_8063CE34.levelUpMoveData, index, i);
@@ -1714,57 +1714,57 @@ void BoxPokemon_SetDataInternal(BoxPokemon *boxMon, u32 param, const void *value
             fn_803D989C(0, "fast_mode\x82\xd6\x95s\x90\xb3\x82\xc8\x8f\x91\x82\xab\x8d\x9e\x82\xdd\n");
             boxMon->boxDecrypted = *u8Value;
             break;
-        case MON_DATA_CHECKSUM_FAILED:          boxMon->checksumFailed = *u8Value; break;
-        case MON_DATA_CHECKSUM:                 boxMon->checksum = *u16Value; break;
-        case MON_DATA_SPECIES:                  blockA->species = *u16Value; break;
-        case MON_DATA_HELD_ITEM:                blockA->heldItem = *u16Value; break;
-        case MON_DATA_OT_ID:                    blockA->otID = *u32Value; break;
-        case MON_DATA_EXPERIENCE:               blockA->exp = *u32Value; break;
-        case MON_DATA_FRIENDSHIP:               blockA->friendship = *u8Value; break;
-        case MON_DATA_ABILITY:                  blockA->ability = *u8Value; break;
-        case MON_DATA_MARKINGS:                 blockA->markings = *u8Value; break;
-        case MON_DATA_LANGUAGE:                 blockA->originLanguage = *u8Value; break;
-        case MON_DATA_HP_EV:                    blockA->hpEV = *u8Value; break;
-        case MON_DATA_ATK_EV:                   blockA->atkEV = *u8Value; break;
-        case MON_DATA_DEF_EV:                   blockA->defEV = *u8Value; break;
-        case MON_DATA_SPEED_EV:                 blockA->speedEV = *u8Value; break;
-        case MON_DATA_SPATK_EV:                 blockA->spAtkEV = *u8Value; break;
-        case MON_DATA_SPDEF_EV:                 blockA->spDefEV = *u8Value; break;
-        case MON_DATA_COOL:                     blockA->cool = *u8Value; break;
-        case MON_DATA_BEAUTY:                   blockA->beauty = *u8Value; break;
-        case MON_DATA_CUTE:                     blockA->cute = *u8Value; break;
-        case MON_DATA_SMART:                    blockA->smart = *u8Value; break;
-        case MON_DATA_TOUGH:                    blockA->tough = *u8Value; break;
-        case MON_DATA_SHEEN:                    blockA->sheen = *u8Value; break;
+        case MON_DATA_CHECKSUM_FAILED:       boxMon->checksumFailed = *u8Value; break;
+        case MON_DATA_CHECKSUM:              boxMon->checksum = *u16Value; break;
+        case MON_DATA_SPECIES:               blockA->species = *u16Value; break;
+        case MON_DATA_HELD_ITEM:             blockA->heldItem = *u16Value; break;
+        case MON_DATA_OT_ID:                 blockA->otID = *u32Value; break;
+        case MON_DATA_EXPERIENCE:            blockA->exp = *u32Value; break;
+        case MON_DATA_FRIENDSHIP:            blockA->friendship = *u8Value; break;
+        case MON_DATA_ABILITY:               blockA->ability = *u8Value; break;
+        case MON_DATA_MARKINGS:              blockA->markings = *u8Value; break;
+        case MON_DATA_LANGUAGE:              blockA->originLanguage = *u8Value; break;
+        case MON_DATA_HP_EV:                 blockA->hpEV = *u8Value; break;
+        case MON_DATA_ATK_EV:                blockA->atkEV = *u8Value; break;
+        case MON_DATA_DEF_EV:                blockA->defEV = *u8Value; break;
+        case MON_DATA_SPEED_EV:              blockA->speedEV = *u8Value; break;
+        case MON_DATA_SPATK_EV:              blockA->spAtkEV = *u8Value; break;
+        case MON_DATA_SPDEF_EV:              blockA->spDefEV = *u8Value; break;
+        case MON_DATA_COOL:                  blockA->cool = *u8Value; break;
+        case MON_DATA_BEAUTY:                blockA->beauty = *u8Value; break;
+        case MON_DATA_CUTE:                  blockA->cute = *u8Value; break;
+        case MON_DATA_SMART:                 blockA->smart = *u8Value; break;
+        case MON_DATA_TOUGH:                 blockA->tough = *u8Value; break;
+        case MON_DATA_SHEEN:                 blockA->sheen = *u8Value; break;
         case MON_DATA_SINNOH_CHAMP_RIBBON:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 1:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 2:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 3:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 4:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 5:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 6:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 7:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 8:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 9:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 10:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 11:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 12:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 13:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 14:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 15:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 16:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 17:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 18:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 19:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 20:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 21:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 22:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 23:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 24:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 25:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 26:
-        case MON_DATA_SINNOH_CHAMP_RIBBON + 27:
-        case MON_DATA_UNUSED_RIBBON_53:         {
+        case MON_DATA_ABILITY_RIBBON:
+        case MON_DATA_GREAT_ABILITY_RIBBON:
+        case MON_DATA_DOUBLE_ABILITY_RIBBON:
+        case MON_DATA_MULTI_ABILITY_RIBBON:
+        case MON_DATA_PAIR_ABILITY_RIBBON:
+        case MON_DATA_WORLD_ABILITY_RIBBON:
+        case MON_DATA_ALERT_RIBBON:
+        case MON_DATA_SHOCK_RIBBON:
+        case MON_DATA_DOWNCAST_RIBBON:
+        case MON_DATA_CARELESS_RIBBON:
+        case MON_DATA_RELAX_RIBBON:
+        case MON_DATA_SNOOZE_RIBBON:
+        case MON_DATA_SMILE_RIBBON:
+        case MON_DATA_GORGEOUS_RIBBON:
+        case MON_DATA_ROYAL_RIBBON:
+        case MON_DATA_GORGEOUS_ROYAL_RIBBON:
+        case MON_DATA_FOOTPRINT_RIBBON:
+        case MON_DATA_RECORD_RIBBON:
+        case MON_DATA_HISTORY_RIBBON:
+        case MON_DATA_LEGEND_RIBBON:
+        case MON_DATA_RED_RIBBON:
+        case MON_DATA_GREEN_RIBBON:
+        case MON_DATA_BLUE_RIBBON:
+        case MON_DATA_FESTIVAL_RIBBON:
+        case MON_DATA_CARNIVAL_RIBBON:
+        case MON_DATA_CLASSIC_RIBBON:
+        case MON_DATA_PREMIER_RIBBON:
+        case MON_DATA_UNUSED_RIBBON_53:      {
             u64 mask = (u64)*u8Value << (param - MON_DATA_SINNOH_CHAMP_RIBBON);
             if (*u8Value) {
                 blockA->ribbonsDS1 |= mask;
@@ -1775,59 +1775,59 @@ void BoxPokemon_SetDataInternal(BoxPokemon *boxMon, u32 param, const void *value
         case MON_DATA_MOVE1:
         case MON_DATA_MOVE2:
         case MON_DATA_MOVE3:
-        case MON_DATA_MOVE4:            blockB->moves[param - (u32)MON_DATA_MOVE1] = *u16Value; break;
+        case MON_DATA_MOVE4:                blockB->moves[param - (u32)MON_DATA_MOVE1] = *u16Value; break;
         case MON_DATA_MOVE1_PP:
         case MON_DATA_MOVE2_PP:
         case MON_DATA_MOVE3_PP:
-        case MON_DATA_MOVE4_PP:         blockB->moveCurrentPPs[param - (u32)MON_DATA_MOVE1_PP] = *u8Value; break;
+        case MON_DATA_MOVE4_PP:             blockB->moveCurrentPPs[param - (u32)MON_DATA_MOVE1_PP] = *u8Value; break;
         case MON_DATA_MOVE1_PP_UPS:
         case MON_DATA_MOVE2_PP_UPS:
         case MON_DATA_MOVE3_PP_UPS:
-        case MON_DATA_MOVE4_PP_UPS:     blockB->movePPUps[param - (u32)MON_DATA_MOVE1_PP_UPS] = *u8Value; break;
+        case MON_DATA_MOVE4_PP_UPS:         blockB->movePPUps[param - (u32)MON_DATA_MOVE1_PP_UPS] = *u8Value; break;
         case MON_DATA_MOVE1_MAX_PP:
         case MON_DATA_MOVE2_MAX_PP:
         case MON_DATA_MOVE3_MAX_PP:
-        case MON_DATA_MOVE4_MAX_PP:     break;
-        case MON_DATA_HP_IV:            blockB->hpIV = *u8Value; break;
-        case MON_DATA_ATK_IV:           blockB->atkIV = *u8Value; break;
-        case MON_DATA_DEF_IV:           blockB->defIV = *u8Value; break;
-        case MON_DATA_SPEED_IV:         blockB->speedIV = *u8Value; break;
-        case MON_DATA_SPATK_IV:         blockB->spAtkIV = *u8Value; break;
-        case MON_DATA_SPDEF_IV:         blockB->spDefIV = *u8Value; break;
-        case MON_DATA_IS_EGG:           blockB->isEgg = *u8Value; break;
-        case MON_DATA_HAS_NICKNAME:     blockB->hasNickname = *u8Value; break;
+        case MON_DATA_MOVE4_MAX_PP:         break;
+        case MON_DATA_HP_IV:                blockB->hpIV = *u8Value; break;
+        case MON_DATA_ATK_IV:               blockB->atkIV = *u8Value; break;
+        case MON_DATA_DEF_IV:               blockB->defIV = *u8Value; break;
+        case MON_DATA_SPEED_IV:             blockB->speedIV = *u8Value; break;
+        case MON_DATA_SPATK_IV:             blockB->spAtkIV = *u8Value; break;
+        case MON_DATA_SPDEF_IV:             blockB->spDefIV = *u8Value; break;
+        case MON_DATA_IS_EGG:               blockB->isEgg = *u8Value; break;
+        case MON_DATA_HAS_NICKNAME:         blockB->hasNickname = *u8Value; break;
         case MON_DATA_COOL_RIBBON:
-        case MON_DATA_COOL_RIBBON + 1:
-        case MON_DATA_COOL_RIBBON + 2:
-        case MON_DATA_COOL_RIBBON + 3:
-        case MON_DATA_COOL_RIBBON + 4:
-        case MON_DATA_COOL_RIBBON + 5:
-        case MON_DATA_COOL_RIBBON + 6:
-        case MON_DATA_COOL_RIBBON + 7:
-        case MON_DATA_COOL_RIBBON + 8:
-        case MON_DATA_COOL_RIBBON + 9:
-        case MON_DATA_COOL_RIBBON + 10:
-        case MON_DATA_COOL_RIBBON + 11:
-        case MON_DATA_COOL_RIBBON + 12:
-        case MON_DATA_COOL_RIBBON + 13:
-        case MON_DATA_COOL_RIBBON + 14:
-        case MON_DATA_COOL_RIBBON + 15:
-        case MON_DATA_COOL_RIBBON + 16:
-        case MON_DATA_COOL_RIBBON + 17:
-        case MON_DATA_COOL_RIBBON + 18:
-        case MON_DATA_COOL_RIBBON + 19:
-        case MON_DATA_COOL_RIBBON + 20:
-        case MON_DATA_COOL_RIBBON + 21:
-        case MON_DATA_COOL_RIBBON + 22:
-        case MON_DATA_COOL_RIBBON + 23:
-        case MON_DATA_COOL_RIBBON + 24:
-        case MON_DATA_COOL_RIBBON + 25:
-        case MON_DATA_COOL_RIBBON + 26:
-        case MON_DATA_COOL_RIBBON + 27:
-        case MON_DATA_COOL_RIBBON + 28:
-        case MON_DATA_COOL_RIBBON + 29:
-        case MON_DATA_COOL_RIBBON + 30:
-        case MON_DATA_WORLD_RIBBON:     {
+        case MON_DATA_COOL_RIBBON_SUPER:
+        case MON_DATA_COOL_RIBBON_HYPER:
+        case MON_DATA_COOL_RIBBON_MASTER:
+        case MON_DATA_BEAUTY_RIBBON:
+        case MON_DATA_BEAUTY_RIBBON_SUPER:
+        case MON_DATA_BEAUTY_RIBBON_HYPER:
+        case MON_DATA_BEAUTY_RIBBON_MASTER:
+        case MON_DATA_CUTE_RIBBON:
+        case MON_DATA_CUTE_RIBBON_SUPER:
+        case MON_DATA_CUTE_RIBBON_HYPER:
+        case MON_DATA_CUTE_RIBBON_MASTER:
+        case MON_DATA_SMART_RIBBON:
+        case MON_DATA_SMART_RIBBON_SUPER:
+        case MON_DATA_SMART_RIBBON_HYPER:
+        case MON_DATA_SMART_RIBBON_MASTER:
+        case MON_DATA_TOUGH_RIBBON:
+        case MON_DATA_TOUGH_RIBBON_SUPER:
+        case MON_DATA_TOUGH_RIBBON_HYPER:
+        case MON_DATA_TOUGH_RIBBON_MASTER:
+        case MON_DATA_CHAMPION_RIBBON:
+        case MON_DATA_WINNING_RIBBON:
+        case MON_DATA_VICTORY_RIBBON:
+        case MON_DATA_ARTIST_RIBBON:
+        case MON_DATA_EFFORT_RIBBON:
+        case MON_DATA_MARINE_RIBBON:
+        case MON_DATA_LAND_RIBBON:
+        case MON_DATA_SKY_RIBBON:
+        case MON_DATA_COUNTRY_RIBBON:
+        case MON_DATA_NATIONAL_RIBBON:
+        case MON_DATA_EARTH_RIBBON:
+        case MON_DATA_WORLD_RIBBON:         {
             u64 mask = (u64)*u8Value << (param - MON_DATA_COOL_RIBBON);
             if (*u8Value) {
                 blockB->ribbonsGBA |= mask;
@@ -1861,26 +1861,26 @@ void BoxPokemon_SetDataInternal(BoxPokemon *boxMon, u32 param, const void *value
         case MON_DATA_UNUSED_120:      blockC->unused = *u8Value; break;
         case MON_DATA_MET_GAME:        blockC->originGame = *u8Value; break;
         case MON_DATA_SUPER_COOL_RIBBON:
-        case MON_DATA_SUPER_COOL_RIBBON + 1:
-        case MON_DATA_SUPER_COOL_RIBBON + 2:
-        case MON_DATA_SUPER_COOL_RIBBON + 3:
-        case MON_DATA_SUPER_COOL_RIBBON + 4:
-        case MON_DATA_SUPER_COOL_RIBBON + 5:
-        case MON_DATA_SUPER_COOL_RIBBON + 6:
-        case MON_DATA_SUPER_COOL_RIBBON + 7:
-        case MON_DATA_SUPER_COOL_RIBBON + 8:
-        case MON_DATA_SUPER_COOL_RIBBON + 9:
-        case MON_DATA_SUPER_COOL_RIBBON + 10:
-        case MON_DATA_SUPER_COOL_RIBBON + 11:
-        case MON_DATA_SUPER_COOL_RIBBON + 12:
-        case MON_DATA_SUPER_COOL_RIBBON + 13:
-        case MON_DATA_SUPER_COOL_RIBBON + 14:
-        case MON_DATA_SUPER_COOL_RIBBON + 15:
-        case MON_DATA_SUPER_COOL_RIBBON + 16:
-        case MON_DATA_SUPER_COOL_RIBBON + 17:
-        case MON_DATA_SUPER_COOL_RIBBON + 18:
-        case MON_DATA_SUPER_COOL_RIBBON + 19:
-        case MON_DATA_UNUSED_RIBBON_142:      {
+        case MON_DATA_SUPER_COOL_RIBBON_GREAT:
+        case MON_DATA_SUPER_COOL_RIBBON_ULTRA:
+        case MON_DATA_SUPER_COOL_RIBBON_MASTER:
+        case MON_DATA_SUPER_BEAUTY_RIBBON:
+        case MON_DATA_SUPER_BEAUTY_RIBBON_GREAT:
+        case MON_DATA_SUPER_BEAUTY_RIBBON_ULTRA:
+        case MON_DATA_SUPER_BEAUTY_RIBBON_MASTER:
+        case MON_DATA_SUPER_CUTE_RIBBON:
+        case MON_DATA_SUPER_CUTE_RIBBON_GREAT:
+        case MON_DATA_SUPER_CUTE_RIBBON_ULTRA:
+        case MON_DATA_SUPER_CUTE_RIBBON_MASTER:
+        case MON_DATA_SUPER_SMART_RIBBON:
+        case MON_DATA_SUPER_SMART_RIBBON_GREAT:
+        case MON_DATA_SUPER_SMART_RIBBON_ULTRA:
+        case MON_DATA_SUPER_SMART_RIBBON_MASTER:
+        case MON_DATA_SUPER_TOUGH_RIBBON:
+        case MON_DATA_SUPER_TOUGH_RIBBON_GREAT:
+        case MON_DATA_SUPER_TOUGH_RIBBON_ULTRA:
+        case MON_DATA_SUPER_TOUGH_RIBBON_MASTER:
+        case MON_DATA_UNUSED_RIBBON_142:          {
             u64 mask = (u64)*u8Value << (param - MON_DATA_SUPER_COOL_RIBBON);
             if (*u8Value) {
                 blockC->ribbonsDS2 |= mask;
@@ -2102,145 +2102,136 @@ void BoxPokemon_IncreaseDataInternal(BoxPokemon *boxMon, u32 param, s32 value) {
             }
             break;
         // Values that cannot be increased
-        case 0x0:
-        case 0x1:
-        case 0x2:
-        case 0x4:
-        case 0x5:
-        case 0x6:
-        case 0x7:
-        case 0xA:
-        case 0xB:
-        case 0xC:
-        case 0x19:
-        case 0x1A:
-        case 0x1B:
-        case 0x1C:
-        case 0x1D:
-        case 0x1E:
-        case 0x1F:
-        case 0x20:
-        case 0x21:
-        case 0x22:
-        case 0x23:
-        case 0x24:
-        case 0x25:
-        case 0x26:
-        case 0x27:
-        case 0x28:
-        case 0x29:
-        case 0x2A:
-        case 0x2B:
-        case 0x2C:
-        case 0x2D:
-        case 0x2E:
-        case 0x2F:
-        case 0x30:
-        case 0x31:
-        case 0x32:
-        case 0x33:
-        case 0x34:
-        case 0x35:
-        case 0x36:
-        case 0x37:
-        case 0x38:
-        case 0x39:
-        case 0x4C:
-        case 0x4D:
-        case 0x4E:
-        case 0x4F:
-        case 0x50:
-        case 0x51:
-        case 0x52:
-        case 0x53:
-        case 0x54:
-        case 0x55:
-        case 0x56:
-        case 0x57:
-        case 0x58:
-        case 0x59:
-        case 0x5A:
-        case 0x5B:
-        case 0x5C:
-        case 0x5D:
-        case 0x5E:
-        case 0x5F:
-        case 0x60:
-        case 0x61:
-        case 0x62:
-        case 0x63:
-        case 0x64:
-        case 0x65:
-        case 0x66:
-        case 0x67:
-        case 0x68:
-        case 0x69:
-        case 0x6A:
-        case 0x6B:
-        case 0x6C:
-        case 0x6D:
-        case 0x6E:
-        case 0x6F:
-        case 0x70:
-        case 0x71:
-        case 0x72:
-        case 0x74:
-        case 0x76:
-        case 0x77:
-        case 0x79:
-        case 0x7A:
-        case 0x7B:
-        case 0x7C:
-        case 0x7D:
-        case 0x7E:
-        case 0x7F:
-        case 0x80:
-        case 0x81:
-        case 0x82:
-        case 0x83:
-        case 0x84:
-        case 0x85:
-        case 0x86:
-        case 0x87:
-        case 0x88:
-        case 0x89:
-        case 0x8A:
-        case 0x8B:
-        case 0x8C:
-        case 0x8D:
-        case 0x8E:
-        case 0x8F:
-        case 0x90:
-        case 0x91:
-        case 0x92:
-        case 0x93:
-        case 0x94:
-        case 0x95:
-        case 0x96:
-        case 0x97:
-        case 0x98:
-        case 0x99:
-        case 0x9A:
-        case 0x9B:
-        case 0x9C:
-        case 0x9D:
-        case 0x9E:
-        case 0x9F:
-        case 0xA0:
-        case 0xA1:
-        case 0xA2:
-        case 0xA3:
-        case 0xA4:
-        case 0xA5:
-        case 0xA6:
-        case 0xA7:
-        case 0xA8:
-        case 0xA9:
-        case 0xAA:
-        case 0xAB:
-        case 0xAC:
-        case 0xAD:
-        default:   fn_803D989C(0, "\x95s\x90\xb3\x82\xc8\x89\xc1\x8eZ\n"); break;
+        case MON_DATA_PERSONALITY:
+        case MON_DATA_IS_PARTY_DECRYPTED:
+        case MON_DATA_IS_BOX_DECRYPTED:
+        case MON_DATA_CHECKSUM:
+        case MON_DATA_SPECIES:
+        case MON_DATA_HELD_ITEM:
+        case MON_DATA_OT_ID:
+        case MON_DATA_ABILITY:
+        case MON_DATA_MARKINGS:
+        case MON_DATA_LANGUAGE:
+        case MON_DATA_SINNOH_CHAMP_RIBBON:
+        case MON_DATA_ABILITY_RIBBON:
+        case MON_DATA_GREAT_ABILITY_RIBBON:
+        case MON_DATA_DOUBLE_ABILITY_RIBBON:
+        case MON_DATA_MULTI_ABILITY_RIBBON:
+        case MON_DATA_PAIR_ABILITY_RIBBON:
+        case MON_DATA_WORLD_ABILITY_RIBBON:
+        case MON_DATA_ALERT_RIBBON:
+        case MON_DATA_SHOCK_RIBBON:
+        case MON_DATA_DOWNCAST_RIBBON:
+        case MON_DATA_CARELESS_RIBBON:
+        case MON_DATA_RELAX_RIBBON:
+        case MON_DATA_SNOOZE_RIBBON:
+        case MON_DATA_SMILE_RIBBON:
+        case MON_DATA_GORGEOUS_RIBBON:
+        case MON_DATA_ROYAL_RIBBON:
+        case MON_DATA_GORGEOUS_ROYAL_RIBBON:
+        case MON_DATA_FOOTPRINT_RIBBON:
+        case MON_DATA_RECORD_RIBBON:
+        case MON_DATA_HISTORY_RIBBON:
+        case MON_DATA_LEGEND_RIBBON:
+        case MON_DATA_RED_RIBBON:
+        case MON_DATA_GREEN_RIBBON:
+        case MON_DATA_BLUE_RIBBON:
+        case MON_DATA_FESTIVAL_RIBBON:
+        case MON_DATA_CARNIVAL_RIBBON:
+        case MON_DATA_CLASSIC_RIBBON:
+        case MON_DATA_PREMIER_RIBBON:
+        case MON_DATA_UNUSED_RIBBON_53:
+        case MON_DATA_MOVE1:
+        case MON_DATA_MOVE2:
+        case MON_DATA_MOVE3:
+        case MON_DATA_MOVE4:
+        case MON_DATA_IS_EGG:
+        case MON_DATA_HAS_NICKNAME:
+        case MON_DATA_COOL_RIBBON:
+        case MON_DATA_COOL_RIBBON_SUPER:
+        case MON_DATA_COOL_RIBBON_HYPER:
+        case MON_DATA_COOL_RIBBON_MASTER:
+        case MON_DATA_BEAUTY_RIBBON:
+        case MON_DATA_BEAUTY_RIBBON_SUPER:
+        case MON_DATA_BEAUTY_RIBBON_HYPER:
+        case MON_DATA_BEAUTY_RIBBON_MASTER:
+        case MON_DATA_CUTE_RIBBON:
+        case MON_DATA_CUTE_RIBBON_SUPER:
+        case MON_DATA_CUTE_RIBBON_HYPER:
+        case MON_DATA_CUTE_RIBBON_MASTER:
+        case MON_DATA_SMART_RIBBON:
+        case MON_DATA_SMART_RIBBON_SUPER:
+        case MON_DATA_SMART_RIBBON_HYPER:
+        case MON_DATA_SMART_RIBBON_MASTER:
+        case MON_DATA_TOUGH_RIBBON:
+        case MON_DATA_TOUGH_RIBBON_SUPER:
+        case MON_DATA_TOUGH_RIBBON_HYPER:
+        case MON_DATA_TOUGH_RIBBON_MASTER:
+        case MON_DATA_CHAMPION_RIBBON:
+        case MON_DATA_WINNING_RIBBON:
+        case MON_DATA_VICTORY_RIBBON:
+        case MON_DATA_ARTIST_RIBBON:
+        case MON_DATA_EFFORT_RIBBON:
+        case MON_DATA_MARINE_RIBBON:
+        case MON_DATA_LAND_RIBBON:
+        case MON_DATA_SKY_RIBBON:
+        case MON_DATA_COUNTRY_RIBBON:
+        case MON_DATA_NATIONAL_RIBBON:
+        case MON_DATA_EARTH_RIBBON:
+        case MON_DATA_WORLD_RIBBON:
+        case MON_DATA_FATEFUL_ENCOUNTER:
+        case MON_DATA_GENDER:
+        case MON_DATA_FORM:
+        case MON_DATA_UNUSED_113:
+        case MON_DATA_UNUSED_114:
+        case MON_DATA_NICKNAME:
+        case MON_DATA_NICKNAME_STRING:
+        case MON_DATA_NICKNAME_STRING_AND_FLAG:
+        case MON_DATA_UNUSED_120:
+        case MON_DATA_MET_GAME:
+        case MON_DATA_SUPER_COOL_RIBBON:
+        case MON_DATA_SUPER_COOL_RIBBON_GREAT:
+        case MON_DATA_SUPER_COOL_RIBBON_ULTRA:
+        case MON_DATA_SUPER_COOL_RIBBON_MASTER:
+        case MON_DATA_SUPER_BEAUTY_RIBBON:
+        case MON_DATA_SUPER_BEAUTY_RIBBON_GREAT:
+        case MON_DATA_SUPER_BEAUTY_RIBBON_ULTRA:
+        case MON_DATA_SUPER_BEAUTY_RIBBON_MASTER:
+        case MON_DATA_SUPER_CUTE_RIBBON:
+        case MON_DATA_SUPER_CUTE_RIBBON_GREAT:
+        case MON_DATA_SUPER_CUTE_RIBBON_ULTRA:
+        case MON_DATA_SUPER_CUTE_RIBBON_MASTER:
+        case MON_DATA_SUPER_SMART_RIBBON:
+        case MON_DATA_SUPER_SMART_RIBBON_GREAT:
+        case MON_DATA_SUPER_SMART_RIBBON_ULTRA:
+        case MON_DATA_SUPER_SMART_RIBBON_MASTER:
+        case MON_DATA_SUPER_TOUGH_RIBBON:
+        case MON_DATA_SUPER_TOUGH_RIBBON_GREAT:
+        case MON_DATA_SUPER_TOUGH_RIBBON_ULTRA:
+        case MON_DATA_SUPER_TOUGH_RIBBON_MASTER:
+        case MON_DATA_UNUSED_RIBBON_142:
+        case MON_DATA_OT_NAME:
+        case MON_DATA_OT_NAME_STRING:
+        case MON_DATA_EGG_YEAR:
+        case MON_DATA_EGG_MONTH:
+        case MON_DATA_EGG_DAY:
+        case MON_DATA_MET_YEAR:
+        case MON_DATA_MET_MONTH:
+        case MON_DATA_MET_DAY:
+        case MON_DATA_EGG_LOCATION:
+        case MON_DATA_MET_LOCATION:
+        case MON_DATA_POKERUS:
+        case MON_DATA_POKEBALL:
+        case MON_DATA_MET_LEVEL:
+        case MON_DATA_OT_GENDER:
+        case MON_DATA_MET_TERRAIN:
+        case MON_DATA_RESERVED_158:
+        case MON_DATA_COMBINED_IVS:
+        case MON_DATA_NO_PRINT_GENDER:
+        case MON_DATA_TYPE_1:
+        case MON_DATA_TYPE_2:
+        case MON_DATA_SPECIES_NAME:
+        default:                                  fn_803D989C(0, "\x95s\x90\xb3\x82\xc8\x89\xc1\x8eZ\n"); break;
     }
 }
 

@@ -15,8 +15,8 @@ void fn_8017714C(u16 *dst, u16 *src, u32 size);
 static u32 Swap16(u16 value);
 static u32 Swap32(u32 value);
 static u64 Swap64(u64 value);
-// TODO Encrypts or decrypts DS data in place with the LCRNG, like EncodeData in the DS games.
 
+// TODO Encrypts or decrypts DS data in place with the LCRNG, like EncodeData in the DS games.
 void fn_803E02B4(u16 *data, u32 size, u32 seed) {
     u32 i;
     for (i = 0; i < size / 2; i++) {
