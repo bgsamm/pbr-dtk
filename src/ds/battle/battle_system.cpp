@@ -5,12 +5,12 @@
 
 extern "C" {
 
-void fn_803AC820(u32 v) {
-    lbl_806405C0 = v;
+void fn_803AC820(BattleSystem *battleSys) {
+    lbl_806405C0 = battleSys;
 }
 
 BattleSystem *fn_803AC828(void) {
-    return (BattleSystem *)lbl_806405C0;
+    return lbl_806405C0;
 }
 
 s32 fn_803AC830(void) {
@@ -222,8 +222,8 @@ int BattleSystem_GetPartner(BattleSystem *battleSys, int battler) {
     }
 
     for (i = 0; i < maxBattlers; i++) {
-        if (i != battler && (BattlerData_GetBattlerType(battleSys->battlers[i]) & 1) ==
-                                (BattlerData_GetBattlerType(battleSys->battlers[battler]) & 1)) {
+        if (i != battler && (BattlerData_GetBattlerType(battleSys->battlers[i]) & 1U) ==
+                                (BattlerData_GetBattlerType(battleSys->battlers[battler]) & 1U)) {
             break;
         }
     }
@@ -251,7 +251,7 @@ int BattleSystem_GetEnemyInSlot(BattleSystem *battleSys, int battler, int slot) 
 }
 
 // The game inlines the battle system getters here.
-// TODO The map header is loaded before Pokemon_GetValue in the game.
+// TODO Does not match yet (same size; the two registers of the met location comparison are swapped).
 BOOL BattleSystem_UseBagItem(BattleSystem *battleSys, int battler, int partySlot, int moveSlot, int item) {
     // must maintain this order of declarations to match
     BattleContext *battleCtx = battleSys->battleCtx;
@@ -560,7 +560,8 @@ BOOL BattleSystem_UseBagItem(BattleSystem *battleSys, int battler, int partySlot
                 friendship++;
             }
 
-            if (Pokemon_GetValue(mon, MON_DATA_EGG_LOCATION, NULL) == battleSys->mapHeader) {
+            int mapHeader = battleSys->mapHeader;
+            if (Pokemon_GetValue(mon, MON_DATA_EGG_LOCATION, NULL) == mapHeader) {
                 friendship++;
             }
 

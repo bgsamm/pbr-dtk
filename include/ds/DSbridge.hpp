@@ -289,7 +289,7 @@ void fn_803D9844(u32);
 // TODO probably CommSys_CurNetId (pret)
 u16 fn_803D9848();
 void fn_803D9850(void *);
-void fn_803D9854();
+void fn_803D9854(int);
 void fn_803D9858();
 BOOL fn_803D985C();
 BOOL fn_803D9864();

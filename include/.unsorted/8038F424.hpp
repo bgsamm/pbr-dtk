@@ -19,7 +19,7 @@
 #include "ds/battle/battle_lib.hpp"
 
 extern "C" {
-extern u32 lbl_806405C0;
+extern BattleSystem *lbl_806405C0;
 extern u8 *lbl_806405A0;
 u8 fn_8039A3FC(void);
 void fn_8039B278(u8 *p, u32 v);
@@ -51,7 +51,7 @@ void fn_803A5418(u8 *p, f32 v);
 void fn_803A576C(void);
 void fn_803A61A8(void);
 void fn_803AA430(void);
-void fn_803AC820(u32 v);
+void fn_803AC820(BattleSystem *battleSys);
 BattleSystem *fn_803AC828(void);
 s32 fn_803AC830(void);
 s32 fn_803ADBB4(u8 *a);

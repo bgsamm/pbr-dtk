@@ -12,7 +12,7 @@ struct TrainerInfo;
 struct FieldBattleDTO {
     /* 0x0 */ u32 battleType;
     /* 0x4 */ Party *parties[MAX_BATTLERS];
-    /* 0x14 */ u32 _14;
+    /* 0x14 */ u32 resultMask;
     /* 0x18 */ u8 unk18[0xC0];
     /* 0xD8 */ TrainerInfo *trainerInfo[MAX_BATTLERS];
     /* 0xE8 */ Bag *bag;
@@ -25,7 +25,8 @@ struct FieldBattleDTO {
     /* 0x140 */ u32 _140;
     /* 0x144 */ u8 unk144[0x10];
     /* 0x154 */ u32 _154;
-    /* 0x158 */ u8 unk158[0x14];
+    /* 0x158 */ int leveledUpMonsMask;
+    /* 0x15C */ u8 unk15C[0x10];
     /* 0x16C */ u32 _16C;
     /* 0x170 */ u8 unk170[0x4];
     /* 0x174 */ u32 _174;

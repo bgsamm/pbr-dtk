@@ -291,7 +291,8 @@ u16 fn_803D9848() {
 
 void fn_803D9850(void *) {}
 
-void fn_803D9854() {}
+// TODO probably Overlay_UnloadByID (pret)
+void fn_803D9854(int) {}
 
 void fn_803D9858() {}
 

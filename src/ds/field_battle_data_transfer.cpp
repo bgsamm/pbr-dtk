@@ -18,7 +18,7 @@ FieldBattleDTO *FieldBattleDTO_New(u32 heapId, u32 battleType, u32 arg2, u32 arg
     memset(dto, 0, sizeof(FieldBattleDTO));
     dto->battleType = battleType;
     dto->_16C = 0;
-    dto->_14 = 0;
+    dto->resultMask = 0;
     dto->_130 = 0;
     dto->_134 = arg4;
     dto->_174 = arg3;
