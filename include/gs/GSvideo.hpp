@@ -122,6 +122,10 @@ public:
         }
     }
 
+    bool getHomeMenuActive() const {
+        return mHomeMenuActive;
+    }
+
     u8 get_7a() {
         return _7a;
     }

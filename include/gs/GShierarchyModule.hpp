@@ -98,6 +98,10 @@ public:
         return _128;
     }
 
+    GSscene *getCurrentScene() const {
+        return mCurrentScene;
+    }
+
     u32 get_138() const {
         return _138;
     }

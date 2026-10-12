@@ -11,15 +11,15 @@ This project is not affiliated with or endorsed by Nintendo, Game Freak, Creatur
 ## Progress
 
 <!-- progress:start -->
-![Code matched](https://img.shields.io/badge/code%20matched-18.0%25-blue) ![Functions](https://img.shields.io/badge/functions-6000%2F13890-blue) ![Linked](https://img.shields.io/badge/linked-2.2%25-green)
+![Code matched](https://img.shields.io/badge/code%20matched-18.1%25-blue) ![Functions](https://img.shields.io/badge/functions-6003%2F13890-blue) ![Linked](https://img.shields.io/badge/linked-2.2%25-green)
 
-**18.01 %** of the code matches the original (6,000 of 13,890 functions). **2.20 %** is in finished units linked into the build.
+**18.07 %** of the code matches the original (6,003 of 13,890 functions). **2.20 %** is in finished units linked into the build.
 
 | Area | Size | Matched | |
 |---|---:|---:|---|
 | Startup | 2 KiB | 7.0 % | `█░░░░░░░░░░░░░░░░░░░` |
 | Game entry point | 37 KiB | 34.7 % | `███████░░░░░░░░░░░░░` |
-| Battle presentation | 288 KiB | 21.2 % | `████░░░░░░░░░░░░░░░░` |
+| Battle presentation | 288 KiB | 22.0 % | `████░░░░░░░░░░░░░░░░` |
 | Scenes and menus | 1,024 KiB | 4.8 % | `█░░░░░░░░░░░░░░░░░░░` |
 | Save data and Wi-Fi data | 68 KiB | 5.0 % | `█░░░░░░░░░░░░░░░░░░░` |
 | Battle loop and camera | 375 KiB | 17.0 % | `███░░░░░░░░░░░░░░░░░` |

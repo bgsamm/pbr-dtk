@@ -426,6 +426,10 @@ private:
     }
 
 public:
+    GSrenderState *getState() {
+        return mState;
+    }
+
     GSrender(GSrenderStruct1 *param1);
     virtual ~GSrender();
 
