@@ -4,15 +4,26 @@
 
 #include <revolution/types.h>
 
+struct Unk80249D38_D38 {
+    /* 0x0 */ u16 _00;
+    /* 0x2 */ u16 _02;
+    // size: 0x4
+};
+
 struct Unk80249D38 {
-    /* 0x00000 */ u8 unk00000[0xD54];
+    /* 0x00000 */ u8 unk00000[0xD34];
+    /* 0x00D34 */ u32 _D34;
+    /* 0x00D38 */ Unk80249D38_D38 *_D38;
+    /* 0x00D3C */ u8 unk00D3C[0x18];
     /* 0x00D54 */ s16 _D54;
     /* 0x00D56 */ u8 unk00D56[0x16];
-    /* 0x00D6C */ s16 _D6C[256]; // indexed by a byte
-    /* 0x00F6C */ u8 unk00F6C[0x63FA0];
-    /* 0x64F0C */ u8 unk64F0C[0x48];
+    /* 0x00D6C */ s16 _D6C[10];
+    /* 0x00D80 */ u16 _D80[10]; // indexed like _D6C
+    /* 0x00D94 */ u8 unk00D94[0x64178];
+    /* 0x64F0C */ u8 unk64F0C[0x28];
+    /* 0x64F34 */ u32 *_64F34[8];
     /* 0x64F54 */ u32 _64F54[8];
-    /* 0x64F74 */ u8 unk64F74[0x20];
+    /* 0x64F74 */ u32 _64F74[8];
     /* 0x64F94 */ Unk8015AAF0 _64F94[8];
     // size: 0x654B4
 };
@@ -20,9 +31,15 @@ struct Unk80249D38 {
 /* lbl_80497FEC */ extern Unk80249D38 lbl_80497FEC;
 
 extern "C" {
+s32 fn_8024AEC0(Unk80249D38 *obj);
+void *fn_8024AFFC(Unk80249D38 *obj, u32 index);
+u32 fn_8024B084(Unk80249D38 *obj, u32 key, u8 flag, u8 c);
+u32 fn_8024B11C(Unk80249D38 *obj, void *table, u8 flag, u8 c);
+u32 fn_8024B180(Unk80249D38 *obj, Unk8015AAF0 *track, u8 a, s16 b, u8 c, u8 d, u32 e, u32 f, u32 g, u8 h);
+s16 fn_8024B364(Unk80249D38 *obj, u32 key, s16 *out);
 void fn_8024C440(Unk80249D38 *obj, Unk8015AAF0 *track);
 void fn_8024FF4C(Unk80249D38 *obj, void *block);
-void fn_8025032C(void *a);
+void fn_8025032C(Unk8015AAF0 *track);
 void *fn_8025033C(u32 size);
 void fn_80250388(Unk8015AAF0 *track);
 
@@ -30,15 +47,11 @@ void fn_80250388(Unk8015AAF0 *track);
 void fn_8024A464(Unk80249D38 *obj, u32 a);
 void fn_8024A758(Unk80249D38 *obj, u32 a);
 void fn_8024AB50(Unk80249D38 *obj, u32 a);
-void fn_8024AE58(Unk80249D38 *obj, u32 a);
 void fn_8024AFA4(Unk80249D38 *obj, u32 a);
-void fn_8024B084(Unk80249D38 *obj, u32 a, u32 b, u32 c);
-void fn_8024B11C(Unk80249D38 *obj, u32 a, u32 b, u32 c);
-void fn_8024B364(Unk80249D38 *obj, u32 a, u32 b);
 void fn_8024B9C4(Unk80249D38 *obj, u32 a, u32 b, u32 c);
 void fn_8024BB74();
 void fn_8024BC58(Unk80249D38 *obj);
-void fn_8024C504(Unk80249D38 *obj, void *a);
+void fn_8024C504(Unk80249D38 *obj, Unk8015AAF0 *track);
 void fn_8024F8C8(Unk80249D38 *obj, u32 a);
 void fn_8024FA74(Unk80249D38 *obj, u32 a);
 }
