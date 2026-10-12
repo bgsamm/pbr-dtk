@@ -6,6 +6,8 @@ The build reproduces the original `main.dol` byte for byte (SHA-1 `ffcd539d23972
 
 This repository contains no game data and no assembly. You need your own copy of the game to build it.
 
+This project is not affiliated with or endorsed by Nintendo, Game Freak, Creatures or The Pokémon Company. Pokémon is a trademark of its respective owners.
+
 ## Progress
 
 <!-- progress:start -->
