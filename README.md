@@ -9,9 +9,9 @@ This repository contains no game data and no assembly. You need your own copy of
 ## Progress
 
 <!-- progress:start -->
-![Code matched](https://img.shields.io/badge/code%20matched-16.9%25-blue) ![Functions](https://img.shields.io/badge/functions-5877%2F13890-blue) ![Linked](https://img.shields.io/badge/linked-2.0%25-green)
+![Code matched](https://img.shields.io/badge/code%20matched-16.9%25-blue) ![Functions](https://img.shields.io/badge/functions-5878%2F13890-blue) ![Linked](https://img.shields.io/badge/linked-2.0%25-green)
 
-**16.85 %** of the code matches the original (5,877 of 13,890 functions). **1.98 %** is in finished units linked into the build.
+**16.85 %** of the code matches the original (5,878 of 13,890 functions). **1.98 %** is in finished units linked into the build.
 
 | Area | Size | Matched | |
 |---|---:|---:|---|

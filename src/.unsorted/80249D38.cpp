@@ -9,6 +9,7 @@
 extern "C" {
 
 /* lbl_803FD8C8 */ extern s16 lbl_803FD8C8[10];
+/* lbl_80424A80 */ extern s16 lbl_80424A80[4][6][8];
 extern f32 lbl_8063F8D8;
 extern u8 lbl_8063F8CE;
 extern u8 lbl_8063F8D6;
@@ -225,6 +226,15 @@ void fn_8024BC58(Unk80249D38 *obj) {
     obj->_08 ^= 1;
 }
 
+// TODO role: copies the five members at 0x48 to 0x58 of a track onto the members at 0x34 to 0x44
+void fn_8024BEA4(Unk80249D38 *, Unk8015AAF0 *track) {
+    track->_34 = track->_48;
+    track->_38 = track->_4C;
+    track->_3C = track->_50;
+    track->_40 = track->_54;
+    track->_44 = track->_58;
+}
+
 // TODO role: empty handlers selected by the type byte of a track in fn_8024BC58
 void fn_8024C42C(Unk80249D38 *, u32) {}
 void fn_8024C430(Unk80249D38 *, u32) {}
@@ -275,6 +285,40 @@ void fn_8024FA5C(Unk80249D38 *, Unk8015AAF0 *arg) {
     arg->_64 = 0;
     arg->_1E = -1;
     arg->_20 = -1;
+}
+
+// TODO role: asks the callback at 0x64DC8 for 24 values and starts each through fn_802503D8, writing into the table
+// lbl_80424A80
+void fn_8024FC4C(Unk80249D38 *obj) {
+    s16(*g)[8];
+    g = lbl_80424A80[1];
+    fn_802503D8(obj->_64DC8(0xC), g[0]);
+    fn_802503D8(obj->_64DC8(0xD), g[1]);
+    fn_802503D8(obj->_64DC8(0xE), g[2]);
+    fn_802503D8(obj->_64DC8(0xF), g[3]);
+    fn_802503D8(obj->_64DC8(0x11), g[4]);
+    fn_802503D8(obj->_64DC8(0x10), g[5]);
+    g = lbl_80424A80[0];
+    fn_802503D8(obj->_64DC8(0x12), g[0]);
+    fn_802503D8(obj->_64DC8(0x13), g[1]);
+    fn_802503D8(obj->_64DC8(0x14), g[2]);
+    fn_802503D8(obj->_64DC8(0x15), g[3]);
+    fn_802503D8(obj->_64DC8(0x17), g[4]);
+    fn_802503D8(obj->_64DC8(0x16), g[5]);
+    g = lbl_80424A80[2];
+    fn_802503D8(obj->_64DC8(0x1F), g[0]);
+    fn_802503D8(obj->_64DC8(0x20), g[1]);
+    fn_802503D8(obj->_64DC8(0x21), g[2]);
+    fn_802503D8(obj->_64DC8(0x22), g[3]);
+    fn_802503D8(obj->_64DC8(0x24), g[4]);
+    fn_802503D8(obj->_64DC8(0x23), g[5]);
+    g = lbl_80424A80[3];
+    fn_802503D8(obj->_64DC8(0x25), g[0]);
+    fn_802503D8(obj->_64DC8(0x26), g[1]);
+    fn_802503D8(obj->_64DC8(0x27), g[2]);
+    fn_802503D8(obj->_64DC8(0x28), g[3]);
+    fn_802503D8(obj->_64DC8(0x2A), g[4]);
+    fn_802503D8(obj->_64DC8(0x29), g[5]);
 }
 
 // TODO role: allocates from the second game heap, size rounded up to a multiple of 32
