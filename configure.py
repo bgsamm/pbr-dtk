@@ -563,6 +563,17 @@ config.libs = [
         ],
     ),
     RVLSDKLib(
+        "axfx",
+        [
+            Object(NonMatching, "axfx/AXFXReverbHi.c"),
+            Object(NonMatching, "axfx/AXFXReverbHiDpl2.c"),
+            Object(NonMatching, "axfx/AXFXDelay.c"),
+            Object(NonMatching, "axfx/AXFXChorus.c"),
+            Object(NonMatching, "axfx/AXFXSrcCoef.c"),
+            Object(NonMatching, "axfx/AXFXHooks.c"),
+        ],
+    ),
+    RVLSDKLib(
         "ai",
         [
             Object(NonMatching, "ai/ai.c"),
@@ -623,6 +634,7 @@ config.libs = [
     RVLSDKLib(
         "mem",
         [
+            Object(NonMatching, "mem/mem_heapCommon.c"),
             Object(NonMatching, "mem/mem_expHeap.c"),
             Object(NonMatching, "mem/mem_frameHeap.c"),
             Object(NonMatching, "mem/mem_allocator.c"),
@@ -969,7 +981,9 @@ config.libs = [
             Object(NonMatching, ".unsorted/80281F38.cpp"),
             Object(NonMatching, ".unsorted/80284950.cpp"),
             Object(NonMatching, ".unsorted/8028680C.cpp"),
-            Object(NonMatching, ".unsorted/80292364.cpp"),
+            Object(NonMatching, ".unsorted/8029259C.cpp"),
+            Object(NonMatching, ".unsorted/80294B5C.cpp"),
+            Object(NonMatching, ".unsorted/802959F8.cpp"),
             Object(NonMatching, ".unsorted/802973F8.cpp"),
             Object(NonMatching, ".unsorted/80297890.cpp"),
             Object(NonMatching, ".unsorted/802A2904.cpp"),

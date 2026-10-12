@@ -1648,8 +1648,35 @@ libs/RVL_SDK/src/ax/AXVPB.c:
 libs/RVL_SDK/src/ax/AXProf.c:
 	.text       start:0x80292324 end:0x80292364
 
-src/.unsorted/80292364.cpp:
-	.text       start:0x80292364 end:0x80296938
+libs/RVL_SDK/src/axfx/AXFXReverbHi.c:
+	.text       start:0x80292364 end:0x80292460
+
+libs/RVL_SDK/src/axfx/AXFXReverbHiDpl2.c:
+	.text       start:0x80292460 end:0x8029259C
+
+src/.unsorted/8029259C.cpp:
+	.text       start:0x8029259C end:0x802944C8
+
+libs/RVL_SDK/src/axfx/AXFXDelay.c:
+	.text       start:0x802944C8 end:0x80294B5C
+
+src/.unsorted/80294B5C.cpp:
+	.text       start:0x80294B5C end:0x80295894
+
+libs/RVL_SDK/src/axfx/AXFXChorus.c:
+	.text       start:0x80295894 end:0x802959F8
+
+src/.unsorted/802959F8.cpp:
+	.text       start:0x802959F8 end:0x80296480
+
+libs/RVL_SDK/src/axfx/AXFXSrcCoef.c:
+	.text       start:0x80296480 end:0x80296494
+
+libs/RVL_SDK/src/axfx/AXFXHooks.c:
+	.text       start:0x80296494 end:0x802964CC
+
+libs/RVL_SDK/src/mem/mem_heapCommon.c:
+	.text       start:0x802964CC end:0x80296938
 
 libs/RVL_SDK/src/mem/mem_expHeap.c:
 	.text       start:0x80296938 end:0x802973F8
