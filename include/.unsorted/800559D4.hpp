@@ -102,10 +102,12 @@ struct Unk800570E8 {
     /* 0xC */ u16 _c[1];
 };
 
-// size: 0x1C
+// size: unknown
 struct Unk80058EA0 {
-    /* 0x0 */ u8 unk0[0x4];
-    /* 0x4 */ u16 _4[12];
+    /* 0x000 */ u8 unk000[0x4];
+    /* 0x004 */ u16 _004[12];
+    /* 0x01C */ u8 unk01c[0x6C9];
+    /* 0x6E5 */ u8 _6e5;
 };
 
 // size: 0x20
@@ -138,7 +140,7 @@ void fn_80056344();
 void fn_80056358(int a, int b, int c, int d, int e);
 void fn_800563CC(int x);
 void fn_800563E0(u8 x);
-void fn_800563EC(void *p, int x);
+void fn_800563EC(int id, int x);
 void fn_80056458(int x);
 void fn_800564AC(u32 x);
 void fn_800564B8(u8 a, u32 b);

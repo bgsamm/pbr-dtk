@@ -60,9 +60,9 @@ double fn_8015F7A0();
 void fn_8015F758(double);
 Unk8011C974 *fn_8011C974();
 void fn_8000B570(int);
-void fn_8000B170(void *, f32, int);
+void fn_8000B170(int, int, f32);
 int fn_8000708C();
-int fn_8000B4C0(void *);
+int fn_8000B4C0(int);
 u32 fn_80164BA8();
 int fn_80164D78();
 int fn_80164DA8();
@@ -294,7 +294,7 @@ void *fn_80055EDC(void *arg) {
             rem = lbl_8063D4A0->_1094 - lbl_8063D4A0->_1090;
             if ((u16)rem <= 5 && (u16)last != (u16)rem && (u16)rem != 0) {
                 last = rem;
-                fn_8000B170((void *)0x234, lbl_80640B68, 0);
+                fn_8000B170(0x234, 0, lbl_80640B68);
             }
         }
         GSthreadManager::sInstance->sleepCurrentThread();
@@ -416,12 +416,12 @@ void fn_800563E0(u8 x) {
     lbl_8063D4A0->_1081 = x;
 }
 
-// TODO Calls fn_8000B170 on p, unless fn_8000B4C0 says it is already set.
-void fn_800563EC(void *p, int x) {
+// TODO Calls fn_8000B170 on id, unless fn_8000B4C0 says it is already set.
+void fn_800563EC(int id, int x) {
     if (x) {
-        fn_8000B170(p, lbl_80640B68, 0);
-    } else if (fn_8000708C() && !fn_8000B4C0(p)) {
-        fn_8000B170(p, lbl_80640B68, 0);
+        fn_8000B170(id, 0, lbl_80640B68);
+    } else if (fn_8000708C() && !fn_8000B4C0(id)) {
+        fn_8000B170(id, 0, lbl_80640B68);
     }
 }
 
@@ -1404,19 +1404,19 @@ void fn_80058CBC(Unk80058EA0 *p) {
     s16 i;
     int j;
     for (i = 0; i < 12; i++) {
-        if (p->_4[i] == 0xffff && p->_4[i + 1] == 0xffff) {
-            p->_4[i] = 0;
+        if (p->_004[i] == 0xffff && p->_004[i + 1] == 0xffff) {
+            p->_004[i] = 0;
             break;
         }
-        if (p->_4[i] == 0) {
+        if (p->_004[i] == 0) {
             break;
         }
     }
     for (j = 9; j >= 0; j--) {
-        p->_4[j + 2] = p->_4[j];
+        p->_004[j + 2] = p->_004[j];
     }
-    p->_4[0] = 0xffff;
-    p->_4[1] = 0x13;
+    p->_004[0] = 0xffff;
+    p->_004[1] = 0x13;
 }
 
 // TODO Removes the marker inserted by fn_80058CBC.
@@ -1434,24 +1434,24 @@ void fn_80058EA0(Unk80058EA0 *p) {
     s16 i;
     int j;
     for (i = 0; i < 10; i++) {
-        if (p->_4[i] == 0xffff && p->_4[i + 1] == 0xffff) {
-            p->_4[i] = 0xffff;
-            p->_4[i + 1] = 0x13;
-            p->_4[i + 2] = 0;
+        if (p->_004[i] == 0xffff && p->_004[i + 1] == 0xffff) {
+            p->_004[i] = 0xffff;
+            p->_004[i + 1] = 0x13;
+            p->_004[i + 2] = 0;
             break;
         }
-        if (p->_4[i] == 0) {
-            p->_4[i] = 0xffff;
-            p->_4[i + 1] = 0x13;
-            p->_4[i + 2] = 0;
+        if (p->_004[i] == 0) {
+            p->_004[i] = 0xffff;
+            p->_004[i + 1] = 0x13;
+            p->_004[i + 2] = 0;
             break;
         }
     }
     for (j = 9; j >= 0; j--) {
-        p->_4[j + 2] = p->_4[j];
+        p->_004[j + 2] = p->_004[j];
     }
-    p->_4[0] = 0xffff;
-    p->_4[1] = 0x14;
+    p->_004[0] = 0xffff;
+    p->_004[1] = 0x14;
 }
 
 // TODO Draws a localized full-screen image with alpha c. Does not match yet (0x21C bytes instead of 0x234).
