@@ -1426,8 +1426,17 @@ libs/RVL_SDK/src/os/OSCache.c:
 libs/RVL_SDK/src/os/OSContext.c:
 	.text       start:0x8026AC14 end:0x8026B49C
 
-src/.unsorted/8026B49C.cpp:
-	.text       start:0x8026B49C end:0x8026DA94
+libs/RVL_SDK/src/os/OSError.c:
+	.text       start:0x8026B49C end:0x8026BB40
+
+src/.unsorted/8026BB40.cpp:
+	.text       start:0x8026BB40 end:0x8026BD08
+
+libs/RVL_SDK/src/os/OSExec.c:
+	.text       start:0x8026BD08 end:0x8026CE70
+
+src/.unsorted/8026CE70.cpp:
+	.text       start:0x8026CE70 end:0x8026DA94
 
 libs/RVL_SDK/src/os/OSFont.c:
 	.text       start:0x8026DA94 end:0x8026E75C
@@ -1444,8 +1453,11 @@ libs/RVL_SDK/src/os/OSMessage.c:
 libs/RVL_SDK/src/os/OSMemory.c:
 	.text       start:0x8026F0FC end:0x8026F910
 
-src/.unsorted/8026F910.cpp:
-	.text       start:0x8026F910 end:0x8026FC90
+libs/RVL_SDK/src/os/OSMutex.c:
+	.text       start:0x8026F910 end:0x8026FC14
+
+src/.unsorted/8026FC14.cpp:
+	.text       start:0x8026FC14 end:0x8026FC90
 
 libs/RVL_SDK/src/os/OSReset.c:
 	.text       start:0x8026FC90 end:0x802703DC

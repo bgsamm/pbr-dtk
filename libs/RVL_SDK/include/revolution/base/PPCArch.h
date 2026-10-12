@@ -434,6 +434,10 @@ void PPCMthid4(u32 val);
 #define FPSCR_ZE 0x00000010      // Zero divide exception enable
 #define FPSCR_XE 0x00000008      // Inexact exception enable
 #define FPSCR_NI 0x00000004      // Non-IEEE mode
+// From doldecomp/ogws (CC0), include/revolution/BASE/PPCArch.h
+#define FPSCR_FPRF (0x1F << (31 - 19))  // Result flags
+#define FPSCR_UNK20 (1 << (31 - 20))
+#define FPSCR_RN 0x00000003  // Rounding control
 
 #define FPSCR_FX_BIT 0       // Exception summary
 #define FPSCR_FEX_BIT 1      // Enabled exception summary
