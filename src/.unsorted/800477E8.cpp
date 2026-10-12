@@ -15,9 +15,9 @@ void fn_800477E8(void) {
 
 // TODO role: sets the byte fn_800401F4 points to and notifies the object fn_80033088 returns
 void fn_80047820(void) {
-    u8 *flag = (u8 *)fn_800401F4();
-    if (flag != NULL) {
-        *flag = 1;
+    Unk80040274 *q = fn_800401F4();
+    if (q != NULL) {
+        q->_0 = 1;
     }
     u8 *p = (u8 *)fn_80033088();
     if (p != NULL) {
@@ -27,9 +27,9 @@ void fn_80047820(void) {
 
 // TODO role: clears the byte fn_800401F4 points to and notifies the object fn_80033088 returns
 void fn_80047860(void) {
-    u8 *flag = (u8 *)fn_800401F4();
-    if (flag != NULL) {
-        *flag = 0;
+    Unk80040274 *q = fn_800401F4();
+    if (q != NULL) {
+        q->_0 = 0;
     }
     u8 *p = (u8 *)fn_80033088();
     if (p != NULL) {

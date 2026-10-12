@@ -1,5 +1,7 @@
 #pragma once
 
+#include ".unsorted/800400E8.hpp"
+
 #include <revolution/types.h>
 
 extern "C" {
@@ -10,8 +12,6 @@ void fn_80033488(u8 *);
 void fn_80033494(u8 *);
 void fn_80035D58(void);
 void fn_8003E03C(void);
-void fn_800401A0(void);
-u32 fn_800401F4(void);
 void fn_800447E4(void);
 void fn_80045550(void);
 void fn_8004F37C(void);

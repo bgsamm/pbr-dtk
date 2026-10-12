@@ -1,5 +1,7 @@
 #include ".unsorted/80036F88.hpp"
 
+#include ".unsorted/800400E8.hpp"
+
 #include "common.hpp"
 
 extern "C" {
@@ -1692,17 +1694,16 @@ struct TmpC58 {
 
 extern "C" {
 
-void *fn_800401F4(void);
-void fn_800401FC(void *m, void *p);
 void fn_801E37F0(void *a);
 void fn_8003EAB0(void *a);
 
 void fn_800375A4(void *p) {
     GSnull **arr;
     int i;
-    void *m = fn_800401F4();
+    Unk80040274 *m = fn_800401F4();
     if (m) {
-        fn_800401FC(m, p);
+        // The camera code handles objects as u32 ids.
+        fn_800401FC(m, (u32)p);
     }
     arr = (GSnull **)p;
     for (i = 0; i < 4; i++) {

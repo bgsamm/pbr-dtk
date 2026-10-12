@@ -114,6 +114,10 @@ public:
         }
     }
 
+    const GXRenderModeObj *getRenderMode() const {
+        return &mRenderMode;
+    }
+
     u8 get_7a() {
         return _7a;
     }
