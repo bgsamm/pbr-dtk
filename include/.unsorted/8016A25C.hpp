@@ -7,3 +7,7 @@ struct Unk8016A25C {
     /* 0x08 */ u8 _08;
     // size: unknown
 };
+
+extern "C" {
+void fn_8016D1C0(u8 v);
+}

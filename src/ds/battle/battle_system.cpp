@@ -604,8 +604,9 @@ u8 BattleSystem_GetTextSpeed(BattleSystem *battleSys) {
     return 0;
 }
 
-s32 fn_803ADBC4(void) {
-    return 1;
+// Always the Set style in this game.
+int BattleSystem_GetBattleStyle(BattleSystem *battleSys) {
+    return OPTIONS_BATTLE_STYLE_SET;
 }
 
 void *BattleSystem_GetChatotCry(BattleSystem *battleSys, int battler) {
@@ -1438,7 +1439,8 @@ u16 fn_803AF3F0(u32 v) {
 
 extern "C" {
 
-u32 fn_803AF43C(u8 *p) {
-    return *(u32 *)(p + 0x23e0);
+// TODO probably BattleSystem_GetRulesetMask (pret)
+u32 fn_803AF43C(BattleSystem *battleSys) {
+    return battleSys->rulesetMask;
 }
 }

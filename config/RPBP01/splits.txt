@@ -1774,6 +1774,8 @@ src/ds/battle/battle_controller.cpp:
 
 src/ds/battle/battle_controller_player.cpp:
 	.text       start:0x803B2AF8 end:0x803BA360
+	.rodata     start:0x80405178 end:0x80405248
+	.data       start:0x80473330 end:0x804734C8
 
 src/ds/battle/battle_lib.cpp:
 	.text       start:0x803BA360 end:0x803C94CC

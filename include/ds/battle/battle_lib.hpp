@@ -170,6 +170,16 @@ BOOL BattleSystem_TriggerFormChange(BattleSystem *battleSys, BattleContext *batt
 void BattleSystem_InitPartyOrder(BattleSystem *battleSys, BattleContext *battleCtx);
 void BattleSystem_SwitchSlots(BattleSystem *battleSys, BattleContext *battleCtx, int battler, int partySlot);
 u32 ApplyStatStage(u8 stage, u32 stat);
+int BattleSystem_CalcMoveDamage(BattleSystem *battleSys,
+                                BattleContext *battleCtx,
+                                int move,
+                                u32 sideConditions,
+                                u32 fieldConditions,
+                                u16 inPower,
+                                u8 inType,
+                                u8 attacker,
+                                u8 defender,
+                                u8 criticalMul);
 int BattleSystem_CalcDamageVariance(BattleContext *battleCtx, int damage);
 int BattleSystem_CalcCriticalMulti(
     BattleContext *battleCtx, int attacker, int defender, int criticalStage, u32 sideConditions);

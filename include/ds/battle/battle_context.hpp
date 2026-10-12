@@ -158,7 +158,13 @@ struct AIContext {
 // Per party member data added by this game, read by the game code
 // size: 0x48
 struct Unk803C940C {
-    /* 0x0 */ u8 unk0[0x48];
+    /* 0x0 */ s16 _00;
+    /* 0x2 */ u8 _02;
+    /* 0x3 */ u8 _03;
+    /* 0x4 */ u16 _04[4];
+    /* 0xC */ u16 _0C[28];
+    /* 0x44 */ u8 _44;
+    /* 0x45 */ u8 unk45[0x3];
 };
 
 // size: 0x4C5C

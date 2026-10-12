@@ -16,4 +16,6 @@ struct Unk8016E2B8 {
 extern "C" {
 void fn_8016E2E4(u32 value);
 s32 fn_8016E430(u8 i);
+void fn_8016E444(s32 i);
+void fn_8016E458(s32 i);
 }

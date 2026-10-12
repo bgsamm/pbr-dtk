@@ -204,7 +204,7 @@ struct BattleMon {
     /* 0x34 */ u8 level;
     /* 0x35 */ u8 friendship;
     /* 0x36 */ u16 nickname[MON_NAME_LEN + 1];
-    /* 0x4C */ s32 curHP;
+    /* 0x4C */ int curHP;
     /* 0x50 */ u32 maxHP;
     /* 0x54 */ u16 OTName[TRAINER_NAME_LEN + 1];
     /* 0x64 */ u32 exp;

@@ -1104,7 +1104,7 @@ s32 fn_803D2168(u8 *a, u8 *b) {
     u32 z = fn_803D6E6C(b);
     u32 w = fn_803D803C(a, b, w0);
     u32 x = fn_803D803C(a, b, x0);
-    fn_803B2D0C(a, b, w, x, (u32)fn_803D90A0(b, y));
+    BattleControllerPlayer_CheckMoveHit((BattleSystem *)a, (BattleContext *)b, w, x, (u32)fn_803D90A0(b, y));
     if (*(u32 *)(b + 0x216c) & 0x1fd849) {
         *(u32 *)(b + 0xb4) += z;
         *(u32 *)&lbl_8048CDE8 = x;

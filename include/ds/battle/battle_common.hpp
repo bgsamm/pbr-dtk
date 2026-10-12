@@ -1,7 +1,8 @@
 #pragma once
 
-#include <revolution/types.h>
 #include "ds/battle/battle_constants.hpp"
+
+#include <revolution/types.h>
 
 // size: 0x2
 struct Fraction {
@@ -13,8 +14,10 @@ struct Fraction {
 // They expect battleSys and battleCtx in scope.
 
 #define ATTACKING_MON (battleCtx->battleMons[battleCtx->attacker])
+#define ATTACKER_TURN_FLAGS (battleCtx->turnFlags[battleCtx->attacker])
 #define DEFENDING_MON (battleCtx->battleMons[battleCtx->defender])
 #define ATTACKER_SELF_TURN_FLAGS (battleCtx->selfTurnFlags[battleCtx->attacker])
+#define DEFENDER_TURN_FLAGS (battleCtx->turnFlags[battleCtx->defender])
 #define DEFENDER_SELF_TURN_FLAGS (battleCtx->selfTurnFlags[battleCtx->defender])
 #define FOLLOW_ME_MON(side) (battleCtx->battleMons[battleCtx->sideConditions[side].followMeUser])
 #define CURRENT_MOVE_DATA (battleCtx->aiContext.moveTable[battleCtx->moveCur])
@@ -31,6 +34,15 @@ struct Fraction {
 #define WEATHER_IS_SUN (battleCtx->fieldConditionsMask & FIELD_CONDITION_SUNNY)
 #define WEATHER_IS_HAIL (battleCtx->fieldConditionsMask & FIELD_CONDITION_HAILING)
 
+#define MON_IS_IDENTIFIED(battler)                                                                                     \
+    ((battleCtx->battleMons[battler].statusVolatile & VOLATILE_CONDITION_FORESIGHT) ||                                 \
+     (battleCtx->battleMons[battler].moveEffectsMask & MOVE_EFFECT_MIRACLE_EYE))
+#define MON_IS_UPROARING(battler)                                                                                      \
+    (battleCtx->fieldConditionsMask & (FlagIndex(battler) << FIELD_CONDITION_UPROAR_SHIFT))
+#define MON_IS_LOCKED_ONTO(attacker, defender)                                                                         \
+    ((battleCtx->battleMons[defender].moveEffectsMask & MOVE_EFFECT_LOCK_ON) &&                                        \
+     battleCtx->battleMons[defender].moveEffectsData.lockOnTarget == attacker)
+
 #define MON_HAS_TYPE(mon, type)                                                                                        \
     (BattleMon_Get(battleCtx, mon, BATTLEMON_TYPE_1, NULL) == type ||                                                  \
      BattleMon_Get(battleCtx, mon, BATTLEMON_TYPE_2, NULL) == type)
@@ -42,3 +54,16 @@ struct Fraction {
 
 #define BATTLER_US 0
 #define BATTLER_THEM 1
+
+// Damage of a typeless hit of the given power from the attacker on itself
+#define CALC_SELF_HIT(move, power)                                                                                     \
+    (BattleSystem_CalcMoveDamage(battleSys,                                                                            \
+                                 battleCtx,                                                                            \
+                                 move,                                                                                 \
+                                 0,                                                                                    \
+                                 0,                                                                                    \
+                                 power,                                                                                \
+                                 0,                                                                                    \
+                                 battleCtx->attacker,                                                                  \
+                                 battleCtx->attacker,                                                                  \
+                                 1))

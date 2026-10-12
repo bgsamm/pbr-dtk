@@ -125,6 +125,9 @@ u8 BattleSystem_IsInitialized(BattleSystem *battleSys);
 int BattleSystem_GetNumSafariBalls(BattleSystem *battleSys);
 BOOL BattleSystem_HasCaughtSpecies(BattleSystem *battleSys, int species);
 u8 BattleSystem_GetTextSpeed(BattleSystem *battleSys);
+int BattleSystem_GetBattleStyle(BattleSystem *battleSys);
+// TODO probably BattleSystem_GetRulesetMask (pret)
+u32 fn_803AF43C(BattleSystem *battleSys);
 void BattleSystem_SetCommandSelectionFlags(BattleSystem *battleSys, u32 flags);
 void BattleSystem_SetUnread_2440(BattleSystem *battleSys, u8 value);
 void BattleSystem_SetRedHPSoundFlag(BattleSystem *battleSys, u8 flag);
