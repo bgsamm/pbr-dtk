@@ -964,8 +964,8 @@ config.libs = [
             Object(Matching, "ds/message_util.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
             Object(Matching, "ds/string_template.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
             Object(Matching, "ds/message.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
-            Object(NonMatching, "ds/convert_pokemon.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
-            Object(NonMatching, "ds/convert_save.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
+            Object(Matching, "ds/convert_pokemon.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
+            Object(Matching, "ds/convert_save.cpp", extra_cflags=["-O4,s", "-inline noauto"]),
         ],
     },
 ]

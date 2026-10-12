@@ -439,21 +439,21 @@ void Pokemon_FromDS(DSPokemon *src, Pokemon *dst) {
 }
 
 void Party_FromDS(DSParty *src, Party *dst) {
+    s32 slot;
     s32 i;
     u16 nickname[32];
     u16 unused[32];
     dst->capacity = Swap32(src->capacity);
     dst->currentCount = Swap32(src->currentCount);
     if (dst->currentCount <= MAX_PARTY_SIZE) {
-        for (i = dst->currentCount; i < MAX_PARTY_SIZE; i++) {
-            memset(&src->pokemon[i], 0, sizeof(DSPokemon));
+        for (slot = dst->currentCount; slot < MAX_PARTY_SIZE; slot++) {
+            memset(&src->pokemon[slot], 0, sizeof(DSPokemon));
         }
     }
     for (i = 0; i < MAX_PARTY_SIZE; i++) {
-        DSPokemon *mon = &src->pokemon[i];
-        BOOL reencrypt = DSPokemon_EnterDecryptionContext(mon);
-        BOOL checksumValid = DSBoxPokemon_IsChecksumValid((DSBoxPokemon *)mon);
-        Pokemon_FromDS(mon, &dst->pokemon[i]);
+        BOOL reencrypt = DSPokemon_EnterDecryptionContext(&src->pokemon[i]);
+        BOOL checksumValid = DSBoxPokemon_IsChecksumValid((DSBoxPokemon *)&src->pokemon[i]);
+        Pokemon_FromDS(&src->pokemon[i], &dst->pokemon[i]);
         if (!checksumValid) {
             dst->pokemon[i].box.checksumFailed = TRUE;
             fn_80177080(nickname,
@@ -461,7 +461,7 @@ void Party_FromDS(DSParty *src, Party *dst) {
                         MON_NAME_LEN + 1);
             fn_8017714C(unused, nickname, 0x40);
         }
-        DSPokemon_ExitDecryptionContext(mon, reencrypt);
+        DSPokemon_ExitDecryptionContext(&src->pokemon[i], reencrypt);
     }
 }
 
@@ -582,17 +582,18 @@ void Pokemon_ToDS(Pokemon *src, DSPokemon *dst, BOOL encrypt) {
 }
 
 // Pokemon_IsEmpty is not a function of its own here.
-static inline BOOL BoxPokemon_InlineIsEmpty(BoxPokemon *boxMon) {
+static inline BOOL Pokemon_InlineIsEmpty(Pokemon *mon) {
+    BoxPokemon *boxMon = &mon->box;
     PokemonDataBlockA *blockA;
     PokemonDataBlockC *blockC;
-    if (boxMon->personality != 0 || boxMon->checksum != 0) {
+    if (mon->box.personality != 0 || mon->box.checksum != 0) {
         return FALSE;
     }
     blockA = (PokemonDataBlockA *)BoxPokemon_GetDataBlock(boxMon, boxMon->personality, DATA_BLOCK_A);
     BoxPokemon_GetDataBlock(boxMon, boxMon->personality, DATA_BLOCK_B);
     blockC = (PokemonDataBlockC *)BoxPokemon_GetDataBlock(boxMon, boxMon->personality, DATA_BLOCK_C);
     BoxPokemon_GetDataBlock(boxMon, boxMon->personality, DATA_BLOCK_D);
-    if (blockA->species != SPECIES_NONE || blockA->exp != 0) {
+    if (blockA->species != SPECIES_NONE || blockA->otID != 0) {
         return FALSE;
     }
     return blockC->nickname[0] == 0;
@@ -610,7 +611,7 @@ void Party_ToDS(Party *src, DSParty *dst, BOOL encrypt) {
         Pokemon_ExitDecryptionContext(mon, reencrypt);
     }
     for (i = 0; i < MAX_PARTY_SIZE; i++) {
-        if (BoxPokemon_InlineIsEmpty(&src->pokemon[i].box)) {
+        if (Pokemon_InlineIsEmpty(&src->pokemon[i])) {
             break;
         }
     }

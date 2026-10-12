@@ -12,6 +12,11 @@ void fn_8017714C(u16 *dst, u16 *src, u32 size);
 static u16 Swap16(u16 value);
 static u32 Swap32(u32 value);
 
+// Same as Swap16, but inlined where it is called.
+static inline u16 Swap16Inline(u16 value) {
+    return ((value & 0xFF) << 8) + ((value >> 8) & 0xFF);
+}
+
 void BagItem_FromDS(const BagItem *src, BagItem *dst) {
     dst->item = Swap16(src->item);
     dst->quantity = Swap16(src->quantity);
@@ -75,8 +80,7 @@ void PCStorage_FromDS(DSPCStorage *src, PCStorage *dst) {
             }
         }
         for (i = 0; i < PC_BOX_NAME_LEN; i++) {
-            u16 c = src->names[box][i];
-            dst->names[box][i] = ((c & 0xFF) << 8) + ((c >> 8) & 0xFF);
+            dst->names[box][i] = Swap16Inline(src->names[box][i]);
         }
     }
 }

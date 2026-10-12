@@ -1802,6 +1802,9 @@ src/ds/field_battle_data_transfer.cpp:
 
 src/ds/pokemon.cpp:
 	.text       start:0x803DA258 end:0x803DE7D8
+	.rodata     start:0x80405BE0 end:0x80405CF8
+	.data       start:0x804744A8 end:0x80474CD8
+	.bss        start:0x8063D098 end:0x8063D230
 
 src/ds/party.cpp:
 	.text       start:0x803DE7D8 end:0x803DE994
@@ -1844,6 +1847,7 @@ src/ds/message.cpp:
 
 src/ds/convert_pokemon.cpp:
 	.text       start:0x803E02B4 end:0x803E1A78
+	.data       start:0x80474E40 end:0x80474F00
 
 src/ds/convert_save.cpp:
 	.text       start:0x803E1A78 end:0x803E1E54

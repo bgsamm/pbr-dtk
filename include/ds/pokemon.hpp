@@ -374,7 +374,7 @@ u16 Pokemon_GetNatureStatValue(u8 nature, u16 statValue, u8 statType);
 void Pokemon_UpdateFriendship(Pokemon *mon, u8 event, u16 mapID);
 u8 Pokemon_GetGender(Pokemon *mon);
 u8 BoxPokemon_GetGender(BoxPokemon *boxMon);
-u8 Pokemon_GetGenderOf(u16 species, u32 personality);
+u8 Pokemon_GetGenderOf(u16 species, u32 personality) NO_INLINE;
 u8 SpeciesData_GetGenderOf(SpeciesData *speciesData, u16 species, u32 personality);
 u8 BoxPokemon_IsShiny(BoxPokemon *boxMon);
 u8 Pokemon_IsPersonalityShiny(u32 otID, u32 personality);
