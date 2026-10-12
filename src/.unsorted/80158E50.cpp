@@ -1,11 +1,123 @@
 #include ".unsorted/80158E50.hpp"
 
+#include ".unsorted/80249D38.hpp"
+
 #include "common.hpp"
 
 extern "C" {
 
 /* lbl_8048773C */ extern Unk8048773C lbl_8048773C;
 extern u32 lbl_8063EFF0;
+
+// TODO role: same copy as fn_8015A98C into a local state, then fn_8025032C and fn_80250388 on it when a third argument
+// is given; two members come back
+void fn_8015A840(Unk80158E50 *, Unk8015AAF0 *src, void *member) {
+    Unk8015AAF0 tmp;
+    tmp._1C = 0;
+    tmp._08 = src->_2C;
+    tmp._0C = src->_30;
+    tmp._10 = src->_10;
+    tmp._12 = src->_12;
+    tmp._14 = src->_14;
+    tmp._5C = src->_5C;
+    tmp._60 = src->_60;
+    tmp._18 = src->_18;
+    tmp._19 = src->_19;
+    tmp._1A = src->_1A;
+    tmp._1E = src->_1E;
+    tmp._20 = src->_20;
+    tmp._22 = src->_22;
+    tmp._24 = src->_24;
+    tmp._1B = src->_1B;
+    tmp._26 = src->_26;
+    tmp._40 = src->_40;
+    tmp._34 = src->_34;
+    tmp._38 = src->_38;
+    tmp._3C = src->_3C;
+    tmp._5A = src->_5A;
+    tmp._59 = src->_59;
+    tmp._64 = 1;
+    tmp._44 = src->_44;
+    for (int i = 0; i < 8; i++) {
+        tmp._68[i] = NULL;
+    }
+    tmp._00 = member;
+    if (member != NULL) {
+        fn_8025032C(&tmp);
+        fn_80250388(&tmp);
+    }
+    src->_2C = tmp._2C;
+    src->_30 = tmp._30;
+    src->_5C = tmp._5C;
+    src->_60 = tmp._60;
+}
+
+// TODO role: copies the state in the second argument into a new slot, resets the slot's own eight slots and attaches
+// the third argument
+void fn_8015A98C(Unk80158E50 *, Unk8015AAF0 *src, Unk8015AAF0 *dst, void *member) {
+    dst->_08 = src->_2C;
+    dst->_0C = src->_30;
+    dst->_10 = src->_10;
+    dst->_12 = src->_12;
+    dst->_14 = src->_14;
+    dst->_18 = src->_18;
+    dst->_19 = src->_19;
+    dst->_1A = src->_1A;
+    dst->_1E = src->_1E;
+    dst->_20 = src->_20;
+    dst->_22 = src->_22;
+    dst->_24 = src->_24;
+    dst->_1C = 1;
+    dst->_1B = src->_1B;
+    dst->_26 = src->_26;
+    dst->_40 = src->_40;
+    dst->_34 = src->_34;
+    dst->_38 = src->_38;
+    dst->_3C = src->_3C;
+    dst->_5A = src->_5A;
+    dst->_59 = src->_59;
+    dst->_64 = 1;
+    dst->_44 = src->_44;
+    for (int i = 0; i < 8; i++) {
+        dst->_68[i] = NULL;
+    }
+    dst->_00 = member;
+}
+
+// TODO role: copies two members of the slot back into the first argument; returns 1 once the slot has reached its end
+// state
+u32 fn_8015AA6C(Unk80158E50 *, Unk8015AAF0 *arg, Unk8015AAF0 *slot) {
+    if (slot->_00 != NULL) {
+        fn_8025032C(slot);
+    }
+    arg->_2C = slot->_2C;
+    arg->_30 = slot->_30;
+    if (slot->_1E == -1 && slot->_20 == -1) {
+        slot->_64 = 1;
+        return 1;
+    }
+    return 0;
+}
+
+// TODO role: advances through the 8 slots of the second argument; each new slot is allocated and filled by fn_8015A98C
+u32 fn_8015AAF0(Unk80158E50 *obj, Unk8015AAF0 *arg, void *member) {
+    if (member == NULL) {
+        return 1;
+    }
+    if (arg->_1E == -1) {
+        fn_8015A840(obj, arg, member);
+        return 1;
+    }
+    if (arg->_68[arg->_88] == NULL) {
+        arg->_68[arg->_88] = (Unk8015AAF0 *)fn_8025033C(sizeof(Unk8015AAF0));
+        fn_8015A98C(obj, arg, arg->_68[arg->_88], member);
+    }
+    u32 result = fn_8015AA6C(obj, arg, arg->_68[arg->_88]);
+    if (result == 1) {
+        arg->_88++;
+    }
+    return result;
+}
 
 // TODO roles not established: each wrapper forwards one member of the object to fn_8015AAF0 or fn_8015ABD8
 u32 fn_8015B65C(Unk80158E50 *obj, Unk8015AAF0 *arg) {

@@ -9,9 +9,9 @@ This repository contains no game data and no assembly. You need your own copy of
 ## Progress
 
 <!-- progress:start -->
-![Code matched](https://img.shields.io/badge/code%20matched-16.2%25-blue) ![Functions](https://img.shields.io/badge/functions-5798%2F13890-blue) ![Linked](https://img.shields.io/badge/linked-1.2%25-green)
+![Code matched](https://img.shields.io/badge/code%20matched-16.3%25-blue) ![Functions](https://img.shields.io/badge/functions-5803%2F13890-blue) ![Linked](https://img.shields.io/badge/linked-1.2%25-green)
 
-**16.24 %** of the code matches the original (5,798 of 13,890 functions). **1.23 %** is in finished units linked into the build.
+**16.27 %** of the code matches the original (5,803 of 13,890 functions). **1.23 %** is in finished units linked into the build.
 
 | Area | Size | Matched | |
 |---|---:|---:|---|
@@ -19,11 +19,11 @@ This repository contains no game data and no assembly. You need your own copy of
 | Game entry point | 37 KiB | 34.7 % | `███████░░░░░░░░░░░░░` |
 | Battle presentation | 288 KiB | 21.2 % | `████░░░░░░░░░░░░░░░░` |
 | Scenes and menus | 1,024 KiB | 4.8 % | `█░░░░░░░░░░░░░░░░░░░` |
-| Save data and Wi-Fi data | 68 KiB | 3.1 % | `█░░░░░░░░░░░░░░░░░░░` |
+| Save data and Wi-Fi data | 68 KiB | 4.5 % | `█░░░░░░░░░░░░░░░░░░░` |
 | Battle loop and camera | 375 KiB | 17.0 % | `███░░░░░░░░░░░░░░░░░` |
 | Runtime, C library and MetroTRK | 79 KiB | 86.9 % | `█████████████████░░░` |
 | gs engine | 470 KiB | 18.3 % | `████░░░░░░░░░░░░░░░░` |
-| Game sound | 46 KiB | 2.5 % | `█░░░░░░░░░░░░░░░░░░░` |
+| Game sound | 46 KiB | 2.6 % | `█░░░░░░░░░░░░░░░░░░░` |
 | Game networking | 51 KiB | 28.6 % | `██████░░░░░░░░░░░░░░` |
 | Revolution SDK | 627 KiB | 20.9 % | `████░░░░░░░░░░░░░░░░` |
 | Other Nintendo libraries (VF, DWC, NW4R, HOME menu) | 602 KiB | 0.8 % | `░░░░░░░░░░░░░░░░░░░░` |

@@ -83,8 +83,16 @@ void fn_802502D4(u32 a) {
     fn_8024B440(&lbl_80497FEC, a);
 }
 
-void fn_8025032C(u32 a) {
+void fn_8025032C(void *a) {
     fn_8024C504(&lbl_80497FEC, a);
+}
+
+// TODO role: allocates from the object above, or returns null for a size of 0
+void *fn_8025033C(u32 size) {
+    if (size == 0) {
+        return NULL;
+    }
+    return fn_8024FF3C(&lbl_80497FEC, size);
 }
 
 void fn_80250360(void *block) {
@@ -95,7 +103,7 @@ void fn_80250370(u32 a, u32 b) {
     fn_8024F970(&lbl_80497FEC, a, b);
 }
 
-void fn_80250388(u32 a) {
+void fn_80250388(void *a) {
     fn_8024C440(&lbl_80497FEC, a);
 }
 

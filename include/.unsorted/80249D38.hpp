@@ -23,6 +23,10 @@ struct Unk8024F9B8 {
 /* lbl_80497FEC */ extern Unk80249D38 lbl_80497FEC;
 
 extern "C" {
+void fn_8025032C(void *a);
+void *fn_8025033C(u32 size);
+void fn_80250388(void *a);
+
 // TODO Replace with proper imports (methods of the object above, not decompiled yet)
 void fn_8024A464(Unk80249D38 *obj, u32 a);
 void fn_8024A758(Unk80249D38 *obj, u32 a);
@@ -37,8 +41,8 @@ void fn_8024B440(Unk80249D38 *obj, u32 a);
 void fn_8024B9C4(Unk80249D38 *obj, u32 a, u32 b, u32 c);
 void fn_8024BB74();
 void fn_8024BC58(Unk80249D38 *obj);
-void fn_8024C440(Unk80249D38 *obj, u32 a);
-void fn_8024C504(Unk80249D38 *obj, u32 a);
+void fn_8024C440(Unk80249D38 *obj, void *a);
+void fn_8024C504(Unk80249D38 *obj, void *a);
 void fn_8024F8C8(Unk80249D38 *obj, u32 a);
 void fn_8024F970(Unk80249D38 *obj, u32 a, u32 b);
 void fn_8024FA74(Unk80249D38 *obj, u32 a);
