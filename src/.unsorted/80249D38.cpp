@@ -10,6 +10,7 @@ extern "C" {
 
 /* lbl_803FD8C8 */ extern s16 lbl_803FD8C8[10];
 /* lbl_80424A80 */ extern s16 lbl_80424A80[4][6][8];
+/* lbl_804FD4A0 */ extern u16 lbl_804FD4A0[256];
 extern f32 lbl_8063F8D8;
 extern u8 lbl_8063F8CE;
 extern u8 lbl_8063F8D6;
@@ -287,6 +288,52 @@ void fn_8024FA5C(Unk80249D38 *, Unk8015AAF0 *arg) {
     arg->_20 = -1;
 }
 
+// TODO role: for a track whose _1A is 1 to 3, builds a message in lbl_804FD4A0, hands it to the callback at
+// 0x64DC4, starts the table that the other callback returns and sets the member at 0x2C from the extent
+// TODO The game tests _1A against 1 before the range check.
+void fn_8024FA74(Unk80249D38 *obj, Unk8015AAF0 *track) {
+    s16 extent;
+    if (track->_10 == 0) {
+        track->_2C = track->_08;
+        return;
+    }
+    switch (track->_1A) {
+        case 1:
+        case 2:
+        case 3:  break;
+        default: track->_2C = track->_08; return;
+    }
+    if (obj->_64DC4 == NULL || obj->_64DC8 == NULL) {
+        extent = (u16)fn_8024B084(&lbl_80497FEC, track->_04, 1, 0);
+    } else {
+        u32 id = 0;
+        if (track->_44 != 0) {
+            id = 6;
+        }
+        switch (track->_18) {
+            case 1:
+            case 6: id += 1; break;
+            case 2:
+            case 7: id += 2; break;
+            case 3: id += 3; break;
+            case 4:
+            case 8: id += 4; break;
+            case 5:
+            case 9: id += 5; break;
+        }
+        lbl_804FD4A0[0] = 0xFFFF;
+        lbl_804FD4A0[1] = track->_34 + 0xF100;
+        fn_8024FF60(obj, track->_8C + 1, lbl_804FD4A0 + 2);
+        obj->_64DC4(0xFFFD, lbl_804FD4A0);
+        extent = (u16)fn_8024B084(&lbl_80497FEC, obj->_64DC8(id), 1, 0);
+    }
+    if (track->_1A == 2) {
+        track->_2C = track->_08 + (track->_10 - extent) / 2;
+    } else {
+        track->_2C = track->_08 + (track->_10 - extent);
+    }
+}
+
 // TODO role: asks the callback at 0x64DC8 for 24 values and starts each through fn_802503D8, writing into the table
 // lbl_80424A80
 void fn_8024FC4C(Unk80249D38 *obj) {
@@ -331,6 +378,28 @@ void fn_8024FF4C(Unk80249D38 *, void *block) {
     if (block != NULL) {
         GSmem::freeToHeap(gUnkHeap2, block);
     }
+}
+
+// TODO role: copies a message of 16-bit units up to its terminator, keeping the escape pairs that start with 0xFFFF
+// TODO The game allocates the registers of the loop differently (the size matches).
+void fn_8024FF60(Unk80249D38 *, const u16 *src, u16 *dst) {
+    u16 escape = 0xFFFF;
+    for (;;) {
+        if (*src == 0) {
+            break;
+        }
+        if (*src == escape) {
+            if (src[1] == escape || src[1] == 0xFFFE) {
+                break;
+            }
+            *dst++ = escape;
+            src++;
+            *dst++ = *src++;
+        } else {
+            *dst++ = *src++;
+        }
+    }
+    *dst = 0;
 }
 
 // TODO role: the wrappers below call methods of the global object lbl_80497FEC
@@ -406,8 +475,8 @@ s16 fn_802503D8(u32 key, s16 *out) {
     return fn_8024B364(&lbl_80497FEC, key, out);
 }
 
-void fn_802503F0(u32 a) {
-    fn_8024FA74(&lbl_80497FEC, a);
+void fn_802503F0(Unk8015AAF0 *track) {
+    fn_8024FA74(&lbl_80497FEC, track);
 }
 
 void fn_80250400(u32 a, u32 b, u32 c) {

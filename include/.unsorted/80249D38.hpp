@@ -25,7 +25,8 @@ struct Unk80249D38 {
     /* 0x00D56 */ u8 unk00D56[0x16];
     /* 0x00D6C */ s16 _D6C[10];
     /* 0x00D80 */ u16 _D80[10]; // indexed like _D6C
-    /* 0x00D94 */ u8 unk00D94[0x64034];
+    /* 0x00D94 */ u8 unk00D94[0x64030];
+    /* 0x64DC4 */ void (*_64DC4)(u32 id, void *data);
     /* 0x64DC8 */ u32 (*_64DC8)(u32 id);
     /* 0x64DCC */ u8 unk64DCC[0x140];
     /* 0x64F0C */ u8 unk64F0C[0x28];
@@ -53,8 +54,10 @@ void fn_8024C434(Unk80249D38 *obj, u32 index);
 void fn_8024C438(Unk80249D38 *obj, u32 index);
 void fn_8024C43C(Unk80249D38 *obj, u32 index);
 void fn_8024C440(Unk80249D38 *obj, Unk8015AAF0 *track);
+void fn_8024FA74(Unk80249D38 *obj, Unk8015AAF0 *track);
 void fn_8024FC4C(Unk80249D38 *obj);
 void fn_8024FF4C(Unk80249D38 *obj, void *block);
+void fn_8024FF60(Unk80249D38 *obj, const u16 *src, u16 *dst);
 void fn_8025032C(Unk8015AAF0 *track);
 void *fn_8025033C(u32 size);
 void fn_80250388(Unk8015AAF0 *track);
@@ -70,5 +73,4 @@ void fn_8024BED0(Unk80249D38 *obj, u32 index);
 void fn_8024C19C(Unk80249D38 *obj, u32 index);
 void fn_8024C504(Unk80249D38 *obj, Unk8015AAF0 *track);
 void fn_8024F8C8(Unk80249D38 *obj, u32 a);
-void fn_8024FA74(Unk80249D38 *obj, u32 a);
 }

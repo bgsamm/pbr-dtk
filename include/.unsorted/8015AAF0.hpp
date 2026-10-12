@@ -46,7 +46,9 @@ struct Unk8015AAF0 {
     /* 0x65 */ u8 unk65[3];
     /* 0x68 */ Unk8015AAF0 *_68[8];
     /* 0x88 */ u8 _88;
-    /* 0x89 */ u8 unk89[0xF];
+    /* 0x89 */ u8 unk89[3];
+    /* 0x8C */ const u16 *_8C;
+    /* 0x90 */ u8 unk90[8];
     /* 0x98 */ u8 _98;
     /* 0x99 */ u8 unk99[0xB];
     // size: 0xA4 (allocation size in fn_8015AAF0)
