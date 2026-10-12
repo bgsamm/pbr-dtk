@@ -1,111 +1,118 @@
 #include ".unsorted/80263CBC.hpp"
+
 #include ".unsorted/8025E348.hpp"
 
-#include "common.hpp"
-
-extern "C" {
-
-s32 fn_80263D18(void) { return 300; }
-s32 fn_80263D20(void) { return 40; }
-s32 fn_80264414(void) { return 0; }
-s32 fn_802644CC(void) { return -1; }
-u32 fn_802644D4(u8 *p) { return *(u32 *)(p + 0x3c50); }
-u32 fn_80264614(u8 *p) { return *(u32 *)(p + 0x3c38); }
-void fn_80266F3C(u8 *p, u32 v) { *(u32 *)(p + 0x3d18) = v; }
-u32 fn_80267034(u8 *p) { return *(u32 *)(p + 0x3388); }
-s32 fn_802670F8(void) { return 1020; }
-s32 fn_802672E0(void) { return -1; }
-void fn_80267374(void) {}
-void fn_802673B4(void) {}
-void fn_802673B8(u8 *p) {}
-
-}
+#include <cstdio>
+#include <cstring>
 
 #include "common.hpp"
 
+using namespace gsapi;
+
+// TODO Replace with proper imports
 extern "C" {
-
-void fn_802643F8(u32, u32 a) { fn_8025E47C(a); }
-BOOL fn_802644DC(u8 *p) { return *(u32 *)(p + 0x3c38) != 0; }
-BOOL fn_802644F0(u8 *p) { return *(u32 *)(p + 0x3c70) != 0; }
-void fn_80266FBC(u8 *p) { *(u32 *)(p + 0x3d18) = 0x0; }
-
-}
-
-// Wi-Fi network manager
-#define F32(p, o) (*(s32 *)((u8 *)(p) + (o)))
-#define F16(p, o) (*(u16 *)((u8 *)(p) + (o)))
-
-struct WifiVObj {
-    virtual void v00();
-    virtual void v01();
-    virtual void v02(); // 0x10
-    virtual void v03();
-    virtual void v04();
-    virtual void v05();
-    virtual s32 v06();
-    virtual void v07();
-    virtual s32 v08();
-    virtual void v09();
-    virtual void v10();
-    virtual void v11();
-    virtual void v12();
-    virtual void v13(); // 0x3c
-    virtual void v14();
-    virtual s32 v15();
-    virtual void v16();
-    virtual void v17();
-    virtual u8 v18(); // 0x50
-    virtual u16 v19();
-    virtual s32 v20(u32);
-    virtual s32 v21(void *, u32, u8);
-    virtual void v22();
-    virtual void v23();
-    virtual void v24();
-    virtual void v25();
-    virtual void v26();
-    virtual void v27();
-    virtual void v28();
-    virtual void v29();
-};
-
-extern "C" {
-
-extern s32 lbl_8063FA10;
-extern s32 lbl_8063FA14;
-extern s32 lbl_8063FA18;
-extern char lbl_80425E60[];
-extern char lbl_804263E0[];
-extern char lbl_804263F0[];
-extern char lbl_804263FC[];
-
-void fn_8031D4B0(void *);
-void fn_8031D51C(void *);
-void fn_8031D510(void *);
-void fn_8031E014(void);
-char *fn_8025E4E8(void);
-int sprintf(char *, const char *, ...);
-void *memset(void *, int, unsigned long);
-s32 fn_8031C4A4(s32 *, s32 *);
-s32 fn_80322E74(void);
-s32 fn_80267098(u8 *);
-u32 fn_80266660(u8 *);
-void fn_8031C890(void);
-void fn_8031C598(s32, char *, u32, void *, void *);
-void fn_8031CB2C(s32);
-void fn_802676B4(u8 *, s32);
-s32 fn_8025BDA4(void);
-void fn_8025BEB4(void);
-s32 fn_8025BD9C(void);
-s32 fn_802F4D18(void);
+char *fn_8025E4E8();
+u32 fn_8025E370();
+WiFiNetwork *fn_8025E31C(void *);
+void *fn_8025DFD0();
+s32 fn_8025E80C(const void *a, const void *b, u32 size);
+void fn_8025E7D8(void *dst, const void *src, u32 size);
+u16 fn_8025E78C(const void *data, u32 size);
+void fn_8025E86C();
+s32 fn_8025BDA4();
+void fn_8025BEB4();
+s32 fn_8025BD9C();
+void fn_8025BBFC(char *dst, char *src, s32 n);
+void fn_8025CAA8(void *);
+void fn_8025CACC();
+void fn_8025CC38();
+s32 fn_8025CC48();
+s32 fn_8025CC94();
+void fn_8025CCA4(s32, s32);
+void fn_8025EC68(WiFiNetwork *, u32, u16, u8, s32);
+s32 fn_8025ECF8(WiFiNetwork *, void *, u32, s32, u8);
+void fn_8025EDC8(WiFiNetwork *, u32);
+void fn_8025EE18(WiFiNetwork *);
+s32 fn_8025EF54(WiFiNetwork *);
+u32 fn_8025EFA4(WiFiNetwork *, u16 *, u16 *);
+void fn_8025F00C(WiFiNetwork *);
+void fn_8025F4E0();
+void fn_8025F934(WiFiNetwork *, s32);
+s32 fn_802F4D18();
 u32 fn_802F4FE8(s32, s32);
-void fn_802672E8(u8 *);
-s32 fn_8025E80C(void *, void *, u32);
-void fn_8025E7D8(void *, void *, u32);
-void fn_80265FF0(u32, u32);
-void fn_80265FF8(u32, u32, u32);
+s32 fn_8031C48C(s32 *);
+s32 fn_8031C4A4(s32 *, s32 *);
+void fn_8031C550();
+void fn_8031C598(s32, char *, u32, void *, void *);
+void fn_8031C890();
+void fn_8031CB2C(s32);
+void fn_8031C2B4(char *, u32, void *, u32);
+void fn_8031D4B0(void *);
+void fn_8031D510(void *);
+void fn_8031D51C(void *);
+void fn_8031D528();
+s32 fn_8031DFFC(u8, void *);
+void fn_8031E014();
+s32 fn_8031E08C();
+s32 fn_8031E0B0(u16, u32, u16, s32);
+u8 fn_8031F198(void *, u8 *, u8 *, s32);
+void fn_8031F2E4(void *, u32);
+void fn_8031F484(void *, void *);
+void fn_80321BFC(void *, void *, s32, char *, char *, s32, s32, void *, s32);
+void fn_80321E84();
+void fn_80321FEC();
+s32 fn_80322260(void *, s32, void *, void *);
+s32 fn_803223C4(s32, void *, void *, void *, void *, void *, void *);
+s32 fn_803224B0(u8, char *, void *, void *, void *, void *);
+s32 fn_803225B8(u8, void *, void *, void *, void *);
+s32 fn_803226C4(s32, void *, void *, void *, void *);
+void fn_80322950(void *, void *);
+s32 fn_80322978();
+s32 fn_80322A70(u8);
+s32 fn_80322B9C();
+s32 fn_80322BF8();
+u32 fn_80322C58();
+s32 fn_80322DC8(u8);
+s32 fn_80322E74();
+void fn_8032432C();
+s32 fn_803243B0();
+u8 fn_80324440(u8, char *, void *);
+s32 fn_80324800(void *, char *, s32);
+void fn_8032488C(s32, void *, s32);
+s32 fn_80330D88(u8, u32, u16);
+void fn_80330E7C(u8, void *, u32);
+void fn_80330EEC(u8);
+void fn_80330F94(void *);
+void fn_80330FB4(void *);
+void fn_80330FD4(void *);
+s32 fn_803331D0(void *);
+s32 fn_80333578(void *);
+void fn_80333584(void *);
+s64 fn_803338A4(void *);
+s32 fn_80335DB4();
+void DCFlushRange(void *, u32);
+}
 
-void fn_80263CBC(u8 *p) {
+extern f32 lbl_8063D988;
+extern const f32 lbl_80642608;
+extern const f32 lbl_8064260C;
+extern const f32 lbl_80642610;
+
+/* lbl_8063FA10 */ s32 lbl_8063FA10;
+/* lbl_8063FA14 */ u32 lbl_8063FA14;
+/* lbl_8063FA18 */ s32 lbl_8063FA18;
+/* lbl_80503BF8 */ s32 lbl_80503BF8[32];
+
+void fn_80265FF0(u32 a, u32 idx);
+void fn_80265FF8(u32 idx, u32 a, u32 b);
+void fn_80265218();
+void fn_802652A4(s32 idx);
+void fn_802652E8(s32 idx);
+void fn_80267374();
+void fn_802673B4();
+
+// TODO Starts the local connection library once and registers fn_80265FF0 and fn_80265FF8 as its callbacks.
+void WiFiNetwork::fn_80263CBC() {
     if (lbl_8063FA10 == 0) {
         fn_8031D4B0(&lbl_8063FA14);
         lbl_8063FA10 = 1;
@@ -114,435 +121,692 @@ void fn_80263CBC(u8 *p) {
     }
 }
 
-void fn_80263D0C(void) {
+// TODO Clears the flag set by fn_80263CBC and stops the local connection library.
+void fn_80263D0C() {
     lbl_8063FA10 = 0;
     fn_8031E014();
 }
 
-s32 fn_80263D28(u8 *p) {
+// TODO Fixed value 300; the callers are outside this unit.
+s32 WiFiNetwork::fn_80263D18() {
+    return 300;
+}
+
+// TODO Fixed value 40; the callers are outside this unit.
+s32 WiFiNetwork::fn_80263D20() {
+    return 40;
+}
+
+// TODO Largest value among the remote entries of _6520, between 10 and 40.
+s32 WiFiNetwork::fn_80263D28() {
     s32 r = 10;
-    u8 *q = p;
     for (s32 i = 0; i < 2; i++) {
-        if (F32(q, 0x6524) != 0 && F32(q, 0x6520) == 0) {
-            if (F32(q, 0x6528) / 100 > r) r = F32(q, 0x6528);
+        if (_6520[i]._4 != 0 && _6520[i]._0 == 0) {
+            if (_6520[i]._8 / 100 > r) {
+                r = _6520[i]._8;
+            }
         }
-        q += 16;
     }
-    if (r > 40) r = 40;
+    if (r > 40) {
+        r = 40;
+    }
     return r;
 }
 
-char *fn_80263DB8(u8 *p, u32 code) {
-    char *base = lbl_80425E60;
-    switch (code) {
-    case 0: return base + 0x0;
-    case 1: return base + 0x1c;
-    case 2: return base + 0x38;
-    case 3: return base + 0x58;
-    case 4: return base + 0x7c;
-    case 5: return base + 0x98;
-    case 6: return base + 0xb8;
-    case 7: return base + 0xdc;
-    case 8: return base + 0xf8;
-    case 9: return base + 0x114;
-    case 10: return base + 0x130;
-    case 11: return base + 0x14c;
-    case 12: return base + 0x16c;
-    case 13: return base + 0x190;
-    case 14: return base + 0x1b0;
-    case 15: return base + 0x1d8;
-    case 16: return base + 0x1f8;
-    case 17: return base + 0x214;
+// TODO Name of a run state, for debug output.
+char *WiFiNetwork::fn_80263DB8(u32 runState) {
+    switch (runState) {
+        case WIFINETWORK_RUNSTATE_INIT:            return "WIFINETWORK_RUNSTATE_INIT";
+        case WIFINETWORK_RUNSTATE_START:           return "WIFINETWORK_RUNSTATE_START";
+        case WIFINETWORK_RUNSTATE_CONNECT:         return "WIFINETWORK_RUNSTATE_CONNECT";
+        case WIFINETWORK_RUNSTATE_CONNECT_HOOK:    return "WIFINETWORK_RUNSTATE_CONNECT_HOOK";
+        case WIFINETWORK_RUNSTATE_LOGIN:           return "WIFINETWORK_RUNSTATE_LOGIN";
+        case WIFINETWORK_RUNSTATE_LOGIN_HOOK:      return "WIFINETWORK_RUNSTATE_LOGIN_HOOK";
+        case WIFINETWORK_RUNSTATE_ONLINE_HOOK:     return "WIFINETWORK_RUNSTATE_ONLINE_HOOK";
+        case WIFINETWORK_RUNSTATE_ONLINE:          return "WIFINETWORK_RUNSTATE_ONLINE";
+        case WIFINETWORK_RUNSTATE_CLIENT:          return "WIFINETWORK_RUNSTATE_CLIENT";
+        case WIFINETWORK_RUNSTATE_SERVER:          return "WIFINETWORK_RUNSTATE_SERVER";
+        case WIFINETWORK_RUNSTATE_PEER:            return "WIFINETWORK_RUNSTATE_PEER";
+        case WIFINETWORK_RUNSTATE_MATCHING:        return "WIFINETWORK_RUNSTATE_MATCHING";
+        case WIFINETWORK_RUNSTATE_MATCHED_HOOK:    return "WIFINETWORK_RUNSTATE_MATCHED_HOOK";
+        case WIFINETWORK_RUNSTATE_MATCHED:         return "WIFINETWORK_RUNSTATE_MATCHED";
+        case WIFINETWORK_RUNSTATE_DISCONNECT_HOOK: return "WIFINETWORK_RUNSTATE_DISCONNECT_HOOK";
+        case WIFINETWORK_RUNSTATE_DISCONNECT:      return "WIFINETWORK_RUNSTATE_DISCONNECT";
+        case WIFINETWORK_RUNSTATE_ERROR:           return "WIFINETWORK_RUNSTATE_ERROR";
+        case WIFINETWORK_RUNSTATE_FATAL:           return "WIFINETWORK_RUNSTATE_FATAL";
     }
     char *buf = fn_8025E4E8();
-    sprintf(buf, base + 0x230, code);
+    sprintf(buf, "WIFINET_RUNSTATE_%d", runState);
     return buf;
 }
 
-char *fn_80263EC4(u32 code) {
-    char *base = lbl_80425E60;
-    switch (code) {
-    case 0: return base + 0x28c;
-    case 1: return base + 0x2a0;
-    case 2: return base + 0x2b8;
-    case 3: return base + 0x2cc;
-    case 4: return base + 0x2ec;
-    case 5: return base + 0x308;
-    case 6: return base + 0x31c;
-    case 7: return base + 0x330;
-    case 8: return base + 0x344;
-    case 9: return base + 0x360;
-    case 10: return base + 0x370;
-    case 11: return base + 0x38c;
-    case 12: return base + 0x3a8;
-    case 13: return base + 0x3c8;
-    case 14: return base + 0x3e0;
-    case 15: return base + 0x3f4;
-    case 16: return base + 0x408;
-    case 17: return base + 0x41c;
+// TODO Name of a DWC error code.
+char *fn_80263EC4(u32 error) {
+    switch (error) {
+        case 0:  return "DWC_ERROR_NONE";
+        case 1:  return "DWC_ERROR_DS_MEMORY_ANY";
+        case 2:  return "DWC_ERROR_AUTH_ANY";
+        case 3:  return "DWC_ERROR_AUTH_OUT_OF_SERVICE";
+        case 4:  return "DWC_ERROR_AUTH_STOP_SERVICE";
+        case 5:  return "DWC_ERROR_AC_ANY";
+        case 6:  return "DWC_ERROR_NETWORK";
+        case 7:  return "DWC_ERROR_GHTTP_ANY";
+        case 8:  return "DWC_ERROR_DISCONNECTED";
+        case 9:  return "DWC_ERROR_FATAL";
+        case 10: return "DWC_ERROR_FRIENDS_SHORTAGE";
+        case 11: return "DWC_ERROR_NOT_FRIEND_SERVER";
+        case 12: return "DWC_ERROR_MO_SC_CONNECT_BLOCK";
+        case 13: return "DWC_ERROR_SERVER_FULL";
+        case 14: return "DWC_ERROR_ND_ANY";
+        case 15: return "DWC_ERROR_ND_HTTP";
+        case 16: return "DWC_ERROR_SVL_ANY";
+        case 17: return "DWC_ERROR_SVL_HTTP";
     }
     char *buf = fn_8025E4E8();
-    sprintf(buf, base + 0x430, code);
+    sprintf(buf, "DWC_ERROR_UNKNOWN_%d", error);
     return buf;
 }
 
-char *fn_80263FD0(u32 code) {
-    char *base = lbl_80425E60;
-    switch (code) {
-    case 0: return base + 0x490;
-    case 1: return base + 0x4a8;
-    case 2: return base + 0x4b8;
-    case 3: return base + 0x4d0;
-    case 4: return base + 0x4e8;
-    case 5: return base + 0x504;
-    case 6: return base + 0x51c;
-    case 7: return base + 0x538;
+// TODO Name of a DWC error type.
+char *fn_80263FD0(u32 type) {
+    switch (type) {
+        case 0: return "DWC_ETYPE_NO_ERROR";
+        case 1: return "DWC_ETYPE_LIGHT";
+        case 2: return "DWC_ETYPE_SHOW_ERROR";
+        case 3: return "DWC_ETYPE_SHUTDOWN_FM";
+        case 4: return "DWC_ETYPE_SHUTDOWN_GHTTP";
+        case 5: return "DWC_ETYPE_SHUTDOWN_ND";
+        case 6: return "DWC_ETYPE_DISCONNECT";
+        case 7: return "DWC_ETYPE_FATAL";
     }
     char *buf = fn_8025E4E8();
-    sprintf(buf, base + 0x548, code);
+    sprintf(buf, "DWC_ETYPE_UNKNOWN_%d", type);
     return buf;
 }
 
-char *fn_8026408C(s32 v) {
+// TODO Text of a DWC error code number.
+char *fn_8026408C(s32 code) {
     char *buf = fn_8025E4E8();
-    if (v < 0) v = -v;
-    sprintf(buf, lbl_804263E0, v);
+    if (code < 0) {
+        code = -code;
+    }
+    sprintf(buf, "DWC_ECODE_%d", code);
     return buf;
 }
 
+// The callees are not inlined in the original.
 #pragma dont_inline on
-char *fn_802640DC(u8 *p) {
+// TODO Text of the current error as "error.type.code".
+char *WiFiNetwork::fn_802640DC() {
     s32 code;
     s32 type;
-    s32 err;
+    s32 error;
     char *buf = fn_8025E4E8();
-    if (F32(p, 0x3d18) != 0) {
+    if (_3D18 != 0) {
         type = 2;
-        err = 5;
-        code = F32(p, 0x3d18);
+        error = 5;
+        code = _3D18;
     } else {
-        err = fn_8031C4A4(&code, &type);
+        error = fn_8031C4A4(&code, &type);
     }
-    sprintf(buf, lbl_804263F0, fn_80263EC4(err), fn_80263FD0(type), fn_8026408C(code));
+    sprintf(buf, "%s.%s.%s", fn_80263EC4(error), fn_80263FD0(type), fn_8026408C(code));
     return buf;
 }
 #pragma dont_inline reset
 
-void fn_80264300(u8 *p) {
-    memset(p + 0x6540, 0, 0x20);
-    memset(p + 0x6560, 0, 0x20);
+WiFiNetwork::WiFiNetwork() {
+    mRunState = WIFINETWORK_RUNSTATE_INIT;
+    mPrevRunState = WIFINETWORK_RUNSTATE_INIT;
+    _3C40 = 0;
+    _1C2C = 0;
+    _66A0 = 0;
+    _3C50 = 0;
+    _3C54 = 0;
+    _3C74 = 0;
+    _3C60 = 0;
+    _3C64 = 0;
+    _3C68 = 0;
+    _3C84 = 0;
+    _3C88 = 0;
+    _3390 = 0;
+    _3394 = 0;
+    _338C = 0;
+    _3C6C = 0;
+    _3C70 = 0;
+    _3C58 = 0;
+    _3C5C = 0;
+    _3D14 = 0;
+    _3388 = 0;
+    memset(&_1C50, 0, sizeof(Unk80264F20));
+    fn_80266FC8();
+    _651C = 0;
+    fn_802643AC();
+    fn_80265218();
+    fn_802650EC();
+    fn_80264300();
+    fn_802649C8();
+    _66A4 = 0;
 }
 
-void fn_80264348(u8 *p, u8 i) {
-    if (i < 2) {
-        memset(p + 0x6520 + i * 16, 0, 0x10);
-        F32(p + i * 4, 0x3d1c) = 0;
+// TODO Clears the two matchmaking key tables.
+void WiFiNetwork::fn_80264300() {
+    memset(_6540, 0, sizeof(_6540));
+    memset(_6560, 0, sizeof(_6560));
+}
+
+// TODO Clears the connection entry of player idx.
+void WiFiNetwork::fn_80264348(u8 idx) {
+    if (idx < 2) {
+        memset(&_6520[idx], 0, sizeof(Unk80263D28));
+        _3D1C[idx] = 0;
     }
 }
 
+// The callee is not inlined in the original.
 #pragma dont_inline on
-void fn_802643AC(u8 *p) {
+// TODO Clears the connection entries of both players.
+void WiFiNetwork::fn_802643AC() {
     for (u32 i = 0; i < 2; i++) {
-        fn_80264348(p, i);
+        fn_80264348(i);
     }
 }
 #pragma dont_inline reset
 
-void fn_80264400(u32 a, u32 b) {
-    if (b) fn_8025E4D0((void *)b);
+// TODO Allocation callback given to the DWC library.
+void fn_802643F8(u32, u32 size) {
+    fn_8025E47C(size);
 }
 
-s32 fn_8026441C(u8 *p) {
-    if (F32(p, 0x3c50)) return -1;
-    if (F32(p, 0x3d14)) return -1;
-    F32(p, 0x3c50) = 1;
+// TODO Free callback given to the DWC library.
+void fn_80264400(u32, u32 block) {
+    if (block) {
+        fn_8025E4D0((void *)block);
+    }
+}
+
+// TODO Always returns 0.
+s32 WiFiNetwork::fn_80264414() {
     return 0;
 }
 
-s32 fn_80264454(u8 *p) {
-    if (F32(p, 0x3c50) == 0) return -1;
-    if (F32(p, 0x3d14)) return -1;
-    ((WifiVObj *)p)->v13();
-    F32(p, 0x3c50) = 0;
-    F32(p, 0x3c58) = 1;
-    F32(p, 0x3c5c) = 1;
+// TODO Requests the connection; fails when it is already requested or locked.
+s32 WiFiNetwork::fn_8026441C() {
+    if (_3C50) {
+        return -1;
+    }
+    if (_3D14) {
+        return -1;
+    }
+    _3C50 = 1;
     return 0;
 }
 
-s32 fn_80264504(u8 *p) {
-    s32 a;
-    s32 b;
-    switch (F32(p, 0x3c38)) {
-    case 6: case 7: case 8: case 9: case 10: case 11: case 12: case 13:
-        return 1;
-    case 16:
-        fn_8031C4A4(&a, &b);
-        if (b == 1) return 1;
-        break;
+// TODO Requests the disconnection; fails when no connection was requested or it is locked.
+s32 WiFiNetwork::fn_80264454() {
+    if (_3C50 == 0) {
+        return -1;
+    }
+    if (_3D14) {
+        return -1;
+    }
+    fn_80266EE8();
+    _3C50 = 0;
+    _3C58 = 1;
+    _3C5C = 1;
+    return 0;
+}
+
+// TODO Always returns -1.
+s32 WiFiNetwork::fn_802644CC() {
+    return -1;
+}
+
+// TODO Whether the connection is requested.
+s32 WiFiNetwork::fn_802644D4() {
+    return _3C50;
+}
+
+// TODO Whether the state machine has left the initial state.
+BOOL WiFiNetwork::fn_802644DC() {
+    return mRunState != WIFINETWORK_RUNSTATE_INIT;
+}
+
+// TODO Whether the online state asked for a new login.
+BOOL WiFiNetwork::fn_802644F0() {
+    return _3C70 != 0;
+}
+
+// TODO Whether the player is online, including a light error.
+s32 WiFiNetwork::fn_80264504() {
+    s32 code;
+    s32 type;
+    switch (mRunState) {
+        case WIFINETWORK_RUNSTATE_ONLINE_HOOK:
+        case WIFINETWORK_RUNSTATE_ONLINE:
+        case WIFINETWORK_RUNSTATE_CLIENT:
+        case WIFINETWORK_RUNSTATE_SERVER:
+        case WIFINETWORK_RUNSTATE_PEER:
+        case WIFINETWORK_RUNSTATE_MATCHING:
+        case WIFINETWORK_RUNSTATE_MATCHED_HOOK:
+        case WIFINETWORK_RUNSTATE_MATCHED:      return 1;
+        case WIFINETWORK_RUNSTATE_ERROR:
+            fn_8031C4A4(&code, &type);
+            if (type == 1) {
+                return 1;
+            }
+            break;
     }
     return 0;
 }
 
-s32 fn_80264570(u8 *p) {
-    switch (F32(p, 0x3c38)) {
-    case 8: case 9: case 10: case 11: case 12: case 13:
-        return 1;
+// TODO Whether a match is being made or requested.
+s32 WiFiNetwork::fn_80264570() {
+    switch (mRunState) {
+        case WIFINETWORK_RUNSTATE_CLIENT:
+        case WIFINETWORK_RUNSTATE_SERVER:
+        case WIFINETWORK_RUNSTATE_PEER:
+        case WIFINETWORK_RUNSTATE_MATCHING:
+        case WIFINETWORK_RUNSTATE_MATCHED_HOOK:
+        case WIFINETWORK_RUNSTATE_MATCHED:      return 1;
     }
-    if (F32(p, 0x3c60) || F32(p, 0x3c64) || F32(p, 0x3c68)) return 1;
-    return 0;
-}
-
-s32 fn_802645C4(u8 *p) {
-    switch (F32(p, 0x3c38)) {
-    case 12: case 13:
-        return 1;
-    }
-    return 0;
-}
-
-s32 fn_802645EC(u8 *p) {
-    switch (F32(p, 0x3c38)) {
-    case 16: case 17:
+    if (_3C60 || _3C64 || _3C68) {
         return 1;
     }
     return 0;
 }
 
+// TODO Whether a match is made.
+s32 WiFiNetwork::fn_802645C4() {
+    switch (mRunState) {
+        case WIFINETWORK_RUNSTATE_MATCHED_HOOK:
+        case WIFINETWORK_RUNSTATE_MATCHED:      return 1;
+    }
+    return 0;
+}
+
+// TODO Whether the state machine is in an error state.
+s32 WiFiNetwork::fn_802645EC() {
+    switch (mRunState) {
+        case WIFINETWORK_RUNSTATE_ERROR:
+        case WIFINETWORK_RUNSTATE_FATAL: return 1;
+    }
+    return 0;
+}
+
+// TODO Current run state.
+s32 WiFiNetwork::fn_80264614() {
+    return mRunState;
+}
+
+// The callees are not inlined in the original.
 #pragma dont_inline on
-void fn_8026461C(u8 *p, s32 st) {
+// TODO Switches to another run state and restarts its step counter.
+void WiFiNetwork::fn_8026461C(s32 runState) {
     fn_80322E74();
-    fn_80267098(p);
-    fn_80266660(p);
-    ((WifiVObj *)p)->v18();
-    F32(p, 0x3c38) = st;
-    F32(p, 0x3c40) = 0;
+    fn_80267098();
+    fn_80266660();
+    fn_8026703C();
+    mRunState = runState;
+    _3C40 = 0;
 }
 #pragma dont_inline reset
 
-void fn_80264684(u8 *p) {
+// TODO Shuts the DWC friend matching library down if it was started.
+void WiFiNetwork::fn_80264684() {
     if (lbl_8063FA18) {
         lbl_8063FA18 = 0;
         fn_8031C890();
     }
 }
 
+// The callees are not inlined in the original.
 #pragma dont_inline on
-void fn_802646A0(u8 *p) {
+// TODO Starts the DWC friend matching library for the game code RPBJ.
+void WiFiNetwork::fn_802646A0() {
     if (lbl_8063FA18 == 0) {
         lbl_8063FA18 = 1;
-        fn_8031C598(1, lbl_804263FC, 0x5250424a, (void *)fn_802643F8, (void *)fn_80264400);
+        fn_8031C598(1, "pokebattlewii", 'RPBJ', (void *)fn_802643F8, (void *)fn_80264400);
         fn_8031CB2C(0);
-        fn_802676B4(p, 0);
+        fn_802676B4(0);
     }
 }
 #pragma dont_inline reset
 
-void fn_80264718(u8 *p) {
-    switch (F32(p, 0x3c40)) {
-    case 0:
-        F32(p, 0x3390) = 0;
-        F32(p, 0x3394) = 0;
-        F32(p, 0x338c) = 0;
-        F32(p, 0x3c40)++;
-        break;
-    case 1:
-        if (F32(p, 0x3c50)) fn_8026461C(p, 1);
-        break;
+// TODO Handler of WIFINETWORK_RUNSTATE_INIT.
+void WiFiNetwork::fn_80264718() {
+    switch (_3C40) {
+        case 0:
+            _3390 = 0;
+            _3394 = 0;
+            _338C = 0;
+            _3C40++;
+            break;
+        case 1:
+            if (_3C50) {
+                fn_8026461C(WIFINETWORK_RUNSTATE_START);
+            }
+            break;
     }
 }
 
-void fn_80264764(u8 *p) {
-    F32(p, 0x3390) = 0;
-    F32(p, 0x3394) = 0;
-    F32(p, 0x338c) = 0;
-    F32(p, 0x3c6c) = 0;
-    F32(p, 0x3c70) = 0;
-    F32(p, 0x33a8) = 0;
-    F32(p, 0x33ac) = 0;
-    F32(p, 0x33b0) = 0;
-    fn_8026461C(p, 2);
+// TODO Handler of WIFINETWORK_RUNSTATE_START.
+void WiFiNetwork::fn_80264764() {
+    _3390 = 0;
+    _3394 = 0;
+    _338C = 0;
+    _3C6C = 0;
+    _3C70 = 0;
+    _33A8 = 0;
+    _33AC = 0;
+    _33B0 = 0;
+    fn_8026461C(WIFINETWORK_RUNSTATE_CONNECT);
 }
 
-void fn_80264790(u8 *p) {
-    switch (F32(p, 0x3c40)) {
-    case 0:
-        F32(p, 0x338c) = 0;
-        if (fn_8025BDA4() == 0) {
-            F32(p, 0x3c40) = 99;
-        } else {
-            F32(p, 0x3c40)++;
-        }
-        break;
-    case 1:
-        F32(p, 0x3c40)++;
-        break;
-    case 2:
-        F32(p, 0x3c40)++;
-        break;
-    case 3:
-        if (F32(p, 0x3c50) == 0) {
-            F32(p, 0x3c58) = 0;
-            fn_8025BEB4();
-            fn_8026461C(p, 0);
-        } else {
-            fn_8026461C(p, 3);
-        }
-        break;
-    case 99:
-        if (F32(p, 0x3c50) == 0) {
-            fn_8026461C(p, 0);
-        } else {
-            F32(p, 0x338c) = 1;
-            s32 h = fn_8025BD9C();
-            fn_80266F3C(p, fn_802F4FE8(h, fn_802F4D18()));
-        }
-        break;
+// TODO Handler of WIFINETWORK_RUNSTATE_CONNECT.
+void WiFiNetwork::fn_80264790() {
+    switch (_3C40) {
+        case 0:
+            _338C = 0;
+            if (fn_8025BDA4() == 0) {
+                _3C40 = 99;
+            } else {
+                _3C40++;
+            }
+            break;
+        case 1: _3C40++; break;
+        case 2: _3C40++; break;
+        case 3:
+            if (_3C50 == 0) {
+                _3C58 = 0;
+                fn_8025BEB4();
+                fn_8026461C(WIFINETWORK_RUNSTATE_INIT);
+            } else {
+                fn_8026461C(WIFINETWORK_RUNSTATE_CONNECT_HOOK);
+            }
+            break;
+        case 99:
+            if (_3C50 == 0) {
+                fn_8026461C(WIFINETWORK_RUNSTATE_INIT);
+            } else {
+                _338C = 1;
+                s32 h = fn_8025BD9C();
+                fn_80266F3C(fn_802F4FE8(h, fn_802F4D18()));
+            }
+            break;
     }
 }
 
-void fn_802648B4(u8 *p) {
-    F32(p, 0x339c) = 0;
-    fn_802672E8(p);
-    fn_802646A0(p);
-    fn_8026461C(p, 4);
+// TODO Handler of WIFINETWORK_RUNSTATE_CONNECT_HOOK.
+void WiFiNetwork::fn_802648B4() {
+    _339C = 0;
+    fn_802672E8();
+    fn_802646A0();
+    fn_8026461C(WIFINETWORK_RUNSTATE_LOGIN);
 }
 
-s32 fn_802648FC(u8 *p) {
-    if (F32(p, 0x3c6c)) return -1;
-    if (F32(p, 0x3390)) return F32(p, 0x3394) != 0;
+// TODO Login result: -1 while pending, otherwise whether the login was rejected.
+s32 WiFiNetwork::fn_802648FC() {
+    if (_3C6C) {
+        return -1;
+    }
+    if (_3390) {
+        return _3394 != 0;
+    }
     return -1;
 }
 
+// The callee is not inlined in the original.
 #pragma dont_inline on
-s32 fn_80264938(u8 *p, void *key) {
-    u8 *q = p + 0x33b8;
+// TODO Whether the key is among the 64 entries of _33B8.
+s32 WiFiNetwork::fn_80264938(void *key) {
     for (s32 i = 0; i < 64; i++) {
-        if (F16(p + i * 0x22, 0x33d8) == 1 && fn_8025E80C(q + i * 0x22, key, 0x10) == 0) return 1;
+        if (_33B8[i]._20 == 1 && fn_8025E80C(_33B8[i]._00, key, 0x10) == 0) {
+            return 1;
+        }
     }
     return 0;
 }
 #pragma dont_inline reset
 
-void fn_802649C8(u8 *p) {
-    F32(p, 0x33b4) = 0;
-    memset(p + 0x33b8, 0, 0x880);
+// TODO Clears the table of known keys.
+void WiFiNetwork::fn_802649C8() {
+    _33B4 = 0;
+    memset(_33B8, 0, sizeof(_33B8));
 }
 
-void fn_802649E0(u8 *p, void *key) {
-    if (fn_80264938(p, key) == 0) {
-        if (F32(p, 0x33b4) >= 64) F32(p, 0x33b4) = 0;
-        fn_8025E7D8(p + F32(p, 0x33b4) * 0x22 + 0x33b8, key, 0x10);
-        F16(p + F32(p, 0x33b4) * 0x22, 0x33d8) = 1;
-        F32(p, 0x33b4)++;
+// TODO Adds the key to the 64 entries of _33B8, overwriting the oldest one.
+void WiFiNetwork::fn_802649E0(void *key) {
+    if (fn_80264938(key) == 0) {
+        if (_33B4 >= 64) {
+            _33B4 = 0;
+        }
+        fn_8025E7D8(_33B8[_33B4]._00, key, 0x10);
+        _33B8[_33B4]._20 = 1;
+        _33B4++;
     }
 }
 
+void fn_80264E14(s32 result, s32 a, WiFiNetwork *self);
+void fn_8026560C(s32 result, s32 a, s32 b, u8 idx, s32 id, WiFiNetwork *self);
+void fn_80265EF0(u32 a, u8 idx);
+void fn_80265F6C(u8 idx, u32 a, u32 b);
+void fn_80266000(s32 v, u8 idx);
 
-extern s32 lbl_80503BF8[32];
-void fn_80321E84(void);
-void *fn_802674DC(u8 *);
-s32 fn_80333578(void *);
-void fn_80333584(void *);
-void fn_80267690(u8 *);
-s32 fn_803223C4(s32, void *, void *, void *, void *, void *, void *);
-void fn_8031F484(void *, void *);
-void *memcpy(void *, const void *, unsigned long);
-s32 fn_803243B0(void);
-s32 fn_80322978(void);
-s64 fn_803338A4(void *);
-u32 fn_8025E370(void);
-u16 fn_8025E78C(void *, u32);
-void DCFlushRange(void *, u32);
-void fn_8031F2E4(void *, u32);
-void fn_80267378(u8 *);
+// TODO Handler of WIFINETWORK_RUNSTATE_LOGIN.
+void WiFiNetwork::fn_80264A70() {
+    switch (_3C40) {
+        case 0:
+            _3C4C = (s32)(lbl_80642608 + lbl_8064260C * lbl_8063D988);
+            _3C40++;
+            break;
+        case 1:
+            if (_3C4C-- <= 0) {
+                _3C40++;
+            }
+            break;
+        case 2:
+            _3C6C = 0;
+            _3C40++;
+            break;
+        case 3:
+            if (_66A0) {
+                _3C40 = 50;
+            } else {
+                _3C40 = 10;
+            }
+            break;
+        case 10: {
+            memset(&_1C28, 0, sizeof(_1C28));
+            fn_80321BFC(&_1C28, fn_802674DC(), 0x2A93, "pokebattlewii", "TzRgSc", 0, 0, fn_802674E4(0), fn_80267504());
+            _339C = 0;
+            if (fn_80322260(_004, 0, (void *)fn_80264E14, this) == 0) {
+                fn_80264DC8();
+                fn_80264454();
+                _3C70 = 0;
+                fn_8026461C(WIFINETWORK_RUNSTATE_DISCONNECT_HOOK);
+            } else {
+                _3C4C = (s32)(lbl_80642608 + lbl_80642610 * lbl_8063D988);
+                _3C40++;
+            }
+            break;
+        }
+        case 11:
+            fn_80321FEC();
+            if (_3C4C-- <= 0) {
+                fn_80264DC8();
+                fn_80264454();
+                _3C70 = 0;
+                fn_8026461C(WIFINETWORK_RUNSTATE_DISCONNECT_HOOK);
+            } else if (_339C) {
+                _3394 = 0;
+                if (fn_80335DB4() == 2) {
+                    _3394 = 1;
+                }
+                _3390 = 1;
+                if (_3394 == 0) {
+                    fn_802649E0(_004);
+                }
+                if (_66A4 == 0) {
+                    fn_8025CAA8(fn_802677F8());
+                    _66A4 = 1;
+                }
+                fn_80267534();
+                _33A0 = 0;
+                _33A4 = 0;
+                fn_80322950((void *)fn_8026560C, this);
+                fn_80330F94((void *)fn_80265EF0);
+                fn_80330FB4((void *)fn_80265F6C);
+                fn_80330FD4((void *)fn_80266000);
+                for (u8 i = 0; i < 2; i++) {
+                    fn_80330E7C(i, _451C[i], 0x1000);
+                }
+                fn_8026461C(WIFINETWORK_RUNSTATE_LOGIN_HOOK);
+            }
+            break;
+        case 50:
+            _33A0 = 0;
+            _33A4 = 0;
+            fn_80263CBC();
+            _3394 = 0;
+            _3390 = 1;
+            fn_8026461C(WIFINETWORK_RUNSTATE_LOGIN_HOOK);
+            break;
+    }
+}
 
-#pragma dont_inline on
-void fn_80264DC8(u8 *p) {
-    F32(p, 0x3390) = 0;
+// TODO Undoes the login: clears _3390 and, outside local mode, calls fn_80321E84.
+void WiFiNetwork::fn_80264DC8() {
+    _3390 = 0;
     fn_802673B4();
-    if (F32(p, 0x66a0) == 0) fn_80321E84();
-    fn_802673B8(p);
-}
-
-void fn_80264ED8(s32 res, s32 b, u8 *p) {
-    if (res == 0) {
-        if (b) fn_80267690(p);
-        F32(p, 0x339c) = 1;
+    if (_66A0 == 0) {
+        fn_80321E84();
     }
+    fn_802673B8();
 }
 
+void fn_80264ED8(s32 result, s32 a, WiFiNetwork *self);
+void fn_80264F20(s32 idx, s32 a, char *str, WiFiNetwork *self);
+void fn_80265138(s32 a, s32 b, WiFiNetwork *self);
+void fn_80265174(s32 a, WiFiNetwork *self);
 
-void fn_80264F20(s32 idx, s32 b, char *str, u8 *p);
-
-void fn_80265138(s32 a, s32 b, u8 *p) {
-    fn_80267690(p);
-    F32(p, 0x3388)++;
-}
-
-void fn_80265174(s32 a, u8 *p) {
-    fn_80267690(p);
-    F32(p, 0x3388)++;
-}
-
-void fn_80264E14(s32 res, s32 x, u8 *p) {
-    if (res) {
-        F32(p, 0x3c70) = 0;
+// TODO Login callback: stores the result and starts the friend list update.
+void fn_80264E14(s32 result, s32 a, WiFiNetwork *self) {
+    if (result) {
+        self->_3C70 = 0;
         return;
     }
-    F32(p, 0x1c4c) = x;
-    if (fn_80333578(fn_802674DC(p))) {
-        fn_80333584(fn_802674DC(p));
-        fn_80267690(p);
+    self->_1C4C = a;
+    if (fn_80333578(self->fn_802674DC())) {
+        fn_80333584(self->fn_802674DC());
+        self->fn_80267690();
     }
-    F32(p, 0x3398) = 0;
-    if (fn_803223C4(0, (void *)fn_80264ED8, p, (void *)fn_80264F20, p, (void *)fn_80265138, p) == 0) {
-        F32(p, 0x3c70) = 0;
+    self->_3398 = 0;
+    if (fn_803223C4(0, (void *)fn_80264ED8, self, (void *)fn_80264F20, self, (void *)fn_80265138, self) == 0) {
+        self->_3C70 = 0;
     } else {
-        fn_8031F484((void *)fn_80265174, p);
+        fn_8031F484((void *)fn_80265174, self);
     }
 }
 
-void fn_80265074(u8 *p, s32 i) {
-    if (!(i >= 0 && i <= 30)) return;
-    memset(p + 0x1d08 + i * 0xb8, 0, 0xb8);
-    memset(p + 0x3298 + i * 8, 0, 8);
+// TODO Callback of the friend list update.
+void fn_80264ED8(s32 result, s32 a, WiFiNetwork *self) {
+    if (result == 0) {
+        if (a) {
+            self->fn_80267690();
+        }
+        self->_339C = 1;
+    }
 }
 
-void fn_802650EC(u8 *p) {
+// TODO Callback receiving the status string of friend idx.
+void fn_80264F20(s32 idx, s32, char *str, WiFiNetwork *self) {
+    if (idx >= 0 && idx < 30) {
+        Unk80264F20 buf;
+        u8 x9;
+        u8 x8;
+        memset(&buf, 0, sizeof(buf));
+        fn_8031C2B4(str, strlen(str), &buf, sizeof(buf));
+        if ((u16)fn_8025E78C(&buf, sizeof(buf)) == 0) {
+            memcpy(&self->_1D08[idx], &buf, sizeof(buf));
+            self->fn_8026806C(idx, buf._00, buf._0C, buf._2C, buf._30);
+        } else {
+            memset(&self->_1D08[idx], 0, sizeof(Unk80264F20));
+        }
+        u8 r = fn_8031F198(self->fn_802674E4(idx), &x9, &x8, 0);
+        self->_3298[idx]._1 = x9;
+        self->_3298[idx]._2 = x8;
+        self->_3298[idx]._3 = 1;
+        if (r != self->_3298[idx]._0) {
+            self->_3298[idx]._4 = fn_8025E370();
+        }
+        self->_3298[idx]._0 = r;
+        self->_3388++;
+    }
+}
+
+// TODO Clears the data of friend idx.
+void WiFiNetwork::fn_80265074(s32 idx) {
+    if (!(idx >= 0 && idx <= 30)) {
+        return;
+    }
+    memset(&_1D08[idx], 0, sizeof(Unk80264F20));
+    memset(&_3298[idx], 0, sizeof(Unk80265074));
+}
+
+// TODO Clears the data of every friend.
+void WiFiNetwork::fn_802650EC() {
     for (s32 i = 0; i < 30; i++) {
-        fn_80265074(p, i);
+        fn_80265074(i);
     }
 }
 
-void fn_802651B0(u8 *p) {
-    fn_80267374();
-    if (F32(p, 0x3c50) && F32(p, 0x3c58)) F32(p, 0x3c58) = 0;
-    F32(p, 0x33a8) = 0;
-    F32(p, 0x3c7c) = 0;
-    F32(p, 0x3c80) = 0;
-    fn_8026461C(p, 6);
+// TODO Callback counting a friend list change.
+void fn_80265138(s32, s32, WiFiNetwork *self) {
+    self->fn_80267690();
+    self->_3388++;
 }
 
-void fn_80265218(void) {
+// TODO Second callback of fn_8031F484; counts a change like fn_80265138.
+void fn_80265174(s32, WiFiNetwork *self) {
+    self->fn_80267690();
+    self->_3388++;
+}
+
+// TODO Handler of WIFINETWORK_RUNSTATE_LOGIN_HOOK.
+void WiFiNetwork::fn_802651B0() {
+    fn_80267374();
+    if (_3C50 && _3C58) {
+        _3C58 = 0;
+    }
+    _33A8 = 0;
+    _3C7C = 0;
+    _3C80 = 0;
+    fn_8026461C(WIFINETWORK_RUNSTATE_ONLINE_HOOK);
+}
+
+// TODO Clears the list of connection ids.
+void fn_80265218() {
     for (s32 i = 0; i < 32; i++) {
         lbl_80503BF8[i] = -1;
     }
 }
 
-void fn_802652A4(s32 v) {
+// TODO Adds a connection id to the list.
+void fn_802652A4(s32 idx) {
     for (s32 i = 0; i < 32; i++) {
         if (lbl_80503BF8[i] < 0) {
-            lbl_80503BF8[i] = v;
+            lbl_80503BF8[i] = idx;
             return;
         }
     }
 }
 
-void fn_802652E8(s32 v) {
+// TODO Removes a connection id from the list and packs the rest.
+void fn_802652E8(s32 idx) {
     s32 n;
     s32 i;
     for (i = 0; i < 32; i++) {
-        if (v == lbl_80503BF8[i]) {
+        if (idx == lbl_80503BF8[i]) {
             lbl_80503BF8[i] = -1;
             break;
         }
@@ -558,426 +822,561 @@ void fn_802652E8(s32 v) {
     }
 }
 
-s32 fn_80265488(u8 *p, s32 *out, s32 max) {
-    u32 mask = fn_80266660(p);
+// TODO Copies up to max connection ids of the other players.
+s32 WiFiNetwork::fn_80265488(s32 *out, s32 max) {
+    u32 mask = fn_80266660();
     s32 n = 0;
-    u8 self = ((WifiVObj *)p)->v18();
+    u8 own = fn_8026703C();
     for (s32 i = 0; i < 32; i++) {
-        if (self != i && (mask & (1 << i))) n++;
+        if (own != i && (mask & (1 << i))) {
+            n++;
+        }
     }
-    if (n > max) n = max;
+    if (n > max) {
+        n = max;
+    }
     memcpy(out, lbl_80503BF8, n * 4);
     return n;
 }
 
-void fn_8026560C(s32 res, s32 b, s32 c, u8 idx, s32 aid, u8 *p) {
-    if (aid >= 0) fn_802652E8(aid);
-    if (res == 0) {
-        switch (F32(p, 0x3c84)) {
-        case 1:
-            F32(p + idx * 16, 0x6524) = 0;
-            if (fn_80267098(p) <= 1) fn_8026461C(p, 6);
-            break;
-        case 2:
-            if (c) {
-                fn_8026461C(p, 6);
-            } else {
-                fn_80264348(p, idx);
-                F32(p, 0x3c5c) = 1;
-                fn_803243B0();
-            }
-            break;
-        case 3:
-            if (c) {
-                fn_80322978();
-                fn_8026461C(p, 6);
-            }
-            break;
+// TODO Callback for a closed connection, handled according to the matchmaking mode.
+void fn_8026560C(s32 result, s32, s32 b, u8 idx, s32 id, WiFiNetwork *self) {
+    if (id >= 0) {
+        fn_802652E8(id);
+    }
+    if (result == 0) {
+        switch (self->_3C84) {
+            case 1:
+                self->_6520[idx]._4 = 0;
+                if (self->fn_80267098() <= 1) {
+                    self->fn_8026461C(WIFINETWORK_RUNSTATE_ONLINE_HOOK);
+                }
+                break;
+            case 2:
+                if (b) {
+                    self->fn_8026461C(WIFINETWORK_RUNSTATE_ONLINE_HOOK);
+                } else {
+                    self->fn_80264348(idx);
+                    self->_3C5C = 1;
+                    fn_803243B0();
+                }
+                break;
+            case 3:
+                if (b) {
+                    fn_80322978();
+                    self->fn_8026461C(WIFINETWORK_RUNSTATE_ONLINE_HOOK);
+                }
+                break;
         }
     }
 }
 
-void fn_80265714(u8 *p) {
-    *(s64 *)(p + 0x1c50) = fn_803338A4(fn_802674DC(p));
-    F16(p, 0x1c86) = fn_8025E370();
-    F16(p, 0x1c84) = 0;
-    F16(p, 0x1c84) = fn_8025E78C(p + 0x1c50, 0xb8);
-    DCFlushRange(p + 0x1c50, 0xb8);
-    fn_8031F2E4(p + 0x1c50, 0xb8);
+// TODO Builds the own status record, with its checksum, and sends it.
+void WiFiNetwork::fn_80265714() {
+    _1C50._00 = fn_803338A4(fn_802674DC());
+    _1C50._36 = fn_8025E370();
+    _1C50._34 = 0;
+    _1C50._34 = fn_8025E78C(&_1C50, sizeof(Unk80264F20));
+    DCFlushRange(&_1C50, sizeof(Unk80264F20));
+    fn_8031F2E4(&_1C50, sizeof(Unk80264F20));
 }
 
-void fn_80265784(u8 *p) {
-    F32(p, 0x3c70) = 0;
-    fn_80267378(p);
-    fn_80265714(p);
-    F32(p, 0x3c78) = 0;
-    fn_8026461C(p, 7);
-}
-void fn_80321FEC(void);
-s32 fn_803331D0(void *);
-void *fn_802674E4(u8 *, s32);
-u8 fn_8031F198(void *, u8 *, u8 *, s32);
-unsigned long strlen(const char *);
-char *strcpy(char *, const char *);
-char *strcat(char *, const char *);
-void fn_8031C2B4(char *, u32, void *, u32);
-void fn_8026806C(u8 *, s32, s32, s32, void *, s32, s32);
-
-void fn_80264F20(s32 idx, s32 b, char *str, u8 *p) {
-    u8 *q;
-    if (idx >= 0 && idx < 30) {
-        u8 buf[0xb8];
-        u8 x9;
-        u8 x8;
-        memset(buf, 0, 0xb8);
-        fn_8031C2B4(str, strlen(str), buf, 0xb8);
-        if ((u16)fn_8025E78C(buf, 0xb8) == 0) {
-            memcpy(p + 0x1d08 + idx * 0xb8, buf, 0xb8);
-            fn_8026806C(p, idx, *(s32 *)(buf + 0), *(s32 *)(buf + 4), buf + 0xc, *(s32 *)(buf + 0x2c), *(s32 *)(buf + 0x30));
-        } else {
-            memset(p + 0x1d08 + idx * 0xb8, 0, 0xb8);
-        }
-        u8 r = fn_8031F198(fn_802674E4(p, idx), &x9, &x8, 0);
-        s32 off = idx * 8;
-        p[off + 0x3299] = x9;
-        p[off + 0x329a] = x8;
-        p[off + 0x329b] = 1;
-        if (r != p[off + 0x3298]) F32(p + off, 0x329c) = fn_8025E370();
-        p[off + 0x3298] = r;
-        F32(p, 0x3388)++;
-    }
+// TODO Handler of WIFINETWORK_RUNSTATE_ONLINE_HOOK.
+void WiFiNetwork::fn_80265784() {
+    _3C70 = 0;
+    fn_80267378();
+    fn_80265714();
+    _3C78 = 0;
+    fn_8026461C(WIFINETWORK_RUNSTATE_ONLINE);
 }
 
-void fn_802657D8(u8 *p) {
-    F32(p, 0x3c84) = 0;
-    fn_802643AC(p);
+// TODO Handler of WIFINETWORK_RUNSTATE_ONLINE.
+void WiFiNetwork::fn_802657D8() {
+    _3C84 = 0;
+    fn_802643AC();
     fn_80265218();
-    if (F32(p, 0x3c50) == 0) F32(p, 0x3c58) = 1;
-    if (F32(p, 0x3c58)) {
-        F32(p, 0x3c58) = 0;
-        fn_80264DC8(p);
-        fn_8026461C(p, 14);
+    if (_3C50 == 0) {
+        _3C58 = 1;
+    }
+    if (_3C58) {
+        _3C58 = 0;
+        fn_80264DC8();
+        fn_8026461C(WIFINETWORK_RUNSTATE_DISCONNECT_HOOK);
         return;
     }
-    if (F32(p, 0x66a0) == 0 && F32(p, 0x3398)) {
-        F32(p, 0x3398) = 0;
-        fn_803223C4(0, (void *)fn_80264ED8, p, (void *)fn_80264F20, p, (void *)fn_80265138, p);
+    if (_66A0 == 0 && _3398) {
+        _3398 = 0;
+        fn_803223C4(0, (void *)fn_80264ED8, this, (void *)fn_80264F20, this, (void *)fn_80265138, this);
     }
-    if (F32(p, 0x3c5c)) F32(p, 0x3c5c) = 0;
-    if (fn_80322E74() == 6) F32(p, 0x3c6c) = 1;
-    if (F32(p, 0x3c6c)) {
-        F32(p, 0x3390) = 0;
-        F32(p, 0x3c6c) = 0;
-        F32(p, 0x3c70) = 1;
-        fn_80264DC8(p);
-        fn_8026461C(p, 4);
+    if (_3C5C) {
+        _3C5C = 0;
+    }
+    if (fn_80322E74() == 6) {
+        _3C6C = 1;
+    }
+    if (_3C6C) {
+        _3390 = 0;
+        _3C6C = 0;
+        _3C70 = 1;
+        fn_80264DC8();
+        fn_8026461C(WIFINETWORK_RUNSTATE_LOGIN);
         return;
     }
-    if (F32(p, 0x3c60)) {
-        fn_8026461C(p, 10);
-        F32(p, 0x3c60) = 0;
+    if (_3C60) {
+        fn_8026461C(WIFINETWORK_RUNSTATE_PEER);
+        _3C60 = 0;
         return;
     }
-    if (F32(p, 0x3c64)) {
-        fn_8026461C(p, 9);
-        F32(p, 0x3c64) = 0;
+    if (_3C64) {
+        fn_8026461C(WIFINETWORK_RUNSTATE_SERVER);
+        _3C64 = 0;
         return;
     }
-    if (F32(p, 0x3c68)) {
-        fn_8026461C(p, 8);
-        F32(p, 0x3c68) = 0;
+    if (_3C68) {
+        fn_8026461C(WIFINETWORK_RUNSTATE_CLIENT);
+        _3C68 = 0;
         return;
     }
-    if (F32(p, 0x66a0) == 0) fn_80321FEC();
+    if (_66A0 == 0) {
+        fn_80321FEC();
+    }
 }
 
-s32 fn_80265A80(u8 *p, u8 a, char *str, s32 c, u8 d) {
-    if (F32(p, 0x3c58)) return -2;
-    if (F32(p, 0x3c60) || F32(p, 0x3c64) || F32(p, 0x3c68)) return -2;
-    switch (F32(p, 0x3c38)) {
-    case 6: case 7:
-        break;
-    default:
-        return -3;
+// TODO Builds the matchmaking filter for version a and region b, then requests a peer match.
+void WiFiNetwork::fn_80265978(u32 a, char *b, s32 c) {
+    char buf[0x80];
+    s32 n;
+    _6540[0]._4 = 2;
+    _6540[1]._4 = a;
+    _6540[2]._4 = (s32)b;
+    _6540[3]._4 = c;
+    sprintf(buf, "ver = %d and reg = %d", 2, a);
+    if (fn_80266538() <= 30) {
+        n = 0;
+    } else {
+        n = fn_80266538() <= 60 ? 1 : 2;
     }
-    if (a > 2 || a < 2 || d > 2) return -4;
+    strcat(buf, " and ");
+    fn_8025BBFC(buf + strlen(buf), b, n);
     if (c) {
-        if (d >= a || d < 2) return -5;
+        sprintf(buf + strlen(buf), " and dis = %d", c);
+    }
+    fn_80265A80(2, buf, 0, 0);
+}
+
+// TODO Requests a peer match; checks the player counts and copies the filter string.
+s32 WiFiNetwork::fn_80265A80(u8 a, char *str, s32 c, u8 d) {
+    if (_3C58) {
+        return -2;
+    }
+    if (_3C60 || _3C64 || _3C68) {
+        return -2;
+    }
+    switch (mRunState) {
+        case WIFINETWORK_RUNSTATE_ONLINE_HOOK:
+        case WIFINETWORK_RUNSTATE_ONLINE:      break;
+        default:                               return -3;
+    }
+    if (a > 2 || a < 2 || d > 2) {
+        return -4;
+    }
+    if (c) {
+        if (d >= a || d < 2) {
+            return -5;
+        }
     } else if (d) {
         return -1;
     }
-    p[0x3c88] = a;
-    p[0x3c89] = d;
-    F32(p, 0x3c8c) = c;
+    _3C88 = a;
+    _3C89 = d;
+    _3C8C = c;
     if (str) {
-        if (strlen(str) + 1 >= 0x80) {
-            p[0x3c90] = 0;
+        if (strlen(str) + 1 >= sizeof(_3C90)) {
+            _3C90[0] = 0;
         } else {
-            strcpy((char *)p + 0x3c90, str);
+            strcpy(_3C90, str);
         }
     } else {
-        p[0x3c90] = 0;
+        _3C90[0] = 0;
     }
-    F32(p, 0x3c60) = 1;
+    _3C60 = 1;
     return 0;
 }
 
-s32 fn_80265BB0(u8 *p, u8 a) {
-    if (F32(p, 0x3c58)) return -2;
-    if (F32(p, 0x3c60) || F32(p, 0x3c64) || F32(p, 0x3c68)) return -2;
-    if (a <= 1 || a > 2) return -1;
-    p[0x3c88] = a;
-    F32(p, 0x3c64) = 1;
+// TODO Requests to host a match for a players.
+s32 WiFiNetwork::fn_80265BB0(u8 a) {
+    if (_3C58) {
+        return -2;
+    }
+    if (_3C60 || _3C64 || _3C68) {
+        return -2;
+    }
+    if (a <= 1 || a > 2) {
+        return -1;
+    }
+    _3C88 = a;
+    _3C64 = 1;
     return 0;
 }
 
-s32 fn_80265C1C(u8 *p, s32 i) {
+// TODO Requests to join the match hosted by friend idx.
+s32 WiFiNetwork::fn_80265C1C(s32 idx) {
     u8 x9;
     u8 x8;
-    if (F32(p, 0x3c58)) return -2;
-    if (F32(p, 0x3c60) || F32(p, 0x3c64) || F32(p, 0x3c68)) return -2;
-    switch (F32(p, 0x3c38)) {
-    case 6: case 7:
-        break;
-    default:
-        return -3;
+    if (_3C58) {
+        return -2;
     }
-    if (i >= 30) return -4;
-    if (fn_803331D0(fn_802674E4(p, i)) == 0) return -5;
-    if (fn_8031F198(fn_802674E4(p, i), &x9, &x8, 0) != 6) return -6;
-    if (x8 >= x9) return -7;
-    F32(p, 0x3d10) = i;
-    F32(p, 0x3c68) = 1;
+    if (_3C60 || _3C64 || _3C68) {
+        return -2;
+    }
+    switch (mRunState) {
+        case WIFINETWORK_RUNSTATE_ONLINE_HOOK:
+        case WIFINETWORK_RUNSTATE_ONLINE:      break;
+        default:                               return -3;
+    }
+    if (idx >= 30) {
+        return -4;
+    }
+    if (fn_803331D0(fn_802674E4(idx)) == 0) {
+        return -5;
+    }
+    if (fn_8031F198(fn_802674E4(idx), &x9, &x8, 0) != 6) {
+        return -6;
+    }
+    if (x8 >= x9) {
+        return -7;
+    }
+    _3D10 = idx;
+    _3C68 = 1;
     return 0;
 }
-void fn_8025E86C(void);
-void *fn_8025DFD0(void);
-u8 *fn_8025E31C(void *);
-void fn_8025EDC8(u8 *, u32);
-void fn_8025EC68(u8 *, u32, u16, u8, s32);
-s32 fn_803225B8(u8, void *, void *, void *, void *);
-s32 fn_803226C4(s32, void *, void *, void *, void *);
 
-s32 fn_80265D2C(u8 *p) {
-    if (F32(p, 0x66a0)) {
+// TODO Cancels the matchmaking in progress.
+s32 WiFiNetwork::fn_80265D2C() {
+    if (_66A0) {
         fn_80263D0C();
-        fn_8026461C(p, 6);
+        fn_8026461C(WIFINETWORK_RUNSTATE_ONLINE_HOOK);
         return 0;
     }
-    switch (F32(p, 0x3c38)) {
-    case 11:
-        if (fn_803243B0() == 0) return -1;
-        break;
-    case 12: case 13:
-        switch (fn_80322978()) {
-        case 0:
+    switch (mRunState) {
+        case WIFINETWORK_RUNSTATE_MATCHING:
+            if (fn_803243B0() == 0) {
+                return -1;
+            }
             break;
-        case 1:
-            fn_803243B0();
-            fn_8026461C(p, 6);
+        case WIFINETWORK_RUNSTATE_MATCHED_HOOK:
+        case WIFINETWORK_RUNSTATE_MATCHED:
+            switch (fn_80322978()) {
+                case 0: break;
+                case 1:
+                    fn_803243B0();
+                    fn_8026461C(WIFINETWORK_RUNSTATE_ONLINE_HOOK);
+                    break;
+                default:
+                    fn_803243B0();
+                    fn_8026461C(WIFINETWORK_RUNSTATE_ONLINE_HOOK);
+                    break;
+            }
             break;
-        default:
-            fn_803243B0();
-            fn_8026461C(p, 6);
-            break;
-        }
-        break;
     }
     return 0;
 }
 
-s32 fn_80265DEC(u8 *p) {
-    F32(p, 0x3c60) = 0;
-    F32(p, 0x3c64) = 0;
-    F32(p, 0x3c68) = 0;
-    if (F32(p, 0x3c5c)) return -1;
-    F32(p, 0x3c60) = 0;
-    F32(p, 0x3c64) = 0;
-    F32(p, 0x3c68) = 0;
-    F32(p, 0x3c5c) = 1;
+// TODO Cancels the pending match requests.
+s32 WiFiNetwork::fn_80265DEC() {
+    _3C60 = 0;
+    _3C64 = 0;
+    _3C68 = 0;
+    if (_3C5C) {
+        return -1;
+    }
+    _3C60 = 0;
+    _3C64 = 0;
+    _3C68 = 0;
+    _3C5C = 1;
     return 0;
 }
 
-s32 fn_80265E2C(u8 *p, void *key) {
-    if (F32(p, 0x3c58)) return -2;
-    if (F32(p, 0x3c60) || F32(p, 0x3c64) || F32(p, 0x3c68)) return -2;
-    switch (F32(p, 0x3c38)) {
-    case 6: case 7:
-        break;
-    default:
-        return -3;
+// TODO Checks the key against the known ones and asks for a new login when it is unknown.
+s32 WiFiNetwork::fn_80265E2C(void *key) {
+    if (_3C58) {
+        return -2;
+    }
+    if (_3C60 || _3C64 || _3C68) {
+        return -2;
+    }
+    switch (mRunState) {
+        case WIFINETWORK_RUNSTATE_ONLINE_HOOK:
+        case WIFINETWORK_RUNSTATE_ONLINE:      break;
+        default:                               return -3;
     }
     fn_8025E86C();
-    if (fn_80264938(p, key)) return 0;
-    F32(p, 0x3390) = 0;
-    F32(p, 0x3c6c) = 1;
+    if (fn_80264938(key)) {
+        return 0;
+    }
+    _3390 = 0;
+    _3C6C = 1;
     return 0;
 }
 
-void fn_80265EF0(u32 a, u8 idx) {
-    u8 *o = fn_8025E31C(fn_8025DFD0());
-    u8 *q = o + idx * 4;
-    u32 v = F32(q, 0x3d1c);
+// TODO Callback for a completed send to player idx; frees the packet.
+void fn_80265EF0(u32, u8 idx) {
+    WiFiNetwork *self = fn_8025E31C(fn_8025DFD0());
+    u32 v = self->_3D1C[idx];
     s32 n = 0;
     if (v) {
-        if ((u32)F32(o, 0x3d1c) == v) n = 1;
-        if ((u32)F32(o, 0x3d20) == v) n++;
-        if (n <= 1) fn_8025EDC8(o, v);
-        F32(q, 0x3d1c) = 0;
+        if (self->_3D1C[0] == v) {
+            n = 1;
+        }
+        if (self->_3D1C[1] == v) {
+            n++;
+        }
+        if (n <= 1) {
+            fn_8025EDC8(self, v);
+        }
+        self->_3D1C[idx] = 0;
     }
 }
 
-void fn_80265F6C(u8 idx, u32 a, u32 c) {
-    u8 *o = fn_8025E31C(fn_8025DFD0());
+// TODO Callback for data received from player idx.
+void fn_80265F6C(u8 idx, u32 a, u32 b) {
+    WiFiNetwork *self = fn_8025E31C(fn_8025DFD0());
     if (idx < 2) {
-        u8 *q = o + idx * 16;
-        F32(q, 0x652c) = fn_8025E370();
-        if (F32(q, 0x652c) == 0) F32(q, 0x652c) = 1;
+        Unk80263D28 *entry = &self->_6520[idx];
+        entry->_C = fn_8025E370();
+        if (entry->_C == 0) {
+            entry->_C = 1;
+        }
     }
-    fn_8025EC68(o, a, c, idx, 1);
+    fn_8025EC68(self, a, b, idx, 1);
 }
 
-void fn_80265FF0(u32 a, u32 b) {
-    fn_80265EF0(a, b);
+// TODO Same as fn_80265EF0, for the local connection library.
+void fn_80265FF0(u32 a, u32 idx) {
+    fn_80265EF0(a, idx);
 }
 
-void fn_80265FF8(u32 a, u32 b, u32 c) {
-    fn_80265F6C(a, b, c);
+// TODO Same as fn_80265F6C, for the local connection library.
+void fn_80265FF8(u32 idx, u32 a, u32 b) {
+    fn_80265F6C(idx, a, b);
 }
 
+// TODO Callback storing a value reported for player idx, with the time.
 void fn_80266000(s32 v, u8 idx) {
-    u8 *o = fn_8025E31C(fn_8025DFD0());
+    WiFiNetwork *self = fn_8025E31C(fn_8025DFD0());
     if (idx < 2) {
-        u8 *q = o + idx * 16;
-        F32(q, 0x6528) = v;
+        Unk80263D28 *entry = &self->_6520[idx];
+        entry->_8 = v;
         s32 t = fn_8025E370();
-        F32(q, 0x652c) = t;
-        if (t == 0) F32(q, 0x652c) = 1;
+        entry->_C = t;
+        if (t == 0) {
+            entry->_C = 1;
+        }
     }
 }
 
-void fn_802661D0(s32 res, s32 b, s32 c, s32 d, s32 aid, u8 *p) {
-    if (res) return;
-    if (b == 0) {
-        F32(p, 0x33a0) = 1;
-        if (aid >= 0) fn_802652A4(aid);
-    } else {
-        if (c || d) F32(p, 0x33a4) = 1;
-        if (aid >= 0) fn_802652E8(aid);
-    }
-}
+void fn_802661D0(s32 result, s32 a, s32 b, s32 c, s32 idx, WiFiNetwork *self);
+void fn_80266224(s32 idx);
 
-void fn_80266224(s32 aid) {
-    if (aid >= 0) fn_802652A4(aid);
-}
-
-void fn_80266068(u8 *p) {
-    if (F32(p, 0x3c5c)) {
-        fn_8026461C(p, 7);
-        F32(p, 0x3c5c) = 0;
+// TODO Handler of WIFINETWORK_RUNSTATE_SERVER.
+void WiFiNetwork::fn_80266068() {
+    if (_3C5C) {
+        fn_8026461C(WIFINETWORK_RUNSTATE_ONLINE);
+        _3C5C = 0;
         return;
     }
-    F32(p, 0x3c84) = 2;
-    F32(p, 0x33a0) = 0;
-    F32(p, 0x33a4) = 0;
+    _3C84 = 2;
+    _33A0 = 0;
+    _33A4 = 0;
     fn_80265218();
-    if (fn_803225B8(p[0x3c88], (void *)fn_802661D0, p, (void *)fn_80266224, p) == 0) {
-        F32(p, 0x3c84) = 0;
-        fn_8026461C(p, 6);
+    if (fn_803225B8(_3C88, (void *)fn_802661D0, this, (void *)fn_80266224, this) == 0) {
+        _3C84 = 0;
+        fn_8026461C(WIFINETWORK_RUNSTATE_ONLINE_HOOK);
     } else {
-        fn_8026461C(p, 11);
+        fn_8026461C(WIFINETWORK_RUNSTATE_MATCHING);
     }
 }
 
-void fn_80266118(u8 *p) {
-    if (F32(p, 0x3c5c)) {
-        fn_8026461C(p, 7);
-        F32(p, 0x3c5c) = 0;
+// TODO Handler of WIFINETWORK_RUNSTATE_CLIENT.
+void WiFiNetwork::fn_80266118() {
+    if (_3C5C) {
+        fn_8026461C(WIFINETWORK_RUNSTATE_ONLINE);
+        _3C5C = 0;
         return;
     }
-    F32(p, 0x3c84) = 3;
-    F32(p, 0x33a0) = 0;
-    F32(p, 0x33a4) = 0;
+    _3C84 = 3;
+    _33A0 = 0;
+    _33A4 = 0;
     fn_80265218();
-    fn_802652A4(F32(p, 0x3d10));
-    if (fn_803226C4(F32(p, 0x3d10), (void *)fn_802661D0, p, (void *)fn_80266224, p) == 0) {
-        F32(p, 0x3c84) = 0;
-        fn_8026461C(p, 6);
+    fn_802652A4(_3D10);
+    if (fn_803226C4(_3D10, (void *)fn_802661D0, this, (void *)fn_80266224, this) == 0) {
+        _3C84 = 0;
+        fn_8026461C(WIFINETWORK_RUNSTATE_ONLINE_HOOK);
     } else {
-        fn_8026461C(p, 11);
+        fn_8026461C(WIFINETWORK_RUNSTATE_MATCHING);
     }
 }
 
-void fn_80266234(s32 v) {
-    u8 *o = fn_8025E31C(fn_8025DFD0());
-    if (v == 0) F32(o, 0x33a0) = 1;
-}
-extern char lbl_8063DA28[4];
-extern char lbl_8063DA2C[4];
-extern char lbl_8063DA30[4];
-extern char lbl_8063DA34[4];
-s32 fn_80324800(void *, char *, s32);
-void fn_8031D528(void);
-u32 fn_80322C58(void);
-
-void fn_80266464(s32 res, s32 b, u8 *p) {
-    if (res) return;
-    if (b == 0) {
-        F32(p, 0x33a0) = 1;
+// TODO Callback of the host and join matchmaking.
+void fn_802661D0(s32 result, s32 a, s32 b, s32 c, s32 idx, WiFiNetwork *self) {
+    if (result) {
+        return;
+    }
+    if (a == 0) {
+        self->_33A0 = 1;
+        if (idx >= 0) {
+            fn_802652A4(idx);
+        }
     } else {
-        F32(p, 0x33a4) = 1;
+        if (b || c) {
+            self->_33A4 = 1;
+        }
+        if (idx >= 0) {
+            fn_802652E8(idx);
+        }
     }
 }
 
-s32 fn_8026648C(void *a, u8 *p) {
-    s32 x = fn_80324800(a, lbl_8063DA28, -1);
-    s32 y = fn_80324800(a, lbl_8063DA2C, -1);
-    fn_80324800(a, lbl_8063DA30, -1);
-    fn_80324800(a, lbl_8063DA34, -1);
-    if (x != F32(p, 0x6564)) return 0;
-    return y == F32(p, 0x656c);
+// TODO Callback for a new connection during the host and join matchmaking.
+void fn_80266224(s32 idx) {
+    if (idx >= 0) {
+        fn_802652A4(idx);
+    }
 }
 
-u32 fn_80266538(u8 *p) {
-    return (u32)F32(p, 0x3c80) / 10;
+// TODO Matchmaking callback of the local connection library.
+void fn_80266234(s32 result) {
+    WiFiNetwork *self = fn_8025E31C(fn_8025DFD0());
+    if (result == 0) {
+        self->_33A0 = 1;
+    }
 }
 
-void fn_80266550(u8 *p) {
-    if (F32(p, 0x66a0)) {
+void fn_80266464(s32 result, s32 a, WiFiNetwork *self);
+s32 fn_8026648C(void *a, WiFiNetwork *self);
+
+// TODO Handler of WIFINETWORK_RUNSTATE_PEER.
+void WiFiNetwork::fn_80266274() {
+    if (_3C5C) {
+        fn_8026461C(WIFINETWORK_RUNSTATE_ONLINE);
+        _3C5C = 0;
+        return;
+    }
+    _3C84 = 1;
+    _33A0 = 0;
+    _33A4 = 0;
+    fn_80265218();
+    if (_66A0) {
+        fn_80263CBC();
+        if (fn_8031DFFC(_3C88, (void *)fn_80266234) == 0) {
+            _3C84 = 0;
+            fn_8026461C(WIFINETWORK_RUNSTATE_ONLINE_HOOK);
+        } else {
+            fn_8026461C(WIFINETWORK_RUNSTATE_MATCHING);
+        }
+        return;
+    }
+    _6560[0]._4 = _6540[0]._4;
+    _6560[1]._4 = _6540[1]._4;
+    _6560[2]._4 = _6540[2]._4;
+    _6560[3]._4 = _6540[3]._4;
+    _6560[0]._0 = fn_80324440(_6560[0]._0, "ver", &_6560[0]._4);
+    _6560[1]._0 = fn_80324440(_6560[1]._0, "reg", &_6560[1]._4);
+    _6560[2]._0 = fn_80324440(_6560[2]._0, "win", &_6560[2]._4);
+    _6560[3]._0 = fn_80324440(_6560[3]._0, "dis", &_6560[3]._4);
+    u8 buf[8];
+    memset(buf, 0, sizeof(buf));
+    if (_3C8C && _3C89 < _3C88) {
+        buf[0] = 1;
+        buf[1] = _3C89;
+        *(s32 *)(buf + 4) = _3C8C;
+    } else {
+        buf[0] = 0;
+    }
+    fn_8032488C(0, buf, sizeof(buf));
+    if (fn_803224B0(_3C88,
+                    ((s8 *)_3C90)[0] ? _3C90 : (char *)NULL,
+                    (void *)fn_80266464,
+                    this,
+                    (void *)fn_8026648C,
+                    this) == 0) {
+        _3C84 = 0;
+        fn_8026461C(WIFINETWORK_RUNSTATE_ONLINE_HOOK);
+    } else {
+        fn_8026461C(WIFINETWORK_RUNSTATE_MATCHING);
+    }
+}
+
+// TODO Callback of the peer matchmaking.
+void fn_80266464(s32 result, s32 a, WiFiNetwork *self) {
+    if (result) {
+        return;
+    }
+    if (a == 0) {
+        self->_33A0 = 1;
+    } else {
+        self->_33A4 = 1;
+    }
+}
+
+// TODO Accepts a peer whose "ver" and "reg" match ours.
+s32 fn_8026648C(void *a, WiFiNetwork *self) {
+    s32 ver = fn_80324800(a, "ver", -1);
+    s32 reg = fn_80324800(a, "reg", -1);
+    fn_80324800(a, "win", -1);
+    fn_80324800(a, "dis", -1);
+    if (ver != self->_6560[0]._4) {
+        return 0;
+    }
+    return reg == self->_6560[1]._4;
+}
+
+// TODO Elapsed matchmaking time divided by 10.
+u32 WiFiNetwork::fn_80266538() {
+    return (u32)_3C80 / 10;
+}
+
+// TODO Handler of WIFINETWORK_RUNSTATE_MATCHING.
+void WiFiNetwork::fn_80266550() {
+    if (_66A0) {
         fn_8031D528();
     } else {
         fn_80321FEC();
     }
-    switch (F32(p, 0x3c40)) {
-    case 0:
-        F32(p, 0x3c7c) = fn_8025E370();
-        F32(p, 0x3c40)++;
-        break;
-    case 1:
-        break;
+    switch (_3C40) {
+        case 0:
+            _3C7C = fn_8025E370();
+            _3C40++;
+            break;
+        case 1: break;
     }
-    F32(p, 0x3c80) = fn_8025E370() - F32(p, 0x3c7c);
-    if (F32(p, 0x33a0)) {
-        F32(p, 0x33a0) = 0;
-        fn_8026461C(p, 12);
+    _3C80 = fn_8025E370() - _3C7C;
+    if (_33A0) {
+        _33A0 = 0;
+        fn_8026461C(WIFINETWORK_RUNSTATE_MATCHED_HOOK);
     }
-    if (F32(p, 0x33a4)) {
-        F32(p, 0x33a4) = 0;
-        fn_8026461C(p, 6);
+    if (_33A4) {
+        _33A4 = 0;
+        fn_8026461C(WIFINETWORK_RUNSTATE_ONLINE_HOOK);
     }
-    if (F32(p, 0x3c58)) fn_80265DEC(p);
-    if (F32(p, 0x3c84) == 3 && (u32)F32(p, 0x3c80) >= 450) fn_80265DEC(p);
-    if (F32(p, 0x3c5c)) {
-        F32(p, 0x3c5c) = 0;
-        fn_80265D2C(p);
+    if (_3C58) {
+        fn_80265DEC();
+    }
+    if (_3C84 == 3 && (u32)_3C80 >= 450) {
+        fn_80265DEC();
+    }
+    if (_3C5C) {
+        _3C5C = 0;
+        fn_80265D2C();
     }
 }
 
-u32 fn_80266660(u8 *p) {
+// TODO Bit mask of the connected players.
+u32 WiFiNetwork::fn_80266660() {
     u32 mask;
-    if (F32(p, 0x66a0)) {
+    if (_66A0) {
         mask = 0;
-        s32 n = fn_80267098(p);
+        s32 n = fn_80267098();
         for (s32 i = 0; i < n; i++) {
             mask |= 1 << i;
         }
@@ -987,574 +1386,414 @@ u32 fn_80266660(u8 *p) {
     return mask;
 }
 
-void fn_80266784(u8 *p) {
+// TODO Handler of WIFINETWORK_RUNSTATE_MATCHED_HOOK.
+void WiFiNetwork::fn_80266784() {
     u32 t = fn_8025E370();
-    u32 mask = fn_80266660(p);
-    u32 self = ((WifiVObj *)p)->v18();
+    u32 mask = fn_80266660();
+    u8 own = fn_8026703C();
     for (u8 i = 0; i < 2; i++) {
-        u8 *q = p + i * 16;
-        if (self == i) {
-            F32(q, 0x6520) = 1;
-            F32(q, 0x6524) = 1;
-            F32(q, 0x6528) = 0;
-            F32(q, 0x652c) = t;
+        Unk80263D28 *entry = &_6520[i];
+        if (own == i) {
+            entry->_0 = 1;
+            entry->_4 = 1;
+            entry->_8 = 0;
+            entry->_C = t;
         } else if (mask & (1 << i)) {
-            F32(q, 0x6520) = 0;
-            F32(q, 0x6524) = 1;
-            F32(q, 0x6528) = 0;
-            F32(q, 0x652c) = t;
+            entry->_0 = 0;
+            entry->_4 = 1;
+            entry->_8 = 0;
+            entry->_C = t;
         } else {
-            F32(q, 0x6520) = 0;
-            F32(q, 0x6524) = 0;
-            F32(q, 0x6528) = 0;
-            F32(q, 0x652c) = 0;
+            entry->_0 = 0;
+            entry->_4 = 0;
+            entry->_8 = 0;
+            entry->_C = 0;
         }
     }
-    F32(p, 0x651c) = fn_8025E370() - self * 10;
-    fn_8026461C(p, 13);
-}
-s32 fn_8031C48C(s32 *);
-void fn_8031C550(void);
-s32 fn_8031E08C(void);
-s32 fn_80322BF8(void);
-s32 fn_80322B9C(void);
-s32 fn_8025ECF8(u8 *, u32, u32, s32, u32);
-s32 fn_80322A70(u8);
-s32 fn_80322DC8(u8);
-void fn_8025EE18(u8 *);
-void fn_8025CC38(void);
-void fn_8032432C(void);
-s32 fn_8025CC48(void);
-void fn_8025CCA4(s32, s32);
-s32 fn_8025CC94(void);
-
-void fn_80267324(u8 *p);
-
-void fn_80266B80(u8 *p) {
-    fn_80264300(p);
-    F32(p, 0x3c60) = 0;
-    F32(p, 0x3c64) = 0;
-    F32(p, 0x3c68) = 0;
-    fn_80264684(p);
-    fn_8025BEB4();
-    fn_80267324(p);
-    fn_8026461C(p, 15);
+    _651C = fn_8025E370() - own * 10;
+    fn_8026461C(WIFINETWORK_RUNSTATE_MATCHED);
 }
 
-void fn_80266BDC(u8 *p) {
-    F32(p, 0x3c58) = 0;
-    fn_8026461C(p, 0);
-}
-
-s32 fn_80266EE8(u8 *p) {
-    s32 a;
-    s32 b;
-    if (F32(p, 0x3c54) == 0) return -1;
-    F32(p, 0x3c54) = 0;
-    fn_8031C4A4(&a, &b);
-    return b == 1;
-}
-
-s32 fn_80266F44(u8 *p) {
-    s32 x;
-    if (F32(p, 0x3d18)) return 5;
-    return fn_8031C48C(&x);
-}
-
-s32 fn_80266F7C(u8 *p) {
-    s32 x;
-    if (F32(p, 0x3d18)) return -F32(p, 0x3d18);
-    fn_8031C48C(&x);
-    return -x;
-}
-
-void fn_80266FC8(u8 *p) {
-    fn_8031C550();
-    fn_80266FBC(p);
-}
-
-s32 fn_80266FFC(u8 *p) {
-    s32 a;
-    s32 b;
-    fn_8031C4A4(&a, &b);
-    return b == 7;
-}
-
-u32 fn_8026703C(u8 *p) {
-    if (F32(p, 0x66a0)) {
-        if (((WifiVObj *)p)->v08()) return (u16)fn_8031E08C();
-        return 0;
-    }
-    return (u8)fn_80322BF8();
-}
-
-s32 fn_80267098(u8 *p) {
-    if (F32(p, 0x66a0)) {
-        if (lbl_8063FA10 && ((WifiVObj *)p)->v08()) return 2;
-        return 1;
-    }
-    return fn_80322B9C();
-}
-
-s32 fn_80267100(u8 *p, u32 a, u32 b, u32 c) {
-    if (((WifiVObj *)p)->v08() == 0) return -1;
-    if (b > ((WifiVObj *)p)->v19()) return -1;
-    if (((WifiVObj *)p)->v20(c) == 0) return -1;
-    s32 r = fn_8025ECF8(p, a, b, 1, c);
-    if (r < 0) b = r;
-    return b;
-}
-
-s32 fn_802671E4(u8 *p, u32 x) {
-    if (((WifiVObj *)p)->v20(x) == 0) return -1;
-    if (F32(p, 0x66a0)) {
-        F32(p, 0x3c58) = 1;
-        return 0;
-    }
-    return fn_80322A70(x);
-}
-
-s32 fn_8026725C(u8 *p, s32 x) {
-    if (((WifiVObj *)p)->v08() == 0) return 0;
-    if (F32(p, 0x66a0)) return x < p[0x3c88];
-    return fn_80322DC8(x);
-}
-
-void fn_802672E8(u8 *p) {
-    fn_8025EE18(p);
-    fn_802650EC(p);
-    fn_802649C8(p);
-}
-
-void fn_80267324(u8 *p) {
-    if (F32(p, 0x66a4)) {
-        fn_8025CC38();
-        F32(p, 0x66a4) = 0;
-    }
-    fn_8025EE18(p);
-    fn_802650EC(p);
-}
-
-void fn_80267378(u8 *p) {
-    fn_8025EE18(p);
-    if (F32(p, 0x66a0) == 0) fn_8032432C();
-}
-
-s32 fn_802673BC(u8 *p, s32 a, s32 b) {
-    if (b < 0 || b > 6) return -1;
-    if (a == 0) return -1;
-    if (((WifiVObj *)p)->v06() == 0) return -3;
-    if (fn_8025CC48() == 0) return -2;
-    fn_8025CCA4(a, b);
-    return 0;
-}
-
-s32 fn_8026745C(u8 *p, s32 *out) {
-    if (fn_8025CC48() == 0) return 0;
-    s32 r = fn_8025CC94();
-    if (r >= 0) {
-        *out = r;
-        r = 1;
-    }
-    return r;
-}
-s32 fn_8025EF54(u8 *);
-u32 fn_8025EFA4(u8 *, u16 *, u16 *);
-s32 fn_8031E0B0(u16, u32, u16, s32);
-s32 fn_80330D88(u8, u32, u16);
-void fn_8025F00C(u8 *);
-void fn_80267534(u8 *);
-
-s32 fn_80266A7C(u8 *p) {
-    u16 xa;
-    u16 x8;
-    if (fn_8025EF54(p) == 0) return -1;
-    u32 h = fn_8025EFA4(p, &xa, &x8);
-    if (h == 0) return -1;
-    if (x8 >= 2) return -1;
-    if (F32(p + x8 * 4, 0x3d1c)) return -1;
-    F32(p + x8 * 4, 0x3d1c) = h;
-    s32 r;
-    if (F32(p, 0x66a0)) {
-        r = fn_8031E0B0(x8, h, xa, 0);
-    } else {
-        r = fn_80330D88(x8, h, xa);
-    }
-    if (r == 0) {
-        F32(p + x8 * 4, 0x3d1c) = 0;
-        return -1;
-    }
-    F32(p + x8 * 4, 0x6580) = fn_8025E370();
-    fn_8025F00C(p);
-    return 0;
-}
-
-void fn_80330EEC(u8);
-void fn_8025F934(u8 *, s32);
-
-void fn_802668B0(u8 *p) {
-    if (F32(p, 0x66a0)) {
+// TODO Handler of WIFINETWORK_RUNSTATE_MATCHED.
+void WiFiNetwork::fn_802668B0() {
+    if (_66A0) {
         fn_8031D528();
     } else {
         fn_80321FEC();
         u32 t = fn_8025E370();
-        if (t - F32(p, 0x651c) >= 50) {
+        if (t - _651C >= 50) {
             for (u8 i = 0; i < 2; i++) {
-                u8 *q = p + i * 16;
-                if (F32(q, 0x6520)) {
-                    F32(q, 0x652c) = t;
+                if (_6520[i]._0) {
+                    _6520[i]._C = t;
                 } else {
-                    if (F32(q, 0x6524) && t - F32(q, 0x652c) > 300) {
-                        F32(q, 0x6524) = 0;
+                    if (_6520[i]._4 && t - _6520[i]._C > 300) {
+                        _6520[i]._4 = 0;
                         fn_80322A70(i);
                     }
-                    if (F32(q, 0x6524)) fn_80330EEC(i);
+                    if (_6520[i]._4) {
+                        fn_80330EEC(i);
+                    }
                 }
             }
-            F32(p, 0x651c) = t;
+            _651C = t;
         }
     }
-    fn_8025F934(p, 1);
+    fn_8025F934(this, 1);
     for (s32 k = 0; k < 8; k++) {
-        if (fn_80266A7C(p)) break;
+        if (fn_80266A7C()) {
+            break;
+        }
         fn_80321FEC();
     }
-    if (F32(p, 0x66a0)) {
+    if (_66A0) {
         fn_8031D528();
     } else {
         fn_80321FEC();
     }
     u32 now = fn_8025E370();
     for (u8 i = 0; i < 2; i++) {
-        u8 *q = p + i * 16;
-        if (F32(q, 0x6520) == 0 && F32(q, 0x6524)) {
-            u8 *r = p + i * 4;
-            if (now - F32(r, 0x6580) >= 50) {
+        Unk80263D28 *entry = &_6520[i];
+        if (entry->_0 == 0 && entry->_4) {
+            if (now - _6580[i] >= 50) {
                 u16 msg[3];
                 msg[0] = 14;
                 msg[1] = 6;
                 msg[2] = 0;
-                ((WifiVObj *)p)->v21(msg, 6, i);
-                F32(r, 0x6580) = now;
+                fn_80267100(msg, sizeof(msg), i);
+                _6580[i] = now;
             }
         }
     }
-    if (F32(p, 0x3c58)) fn_80265DEC(p);
-    if (F32(p, 0x3c5c)) fn_80265D2C(p);
+    if (_3C58) {
+        fn_80265DEC();
+    }
+    if (_3C5C) {
+        fn_80265D2C();
+    }
 }
 
-void fn_80266BEC(u8 *p) {
-    s32 a;
-    s32 b;
-    F32(p, 0x3c70) = 0;
-    if (F32(p, 0x3c54) == 0) {
-        fn_8031C4A4(&a, &b);
-        switch ((u32)b) {
-        case 0:
-            fn_8026461C(p, 14);
-            break;
-        case 1:
-            fn_80267534(p);
-            fn_8026461C(p, 6);
-            break;
-        case 3:
-        case 6:
-            fn_802643AC(p);
-            fn_80265218();
-            fn_80264DC8(p);
-            ((WifiVObj *)p)->v02();
-            fn_8026461C(p, 14);
-            break;
-        case 7:
-            fn_8026461C(p, 17);
-            break;
-        default:
-            fn_8026461C(p, 17);
-            break;
+// TODO Hands the next pending packet to the network library.
+s32 WiFiNetwork::fn_80266A7C() {
+    u16 xa;
+    u16 x8;
+    if (fn_8025EF54(this) == 0) {
+        return -1;
+    }
+    u32 h = fn_8025EFA4(this, &xa, &x8);
+    if (h == 0) {
+        return -1;
+    }
+    if (x8 >= 2) {
+        return -1;
+    }
+    if (_3D1C[x8]) {
+        return -1;
+    }
+    _3D1C[x8] = h;
+    s32 r;
+    if (_66A0) {
+        r = fn_8031E0B0(x8, h, xa, 0);
+    } else {
+        r = fn_80330D88(x8, h, xa);
+    }
+    if (r == 0) {
+        _3D1C[x8] = 0;
+        return -1;
+    }
+    _6580[x8] = fn_8025E370();
+    fn_8025F00C(this);
+    return 0;
+}
+
+// TODO Handler of WIFINETWORK_RUNSTATE_DISCONNECT_HOOK.
+void WiFiNetwork::fn_80266B80() {
+    fn_80264300();
+    _3C60 = 0;
+    _3C64 = 0;
+    _3C68 = 0;
+    fn_80264684();
+    fn_8025BEB4();
+    fn_80267324();
+    fn_8026461C(WIFINETWORK_RUNSTATE_DISCONNECT);
+}
+
+// TODO Handler of WIFINETWORK_RUNSTATE_DISCONNECT.
+void WiFiNetwork::fn_80266BDC() {
+    _3C58 = 0;
+    fn_8026461C(WIFINETWORK_RUNSTATE_INIT);
+}
+
+// TODO Handler of WIFINETWORK_RUNSTATE_ERROR.
+void WiFiNetwork::fn_80266BEC() {
+    s32 code;
+    s32 type;
+    _3C70 = 0;
+    if (_3C54 == 0) {
+        fn_8031C4A4(&code, &type);
+        switch ((u32)type) {
+            case 0: fn_8026461C(WIFINETWORK_RUNSTATE_DISCONNECT_HOOK); break;
+            case 1:
+                fn_80267534();
+                fn_8026461C(WIFINETWORK_RUNSTATE_ONLINE_HOOK);
+                break;
+            case 3:
+            case 6:
+                fn_802643AC();
+                fn_80265218();
+                fn_80264DC8();
+                fn_80264454();
+                fn_8026461C(WIFINETWORK_RUNSTATE_DISCONNECT_HOOK);
+                break;
+            case 7:  fn_8026461C(WIFINETWORK_RUNSTATE_FATAL); break;
+            default: fn_8026461C(WIFINETWORK_RUNSTATE_FATAL); break;
         }
         fn_8031C550();
-        fn_80266FBC(p);
-    }
-}
-extern char lbl_8042640C[];
-extern char lbl_80426424[];
-extern char lbl_8063DA20[6];
-void fn_8025BBFC(char *, char *, s32);
-
-void fn_80265978(u8 *p, u32 a, char *b, s32 c) {
-    char buf[0x80];
-    s32 n;
-    F32(p, 0x6544) = 2;
-    F32(p, 0x654c) = a;
-    *(char **)(p + 0x6554) = b;
-    F32(p, 0x655c) = c;
-    sprintf(buf, lbl_8042640C, 2, a);
-    if (fn_80266538(p) <= 30) {
-        n = 0;
-    } else {
-        n = fn_80266538(p) <= 60 ? 1 : 2;
-    }
-    strcat(buf, lbl_8063DA20);
-    fn_8025BBFC(buf + strlen(buf), b, n);
-    if (c) sprintf(buf + strlen(buf), lbl_80426424, c);
-    fn_80265A80(p, 2, buf, 0, 0);
-}
-void fn_8025F4E0(void);
-void fn_8025CACC(void);
-
-s32 fn_8031DFFC(u8, void *);
-u8 fn_80324440(u8, char *, void *);
-void fn_8032488C(s32, void *, s32);
-s32 fn_803224B0(u8, char *, void *, void *, void *, void *);
-
-void fn_80266274(u8 *p) {
-    if (F32(p, 0x3c5c)) {
-        fn_8026461C(p, 7);
-        F32(p, 0x3c5c) = 0;
-        return;
-    }
-    F32(p, 0x3c84) = 1;
-    F32(p, 0x33a0) = 0;
-    F32(p, 0x33a4) = 0;
-    fn_80265218();
-    if (F32(p, 0x66a0)) {
-        fn_80263CBC(p);
-        if (fn_8031DFFC(p[0x3c88], (void *)fn_80266234) == 0) {
-            F32(p, 0x3c84) = 0;
-            fn_8026461C(p, 6);
-        } else {
-            fn_8026461C(p, 11);
-        }
-        return;
-    }
-    F32(p, 0x6564) = F32(p, 0x6544);
-    F32(p, 0x656c) = F32(p, 0x654c);
-    F32(p, 0x6574) = F32(p, 0x6554);
-    F32(p, 0x657c) = F32(p, 0x655c);
-    p[0x6560] = fn_80324440(p[0x6560], lbl_8063DA28, p + 0x6564);
-    p[0x6568] = fn_80324440(p[0x6568], lbl_8063DA2C, p + 0x656c);
-    p[0x6570] = fn_80324440(p[0x6570], lbl_8063DA30, p + 0x6574);
-    p[0x6578] = fn_80324440(p[0x6578], lbl_8063DA34, p + 0x657c);
-    u8 buf[8];
-    memset(buf, 0, 8);
-    if (F32(p, 0x3c8c) && p[0x3c89] < p[0x3c88]) {
-        buf[0] = 1;
-        buf[1] = p[0x3c89];
-        *(s32 *)(buf + 4) = F32(p, 0x3c8c);
-    } else {
-        buf[0] = 0;
-    }
-    fn_8032488C(0, buf, 8);
-    if (fn_803224B0(p[0x3c88], ((s8 *)p)[0x3c90] ? (char *)(p + 0x3c90) : (char *)0, (void *)fn_80266464, p, (void *)fn_8026648C, p) == 0) {
-        F32(p, 0x3c84) = 0;
-        fn_8026461C(p, 6);
-    } else {
-        fn_8026461C(p, 11);
+        fn_80266FBC();
     }
 }
 
-extern f32 lbl_8063D988;
-extern const f32 lbl_80642608;
-extern const f32 lbl_8064260C;
-extern const f32 lbl_80642610;
-extern char lbl_8063DA18[7];
-void *fn_80267504(u8 *);
-void fn_80321BFC(void *, void *, s32, char *, char *, s32, s32, void *, void *);
-s32 fn_80322260(void *, s32, void *, void *);
-s32 fn_80335DB4(void);
-void *fn_802677F8(u8 *);
-void fn_8025CAA8(void *);
-void fn_80322950(void *, void *);
-void fn_80330F94(void *);
-void fn_80330FB4(void *);
-void fn_80330FD4(void *);
-void fn_80330E7C(u8, void *, u32);
-
-void fn_80264A70(u8 *p) {
-    switch (F32(p, 0x3c40)) {
-    case 0:
-        F32(p, 0x3c4c) = (s32)(lbl_80642608 + lbl_8064260C * lbl_8063D988);
-        F32(p, 0x3c40)++;
-        break;
-    case 1:
-        if (F32(p, 0x3c4c)-- <= 0) F32(p, 0x3c40)++;
-        break;
-    case 2:
-        F32(p, 0x3c6c) = 0;
-        F32(p, 0x3c40)++;
-        break;
-    case 3:
-        if (F32(p, 0x66a0)) {
-            F32(p, 0x3c40) = 50;
-        } else {
-            F32(p, 0x3c40) = 10;
-        }
-        break;
-    case 10: {
-        memset(p + 0x1c28, 0, 4);
-        fn_80321BFC(p + 0x1c28, fn_802674DC(p), 0x2a93, lbl_804263FC, lbl_8063DA18, 0, 0, fn_802674E4(p, 0), fn_80267504(p));
-        F32(p, 0x339c) = 0;
-        if (fn_80322260(p + 4, 0, (void *)fn_80264E14, p) == 0) {
-            fn_80264DC8(p);
-            ((WifiVObj *)p)->v02();
-            F32(p, 0x3c70) = 0;
-            fn_8026461C(p, 14);
-        } else {
-            F32(p, 0x3c4c) = (s32)(lbl_80642608 + lbl_80642610 * lbl_8063D988);
-            F32(p, 0x3c40)++;
-        }
-        break;
-    }
-    case 11:
-        fn_80321FEC();
-        if (F32(p, 0x3c4c)-- <= 0) {
-            fn_80264DC8(p);
-            ((WifiVObj *)p)->v02();
-            F32(p, 0x3c70) = 0;
-            fn_8026461C(p, 14);
-        } else if (F32(p, 0x339c)) {
-            F32(p, 0x3394) = 0;
-            if (fn_80335DB4() == 2) F32(p, 0x3394) = 1;
-            F32(p, 0x3390) = 1;
-            if (F32(p, 0x3394) == 0) fn_802649E0(p, p + 4);
-            if (F32(p, 0x66a4) == 0) {
-                fn_8025CAA8(fn_802677F8(p));
-                F32(p, 0x66a4) = 1;
-            }
-            fn_80267534(p);
-            F32(p, 0x33a0) = 0;
-            F32(p, 0x33a4) = 0;
-            fn_80322950((void *)fn_8026560C, p);
-            fn_80330F94((void *)fn_80265EF0);
-            fn_80330FB4((void *)fn_80265F6C);
-            fn_80330FD4((void *)fn_80266000);
-            for (u8 i = 0; i < 2; i++) {
-                fn_80330E7C(i, p + 0x451c + i * 0x1000, 0x1000);
-            }
-            fn_8026461C(p, 5);
-        }
-        break;
-    case 50:
-        F32(p, 0x33a0) = 0;
-        F32(p, 0x33a4) = 0;
-        fn_80263CBC(p);
-        F32(p, 0x3394) = 0;
-        F32(p, 0x3390) = 1;
-        fn_8026461C(p, 5);
-        break;
-    }
-}
-
-extern u8 lbl_80425A00[];
-extern u8 lbl_80426498[];
-
-u8 *fn_8026419C(u8 *p) {
-    *(void **)p = lbl_80425A00;
-    u8 *e = p + 0x24;
-    do {
-        e[0] = 0;
-        e[1] = 0;
-        *(u16 *)(e + 2) = 0;
-        *(u16 *)(e + 4) = 0;
-        e[6] = 0;
-        e[7] = 0;
-        F32(e, 0x8) = 0;
-        F32(e, 0xc) = 0;
-        F32(e, 0x10) = 0;
-        F32(e, 0x14) = 0;
-        F32(e, 0x18) = 0;
-        F32(e, 0x1c) = 0;
-        F32(e, 0x20) = 0;
-        F32(e, 0x24) = 0;
-        F32(e, 0x28) = 200;
-        F32(e, 0x2c) = 50;
-        F32(e, 0x30) = 10;
-        e += 0x74;
-    } while (e < p + 0xea4);
-    F32(p, 0xee4) = 0;
-    F32(p, 0xee8) = 0;
-    F32(p, 0xeec) = 0;
-    F32(p, 0xef0) = 0;
-    *(void **)p = lbl_80426498;
-    F32(p, 0x3c38) = 0;
-    F32(p, 0x3c3c) = 0;
-    F32(p, 0x3c40) = 0;
-    F32(p, 0x1c2c) = 0;
-    F32(p, 0x66a0) = 0;
-    F32(p, 0x3c50) = 0;
-    F32(p, 0x3c54) = 0;
-    F32(p, 0x3c74) = 0;
-    F32(p, 0x3c60) = 0;
-    F32(p, 0x3c64) = 0;
-    F32(p, 0x3c68) = 0;
-    F32(p, 0x3c84) = 0;
-    p[0x3c88] = 0;
-    F32(p, 0x3390) = 0;
-    F32(p, 0x3394) = 0;
-    F32(p, 0x338c) = 0;
-    F32(p, 0x3c6c) = 0;
-    F32(p, 0x3c70) = 0;
-    F32(p, 0x3c58) = 0;
-    F32(p, 0x3c5c) = 0;
-    F32(p, 0x3d14) = 0;
-    F32(p, 0x3388) = 0;
-    memset(p + 0x1c50, 0, 0xb8);
-    fn_80266FC8(p);
-    F32(p, 0x651c) = 0;
-    fn_802643AC(p);
-    fn_80265218();
-    fn_802650EC(p);
-    fn_80264300(p);
-    fn_802649C8(p);
-    F32(p, 0x66a4) = 0;
-    return p;
-}
-
-s32 fn_80266CE0(u8 *p) {
-    u8 changed = 0;
+// TODO Runs one frame of the state machine; returns whether the run state changed.
+s32 WiFiNetwork::fn_80266CE0() {
+    u8 changed = FALSE;
     fn_8025F4E0();
-    switch ((u32)F32(p, 0x3c38)) {
-    case 0: fn_80264718(p); break;
-    case 1: fn_80264764(p); break;
-    case 2: fn_80264790(p); break;
-    case 3: fn_802648B4(p); break;
-    case 4: fn_80264A70(p); break;
-    case 5: fn_802651B0(p); break;
-    case 6: fn_80265784(p); break;
-    case 7: fn_802657D8(p); break;
-    case 8: fn_80266118(p); break;
-    case 9: fn_80266068(p); break;
-    case 10: fn_80266274(p); break;
-    case 11: fn_80266550(p); break;
-    case 12: fn_80266784(p); break;
-    case 13: fn_802668B0(p); break;
-    case 14: fn_80266B80(p); break;
-    case 15: fn_80266BDC(p); break;
-    case 16: fn_80266BEC(p); break;
+    switch ((u32)mRunState) {
+        case WIFINETWORK_RUNSTATE_INIT:            fn_80264718(); break;
+        case WIFINETWORK_RUNSTATE_START:           fn_80264764(); break;
+        case WIFINETWORK_RUNSTATE_CONNECT:         fn_80264790(); break;
+        case WIFINETWORK_RUNSTATE_CONNECT_HOOK:    fn_802648B4(); break;
+        case WIFINETWORK_RUNSTATE_LOGIN:           fn_80264A70(); break;
+        case WIFINETWORK_RUNSTATE_LOGIN_HOOK:      fn_802651B0(); break;
+        case WIFINETWORK_RUNSTATE_ONLINE_HOOK:     fn_80265784(); break;
+        case WIFINETWORK_RUNSTATE_ONLINE:          fn_802657D8(); break;
+        case WIFINETWORK_RUNSTATE_CLIENT:          fn_80266118(); break;
+        case WIFINETWORK_RUNSTATE_SERVER:          fn_80266068(); break;
+        case WIFINETWORK_RUNSTATE_PEER:            fn_80266274(); break;
+        case WIFINETWORK_RUNSTATE_MATCHING:        fn_80266550(); break;
+        case WIFINETWORK_RUNSTATE_MATCHED_HOOK:    fn_80266784(); break;
+        case WIFINETWORK_RUNSTATE_MATCHED:         fn_802668B0(); break;
+        case WIFINETWORK_RUNSTATE_DISCONNECT_HOOK: fn_80266B80(); break;
+        case WIFINETWORK_RUNSTATE_DISCONNECT:      fn_80266BDC(); break;
+        case WIFINETWORK_RUNSTATE_ERROR:           fn_80266BEC(); break;
     }
-    if (F32(p, 0x3c78) && ((WifiVObj *)p)->v06()) {
-        if (F32(p, 0x3c78) <= 1) {
-            fn_80265714(p);
-            F32(p, 0x3c78) = 0;
+    if (_3C78 && fn_80264504()) {
+        if (_3C78 <= 1) {
+            fn_80265714();
+            _3C78 = 0;
         } else {
-            F32(p, 0x3c78)--;
+            _3C78--;
         }
     }
-    if (F32(p, 0x3c38) == 16) {
-    } else if (((WifiVObj *)p)->v15()) {
-        F32(p, 0x3c44) = F32(p, 0x3c38);
-        F32(p, 0x3c48) = F32(p, 0x3c40);
-        F32(p, 0x3c54) = 1;
-        fn_8026461C(p, 16);
+    if (mRunState != WIFINETWORK_RUNSTATE_ERROR && fn_80266F44()) {
+        _3C44 = mRunState;
+        _3C48 = _3C40;
+        _3C54 = 1;
+        fn_8026461C(WIFINETWORK_RUNSTATE_ERROR);
     }
-    if (F32(p, 0x3c3c) != F32(p, 0x3c38)) {
-        changed = 1;
-        F32(p, 0x3c3c) = F32(p, 0x3c38);
-        F32(p, 0x3388)++;
+    if (mPrevRunState != mRunState) {
+        changed = TRUE;
+        mPrevRunState = mRunState;
+        _3388++;
     }
-    if (((WifiVObj *)p)->v06()) fn_8025CACC();
+    if (fn_80264504()) {
+        fn_8025CACC();
+    }
     return changed;
 }
-#pragma dont_inline reset
 
+// TODO Takes the pending error flag; returns -1 when none, otherwise whether the error is light.
+s32 WiFiNetwork::fn_80266EE8() {
+    s32 code;
+    s32 type;
+    if (_3C54 == 0) {
+        return -1;
+    }
+    _3C54 = 0;
+    fn_8031C4A4(&code, &type);
+    return type == 1;
+}
+
+// TODO Sets the error code reported by fn_802640DC.
+void WiFiNetwork::fn_80266F3C(u32 v) {
+    _3D18 = v;
+}
+
+// TODO Current error, 5 when an error code was set by fn_80266F3C.
+s32 WiFiNetwork::fn_80266F44() {
+    s32 code;
+    if (_3D18) {
+        return 5;
+    }
+    return fn_8031C48C(&code);
+}
+
+// TODO Current error code as a positive number.
+s32 WiFiNetwork::fn_80266F7C() {
+    s32 code;
+    if (_3D18) {
+        return -_3D18;
+    }
+    fn_8031C48C(&code);
+    return -code;
+}
+
+// TODO Clears the error code set by fn_80266F3C.
+void WiFiNetwork::fn_80266FBC() {
+    _3D18 = 0;
+}
+
+// TODO Clears the DWC error and the error code.
+void WiFiNetwork::fn_80266FC8() {
+    fn_8031C550();
+    fn_80266FBC();
+}
+
+// TODO Whether the current error is fatal.
+s32 WiFiNetwork::fn_80266FFC() {
+    s32 code;
+    s32 type;
+    fn_8031C4A4(&code, &type);
+    return type == 7;
+}
+
+// TODO Change counter, incremented on every state change and friend update.
+s32 WiFiNetwork::fn_80267034() {
+    return _3388;
+}
+
+// TODO Own connection index.
+u32 WiFiNetwork::fn_8026703C() {
+    if (_66A0) {
+        if (fn_802645C4()) {
+            return (u16)fn_8031E08C();
+        }
+        return 0;
+    }
+    return (u8)fn_80322BF8();
+}
+
+// TODO Number of connected players.
+s32 WiFiNetwork::fn_80267098() {
+    if (_66A0) {
+        if (lbl_8063FA10 && fn_802645C4()) {
+            return 2;
+        }
+        return 1;
+    }
+    return fn_80322B9C();
+}
+
+// TODO Largest packet size.
+u16 WiFiNetwork::fn_802670F8() {
+    return 1020;
+}
+
+// TODO Sends data to player idx; returns the size sent or an error.
+s32 WiFiNetwork::fn_80267100(void *data, u32 size, u8 idx) {
+    if (fn_802645C4() == 0) {
+        return -1;
+    }
+    if (size > fn_802670F8()) {
+        return -1;
+    }
+    if (fn_8026725C(idx) == 0) {
+        return -1;
+    }
+    s32 r = fn_8025ECF8(this, data, size, 1, idx);
+    if (r < 0) {
+        size = r;
+    }
+    return size;
+}
+
+// TODO Closes the connection with player idx.
+s32 WiFiNetwork::fn_802671E4(u32 idx) {
+    if (fn_8026725C(idx) == 0) {
+        return -1;
+    }
+    if (_66A0) {
+        _3C58 = 1;
+        return 0;
+    }
+    return fn_80322A70(idx);
+}
+
+// TODO Whether player idx is connected.
+s32 WiFiNetwork::fn_8026725C(s32 idx) {
+    if (fn_802645C4() == 0) {
+        return 0;
+    }
+    if (_66A0) {
+        return idx < _3C88;
+    }
+    return fn_80322DC8(idx);
+}
+
+// TODO Always returns -1.
+s32 WiFiNetwork::fn_802672E0() {
+    return -1;
+}
+
+// TODO Clears the send queue, the friend data and the known keys.
+void WiFiNetwork::fn_802672E8() {
+    fn_8025EE18(this);
+    fn_802650EC();
+    fn_802649C8();
+}
+
+// TODO Releases the data set by fn_8025CAA8 and clears the send queue and the friend data.
+void WiFiNetwork::fn_80267324() {
+    if (_66A4) {
+        fn_8025CC38();
+        _66A4 = 0;
+    }
+    fn_8025EE18(this);
+    fn_802650EC();
+}
+
+// TODO Empty.
+void fn_80267374() {}
+
+// TODO Clears the send queue and the DWC status data.
+void WiFiNetwork::fn_80267378() {
+    fn_8025EE18(this);
+    if (_66A0 == 0) {
+        fn_8032432C();
+    }
+}
+
+// TODO Empty.
+void fn_802673B4() {}
+
+// TODO Empty.
+void WiFiNetwork::fn_802673B8() {}
+
+// TODO Sends a request with a value between 0 and 6 while online.
+s32 WiFiNetwork::fn_802673BC(s32 a, s32 b) {
+    if (b < 0 || b > 6) {
+        return -1;
+    }
+    if (a == 0) {
+        return -1;
+    }
+    if (fn_80264504() == 0) {
+        return -3;
+    }
+    if (fn_8025CC48() == 0) {
+        return -2;
+    }
+    fn_8025CCA4(a, b);
+    return 0;
+}
+
+// TODO Reads the answer to the request sent by fn_802673BC.
+s32 WiFiNetwork::fn_8026745C(s32 *out) {
+    if (fn_8025CC48() == 0) {
+        return 0;
+    }
+    s32 r = fn_8025CC94();
+    if (r >= 0) {
+        *out = r;
+        r = 1;
+    }
+    return r;
 }
