@@ -2,6 +2,8 @@
 
 #include "gs/GSmem.hpp"
 
+#include <string.h>
+
 #include "common.hpp"
 
 extern "C" {
@@ -9,6 +11,8 @@ extern "C" {
 /* lbl_803FD8C8 */ extern s16 lbl_803FD8C8[10];
 extern f32 lbl_8063F8D8;
 extern u8 lbl_8063F8CE;
+extern u8 lbl_8063F8D6;
+extern u8 lbl_8063D9B8;
 extern s16 *lbl_8063F8D0;
 extern s16 lbl_8063F8D4;
 
@@ -165,15 +169,68 @@ u32 fn_8024B440(Unk80249D38 *obj, u32 value) {
     return 0;
 }
 
-void fn_8024B4B0(void) {
-    fn_8024BB74();
+// TODO role: forwards to fn_8024BB74
+BOOL fn_8024B4B0(Unk80249D38 *obj, u32 value) {
+    return fn_8024BB74(obj, value);
 }
 
-void fn_8024C42C(void) {}
-void fn_8024C430(void) {}
-void fn_8024C434(void) {}
-void fn_8024C438(void) {}
-void fn_8024C43C(void) {}
+// TODO role: 1 when one of the eight tracks has the argument in its member at 0x04
+BOOL fn_8024BB74(Unk80249D38 *obj, u32 value) {
+    for (s32 i = 0; i < 8; i++) {
+        if (obj->_64F94[i]._04 == value) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+// TODO role: updates the eight tracks, then clears the buffer selected by the member at 0x08 and flips it
+void fn_8024BC58(Unk80249D38 *obj) {
+    if (lbl_8063F8D6 == 0) {
+        return;
+    }
+    if (lbl_8063D9B8 != 0) {
+        if (obj->_64DC8 != 0) {
+            fn_8024FC4C(obj);
+        }
+        lbl_8063D9B8 = 0;
+    }
+    for (u32 i = 0; i < 8; i++) {
+        if (obj->_64F94[i]._04 == 0) {
+            continue;
+        }
+        Unk8015AAF0 *track = &obj->_64F94[i];
+        switch (obj->_64F94[i]._98) {
+            case 1:  fn_8024C19C(obj, i); break;
+            case 2:  fn_8024C42C(obj, i); break;
+            case 3:  fn_8024C430(obj, i); break;
+            case 4:  fn_8024C434(obj, i); break;
+            case 5:  fn_8024C438(obj, i); break;
+            case 6:  fn_8024C43C(obj, i); break;
+            default: fn_8024BED0(obj, i); break;
+        }
+        fn_8024BEA4(obj, track);
+        fn_8024C504(obj, track);
+        if (obj->_64F94[i]._64 == 0) {
+            obj->_64F94[i]._04 = 0;
+            fn_8024C440(obj, track);
+        }
+    }
+    for (s32 j = 0; j < 256; j++) {
+        if (obj->_C0C[j] == 0) {
+            obj->_0C[j][obj->_08] = 0;
+        }
+    }
+    memset(obj->_C0C, 0, 256);
+    obj->_08 ^= 1;
+}
+
+// TODO role: empty handlers selected by the type byte of a track in fn_8024BC58
+void fn_8024C42C(Unk80249D38 *, u32) {}
+void fn_8024C430(Unk80249D38 *, u32) {}
+void fn_8024C434(Unk80249D38 *, u32) {}
+void fn_8024C438(Unk80249D38 *, u32) {}
+void fn_8024C43C(Unk80249D38 *, u32) {}
 
 // TODO role: frees the eight child tracks of a track, recursively
 void fn_8024C440(Unk80249D38 *obj, Unk8015AAF0 *track) {
@@ -261,8 +318,12 @@ void fn_802502C8(void) {
     fn_8024B3D4(&lbl_80497FEC);
 }
 
-void fn_802502D4(u32 a) {
-    fn_8024B440(&lbl_80497FEC, a);
+u32 fn_802502D4(u32 value) {
+    return fn_8024B440(&lbl_80497FEC, value);
+}
+
+BOOL fn_802502E4(u32 value) {
+    return fn_8024B4B0(&lbl_80497FEC, value);
 }
 
 void fn_8025032C(Unk8015AAF0 *track) {
