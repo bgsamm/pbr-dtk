@@ -290,10 +290,10 @@ void fn_803D9844(u32);
 u16 fn_803D9848();
 void fn_803D9850(void *);
 void fn_803D9854(int);
-void fn_803D9858();
+void fn_803D9858(int, int);
 BOOL fn_803D985C();
-BOOL fn_803D9864();
-void fn_803D986C();
+BOOL fn_803D9864(int);
+void fn_803D986C(int);
 BOOL fn_803D9870();
 
 u8 App_PixelCount(s16 cur, s16 max, s32 maxPixels);

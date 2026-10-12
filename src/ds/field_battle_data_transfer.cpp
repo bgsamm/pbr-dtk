@@ -17,13 +17,13 @@ FieldBattleDTO *FieldBattleDTO_New(u32 heapId, u32 battleType, u32 arg2, u32 arg
     s32 i;
     memset(dto, 0, sizeof(FieldBattleDTO));
     dto->battleType = battleType;
-    dto->_16C = 0;
+    dto->battleStatusMask = 0;
     dto->resultMask = 0;
-    dto->_130 = 0;
-    dto->_134 = arg4;
-    dto->_174 = arg3;
-    dto->_140 = 0;
-    dto->_154 = arg2;
+    dto->background = 0;
+    dto->terrain = arg4;
+    dto->rulesetMask = arg3;
+    dto->timeOfDay = 0;
+    dto->fieldWeather = arg2;
     for (i = 0; i < MAX_BATTLERS; i++) {
         dto->parties[i] = Party_New(heapId);
     }
@@ -31,7 +31,7 @@ FieldBattleDTO *FieldBattleDTO_New(u32 heapId, u32 battleType, u32 arg2, u32 arg
         dto->trainerInfo[i] = TrainerInfo_New(heapId);
     }
     dto->bag = Bag_New(heapId);
-    dto->_F0 = 0;
-    dto->_EC = 0;
+    dto->pokedex = 0;
+    dto->bagCursor = 0;
     return dto;
 }

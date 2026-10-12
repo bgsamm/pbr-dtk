@@ -14,13 +14,24 @@ BOOL Trainer_LoadParty(u32 trainerID, void *trainerParty);
 struct TrainerHeader {
     /* 0x0 */ u8 monDataType;
     /* 0x1 */ u8 trainerType;
-    /* 0x2 */ u8 unk2[0x12];
+    /* 0x2 */ u8 sprite;
+    /* 0x3 */ u8 partySize;
+    /* 0x4 */ u16 items[4];
+    /* 0xC */ u32 aiMask;
+    /* 0x10 */ u32 battleType;
 };
 
-// Only the fields used so far (pokeplatinum Trainer).
+// pokeplatinum Trainer with the TrainerHeader fields in line: Battle_Main copies them one by one.
 // size: 0x2C (stride of BattleSystem::trainers)
 struct Trainer {
-    /* 0x0 */ TrainerHeader header;
+    /* 0x0 */ u8 monDataType;
+    /* 0x1 */ u8 trainerType;
+    /* 0x2 */ u8 sprite;
+    /* 0x3 */ u8 partySize;
+    /* 0x4 */ u16 items[4];
+    /* 0xC */ u32 aiMask;
+    /* 0x10 */ u32 battleType;
     /* 0x14 */ u16 name[8];
-    /* 0x24 */ u8 unk24[0x8];
+    /* 0x24 */ u32 unk24;
+    /* 0x28 */ u32 unk28;
 };

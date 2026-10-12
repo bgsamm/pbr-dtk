@@ -28,7 +28,7 @@ Unk80035CB0 *fn_80035D9C();
 void fn_80035E60(Unk80035CB0 *config, u32 enable);
 void fn_80035E70(Unk80035CB0 *config, u32 mode);
 s32 fn_803AC830();
-u32 fn_803AB534();
+BOOL fn_803AB534(ApplicationManager *appMan, s32 *state);
 
 u16 fn_8038FD44(u8 **file, s32 item);
 u8 fn_8038FD78(u8 **file, s32 item);
@@ -294,17 +294,20 @@ void fn_803D9850(void *) {}
 // TODO probably Overlay_UnloadByID (pret)
 void fn_803D9854(int) {}
 
-void fn_803D9858() {}
+// TODO probably Overlay_LoadByID (pret)
+void fn_803D9858(int, int) {}
 
 BOOL fn_803D985C() {
     return FALSE;
 }
 
-BOOL fn_803D9864() {
+// TODO probably CommTiming_IsSyncState (pret)
+BOOL fn_803D9864(int) {
     return TRUE;
 }
 
-void fn_803D986C() {}
+// TODO probably CommTiming_StartSync (pret)
+void fn_803D986C(int) {}
 
 BOOL fn_803D9870() {
     return FALSE;
@@ -443,7 +446,7 @@ static BOOL fn_803D9CE4(ApplicationManager *appMan, s32 *state) {
 }
 
 static BOOL fn_803D9CEC(ApplicationManager *appMan, s32 *state) {
-    return fn_803AB534() != 0;
+    return fn_803AB534(appMan, state) != 0;
 }
 
 static BOOL fn_803D9D14(ApplicationManager *appMan, s32 *state) {

@@ -26,6 +26,8 @@
 #define BATTLE_TYPE_UNK_16 (1 << 16)
 // TODO Battle type flag only this game has; with it, all the battlers are controlled by the AI.
 #define BATTLE_TYPE_UNK_17 (1 << 17)
+// TODO Battle type flag only this game has; with it, Battle_Main leaves the battle uninitialized.
+#define BATTLE_TYPE_UNK_18 (1 << 18)
 // TODO Battle type flag only this game has; with it, BattleMessage_CheckSide replaces some messages.
 #define BATTLE_TYPE_UNK_19 (1 << 19)
 #define BATTLE_TYPE_2vs2_TAG (BATTLE_TYPE_2vs2 | BATTLE_TYPE_TAG)
@@ -158,6 +160,7 @@
 #define BATTLER_ENEMY_2 3
 #define BATTLER_NONE 0xFF
 #define BATTLER_PLAYER_1 0
+#define BATTLER_ENEMY_1 1
 #define BATTLER_PLAYER_2 2
 #define BATTLER_STATUS_SWITCHING 1
 #define BATTLE_ACTION_PICK_COMMAND 0

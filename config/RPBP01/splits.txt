@@ -1981,6 +1981,9 @@ src/ds/battle/battle_display.cpp:
 
 src/ds/battle/battle_main.cpp:
 	.text       start:0x803AB534 end:0x803AC820
+	.rodata     start:0x80405158 end:0x80405168
+	.data       start:0x804730A8 end:0x804730E8
+	.sdata2     start:0x80642FD0 end:0x80642FE8
 
 src/ds/battle/battle_system.cpp:
 	.text       start:0x803AC820 end:0x803AF444

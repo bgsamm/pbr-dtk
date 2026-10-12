@@ -332,7 +332,7 @@ void BattleController_EmitSetTrainerEncounter(BattleSystem *battleSys, int battl
     TrainerEncounterMessage message;
 
     message.command = BATTLE_COMMAND_SET_TRAINER_ENCOUNTER;
-    message.trainerType = battleSys->trainers[battler].header.trainerType;
+    message.trainerType = battleSys->trainers[battler].trainerType;
     message.unread = battleSys->unwritten[battler];
 
     SendMessage(battleSys, COMM_RECIPIENT_CLIENT, battler, &message, sizeof(TrainerEncounterMessage));
@@ -357,7 +357,7 @@ void BattleController_EmitSlideTrainerIn(BattleSystem *battleSys, int battler, i
     TrainerSlideInMessage message;
 
     message.command = BATTLE_COMMAND_SLIDE_TRAINER_IN;
-    message.trainerType = battleSys->trainers[battler].header.trainerType;
+    message.trainerType = battleSys->trainers[battler].trainerType;
     message.unread = battleSys->unwritten[battler];
     message.posIn = posIn;
 
