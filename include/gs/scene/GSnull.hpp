@@ -92,6 +92,10 @@ protected:
     bool fn_801F3C7C();
 
 public:
+    const GSvec3 &getLocalTranslation() const {
+        return mLocalTranslation;
+    }
+
     GSnull(GSnodeType type);
     GSnull(GSobject *parentObject, GSnodeData *data);
 

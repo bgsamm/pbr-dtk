@@ -2,6 +2,7 @@
 
 #include "gs/GSlinkedList.hpp"
 #include "gs/GSsceneData.hpp"
+#include "gs/scene/GScamera.hpp"
 #include "gs/scene/GShierMemObject.hpp"
 #include "gs/scene/GSlight.hpp"
 #include "gs/scene/GSmodel.hpp"
@@ -196,6 +197,17 @@ public:
 
     u16 getLightCount() const {
         return mLightCount;
+    }
+
+    GScamera *getCamera(u16 index) const {
+        u16 *lookup = mCameraLookup;
+        if (!lookup) {
+            return NULL;
+        }
+        if (index >= mCameraCount) {
+            return NULL;
+        }
+        return static_cast<GScamera *>(getNode(lookup[index]));
     }
 
     GSlight *getLight(u16 index) const {

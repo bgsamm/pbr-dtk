@@ -1,5 +1,6 @@
 #include ".unsorted/800400E8.hpp"
 
+#include ".unsorted/80032FE8.hpp"
 #include "gs/GSmath.hpp"
 #include "gs/GSrender.hpp"
 #include "gs/render/GSrenderTarget.hpp"
@@ -8,8 +9,6 @@
 #include <cmath>
 
 #include "common.hpp"
-
-class Unk80242B88;
 
 void *operator new(unsigned long);
 
@@ -23,8 +22,6 @@ GSvec3 fn_8003B674(u32 obj, u32 kind);
 f32 fn_8000739C();
 f32 fn_8003A5EC(u32 obj, int i);
 int fn_800396D4(u32 obj);
-u32 fn_80033088();
-u32 fn_80033B98(u32 a, u32 id);
 void fn_800387E0(Vec *out, u32 obj);
 void fn_80038A94(Vec *out, u32 a);
 void fn_8003989C(Vec *out, u32 a, u32 b);
@@ -33,7 +30,7 @@ void fn_8005033C(eftseq::AnimNode<f32> *s, f32 *a, f32 *b, f32 *c, u32 x, f32 f)
 void fn_80050388(eftseq::AnimNode<f32> *s);
 void fn_80050E38(eftseq::AnimNodeShake *s);
 void fn_80050E7C(eftseq::AnimNodeShake *s, u32 a, f32 *b, u32 c, u32 d, u32 e);
-void fn_80242B88(Unk80242B88 *target, u16 idx, f32 *x, f32 *y, f32 *w, f32 *h);
+void fn_80242B88(Unk80242A00 *target, u16 idx, f32 *x, f32 *y, f32 *w, f32 *h);
 void fn_8023EB58(u32, void (*)(), void (*)(), u32, u32);
 }
 
@@ -96,11 +93,6 @@ struct Unk80044554 {
     /* 0x0C */ f32 _0c;
     /* 0x10 */ f32 _10;
     /* 0x14 */ f32 _14;
-};
-
-class Unk80242B88 : public GSrenderTarget {
-public:
-    /* 0x20 */ s32 _20;
 };
 
 static inline void vcopy(Vec *d, const Vec *s) {
@@ -459,8 +451,8 @@ int fn_80040960(Unk800404A8 *c, Vec *out, Vec *in) {
     }
     rect._0 = lbl_806408B0;
     rect._4 = lbl_806408B0;
-    rect._8 = GSrender::sInstance->getRenderMode()->fbWidth;
-    rect._c = GSrender::sInstance->getRenderMode()->efbHeight;
+    rect._8 = GSrender::sInstance->mRenderMode.fbWidth;
+    rect._c = GSrender::sInstance->mRenderMode.efbHeight;
     center._0 = rect._8 * lbl_806408B8;
     center._4 = rect._c * lbl_806408B8;
     dist = safeSqrt((scr.x - center._0) * (scr.x - center._0) + (scr.y - center._4) * (scr.y - center._4));
@@ -1791,6 +1783,7 @@ int fn_80044554(Unk80040EA4 *e, Vec *in, Vec *out) {
     GSvec3 p;
     GSvec3 q;
     GSvec3 d;
+    Unk80033090 *manager;
     u32 x;
     GScamera *cam;
     f32 *proj;
@@ -1799,21 +1792,21 @@ int fn_80044554(Unk80040EA4 *e, Vec *in, Vec *out) {
     if (e->_6cc == 0) {
         return 0;
     }
-    x = fn_80033088();
-    if (x == 0) {
+    manager = fn_80033088();
+    if (manager == NULL) {
         return 0;
     }
-    x = fn_80033B98(x, e->_4b4);
+    x = fn_80033B98(manager, e->_4b4);
     if ((u16)x != 0xffff) {
-        Unk80242B88 *t = (Unk80242B88 *)GSrenderTarget::findTarget(2);
+        Unk80242A00 *t = (Unk80242A00 *)GSrenderTarget::findTarget(2);
         if (t->_20 == 1) {
             fn_80242B88(t, (u16)x, &vp._00, &vp._04, &vp._08, &vp._0c);
         }
     }
     vp._00 = lbl_806408B0;
     vp._04 = lbl_806408B0;
-    vp._08 = GSrender::sInstance->getRenderMode()->fbWidth;
-    vp._0c = GSrender::sInstance->getRenderMode()->efbHeight;
+    vp._08 = GSrender::sInstance->mRenderMode.fbWidth;
+    vp._0c = GSrender::sInstance->mRenderMode.efbHeight;
     vp._10 = lbl_806408B0;
     vp._14 = lbl_806408BC;
     cam = e->_6cc;
