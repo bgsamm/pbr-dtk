@@ -486,9 +486,13 @@ void GSvideo::fn_8023FE30(bool param1) {
     }
 
     if (mRenderMode.field_rendering) {
-        GXSetViewportJitter(
-            _a8.fval + var1, _ac.fval + var2, mViewportWidth.fval, mViewportHeight.fval, _b8.fval, _bc.fval, mNextField
-        );
+        GXSetViewportJitter(_a8.fval + var1,
+                            _ac.fval + var2,
+                            mViewportWidth.fval,
+                            mViewportHeight.fval,
+                            _b8.fval,
+                            _bc.fval,
+                            mNextField);
     } else {
         GXSetViewport(_a8.fval + var1, _ac.fval + var2, mViewportWidth.fval, mViewportHeight.fval, _b8.fval, _bc.fval);
     }
