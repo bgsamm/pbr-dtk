@@ -852,6 +852,7 @@ src/gs/scene/GSvolumeNode.cpp:
 src/.unsorted/801E07E8.cpp:
 	.text       start:0x801E07E8 end:0x801E0810
 	.ctors      start:0x803E2068 end:0x803E206C
+	.sbss       start:0x8063F368 end:0x8063F370
 
 src/.unsorted/801E0810.cpp:
 	.text       start:0x801E0810 end:0x801E0A54
@@ -1186,6 +1187,7 @@ src/gs/render/GSrenderTarget.cpp:
 src/gs/render/8023B64C.cpp:
 	.text       start:0x8023B64C end:0x8023B9F4
 	.ctors      start:0x803E2188 end:0x803E218C
+	.bss        start:0x804967A0 end:0x804967C0
 	.sbss       start:0x8063F738 end:0x8063F750
 
 src/gs/render/8023B9F4.cpp:
