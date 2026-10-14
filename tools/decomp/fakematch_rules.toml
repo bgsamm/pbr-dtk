@@ -102,3 +102,25 @@ query = '''
     type: (type_descriptor declarator: (abstract_pointer_declarator))
     value: (pointer_expression operator: "&"))) @match
 '''
+
+[[rule]]
+id = "ref-cast-assign"
+severity = "warning"
+message = "assignment to reference-cast variable"
+# e.g. `static_cast<u32 &>(x) = y`
+# tree-splitter-cpp gets C-style cast precedence wrong, which
+# is why the cast is the root for that part of the query 
+query = '''
+((assignment_expression
+  left: (call_expression
+    function: (template_function
+      name: (identifier) @_function
+      arguments: (template_argument_list
+        (type_descriptor
+          declarator: (abstract_reference_declarator)))))) @match
+  (#match? @_function "^(static|dynamic|const|reinterpret)_cast$"))
+(cast_expression
+  type: (type_descriptor
+    declarator: (abstract_reference_declarator))
+  value: (assignment_expression)) @match
+'''
