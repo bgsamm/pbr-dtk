@@ -67,7 +67,6 @@ Steps:
 | [docs/game-map.md](docs/game-map.md) | Map of `main.dol` by area (addresses, sizes, dependencies) and of the game's data files |
 | [STYLE.md](STYLE.md) | Code conventions |
 | [docs/matching-notes.md](docs/matching-notes.md) | Compiler behaviour worked out on this project |
-| [docs/open-issues.md](docs/open-issues.md) | Temporary notes on imported code that differs from the game |
 
 ## Repository layout
 
