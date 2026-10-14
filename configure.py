@@ -648,6 +648,7 @@ config.libs = [
         [
             Object(NonMatching, "mtx/mtx.c"),
             Object(NonMatching, "mtx/mtxvec.c"),
+            Object(NonMatching, "mtx/mtx44.c"),
             Object(NonMatching, "mtx/vec.c"),
         ],
     ),
@@ -1028,7 +1029,7 @@ config.libs = [
             Object(NonMatching, ".unsorted/8027738C.cpp"),
             Object(NonMatching, ".unsorted/80277498.cpp"),
             Object(NonMatching, ".unsorted/8027C5C0.cpp"),
-            Object(NonMatching, ".unsorted/8027CA50.cpp"),
+            Object(NonMatching, ".unsorted/8027CCC4.cpp"),
             Object(NonMatching, ".unsorted/8027CE24.cpp"),
             Object(NonMatching, ".unsorted/80281F38.cpp"),
             Object(NonMatching, ".unsorted/80284950.cpp"),
