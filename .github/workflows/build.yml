@@ -1,14 +1,14 @@
 name: Build
 
-# Manual only: the job needs a private build container holding the original
-# game files in /orig, and this repository does not have one yet.
 on:
+  push:
+  pull_request:
   workflow_dispatch:
 
 jobs:
   build:
-    # Private container from bgsamm/pbr-dtk; replace it with our own.
-    container: ghcr.io/bgsamm/pbr-dtk-build:main
+    # Private build container
+    container: ghcr.io/pbr-ret/pbr-decomp-build:main
 
     runs-on: ubuntu-latest
     strategy:
