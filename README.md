@@ -65,7 +65,7 @@ Steps:
 | File | Contents |
 |---|---|
 | [docs/game-map.md](docs/game-map.md) | Map of `main.dol` by area (addresses, sizes, dependencies) and of the game's data files |
-| [docs/STYLE.md](docs/STYLE.md) | Code conventions |
+| [STYLE.md](STYLE.md) | Code conventions |
 | [docs/matching-notes.md](docs/matching-notes.md) | Compiler behaviour worked out on this project |
 | [docs/open-issues.md](docs/open-issues.md) | Known gaps: unwritten functions, imported code that differs, blockers |
 
