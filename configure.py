@@ -625,6 +625,14 @@ config.libs = [
         ],
     ),
     RVLSDKLib(
+        "dsp",
+        [
+            Object(NonMatching, "dsp/dsp.c"),
+            Object(NonMatching, "dsp/dsp_debug.c"),
+            Object(NonMatching, "dsp/dsp_task.c"),
+        ],
+    ),
+    RVLSDKLib(
         "ai",
         [
             Object(NonMatching, "ai/ai.c"),
@@ -1038,6 +1046,7 @@ config.libs = [
             Object(NonMatching, ".unsorted/802959F8.cpp"),
             Object(NonMatching, ".unsorted/802973F8.cpp"),
             Object(NonMatching, ".unsorted/80297890.cpp"),
+            Object(NonMatching, ".unsorted/8029B918.cpp"),
             Object(NonMatching, ".unsorted/802A2904.cpp"),
             Object(NonMatching, ".unsorted/802A4660.cpp"),
             Object(NonMatching, ".unsorted/802AD0D4.cpp"),
