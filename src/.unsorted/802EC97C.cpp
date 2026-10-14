@@ -7,7 +7,6 @@ extern "C" {
 extern u32 lbl_8063DEC0;
 extern u32 lbl_8063DECC;
 extern u32 lbl_8064020C;
-extern u32 lbl_80640288;
 extern u8 lbl_80445BB0[];
 extern u8 lbl_8057AAB8[];
 void fn_802ED628();
@@ -37,8 +36,6 @@ u8 *fn_802FFED4(u8 *p) { return p + 0x800; }
 u8 *fn_802FFEDC(u8 *p) { return p + 0x808; }
 u8 *fn_802FFEE4(u8 *p) { return p + 0x840; }
 u8 *fn_802FFEEC(u8 *p) { return p + 0x80c; }
-u32 fn_803047CC(void) { return lbl_80640288; }
-s32 fn_8030483C(void) { return 0; }
 void fn_802F83F4(u8 *p) { *(u32 *)(p + 0x18) = 0x0; }
 void fn_802F8CB4(u8 *p) { *(u32 *)(p + 0x0) = 0x0; }
 void fn_802FAA50(u8 *p) { *(u32 *)(p + 0x348) = 0x0; }
