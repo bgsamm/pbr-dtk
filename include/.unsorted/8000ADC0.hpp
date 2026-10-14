@@ -353,7 +353,7 @@ void fn_8000D818(Unk8063E970 *p, int a, void *b, int c);
 void fn_8000D8AC(void *);
 void fn_8000DE70(Unk8063E970 *p);
 void fn_8000DEC4(Unk8063E970 *bp);
-u32 fn_8000DFC4(Unk8063E970 *p, int a, u8 b, int c, int d);
+u32 fn_8000DFC4(Unk8063E970 *p, int a, u8 b, int c, void *d);
 void fn_8000E06C(Unk8063E970 *p);
 void fn_8000E194(Unk8063E970 *p, void *x);
 void fn_8000E2C8(Unk8063E970 *p);
