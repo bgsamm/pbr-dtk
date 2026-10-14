@@ -1744,8 +1744,11 @@ libs/RVL_SDK/src/wpad/debug_msg.c:
 libs/RVL_SDK/src/euart/euart.c:
 	.text       start:0x802B38B0 end:0x802B3C20
 
-src/.unsorted/802B3C20.cpp:
-	.text       start:0x802B3C20 end:0x802E7450
+libs/RVL_SDK/src/usb/usb.c:
+	.text       start:0x802B3C20 end:0x802B4CC0
+
+src/.unsorted/802B4CC0.cpp:
+	.text       start:0x802B4CC0 end:0x802E7450
 
 libs/RVL_SDK/src/nand/nand.c:
 	.text       start:0x802E7450 end:0x802E82F4
