@@ -1,66 +1,138 @@
 #!/usr/bin/env python3
-"""Lint changes on this branch against the merge base with <base_ref>.
+"""Find fakematch constructs in game code (src/ and include/).
 
-Usage: python tools/decomp/lint.py [<base_ref>]   (default base: origin/main)
+Usage:
+  python tools/decomp/lint.py [<base_ref>]     lines added since the merge base
+                                               with <base_ref> (default: origin/main)
+  python tools/decomp/lint.py --all [<path>...]
+                                               whole files; each path is a file or a
+                                               directory (default: src include)
+  python tools/decomp/lint.py --tree <file>    print a file's syntax tree, for
+                                               writing rules
 
-Checks lines added under src/ and include/ for fakematch constructs.
+The rules live in fakematch_rules.toml, next to this script. Needs tree-sitter:
+  pip install -r tools/decomp/requirements.txt
 
-Exits 1 if any error is found.
+Exits 1 if any error is found. Warnings are reported but never fail.
 """
 
-from typing import Iterator, List, Tuple
+from collections import Counter
+from pathlib import Path
+from typing import Dict, Iterator, List, NamedTuple, Optional, Set
 import argparse
 import re
 import subprocess
 import sys
+import tomllib
+
+try:
+    from tree_sitter import Language, Node, Parser, Query, QueryCursor
+    import tree_sitter_cpp
+except ImportError:
+    sys.exit(
+        "error: lint.py needs tree-sitter: "
+        "pip install -r tools/decomp/requirements.txt"
+    )
+
+from common import ROOT
 
 PATHS = ["src", "include"]  # game code only; libs/ (SDK, runtime) is exempt
+SOURCE_SUFFIXES = {".c", ".cpp", ".cp", ".h", ".hpp", ".inc"}
+RULES_PATH = Path(__file__).with_name("fakematch_rules.toml")
 
-# (regex, label) pairs checked against each added line of code
-ERROR_PATTERNS: List[Tuple[str, str]] = []
-WARNING_PATTERNS = [
-    (r"\b(asm|__asm)\b", "inline asm"),
-    (r"#\s*pragma\b(?!\s+once)", "#pragma in source"),
-    (r"\bvolatile\b", "volatile"),
-    (r"\bregister\b", "register"),
-    (r"\bgoto\b", "goto"),
-    (r"__declspec\s*\(\s*section", "section forcing"),
-    (r"\(\s*[\w:]+\s*\*\s*\)\s*0x8[0-9A-Fa-f]{7}\b", "hard-coded address"),
-    (
-        r"\*\s*\(\s*(f32|f64|float|double|u32|s32|int)\s*\*\s*\)\s*&",
-        "type-punned dereference",
-    ),
-]
+LANGUAGE = Language(tree_sitter_cpp.language())
+PARSER = Parser(LANGUAGE)
 
 
-class LintResults:
-    """Prints problems as they are found, and counts them."""
-
-    def __init__(self) -> None:
-        self.error_count = 0
-        self.warning_count = 0
-
-    def add_error(self, location: str, message: str) -> None:
-        print(f"ERROR {location}: {message}")
-        self.error_count += 1
-
-    def add_warning(self, location: str, message: str) -> None:
-        print(f"WARN  {location}: {message}")
-        self.warning_count += 1
+class Rule(NamedTuple):
+    id: str
+    severity: str  # "error" or "warning"
+    message: str
+    query: Query
 
 
-def run_git(*args: str) -> str:
-    result = subprocess.run(["git", *args], capture_output=True, text=True, check=True)
-    return result.stdout
+class Finding(NamedTuple):
+    path: str  # relative to the repo root, e.g. "src/gs/GSmem.cpp"
+    line_number: int
+    rule: Rule
+    code: str  # the line the construct starts on
 
 
 # --------------------------------------------------------------------------
-# Fakematch constructs in added source lines
+# Rules
 
 
-def mark_new_files_as_intended() -> None:
-    """Make untracked files under PATHS show up in `git diff`."""
-    subprocess.run(["git", "add", "--intent-to-add", *PATHS], check=True)
+class Rules(NamedTuple):
+    rules: List[Rule]
+    blank_macros: List[str]
+
+
+def load_rules() -> Rules:
+    config = tomllib.loads(RULES_PATH.read_text(encoding="utf-8"))
+    rules = []
+    for entry in config["rule"]:
+        if entry["severity"] not in ("error", "warning"):
+            sys.exit(f"error: rule {entry['id']}: unknown severity {entry['severity']!r}")
+        try:
+            query = Query(LANGUAGE, entry["query"])
+        except Exception as error:
+            sys.exit(f"error: rule {entry['id']}: bad query: {error}")
+        rules.append(Rule(entry["id"], entry["severity"], entry["message"], query))
+    return Rules(rules, config.get("blank_macros", []))
+
+
+# --------------------------------------------------------------------------
+# Finding fakematches in a file
+
+
+def blank_out_macros(source: bytes, macros: List[str]) -> bytes:
+    """Replace the given macros with spaces, so every line and column stays
+    where it was."""
+    for macro in macros:
+        pattern = rb"\b" + re.escape(macro.encode()) + rb"\b"
+        source = re.sub(pattern, lambda match: b" " * len(match.group()), source)
+    return source
+
+
+def get_line_number(source: bytes, node: Node) -> int:
+    """The line the node starts on. (Not via node.start_point: with
+    tree-sitter 0.26 on Python 3.14, discarding a Point can crash Python.)"""
+    return source.count(b"\n", 0, node.start_byte) + 1
+
+
+def find_fakematches(path: str, rules: Rules) -> List[Finding]:
+    """Every fakematch in the file at `path` (relative to the repo root),
+    at most one per rule per line."""
+    source = (ROOT / path).read_bytes()
+    lines = source.split(b"\n")
+    tree = PARSER.parse(blank_out_macros(source, rules.blank_macros))
+
+    findings = []
+    for rule in rules.rules:
+        captures = QueryCursor(rule.query).captures(tree.root_node)
+        line_numbers = {
+            get_line_number(source, node) for node in captures.get("match", [])
+        }
+        for line_number in sorted(line_numbers):
+            code = lines[line_number - 1].decode("utf-8", "replace").strip()
+            findings.append(Finding(path, line_number, rule, code))
+    findings.sort(key=lambda finding: finding.line_number)
+    return findings
+
+
+# --------------------------------------------------------------------------
+# Which files and lines to check
+
+
+def run_git(*args: str) -> str:
+    result = subprocess.run(
+        ["git", *args], cwd=ROOT, capture_output=True, text=True, check=True
+    )
+    return result.stdout
+
+
+def is_source(path: str) -> bool:
+    return Path(path).suffix in SOURCE_SUFFIXES
 
 
 def find_merge_base(base: str) -> str:
@@ -73,10 +145,12 @@ def find_merge_base(base: str) -> str:
         )
 
 
-def iter_added_lines(merge_base: str) -> Iterator[Tuple[str, int, str]]:
-    """(path, line number, text) for each line added since the merge base."""
-    diff = run_git("diff", "--unified=0", merge_base, "--", *PATHS)
+def get_added_lines(merge_base: str) -> Dict[str, Set[int]]:
+    """Line numbers added since the merge base (including untracked files), by
+    path."""
+    added: Dict[str, Set[int]] = {}
 
+    diff = run_git("diff", "--unified=0", merge_base, "--", *PATHS)
     path = None
     line_number = 0
     for line in diff.splitlines():
@@ -88,41 +162,106 @@ def iter_added_lines(merge_base: str) -> Iterator[Tuple[str, int, str]]:
             match = re.search(r"\+(\d+)", line)
             line_number = int(match.group(1)) if match else 0
         elif line.startswith("+") and path:
-            # e.g. `+#include "common.hpp"`
-            yield path, line_number, line[1:]
+            added.setdefault(path, set()).add(line_number)
             line_number += 1
 
+    untracked = run_git("ls-files", "--others", "--exclude-standard", "--", *PATHS)
+    for path in untracked.splitlines():
+        line_count = len((ROOT / path).read_bytes().splitlines())
+        added[path] = set(range(1, line_count + 1))
 
-def lint_fakematches(merge_base: str, results: LintResults) -> None:
-    mark_new_files_as_intended()
-    for path, line_number, text in iter_added_lines(merge_base):
-        location = f"{path}:{line_number}"
-        code = text.split("//", 1)[0]
-        for pattern, label in ERROR_PATTERNS:
-            if re.search(pattern, code):
-                results.add_error(location, f"{label}: {code.strip()}")
-        for pattern, label in WARNING_PATTERNS:
-            if re.search(pattern, code):
-                results.add_warning(location, f"{label}: {code.strip()}")
+    return {path: lines for path, lines in added.items() if is_source(path)}
+
+
+def iter_source_files(paths: List[str]) -> Iterator[str]:
+    """Source files under the given files and directories, relative to the
+    repo root."""
+    for given in paths:
+        path = Path(given).resolve()
+        if not path.exists():
+            sys.exit(f"error: {given} doesn't exist")
+        if not path.is_relative_to(ROOT):
+            sys.exit(f"error: {given} isn't in the repository")
+        files = sorted(path.rglob("*")) if path.is_dir() else [path]
+        for file in files:
+            if file.is_file() and is_source(file.name):
+                yield file.relative_to(ROOT).as_posix()
 
 
 # --------------------------------------------------------------------------
+# Output
+
+
+def report(findings: List[Finding]) -> int:
+    """Print the findings and a summary; return the exit code."""
+    for finding in findings:
+        label = "ERROR" if finding.rule.severity == "error" else "WARN "
+        code = finding.code if len(finding.code) <= 100 else finding.code[:97] + "..."
+        print(
+            f"{label} {finding.path}:{finding.line_number}: "
+            f"{finding.rule.message} [{finding.rule.id}]: {code}"
+        )
+
+    error_count = sum(finding.rule.severity == "error" for finding in findings)
+    warning_count = len(findings) - error_count
+    print(f"{error_count} error(s), {warning_count} warning(s)")
+    for rule_id, count in Counter(finding.rule.id for finding in findings).most_common():
+        print(f"  {rule_id}: {count}")
+    return 1 if error_count else 0
+
+
+def print_tree(path: str, rules: Rules) -> None:
+    """Print each node as `field: type  line: text`, indented by depth."""
+    source = Path(path).read_bytes()
+    tree = PARSER.parse(blank_out_macros(source, rules.blank_macros))
+
+    def walk(node: Node, depth: int, field: Optional[str]) -> None:
+        kind = node.type if node.is_named else repr(node.type)
+        label = f"{field}: {kind}" if field else kind
+        text = source[node.start_byte : node.end_byte].split(b"\n", 1)[0]
+        text = text.decode("utf-8", "replace").strip()[:60]
+        line_number = get_line_number(source, node)
+        print(f"{'  ' * depth}{label}  {line_number}: {text}")
+        for index, child in enumerate(node.children):
+            walk(child, depth + 1, node.field_name_for_child(index))
+
+    walk(tree.root_node, 0, None)
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--all", action="store_true", help="check whole files")
+    mode.add_argument("--tree", metavar="FILE", help="print a file's syntax tree")
     parser.add_argument(
-        "base", nargs="?", default="origin/main", help="base ref (default: origin/main)"
+        "paths",
+        nargs="*",
+        metavar="base_ref | path",
+        help="base ref (default: origin/main), or with --all, files and directories",
     )
     args = parser.parse_args()
+    rules = load_rules()
 
-    merge_base = find_merge_base(args.base)
-    results = LintResults()
-    lint_fakematches(merge_base, results)
-    print(f"{results.error_count} error(s), {results.warning_count} warning(s)")
-    return 1 if results.error_count else 0
+    if args.tree:
+        print_tree(args.tree, rules)
+        return 0
+
+    findings: List[Finding] = []
+    if args.all:
+        for path in iter_source_files(args.paths or [str(ROOT / p) for p in PATHS]):
+            findings += find_fakematches(path, rules)
+    else:
+        if len(args.paths) > 1:
+            parser.error("expected at most one base ref (did you mean --all?)")
+        merge_base = find_merge_base(args.paths[0] if args.paths else "origin/main")
+        for path, added_lines in sorted(get_added_lines(merge_base).items()):
+            for finding in find_fakematches(path, rules):
+                if finding.line_number in added_lines:
+                    findings.append(finding)
+
+    return report(findings)
 
 
 if __name__ == "__main__":

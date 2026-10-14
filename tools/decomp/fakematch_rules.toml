@@ -1,0 +1,104 @@
+# Fakematch rules for lint.py.
+#
+# Each rule is a tree-sitter query over the C++ syntax tree. The node captured
+# as @match is reported at the line it starts on. Captures starting with an
+# underscore (e.g. @_name) can be used in predicates such as #eq? and #match?.
+#
+# severity: "error"   - never allowed
+#           "warning" - allowed, but worth a second look
+#
+# To see how a snippet parses, run `python tools/decomp/lint.py --tree <file>`,
+# or use the playground on the tree-sitter website (language: C++).
+
+# Macros the parser can't make sense of. lint.py replaces them with spaces in
+# its own copy of each file before parsing; the source itself is untouched.
+blank_macros = ["NO_INLINE"]
+
+[[rule]]
+id = "inline-asm"
+severity = "warning"
+message = "inline asm"
+# CodeWarrior's `asm { ... }` and `asm void f()` don't parse, so they show up
+# as ERROR nodes starting with `asm`.
+query = '''
+(gnu_asm_expression) @match
+((ERROR) @match (#match? @match "^(__)?asm\\b"))
+'''
+
+[[rule]]
+id = "pragma"
+severity = "warning"
+message = "#pragma in source"
+query = '''
+((preproc_call directive: (preproc_directive) @_directive) @match
+  (#match? @_directive "^#\\s*pragma$")
+  (#not-match? @match "^#\\s*pragma\\s+once\\b"))
+'''
+
+[[rule]]
+id = "volatile"
+severity = "warning"
+message = "volatile"
+query = '((type_qualifier) @match (#eq? @match "volatile"))'
+
+[[rule]]
+id = "register"
+severity = "warning"
+message = "register"
+query = '((storage_class_specifier) @match (#eq? @match "register"))'
+
+[[rule]]
+id = "goto"
+severity = "warning"
+message = "goto"
+query = "(goto_statement) @match"
+
+[[rule]]
+id = "section-forcing"
+severity = "error"
+message = "section forcing"
+# __declspec(section ".x") often doesn't parse, so it can be an ERROR node too.
+# (Wildcards like `(_ ...)` don't match ERROR nodes; they have to be named.)
+query = '''
+((ms_declspec_modifier (identifier) @_kind) @match
+  (#eq? @_kind "section"))
+((ERROR "__declspec" . "(" . (identifier) @_kind) @match
+  (#eq? @_kind "section"))
+'''
+
+[[rule]]
+id = "game-address"
+severity = "error"
+message = "hard-coded game address"
+# e.g. `(u32*)0x80001234`: MEM1 is 0x80000000-0x817FFFFF
+query = '''
+((cast_expression
+   type: (type_descriptor declarator: (abstract_pointer_declarator))
+   value: (number_literal) @_address) @match
+  (#match? @_address "^0[xX]8[01][0-9A-Fa-f]{6}[uUlL]*$"))
+'''
+
+[[rule]]
+id = "hardware-address"
+severity = "warning"
+message = "hard-coded address"
+# e.g. `(vu32*)0xCC008000`: uncached memory, MEM2 and hardware registers
+query = '''
+((cast_expression
+   type: (type_descriptor declarator: (abstract_pointer_declarator))
+   value: (number_literal) @_address) @match
+  (#match? @_address "^0[xX][9CDcd][0-9A-Fa-f]{7}[uUlL]*$"))
+'''
+
+[[rule]]
+id = "type-punning"
+severity = "warning"
+message = "type-punned dereference"
+# e.g. `*(f32*)&x`
+query = '''
+(pointer_expression
+  operator: "*"
+  argument: (cast_expression
+    type: (type_descriptor declarator: (abstract_pointer_declarator))
+    value: (pointer_expression operator: "&"))) @match
+'''
