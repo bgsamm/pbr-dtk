@@ -63,6 +63,8 @@ using ::sqrtf;
 
 using ::ceil;
 using ::ceilf;
+using ::floorf;
+using ::modff;
 
 using ::copysign;
 using ::copysignf;

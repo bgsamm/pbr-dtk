@@ -60,6 +60,7 @@ u16 OSGetFontEncode();
 u16 OSSetFontEncode(u16 encode);
 
 u32 OSLoadFont(OSFontHeader* fontData, void* tmp);
+BOOL OSInitFont(OSFontHeader* font); // From doldecomp/ogws (CC0)
 
 char* OSGetFontTexel(const char* string, void* image, s32 pos, s32 stride, s32* width);
 

@@ -23,7 +23,7 @@ char* __va_arg(va_list args, _va_arg_type type);
 #ifdef __MWERKS__
 #define va_start(list, arg) ((void)arg, __builtin_va_info(&list))
 #define va_end(list) ((void)list)
-#define va_arg(list, type) (*(type*)__va_arg(list, _var_arg_typeof(type)))
+#define va_arg(list, type) (*(type*)__va_arg(list, (_va_arg_type)_var_arg_typeof(type)))
 #else
 #define va_start(list, arg)
 #define va_end(list)

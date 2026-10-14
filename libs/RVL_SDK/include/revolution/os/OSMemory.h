@@ -3,6 +3,9 @@
 #ifndef REVOLUTION_OS_MEMORY_H
 #define REVOLUTION_OS_MEMORY_H
 
+// From doldecomp/ogws (CC0), include/revolution/OS/OSMemory.h
+#define OS_MEM_KB_TO_B(kb) ((kb) * 1024)
+
 #include <revolution/types.h>
 
 #ifdef __cplusplus
