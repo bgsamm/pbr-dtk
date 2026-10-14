@@ -196,6 +196,10 @@ def iter_source_files(paths: List[str]) -> Iterator[str]:
 
 def report(findings: List[Finding]) -> int:
     """Print the findings and a summary; return the exit code."""
+    if not findings:
+        print("No fakematches found.")
+        return 0
+
     for finding in findings:
         label = "ERROR" if finding.rule.severity == "error" else "WARN"
         code = finding.code if len(finding.code) <= 100 else finding.code[:97] + "..."
@@ -240,6 +244,12 @@ def main() -> int:
     mode.add_argument("--all", action="store_true", help="check whole files")
     mode.add_argument("--tree", metavar="FILE", help="print a file's syntax tree")
     parser.add_argument(
+        "--rule",
+        action="append",
+        metavar="ID",
+        help="only check this rule (can be given more than once)",
+    )
+    parser.add_argument(
         "paths",
         nargs="*",
         metavar="base_ref | path",
@@ -247,6 +257,17 @@ def main() -> int:
     )
     args = parser.parse_args()
     rules = load_rules()
+
+    if args.rule:
+        known_ids = [rule.id for rule in rules.rules]
+        unknown_ids = [rule_id for rule_id in args.rule if rule_id not in known_ids]
+        if unknown_ids:
+            parser.error(
+                f"unknown rule(s): {', '.join(unknown_ids)} "
+                f"(known: {', '.join(known_ids)})"
+            )
+        selected = [rule for rule in rules.rules if rule.id in args.rule]
+        rules = rules._replace(rules=selected)
 
     if args.tree:
         print_tree(args.tree, rules)
