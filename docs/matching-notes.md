@@ -19,6 +19,7 @@ Compiler behaviour already worked out on this project. Add to it when a unit tea
 
 ## Data and linking
 
+- Jump tables stay in the automatic data splits until a unit's data sections are split, so a function with a `switch` can show 99.8% instead of 100% until then.
 - `-str` pools identical strings. Removing a function, or making a stripped one `static`, shifts the order of strings in `.data` and breaks the data match of the whole unit.
 - Functions of an imported library that the linker stripped from the DOL stay in the source. Don't force them active.
 - File statics need `scope:local` in `symbols.txt`; several units each have a local `version` object from `common.hpp`.

@@ -8,7 +8,6 @@ Read before starting:
 - `STYLE.md`: code rules (files, naming, declarations, structures, what does not belong in finished code).
 - `docs/fakematches.md`: what counts as a fakematch and how to justify one.
 - `docs/matching-notes.md`: compiler behaviour already worked out on this project.
-- `docs/open-issues.md`: known gaps; add or remove an entry when your PR leaves or closes one.
 
 ## Scope of a change
 
