@@ -72,7 +72,9 @@ def load_rules() -> Rules:
     rules = []
     for entry in config["rule"]:
         if entry["severity"] not in ("error", "warning"):
-            sys.exit(f"error: rule {entry['id']}: unknown severity {entry['severity']!r}")
+            sys.exit(
+                f"error: rule {entry['id']}: unknown severity {entry['severity']!r}"
+            )
         try:
             query = Query(LANGUAGE, entry["query"])
         except Exception as error:
@@ -113,7 +115,7 @@ def find_fakematches(path: str, rules: Rules) -> List[Finding]:
         line_numbers = {
             get_line_number(source, node) for node in captures.get("match", [])
         }
-        for line_number in sorted(line_numbers):
+        for line_number in line_numbers:
             code = lines[line_number - 1].decode("utf-8", "replace").strip()
             findings.append(Finding(path, line_number, rule, code))
     findings.sort(key=lambda finding: finding.line_number)
@@ -195,17 +197,19 @@ def iter_source_files(paths: List[str]) -> Iterator[str]:
 def report(findings: List[Finding]) -> int:
     """Print the findings and a summary; return the exit code."""
     for finding in findings:
-        label = "ERROR" if finding.rule.severity == "error" else "WARN "
+        label = "ERROR" if finding.rule.severity == "error" else "WARN"
         code = finding.code if len(finding.code) <= 100 else finding.code[:97] + "..."
         print(
-            f"{label} {finding.path}:{finding.line_number}: "
-            f"{finding.rule.message} [{finding.rule.id}]: {code}"
+            f"{label:5} {finding.path}:{finding.line_number}: "
+            f"{finding.rule.message}: {code}"
         )
 
     error_count = sum(finding.rule.severity == "error" for finding in findings)
     warning_count = len(findings) - error_count
     print(f"{error_count} error(s), {warning_count} warning(s)")
-    for rule_id, count in Counter(finding.rule.id for finding in findings).most_common():
+    for rule_id, count in Counter(
+        finding.rule.id for finding in findings
+    ).most_common():
         print(f"  {rule_id}: {count}")
     return 1 if error_count else 0
 
