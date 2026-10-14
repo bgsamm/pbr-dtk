@@ -14,7 +14,7 @@ Format with the repository's `.clang-format`, using clang-format 23.
 ## Naming
 
 - Functions: real name when the evidence supports it (strings, symbol maps, the DS code it is ported from, behaviour).
-  When the purpose is not established yet, keep the address name (`fn_803D9778`) with a one-line `// TODO` saying what is known. Never invent a confident name.
+  When the purpose is not established yet, keep the address name (`fn_803D9778`) with a one-line `// TODO` at the definition site saying what is known. Never invent a confident name.
 - Types: `PascalCase` (`ItemData`). gs engine types are `GS` followed by `camelCase` (`GSfsys`, `GSfsysEntry`).
   Members: `mName` for classes and engine structures, plain `camelCase` for data records ported from the DS code (`price`, `holdEffect`).
   A type whose role is not established is named `Unk` plus the address of the function or object it was found from (`Unk80035CB0`).
@@ -58,8 +58,8 @@ protected:
 public:
     GSrenderModule(const char *name);
 
-    /* 0x08 */ virtual void update(f32 deltaTime);
-    /* 0x0C */ virtual void fn_80236AE0();
+    /* 0x8 */ virtual void update(f32 deltaTime);
+    /* 0xC */ virtual void fn_80236AE0();
 };
 ```
 
