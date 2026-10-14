@@ -29,6 +29,8 @@ struct Unk80226364_04 {
 struct Unk80226364 {
     /* 0x00 */ u8 unk00[4];
     /* 0x04 */ Unk80226364_04 *_04;
+    /* 0x08 */ u8 unk08[0x18];
+    /* 0x20 */ u32 _20;
     // size: unknown
 };
 
@@ -43,6 +45,7 @@ struct Unk80227558 {
 
 extern "C" {
 // TODO Replace with proper imports
+u32 fn_80226910(Unk80226364 *obj);
 u32 fn_80228B84(Unk80226364_00 *obj);
 void fn_80228CF8(Unk80226364_00 *obj);
 void fn_80227574();
