@@ -66,7 +66,8 @@ Steps:
 |---|---|
 | [docs/architecture.md](docs/architecture.md) | Map of `main.dol` by area: addresses, sizes, dependencies |
 | [docs/STYLE.md](docs/STYLE.md) | Code conventions and what makes a unit finished |
-| [docs/PROGRESS.md](docs/PROGRESS.md) | Progress log and compiler notes |
+| [docs/matching-notes.md](docs/matching-notes.md) | Compiler behaviour worked out on this project |
+| [docs/open-issues.md](docs/open-issues.md) | Known gaps: unwritten functions, imported code that differs, blockers |
 
 ## Repository layout
 
@@ -80,7 +81,7 @@ Steps:
 | `config/RPBP01/` | `splits.txt` and `symbols.txt` for [decomp-toolkit](https://github.com/encounter/decomp-toolkit) |
 | `tools/` | Build scripts and `progress.py` |
 | `ghidra_scripts/` | Imports `symbols.txt` into a Ghidra project |
-| `docs/` | Architecture map, progress log and code style |
+| `docs/` | Architecture map, code style, matching notes and open issues |
 
 ## Credits
 

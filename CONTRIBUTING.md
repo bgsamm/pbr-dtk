@@ -8,6 +8,7 @@ Read before starting:
 - `docs/STYLE.md`: code rules (files, naming, types, what does not belong in finished code, definition of done).
 - `docs/fakematches.md`: what counts as a fakematch and how to justify one.
 - `docs/matching-notes.md`: compiler behaviour already worked out on this project.
+- `docs/open-issues.md`: known gaps; add or remove an entry when your PR leaves or closes one.
 
 ## Scope of a change
 
@@ -50,7 +51,7 @@ Found in `tools/decomp/` (Python 3.12+); each has `--help`.
 - Commit messages, PR descriptions and comments describe the change only: no attribution lines, co-author trailers, links to outside tools or generated footers. No personal names, e-mail addresses or local file paths.
 - Editor, assistant and tool configuration stays out of the repository.
 - PRs are squash-merged once CI is green and the review is done.
-- Don't regenerate the README progress table in a unit PR.
+- Don't regenerate the README progress table in a unit PR. It is refreshed in an occasional small PR.
 
 ## Sign-off
 
