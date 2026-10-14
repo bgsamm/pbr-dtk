@@ -5,7 +5,7 @@ Goal: plausible original C++ that byte-matches retail. Clean C++ at 90% is bette
 Read before starting:
 
 - [STYLE.md](STYLE.md): code rules (files, naming, declarations, structures, what does not belong in finished code).
-- [docs/repo-map.md](docs/repo-map.md): how the repository is laid out.
+- [README.md](README.md#repository-layout): how the repository is laid out.
 - [docs/fakematches.md](docs/fakematches.md): what counts as a fakematch and how to justify one.
 - [docs/matching-notes.md](docs/matching-notes.md): compiler behaviour already worked out on this project.
 
