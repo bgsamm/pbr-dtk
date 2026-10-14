@@ -14,7 +14,17 @@ extern "C" {
 #define GX_VIEWPORT_SZ 6
 
 void GXSetProjection(const Mtx44 mtx, GXProjectionType type);
-void GXSetProjectionv(const f32* ptr);
+void GXSetProjectionv(const f32 *ptr);
+
+void GXProject(f32 x,
+               f32 y,
+               f32 z,
+               const Mtx mtx,
+               const f32 pm[GX_PROJECTION_SZ],
+               const f32 vp[GX_VIEWPORT_SZ],
+               f32 *sx,
+               f32 *sy,
+               f32 *sz);
 
 void GXLoadPosMtxImm(const Mtx mtx, u32 id);
 
@@ -33,7 +43,7 @@ void GXSetClipMode(GXClipMode mode);
 
 void GXSetZScaleOffset(f32 scale, f32 offset);
 
-inline void GXSetViewportv(const f32* view) {
+inline void GXSetViewportv(const f32 *view) {
     GXSetViewport(view[0], view[1], view[2], view[3], view[4], view[5]);
 }
 
@@ -41,4 +51,4 @@ inline void GXSetViewportv(const f32* view) {
 }
 #endif
 
-#endif  // REVOLUTION_GX_TRANSFORM_H
+#endif // REVOLUTION_GX_TRANSFORM_H
