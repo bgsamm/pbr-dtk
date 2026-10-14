@@ -6,7 +6,7 @@ Compiler behaviour already worked out on this project. Add to it when a unit tea
 
 - Code ported from the DS games (`src/ds/` and a few `.unsorted` units) is built with `-O4,s -inline noauto`. Set it per unit with `extra_cflags` in `configure.py`, not with `#pragma` blocks. Some menu units use the same flags.
 - Under `-O4,s -inline noauto`, loops are not unrolled, `_savegpr` is used and inline constructors stay out of line.
-- When one function inside such a unit needs different inlining, a per-function `NO_INLINE` (`include/decomp.h`) is preferred to a `#pragma dont_inline` region.
+- When one function inside such a unit needs different inlining, a per-function `NO_INLINE` (`include/decomp.h`) is preferred to a `#pragma dont_inline` region. Either one is a fakematch that needs a justification ([fakematches.md](fakematches.md)).
 
 ## Code generation
 
