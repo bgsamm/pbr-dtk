@@ -1721,10 +1721,13 @@ libs/RVL_SDK/src/ipc/memory.c:
 	.text       start:0x802A4004 end:0x802A4528
 
 libs/RVL_SDK/src/ipc/ipcProfile.c:
-	.text       start:0x802A4528 end:0x802A4660
+	.text       start:0x802A4528 end:0x802A46EC
 
-src/.unsorted/802A4660.cpp:
-	.text       start:0x802A4660 end:0x802A5B84
+libs/RVL_SDK/src/ipc/fs.c:
+	.text       start:0x802A46EC end:0x802A5B28
+
+src/.unsorted/802A5B28.cpp:
+	.text       start:0x802A5B28 end:0x802A5B84
 
 libs/RVL_SDK/src/wpad/WPAD.c:
 	.text       start:0x802A5B84 end:0x802AD0D4
