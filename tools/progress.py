@@ -14,7 +14,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPORT = os.path.join(ROOT, "build", "RPBP01", "report.json")
 README = os.path.join(ROOT, "README.md")
 
-# Areas of main.dol, see docs/architecture.md (boundaries are approximate)
+# Areas of main.dol, see docs/game-map.md (boundaries are approximate)
 AREAS = [
     ("Startup", [(0x80004000, 0x80006BC4)]),
     ("Game entry point", [(0x80006BC4, 0x80010000)]),

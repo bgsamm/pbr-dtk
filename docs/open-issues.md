@@ -24,5 +24,6 @@ Known gaps that are not obvious from `configure.py` or the objdiff report: funct
 
 ## Project-wide
 
+- Parts of `src/gs/` predate [STYLE.md](STYLE.md) (`lbl_` address comments, `_pad_NN` regions) and are to be brought in line with it.
 - Jump tables and data remain in automatic splits, so functions with a `switch` can show 99.8 % instead of 100 % until the data sections are split; units cannot be marked `Matching` before that.
 - Most matched functions outside `src/gs/` and `src/ds/DSbridge.cpp` still use placeholder names and types (`fn_`, offset access): they are scaffolding, to be rewritten unit by unit following [STYLE.md](STYLE.md).

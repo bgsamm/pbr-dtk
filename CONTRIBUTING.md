@@ -5,7 +5,7 @@ Goal: plausible original C++ that byte-matches retail. Clean C++ at 90% is bette
 Read before starting:
 
 - `docs/repo-map.md`: how the repository is laid out.
-- `docs/STYLE.md`: code rules (files, naming, types, what does not belong in finished code, definition of done).
+- `docs/STYLE.md`: code rules (files, naming, declarations, structures, what does not belong in finished code).
 - `docs/fakematches.md`: what counts as a fakematch and how to justify one.
 - `docs/matching-notes.md`: compiler behaviour already worked out on this project.
 - `docs/open-issues.md`: known gaps; add or remove an entry when your PR leaves or closes one.
@@ -39,16 +39,26 @@ Found in `tools/decomp/` (Python 3.12+); each has `--help`.
 - Before adding a type, grep `include/` and `src/` for an existing one.
 - To produce a particular asm shape, find already-matched code that emits it and reuse the C++ pattern.
 - Whole-unit compiler flags go in `configure.py` (`extra_cflags`). A local `#pragma` is allowed only with a one-line comment directly above it saying why the original plausibly looked like this.
-- A unit becomes `Matching` in `configure.py` only at 100% with no unjustified fakematch.
 - Names follow `docs/STYLE.md`: a real name only with evidence, stated in the PR; otherwise keep the placeholder.
 - Imported code keeps its credit line on the first line of each file.
 - A partial clean improvement is a good outcome: open it as a draft with notes on what is left.
+
+## Definition of done for a unit
+
+A unit is finished when:
+
+1. Every function matches at 100% in objdiff.
+2. Its data sections are split in `splits.txt` and the object is marked `Matching` (linked) in `configure.py`, with the DOL hash unchanged.
+3. It has no `fn_` names or unknown types left except documented unknowns, no raw offset access, no placeholder signatures, and no unjustified fakematch.
+4. It follows `docs/STYLE.md` and has been reviewed before merging.
+
+Units that are not finished stay `NonMatching` and may contain scaffolding (for instance the placeholder stubs in `src/.unsorted/`), which is replaced unit by unit, never extended.
 
 ## Commits and PRs
 
 - Fill in every section of `.github/pull_request_template.md`.
 - Commit subject: `<area>: <what changed>`, with a short body if useful.
-- Commit messages, PR descriptions and comments describe the change only: no attribution lines, co-author trailers, links to outside tools or generated footers. No personal names, e-mail addresses or local file paths.
+- Commit messages, PR descriptions and comments describe the change only: no attribution lines, co-author trailers, links to outside tools or generated footers. No game data, personal names, e-mail addresses or local file paths.
 - Editor, assistant and tool configuration stays out of the repository.
 - PRs are squash-merged once CI is green and the review is done.
 - Don't regenerate the README progress table in a unit PR. It is refreshed in an occasional small PR.

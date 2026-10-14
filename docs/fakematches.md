@@ -20,3 +20,7 @@ reason on its own; the question is whether a programmer would have written it.
 - `__declspec(section ...)` or other forced section placement
 - hard-coded addresses cast to pointers
 - casts between unrelated types (type punning)
+- raw pointer arithmetic such as `*(u32 *)(p + 0x2c)` instead of a structure,
+  even a partial one
+- structures of function pointers standing in for a C++ class with virtual
+  methods
