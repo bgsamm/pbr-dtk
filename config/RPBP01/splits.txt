@@ -1769,7 +1769,13 @@ libs/RVL_SDK/src/sc/scapi_prdinfo.c:
 	.text       start:0x802EC78C end:0x802EC97C
 
 src/.unsorted/802EC97C.cpp:
-	.text       start:0x802EC97C end:0x80304E94
+	.text       start:0x802EC97C end:0x802ECCF8
+
+libs/RVL_SDK/src/arc/arc.c:
+	.text       start:0x802ECCF8 end:0x802ED204
+
+src/.unsorted/802ED204.cpp:
+	.text       start:0x802ED204 end:0x80304E94
 
 libs/RVL_SDK/src/vf/pf_clib.c:
 	.text       start:0x80304E94 end:0x80305194
