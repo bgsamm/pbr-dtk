@@ -1435,7 +1435,7 @@ src/.unsorted/8026BB40.cpp:
 libs/RVL_SDK/src/os/OSExec.c:
 	.text       start:0x8026BD08 end:0x8026CE70
 
-src/.unsorted/8026CE70.cpp:
+libs/RVL_SDK/src/os/OSFatal.c:
 	.text       start:0x8026CE70 end:0x8026DA94
 
 libs/RVL_SDK/src/os/OSFont.c:
