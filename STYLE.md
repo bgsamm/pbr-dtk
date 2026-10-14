@@ -1,7 +1,7 @@
 # Code style
 
 These rules apply to all code in the repository. Some existing code, including parts of `src/gs/`, predates them and is being brought in line.
-Format with the repository's `.clang-format`, using clang-format 23.
+Format with the repository's [.clang-format](.clang-format), using clang-format 23.
 
 ## Files
 
@@ -65,6 +65,6 @@ public:
 
 ## What does not belong in finished code
 
-- Placeholder signatures (`u32 a0, ..., u32 a7`), dummy classes made only to reproduce a call sequence, `extern "C"` blocks around our own code.
+- Dummy classes made only to reproduce a call sequence, `extern "C"` blocks around our own code.
 - Comments that restate the code, banners, or comments about how the code was produced.
-- Anything listed in [fakematches.md](fakematches.md) without the justification that file asks for.
+- Anything listed in [docs/fakematches.md](docs/fakematches.md) without the justification that file asks for.

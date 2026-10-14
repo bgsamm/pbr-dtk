@@ -2,11 +2,11 @@
 
 - `src/`: Game code.
 - `src/.unsorted/<addr>.cpp`: TUs not yet identified, named after their start address.
-- `include/`: Headers for `src/`, same layout (`include/gs/GSnand.hpp`
-  ↔ `src/gs/GSnand.cpp`). 
-- `include/common.hpp`: Project-wide helpers and macros.
+- `include/`: Headers for `src/`, same layout ([include/gs/GSnand.hpp](../include/gs/GSnand.hpp)
+  ↔ [src/gs/GSnand.cpp](../src/gs/GSnand.cpp)). 
+- [include/common.hpp](../include/common.hpp): Project-wide helpers and macros.
 - `libs/`: RVL SDK, MSL and the MetroWerks Runtime.
-- `configure.py`: Compilation settings, plus the unit list with `Matching`/`NonMatching` flags.
+- [configure.py](../configure.py): Compilation settings, plus the unit list with `Matching`/`NonMatching` flags.
   Generates `build.ninja`.
 - `config/<version>/splits.txt`: Contains split information (i.e. each TU's sections).
 - `config/<version>/symbols.txt`: Contains symbol information.

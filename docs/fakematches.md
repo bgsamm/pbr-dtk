@@ -7,7 +7,7 @@ work even at 100%. If a unit only matches with such a construct, leave it
 `NonMatching`; see the [definition of done](../CONTRIBUTING.md#definition-of-done-for-a-unit)
 for when a unit can be marked `Matching`.
 
-`tools/decomp/lint.py` helps find both kinds of construct below: it reports
+[tools/decomp/lint.py](../tools/decomp/lint.py) helps find both kinds of construct below: it reports
 the ones that are never accepted as errors and the ones that need a
 justification as warnings. It is not foolproof however. It can't detect every case, so passing lint does not guarantee a unit has no fakematches.
 
