@@ -5,8 +5,7 @@ Format with the repository's [.clang-format](.clang-format), using clang-format 
 
 ## Files
 
-- One translation unit per original source file, placed by module: `src/gs/...`, `src/ds/...`, game code under a descriptive directory.
-  `src/.unsorted/<address>.cpp` is only a holding area for units whose role is still unknown.
+- One translation unit per original source file, placed by module: `src/gs/...`, `src/ds/...`, etc. `src/.unsorted/<address>.cpp` is only a holding area for units whose role is still unknown.
 - One header per module in `include/`, mirroring `src/`. Structures and declarations used by more than one unit live in a header, never copied between files.
 - Functions appear in the file in address order, as in the original object.
 - Source files are Shift-JIS, the encoding the compiler reads. Keep to ASCII except for Japanese text in string literals.
@@ -22,8 +21,8 @@ Format with the repository's [.clang-format](.clang-format), using clang-format 
 
 ## Declarations
 
-- Declare a function in the header of the unit that defines it, even when that unit is not decompiled yet. Never declare the same function in several places.
-- Data from a unit whose data sections are not split yet may be declared `extern` in the file that uses it, until its home is known.
+- Declare a function in the header of the unit that defines it, even when that unit is not yet decompiled. Never declare the same function in several places (e.g. using `extern`).
+- Data from a unit whose data sections are not yet split may be declared `extern` in the file that uses it, until its home is known.
 - A static or global variable whose address is known gets the address in a comment where it is defined: `/* 0x8063F2E8 */ static GScacheEntry *sFileCacheList;`.
   Addresses are those of RPBP01, the version this project builds. Float and string literals are written directly in the source and get no address.
 
@@ -32,7 +31,7 @@ Format with the repository's [.clang-format](.clang-format), using clang-format 
 - Every structure and class has its size (`// size: 0x10`) and a `/* 0xNN */` offset comment on each member.
   When the true size is not known yet, give the smallest size the code proves: `// size: >= 0x14`.
 - A class with virtual methods also gives the offset of its vtable pointer (`// vtable: 0xC`), and each virtual method has its offset in the vtable.
-- Unknown regions are `u8 _unkN[size]`; unknown fields are named `_NN` after their offset.
+- Unknown regions are `u8 _unkNN[size]`; unknown fields are named `_NN` after their offset.
 
 ```cpp
 // size: >= 0x14
@@ -45,7 +44,6 @@ struct GStocHeader {
 };
 
 // size: 0x10
-// vtable: 0xC
 class GSrenderModule {
 protected:
     /* 0x0 */ const char *mName;
@@ -58,6 +56,7 @@ protected:
 public:
     GSrenderModule(const char *name);
 
+    // vtable: 0xC
     /* 0x8 */ virtual void update(f32 deltaTime);
     /* 0xC */ virtual void fn_80236AE0();
 };
@@ -65,6 +64,6 @@ public:
 
 ## What does not belong in finished code
 
-- Dummy classes made only to reproduce a call sequence, `extern "C"` blocks around our own code.
+- `extern "C"` blocks around game code, used to link against unmangled placeholder symbols. Work out the signature and give the symbol its mangled name in [symbols.txt](config/RPBP01/symbols.txt) instead.
 - Comments that restate the code, banners, or comments about how the code was produced.
 - Anything listed in [docs/fakematches.md](docs/fakematches.md) without the justification that file asks for.
