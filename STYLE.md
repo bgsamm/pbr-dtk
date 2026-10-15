@@ -24,7 +24,9 @@ Format with the repository's [.clang-format](.clang-format), using clang-format 
 - RTTI and vtable names, or symbols from any map or debug build (none known).
 - Shared code: the SDK, NW4R and other imported libraries; for battle code, `pret/pokeplatinum` when the function is clearly the same one.
 - Names from the game's own data (.fsys file names, string tables) when the link to the code is shown.
-- Behaviour, once the function and its callers are fully understood: a plain name for what it does, not a guess at what the original programmers called it. If in doubt, keep the placeholder.
+- Behaviour, once the function and its callers are fully understood.
+
+If in doubt, keep the placeholder.
 
 ## Declarations
 

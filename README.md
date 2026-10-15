@@ -77,6 +77,7 @@ Steps:
 |---|---|
 | [CONTRIBUTING.md](CONTRIBUTING.md) | How to contribute: scope of a change, tools, build and verify, definition of done, commits and PRs, sign-off |
 | [STYLE.md](STYLE.md) | Code conventions |
+| [docs/areas.md](docs/areas.md) | Currently claimed sections being worked on |
 | [docs/fakematches.md](docs/fakematches.md) | What counts as a fakematch and how to justify one |
 | [docs/matching-notes.md](docs/matching-notes.md) | Compiler behaviour worked out on this project |
 | [docs/game-map.md](docs/game-map.md) | Map of `main.dol` by area (addresses, sizes, dependencies) and of the game's data files |
