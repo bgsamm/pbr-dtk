@@ -24,7 +24,7 @@ Format with the repository's [.clang-format](.clang-format), using clang-format 
 - RTTI and vtable names, or symbols from any map or debug build (none known).
 - Shared code: the SDK, NW4R and other imported libraries; for battle code, `pret/pokeplatinum` when the function is clearly the same one.
 - Names from the game's own data (.fsys file names, string tables) when the link to the code is shown.
-- A clear, well-understood implementation.
+- Behaviour, once the function and its callers are fully understood: a plain name for what it does, not a guess at what the original programmers called it. If in doubt, keep the placeholder.
 
 ## Declarations
 
@@ -37,7 +37,7 @@ Format with the repository's [.clang-format](.clang-format), using clang-format 
 
 - Every structure and class has its size (`// size: 0x10`) and a `/* 0xNN */` offset comment on each member.
   When the true size is not known yet, give the smallest size the code proves: `// size: >= 0x14`.
-- A class with virtual methods also gives the offset of its vtable pointer (`// vtable: 0xC`), and each virtual method has its offset in the vtable.
+- A class with virtual methods also gives the offset of its vtable pointer within the object (`// vtable pointer: 0xC`) just above its virtual methods, and each virtual method has its offset in the vtable.
 - Unknown regions are `u8 _unkNN[size]`; unknown fields are named `_NN` after their offset.
 
 ```cpp
@@ -63,7 +63,7 @@ protected:
 public:
     GSrenderModule(const char *name);
 
-    // vtable: 0xC
+    // vtable pointer: 0xC
     /* 0x8 */ virtual void update(f32 deltaTime);
     /* 0xC */ virtual void fn_80236AE0();
 };
