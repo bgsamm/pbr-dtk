@@ -6,6 +6,7 @@ extern "C" {
 
 void fn_80294F48();
 
-void fn_80294C44(void) { fn_80294F48(); }
-
+void fn_80294C44(void) {
+    fn_80294F48();
+}
 }

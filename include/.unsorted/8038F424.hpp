@@ -6,6 +6,9 @@
 #include ".unsorted/8016E2B8.hpp"
 #include ".unsorted/803DEEA4.hpp"
 #include "ds/DSbridge.hpp"
+#include "ds/battle/battle_controller.hpp"
+#include "ds/battle/battle_controller_player.hpp"
+#include "ds/battle/battle_lib.hpp"
 #include "ds/charcode_util.hpp"
 #include "ds/message.hpp"
 #include "ds/move_table.hpp"
@@ -14,9 +17,6 @@
 #include "ds/strbuf.hpp"
 #include "ds/string_template.hpp"
 #include "ds/trainer_info.hpp"
-#include "ds/battle/battle_controller.hpp"
-#include "ds/battle/battle_controller_player.hpp"
-#include "ds/battle/battle_lib.hpp"
 
 extern "C" {
 extern BattleSystem *lbl_806405C0;
@@ -839,7 +839,6 @@ struct Inner18 {
     u32 w[6];
 };
 
-
 s32 fn_803CBE80(u8 *a, u8 *b);
 s32 fn_803CD9C4(u8 *a, u8 *b);
 s32 fn_803D5028(u8 *a, u8 *b);
@@ -1021,9 +1020,9 @@ struct BF_1C4 {
 };
 
 s32 fn_803CEFFC(u8 *a, u8 *b);
-u32 fn_803DA0C0(TrainerInfo *trInfo); // TrainerInfo_ID
-u32 fn_803DA0C8(TrainerInfo *trInfo); // TrainerInfo_Gender
-const u16 *fn_803DA0BC(TrainerInfo *trInfo); // TrainerInfo_Name
+u32 fn_803DA0C0(TrainerInfo *trInfo);                        // TrainerInfo_ID
+u32 fn_803DA0C8(TrainerInfo *trInfo);                        // TrainerInfo_Gender
+const u16 *fn_803DA0BC(TrainerInfo *trInfo);                 // TrainerInfo_Name
 BOOL fn_803DECAC(const u16 *str1, const u16 *str2, u32 len); // CharCode_CompareNumChars
 s32 fn_803D180C(u8 *a, u8 *b);
 s32 fn_803D2C80(u8 *a, u8 *b);
@@ -1095,5 +1094,4 @@ struct BF_2DCC {
     u32 k : 4;
     u32 lo : 5;
 };
-
 }

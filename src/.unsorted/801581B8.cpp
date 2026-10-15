@@ -4,6 +4,7 @@
 
 extern "C" {
 
-BOOL fn_80158438(void) { return lbl_8063D5A0->_1C == 0xFF; }
-
+BOOL fn_80158438(void) {
+    return lbl_8063D5A0->_1C == 0xFF;
+}
 }

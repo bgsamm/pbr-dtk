@@ -4,7 +4,8 @@
 
 extern "C" {
 
-s32 fn_8007CFB0(void) { return 1; }
+s32 fn_8007CFB0(void) {
+    return 1;
+}
 void fn_8007F0A8(void) {}
-
 }
