@@ -1,6 +1,10 @@
 ## Unit
 `<unit path>`: <before>% -> <after>%  (`Matching`: yes/no)
 
+<!-- For an imported library, use this form instead: -->
+<!-- `<library>` from <source>: -->
+<!-- - `<unit path>`: <before>% -> <after>%  (`Matching`: yes/no) -->
+
 ## Non-matching functions
 | Function | Fuzzy % | What's left |
 |---|---|---|

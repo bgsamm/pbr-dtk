@@ -12,7 +12,7 @@ Read before starting:
 
 ## Scope of a change
 
-- One unit per PR. Touch other files only for headers, types or symbol names that unit needs.
+- One unit per PR (or, for an imported library, one library). Touch other files only for headers, types or symbol names that unit needs.
 - Areas being worked on are listed in [docs/areas.md](docs/areas.md). Note in the PR if you edit a unit in someone else's area.
 - [config/RPBP01/splits.txt](config/RPBP01/splits.txt): adding the sections of the unit you are linking is part of the PR. Moving or removing an existing boundary, or renaming a unit, needs sign-off first (see below).
 - [config/RPBP01/symbols.txt](config/RPBP01/symbols.txt): you may rename a symbol, fix `size:`, set `scope:` or `data:`, and split an existing data symbol inside the unit you are linking.
