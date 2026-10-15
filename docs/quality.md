@@ -1,0 +1,40 @@
+# Quality checks
+
+`tools/qa/check.py` checks a change against its base commit. CI runs it on every push and pull request, and it runs the same way locally.
+
+Each check runs on both trees and fails only on problems the change adds. Problems the base already has are counted as inherited, so existing code never blocks an unrelated change, and every new problem does.
+
+## Checks
+
+| Check | Needs the game files | Fails on |
+|---|---|---|
+| `diagnostics` | no | a new compiler warning or error under the extra warning flags; in C units, a call to a function with no prototype (`-requireprotos`) |
+| `symbols` | no | a compiled symbol whose scope differs from `symbols.txt`, a name missing from `symbols.txt`, a definition outside the unit's `splits.txt` range, functions out of retail order, an undefined name that neither `symbols.txt` nor any unit provides |
+| `format` | no | a changed file under `src/` or `include/` that clang-format 23 would change |
+| `lint` | no | an error from `tools/decomp/lint.py` on the added lines |
+| `regressions` | yes | a function that was 100% and no longer is, or a unit or the total losing matched or linked code or data (objdiff report of the base against the change) |
+| `apply` | yes | a line `dtk dol apply` would change in `symbols.txt` |
+
+With the game files, the output also lists units that are 100% but not marked `Matching`, and functions whose match dropped below their previous score. Explain those in the PR.
+
+The warning flags are `-w missingreturn,hidevirtual,possible,unusedexpr,filecaps,sysfilecaps,tokenpasting`. `-W all` is not used: it reports every implicit integer conversion, which the original code is full of. Warning flags do not change the generated code.
+
+The `diagnostics` and `symbols` checks compile every unit of both trees into `build/qa/` with the project's own flags. They do not touch the normal build.
+
+## Running locally
+
+```sh
+python tools/qa/check.py                 # compiler-only checks against origin/main
+python tools/qa/check.py --with-dol      # all checks; needs orig/ and a configured build
+python tools/qa/check.py --show-inherited   # also list the problems the base has
+python tools/qa/check.py --base none     # report everything, compare nothing
+python tools/qa/check.py --only symbols,format
+```
+
+The base defaults to the merge base of `HEAD` and `origin/main`, and is checked out as a worktree in `build/qa/base`. Uncommitted changes in the working tree are included.
+
+Requirements: Python 3.12+, the build tools (`python configure.py` then `ninja`), clang-format 23 (`pip install clang-format==23.1.3`, or set `CLANG_FORMAT`), and tree-sitter for `lint.py` (`pip install -r tools/decomp/requirements.txt`).
+
+## Accepting a regression
+
+A cleaner rewrite sometimes matches less than the code it replaces. A maintainer can accept that by adding the `accepted regression` label to the pull request. The regressions are then listed but don't fail the build. The PR description must say why.
