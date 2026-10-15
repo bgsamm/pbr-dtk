@@ -369,7 +369,7 @@ s32 fn_803CC028(u8 *a, u8 *b) {
 
 s32 fn_803CC0D8(u8 *a, u8 *b) {
     BattleSystem_GetBattleType((BattleSystem *)a);
-    (u32) BattleSystem_GetBattlerData((BattleSystem *)a, *(u32 *)(b + 0x74));
+    BattleSystem_GetBattlerData((BattleSystem *)a, *(u32 *)(b + 0x74));
     (*(u32 *)(b + 0xb4))++;
     u32 n = fn_803D6E6C(b);
     *(u32 *)(b + 0xb4) += n;
