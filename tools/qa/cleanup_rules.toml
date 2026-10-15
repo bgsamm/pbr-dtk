@@ -1,0 +1,138 @@
+# Cleanup rules for cleanup_index.py.
+#
+# Same query format as tools/decomp/fakematch_rules.toml, whose rules the
+# index also lists (family "fakematch"). A rule here whose id is also a
+# fakematch rule is left out, so nothing is counted twice.
+#
+# family:          "names" (names still to find) or "structure" (memory still
+#                  accessed without a type); see "Definition of done" in
+#                  docs/STYLE.md
+# once_per_name:   list the first line of each distinct @_name per file only
+# skip_inside:     drop a match that lies inside a match of these rules, so
+#                  `*(u32 *)(p + 0x2C)` counts once, as raw-offset
+
+[[rule]]
+id = "fn-name"
+family = "names"
+message = "function defined with an address name"
+once_per_name = true
+query = '''
+(function_definition
+  declarator: [
+    (function_declarator declarator: (identifier) @_name)
+    (pointer_declarator
+      declarator: (function_declarator declarator: (identifier) @_name))
+    (reference_declarator
+      (function_declarator declarator: (identifier) @_name))
+  ]
+  (#match? @_name "^fn_[0-9A-F]{8}$")) @match
+'''
+
+[[rule]]
+id = "lbl-name"
+family = "names"
+message = "data defined with an address name"
+once_per_name = true
+query = '''
+((declaration
+   declarator: [
+     (identifier) @_name
+     (array_declarator declarator: (identifier) @_name)
+     (pointer_declarator declarator: (identifier) @_name)
+     (init_declarator
+       declarator: [
+         (identifier) @_name
+         (array_declarator declarator: (identifier) @_name)
+         (pointer_declarator declarator: (identifier) @_name)
+       ])
+   ]) @match
+  (#match? @_name "^lbl_[0-9A-F]{8}$")
+  (#not-match? @match "^extern\\b"))
+'''
+
+[[rule]]
+id = "unk-type"
+family = "names"
+message = "type whose role is not established"
+once_per_name = true
+query = '''
+([
+   (struct_specifier name: (type_identifier) @_name body: (field_declaration_list))
+   (class_specifier name: (type_identifier) @_name body: (field_declaration_list))
+   (union_specifier name: (type_identifier) @_name body: (field_declaration_list))
+ ] @match
+ (#match? @_name "^Unk[0-9A-F]{8}$"))
+'''
+
+[[rule]]
+id = "todo"
+family = "names"
+message = "TODO note"
+query = '''
+((comment) @_text @match
+  (#match? @_text "TODO"))
+'''
+
+[[rule]]
+id = "raw-offset"
+family = "structure"
+message = "raw pointer arithmetic instead of a structure"
+# `*(u32 *)(p + 0x2C)`, `*(u32 *)((u8 *)p + 0x2C)`
+query = '''
+(pointer_expression
+  operator: "*"
+  argument: (cast_expression
+    type: (type_descriptor declarator: (abstract_pointer_declarator))
+    value: (parenthesized_expression
+      (binary_expression operator: ["+" "-"] right: (number_literal))))) @match
+'''
+
+[[rule]]
+id = "offset-cast"
+family = "structure"
+message = "pointer moved by a constant offset"
+# `(u32 *)(p + 0x10)`, `(u8 *)p + 0x30`
+skip_inside = ["raw-offset"]
+query = '''
+[
+  (cast_expression
+    type: (type_descriptor declarator: (abstract_pointer_declarator))
+    value: (parenthesized_expression
+      (binary_expression operator: ["+" "-"] right: (number_literal))))
+  (binary_expression
+    left: (cast_expression
+      type: (type_descriptor declarator: (abstract_pointer_declarator)))
+    operator: ["+" "-"]
+    right: (number_literal))
+] @match
+'''
+
+[[rule]]
+id = "cast-index"
+family = "structure"
+message = "pointer cast and indexed instead of a structure"
+# `((u32 *)p)[3]`
+query = '''
+(subscript_expression
+  argument: (parenthesized_expression
+    (cast_expression
+      type: (type_descriptor declarator: (abstract_pointer_declarator))))) @match
+'''
+
+[[rule]]
+id = "placeholder-parameter"
+family = "structure"
+message = "placeholder parameter (a0, a1, ...)"
+query = '''
+((parameter_declaration
+   declarator: [(identifier) (pointer_declarator)] @_name) @match
+  (#match? @_name "^\\**\\s*a[0-9]$"))
+'''
+
+[[rule]]
+id = "extern-c"
+family = "structure"
+message = "extern \"C\" linkage"
+query = '''
+(linkage_specification value: (string_literal) @match)
+'''

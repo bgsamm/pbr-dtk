@@ -90,3 +90,61 @@ jobs:
       env:
         BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
       run: python tools/qa/check.py --only format,lint --base "$BASE"
+
+  # Cleanup index (docs/quality.md): built on every run, published from main
+  cleanup-index:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install tools
+      run: pip install -r tools/decomp/requirements.txt
+
+    - name: Download report
+      uses: actions/download-artifact@v4
+      with:
+        name: RPBP01_report
+        path: build/RPBP01
+
+    - name: Generate
+      run: |
+        python tools/qa/cleanup_index.py --out build/pages \
+            --report build/RPBP01/report.json \
+            --revision ${{ github.sha }} --generated "$(date -u +%Y-%m-%d)" \
+            --repo ${{ github.server_url }}/${{ github.repository }}
+
+    - name: Upload index
+      uses: actions/upload-artifact@v4
+      with:
+        name: cleanup_index
+        path: build/pages
+
+    - name: Upload Pages artifact
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: build/pages
+
+  deploy-pages:
+    needs: cleanup-index
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
