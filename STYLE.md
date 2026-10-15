@@ -12,12 +12,19 @@ Format with the repository's [.clang-format](.clang-format), using clang-format 
 
 ## Naming
 
-- Functions: real name when the evidence supports it (strings, symbol maps, the DS code it is ported from, behaviour).
-  When the purpose is not established yet, keep the address name (`fn_803D9778`) with a one-line `// TODO` at the definition site saying what is known. Never invent a confident name.
+- Functions: use a real name when the evidence supports it (see below). Otherwise, keep the placeholder name (e.g. `fn_803D9778`) with a one-line `// TODO` at the definition site saying what is known. Never invent a confident name.
 - Types: `PascalCase` (`ItemData`). gs engine types are `GS` followed by `camelCase` (`GSfsys`, `GSfsysEntry`).
   Members: `mName` for classes and engine structures, plain `camelCase` for data records ported from the DS code (`price`, `holdEffect`).
   A type whose role is not established is named `Unk` plus the address of the function or object it was found from (`Unk80035CB0`).
 - Globals `gName`, file statics `sName`, constants and enum values `UPPER_CASE`.
+
+### Naming evidence
+
+- Strings in the binary: assert/OSReport messages, source file names, function names.
+- RTTI and vtable names, or symbols from any map or debug build (none known).
+- Shared code: the SDK, NW4R and other imported libraries; for battle code, `pret/pokeplatinum` when the function is clearly the same one.
+- Names from the game's own data (.fsys file names, string tables) when the link to the code is shown.
+- A clear, well-understood implementation.
 
 ## Declarations
 
