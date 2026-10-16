@@ -64,8 +64,9 @@ Units that don't meet it yet stay `NonMatching` and may contain scaffolding (for
 
 These should get a maintainer's approval *before* opening a PR, as they may affect other in-progress units:
 
-- Moving or removing an existing [splits.txt](config/RPBP01/splits.txt) boundary, renaming a unit;
-- Project-wide flags, compilers or build changes in [configure.py](configure.py) (this excludes marking your own unit `Matching`);
-- Changes to `CONTRIBUTING.md`, `STYLE.md`, or `docs/fakematches.md`;
-- Changes to CI workflows (`.github/workflows/`);
+- Moving or removing an existing [splits.txt](config/RPBP01/splits.txt) boundary, or renaming a unit.
+- Project-wide flags, compilers or build changes in [configure.py](configure.py) (this excludes marking your own unit `Matching`).
+- Changes to `CONTRIBUTING.md`, `STYLE.md`, or `.clang-format`.
+- Changes to `docs/fakematches.md`, `tools/decomp/lint.py`, or `tools/decomp/fakematch_rules.toml`.
+- Changes to CI workflows (`.github/workflows/`).
 - Code imported from a new outside source. Always include an attribution comment on the first line of each imported file.
