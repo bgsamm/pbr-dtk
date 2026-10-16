@@ -2816,6 +2816,13 @@ enum BeforeMoveState {
     BEFORE_MOVE_END,
 };
 
+static void BattleControllerPlayer_ExecScript(BattleSystem *battleSys, BattleContext *battleCtx) {
+    if (fn_803C94CC((u8 *)battleSys, (u8 *)battleCtx) == TRUE) {
+        battleCtx->scriptCursor = 0;
+        battleCtx->command = battleCtx->commandNext;
+    }
+}
+
 static void BattleControllerPlayer_BeforeMove(BattleSystem *battleSys, BattleContext *battleCtx) {
     switch (battleCtx->beforeMoveCheckState) {
         case BEFORE_MOVE_STATE_QUICK_CLAW:
@@ -2903,13 +2910,6 @@ static void BattleControllerPlayer_BeforeMove(BattleSystem *battleSys, BattleCon
         lbl_8048CDE8.args[0] = battleCtx->moveCur;
         lbl_8048CDE8.args[15] = 1;
         fn_8016FA4C(5, &lbl_8048CDE8);
-    }
-}
-
-static void BattleControllerPlayer_ExecScript(BattleSystem *battleSys, BattleContext *battleCtx) {
-    if (fn_803C94CC((u8 *)battleSys, (u8 *)battleCtx) == TRUE) {
-        battleCtx->scriptCursor = 0;
-        battleCtx->command = battleCtx->commandNext;
     }
 }
 
