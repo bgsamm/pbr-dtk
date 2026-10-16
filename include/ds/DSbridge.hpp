@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ds/battle/battle_system.hpp"
 #include "ds/battle/battle_constants.hpp"
+#include "ds/battle/battle_system.hpp"
 
 #include <revolution/types.h>
 
@@ -26,7 +26,6 @@ struct Strbuf;
 #define ITEM_PARTY_PARAM_SIZE 20
 
 #define NARC_INDEX_ITEM_DATA 16
-
 
 enum ItemDataParam {
     ITEM_PARAM_PRICE,
