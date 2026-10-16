@@ -39,6 +39,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 import argparse
+import dataclasses
 import difflib
 import json
 import os
@@ -658,7 +659,19 @@ def symbol_issues(tree: Tree, results: List[CompileResult]) -> List[Issue]:
                     unit["source"],
                 )
             )
-    return issues
+    # Keyed without the unit, which goes in the detail: renaming or splitting
+    # a unit keeps its problems inherited. Placeholder units (src/.unsorted)
+    # all get `version` and its initializer from common.hpp; their addresses
+    # are only known once the file is identified.
+    return [
+        dataclasses.replace(issue, key=issue.key[1:], detail=issue.key[0])
+        for issue in issues
+        if not (
+            issue.path.startswith("src/.unsorted/")
+            and issue.key[1] in ("unknown", "outside")
+            and (issue.key[2] == "version" or issue.key[2].startswith("__sinit_"))
+        )
+    ]
 
 
 # --------------------------------------------------------------------------
