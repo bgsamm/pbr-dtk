@@ -1,3 +1,7 @@
+# Areas
+
+These are the currently claimed areas, and who is working on each:
+
 | Area | Where | Who |
 | --- | --- | --- |
 | Battle code | `0x8038F424`–`0x803D9208`, `src/ds/battle/` | salvagedisc |
