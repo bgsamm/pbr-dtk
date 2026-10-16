@@ -1,4 +1,4 @@
-#include ".unsorted/802B3C20.hpp"
+#include ".unsorted/802B4CC0.hpp"
 
 #include "common.hpp"
 
@@ -9,9 +9,6 @@ void fn_802B4D10();
 void fn_802B9D34();
 void fn_802C7CB0();
 
-s32 fn_802B3E6C(void) {
-    return 0;
-}
 s32 fn_802B9574(void) {
     return 0;
 }
