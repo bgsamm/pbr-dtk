@@ -56,6 +56,7 @@ BOOL DSPCheckMailToDSP(void);
 BOOL DSPCheckMailFromDSP(void);
 u32 DSPReadMailFromDSP();
 void DSPSendMailToDSP(u32 mail);
+void DSPAssertInt(void);
 
 // From doldecomp/ogws (CC0), include/revolution/DSP/dsp_task.h
 #define DSP_SEND_MAIL_SYNC(mail)                                                                                       \

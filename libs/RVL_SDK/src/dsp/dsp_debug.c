@@ -1,4 +1,5 @@
 // Imported from doldecomp/ogws (CC0), src/revolution/DSP/dsp_debug.c
+#include <private/dsp.h>
 #include <revolution/dsp.h>
 
 // Stubbed for release
