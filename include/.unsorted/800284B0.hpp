@@ -1,10 +1,10 @@
 #pragma once
 
+#include ".unsorted/80024914.hpp"
+
 #include <revolution/gx/GXStruct.h>
 #include <revolution/mtx.h>
 #include <revolution/types.h>
-
-#include ".unsorted/80024914.hpp"
 
 // Tagged value: the tag at 0x00 says whether the value at 0x04 is an integer or a float.
 struct Unk800284B0Value {
