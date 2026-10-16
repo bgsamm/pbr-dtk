@@ -1597,8 +1597,9 @@ libs/RVL_SDK/src/gx/GXTev.c:
 libs/RVL_SDK/src/gx/GXPixel.c:
 	.text       start:0x802841C0 end:0x80284950
 
-src/.unsorted/80284950.cpp:
+libs/RVL_SDK/src/gx/GXDraw.c:
 	.text       start:0x80284950 end:0x8028663C
+	.bss        start:0x80515FF8 end:0x80516280
 
 libs/RVL_SDK/src/gx/GXDisplayList.c:
 	.text       start:0x8028663C end:0x8028680C
