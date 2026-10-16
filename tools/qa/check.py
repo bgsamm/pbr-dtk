@@ -111,6 +111,10 @@ FORMAT_PATHS = ["src", "include"]
 SOURCE_SUFFIXES = {".c", ".cpp", ".cp", ".h", ".hpp", ".inc"}
 ALL_CHECKS = ["diagnostics", "symbols", "format", "lint", "regressions", "apply"]
 DOL_CHECKS = {"regressions", "apply"}
+# Helpers made by the DECOMP_FORCE_* macros of include/decomp.h: they only
+# pull literals or functions into the object, and the linker strips them.
+FORCE_HELPER = re.compile(r"^(FORCE(ACTIVE|LITERAL|DTOR)\w*|fake_function)$")
+FORCE_EXPANSION = re.compile(r"__LINE__\)\(\)\s*\{")
 # Undefined names the linker provides itself.
 LINKER_NAMES = re.compile(
     r"^(_SDA2?_BASE_|_stack_(addr|end)|_db_stack_(addr|end)|"
@@ -425,6 +429,8 @@ def diagnostic_issues(results: List[CompileResult]) -> List[Issue]:
     for result in results:
         groups: Dict[Tuple[str, ...], List[Diagnostic]] = defaultdict(list)
         for d in result.diagnostics:
+            if FORCE_EXPANSION.search(d.text):
+                continue  # inside a DECOMP_FORCE_* macro, on purpose
             message = re.sub(r"^\(\d+\)\s*", "", d.message)
             groups[(d.path, d.kind, message)].append(d)
         for key, group in groups.items():
@@ -525,7 +531,12 @@ def read_elf_symbols(readelf: str, path: Path) -> List[ElfSymbol]:
 
 
 def is_compiler_name(name: str) -> bool:
-    return name.startswith("@") or "$" in name or name.startswith(".")
+    return (
+        name.startswith("@")
+        or "$" in name
+        or name.startswith(".")
+        or FORCE_HELPER.match(name) is not None
+    )
 
 
 def symbol_issues(tree: Tree, results: List[CompileResult]) -> List[Issue]:
@@ -567,6 +578,11 @@ def symbol_issues(tree: Tree, results: List[CompileResult]) -> List[Issue]:
             local = [s for s in candidates if in_unit(s)]
             where = f"{unit['source']}: {elf.name}"
             if not candidates:
+                if elf.kind == "FUNC" and unit["source"].startswith("libs/"):
+                    # Library sources keep functions the game never calls,
+                    # which the linker strips. A wrong name still shows as
+                    # an unmatched function in the objdiff report.
+                    continue
                 issues.append(
                     Issue(
                         "symbols",
