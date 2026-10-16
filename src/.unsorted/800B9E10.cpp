@@ -4,7 +4,9 @@
 
 extern "C" {
 
-Unk800B9E10 *fn_800BA550(void) { return lbl_8063EED8; }
+Unk800B9E10 *fn_800BA550(void) {
+    return lbl_8063EED8;
+}
 
 void fn_800BA558(u16 v) {
     if (lbl_8063EED8 == NULL) {
@@ -77,9 +79,10 @@ void fn_800BA9F0(u16 i, u32 v) {
     lbl_8063EED8->_28C[i] = v;
 }
 
-u8 fn_800BB9D4(s32 v) { return v / 6; }
+u8 fn_800BB9D4(s32 v) {
+    return v / 6;
+}
 
 void fn_800C5940(void) {}
 void fn_800C5944(void) {}
-
 }
