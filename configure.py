@@ -625,6 +625,24 @@ config.libs = [
         ],
     ),
     RVLSDKLib(
+        "nwc24",
+        [
+            Object(NonMatching, "nwc24/NWC24StdApi.c"),
+            Object(NonMatching, "nwc24/NWC24FileApi.c"),
+            Object(NonMatching, "nwc24/NWC24Config.c"),
+            Object(NonMatching, "nwc24/NWC24Manage.c"),
+            Object(NonMatching, "nwc24/NWC24MBoxCtrl.c"),
+            Object(NonMatching, "nwc24/NWC24Mime.c"),
+            Object(NonMatching, "nwc24/NWC24Schedule.c"),
+            Object(NonMatching, "nwc24/NWC24FriendList.c"),
+            Object(NonMatching, "nwc24/NWC24SecretFList.c"),
+            Object(NonMatching, "nwc24/NWC24Time.c"),
+            Object(NonMatching, "nwc24/NWC24Ipc.c"),
+            Object(NonMatching, "nwc24/NWC24Download.c"),
+            Object(NonMatching, "nwc24/NWC24System.c"),
+        ],
+    ),
+    RVLSDKLib(
         "ai",
         [
             Object(NonMatching, "ai/ai.c"),

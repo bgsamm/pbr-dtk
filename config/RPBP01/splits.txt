@@ -1769,7 +1769,63 @@ libs/RVL_SDK/src/sc/scapi_prdinfo.c:
 	.text       start:0x802EC78C end:0x802EC97C
 
 src/.unsorted/802EC97C.cpp:
-	.text       start:0x802EC97C end:0x80304E94
+	.text       start:0x802EC97C end:0x80300FE4
+
+libs/RVL_SDK/src/nwc24/NWC24StdApi.c:
+	.text       start:0x80300FE4 end:0x80301B48
+
+libs/RVL_SDK/src/nwc24/NWC24FileApi.c:
+	.text       start:0x80301B48 end:0x80302B58
+	.sbss       start:0x80640238 end:0x80640248
+
+libs/RVL_SDK/src/nwc24/NWC24Config.c:
+	.text       start:0x80302B58 end:0x80303054
+	.sdata      start:0x8063DF50 end:0x8063DF60
+	.sbss       start:0x80640248 end:0x80640250
+
+libs/RVL_SDK/src/nwc24/NWC24Manage.c:
+	.text       start:0x80303054 end:0x803033AC
+	.sdata      start:0x8063DF60 end:0x8063DF68
+	.sbss       start:0x80640250 end:0x80640268
+
+libs/RVL_SDK/src/nwc24/NWC24MBoxCtrl.c:
+	.text       start:0x803033AC end:0x80303714
+	.sbss       start:0x80640268 end:0x80640270
+
+libs/RVL_SDK/src/nwc24/NWC24Mime.c:
+	.text       start:0x80303714 end:0x803039F4
+
+libs/RVL_SDK/src/nwc24/NWC24Schedule.c:
+	.text       start:0x803039F4 end:0x80304268
+	.bss        start:0x8057E7A0 end:0x8057E920
+	.sbss       start:0x80640270 end:0x80640280
+
+libs/RVL_SDK/src/nwc24/NWC24FriendList.c:
+	.text       start:0x80304268 end:0x80304384
+	.sdata      start:0x8063DF70 end:0x8063DF78
+
+libs/RVL_SDK/src/nwc24/NWC24SecretFList.c:
+	.text       start:0x80304384 end:0x803044A0
+	.sdata      start:0x8063DF78 end:0x8063DF80
+
+libs/RVL_SDK/src/nwc24/NWC24Time.c:
+	.text       start:0x803044A0 end:0x8030467C
+	.bss        start:0x8057E920 end:0x8057EA00
+	.sbss       start:0x80640280 end:0x80640288
+
+libs/RVL_SDK/src/nwc24/NWC24Ipc.c:
+	.text       start:0x8030467C end:0x803047F0
+	.sbss       start:0x80640288 end:0x80640290
+
+libs/RVL_SDK/src/nwc24/NWC24Download.c:
+	.text       start:0x803047F0 end:0x80304D1C
+	.sdata      start:0x8063DF80 end:0x8063DF88
+
+libs/RVL_SDK/src/nwc24/NWC24System.c:
+	.text       start:0x80304D1C end:0x80304E94
+	.bss        start:0x8057EA00 end:0x8057EA60
+	.sdata      start:0x8063DF88 end:0x8063DF90
+	.sbss       start:0x80640290 end:0x806402A0
 
 libs/RVL_SDK/src/vf/pf_clib.c:
 	.text       start:0x80304E94 end:0x80305194
