@@ -1,8 +1,8 @@
 #include "ds/DSbridge.hpp"
-#include "ds/battle/battle_system.hpp"
 
 #include ".unsorted/80035CB0.hpp"
 #include ".unsorted/803DEEA4.hpp"
+#include "ds/battle/battle_system.hpp"
 #include "ds/field_battle_data_transfer.hpp"
 #include "ds/overlay_manager.hpp"
 #include "ds/pokemon.hpp"

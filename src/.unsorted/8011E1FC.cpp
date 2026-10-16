@@ -6,5 +6,4 @@ extern "C" {
 
 void fn_8012A414(void) {}
 void fn_8012B0D0(void) {}
-
 }

@@ -1,14 +1,14 @@
 #pragma once
 
-#include <revolution/types.h>
 #include "ds/battle/battle_constants.hpp"
 #include "ds/trainer_data.hpp"
+
+#include <revolution/types.h>
 
 struct Bag;
 struct PCBoxes;
 struct Party;
 struct TrainerInfo;
-
 
 // size: 0x17C
 struct FieldBattleDTO {

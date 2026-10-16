@@ -5,5 +5,4 @@
 extern "C" {
 
 void fn_801313B8(void) {}
-
 }
