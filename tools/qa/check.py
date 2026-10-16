@@ -953,11 +953,23 @@ def check_apply(head_root: Path, base_root: Optional[Path]) -> CheckResult:
     head = apply_drift(head_root)
     base = apply_drift(base_root) if base_root else None
     issues = [
-        Issue("apply", pair, f"symbols.txt: `{pair[0]}` should be `{pair[1]}`")
+        Issue(
+            "apply",
+            apply_key(pair),
+            f"symbols.txt: `{pair[0]}` should be `{pair[1]}`",
+        )
         for pair in sorted(head)
     ]
-    base_issues = None if base is None else [Issue("apply", pair, "") for pair in base]
+    base_issues = (
+        None if base is None else [Issue("apply", apply_key(pair), "") for pair in base]
+    )
     return compare("apply", issues, base_issues)
+
+
+def apply_key(pair: Tuple[str, str]) -> Tuple[str, ...]:
+    """Compiler-generated names (@123) are numbered per unit, and the numbers
+    shift when an included header changes, so they are compared without."""
+    return tuple(re.sub(r"@\d+", "@", line) for line in pair)
 
 
 # --------------------------------------------------------------------------
