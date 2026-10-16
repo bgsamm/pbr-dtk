@@ -17,5 +17,10 @@
 - <header outside the TU>: <what changed and why>
 - or: none
 
+## Name changs
+<!-- List every symbol renamed in symbols.txt -->
+- <old name> -> <new name>: <justification for new name>
+- or: none
+
 ## Notes
 What's left, lessons learned, uncertainties, etc.

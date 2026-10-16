@@ -20,13 +20,15 @@ Format with the repository's [.clang-format](.clang-format), using clang-format 
 
 ### Naming evidence
 
+The following are the types of evidence by which a symbol rename can be justified:
+
 - Strings in the binary: assert/OSReport messages, source file names, function names.
 - RTTI and vtable names, or symbols from any map or debug build (none known).
 - Shared code: the SDK, NW4R and other imported libraries; for battle code, `pret/pokeplatinum` when the function is clearly the same one.
 - Names from the game's own data (.fsys file names, string tables) when the link to the code is shown.
 - Behaviour, once the function and its callers are fully understood.
 
-If in doubt, keep the placeholder.
+Say in the PR which item a new name relies on; for a behaviour-based name, which callers you checked. If in doubt, keep the placeholder.
 
 ## Declarations
 
