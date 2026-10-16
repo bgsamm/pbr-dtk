@@ -1,6 +1,9 @@
 #include ".unsorted/8000ADC0.hpp"
 
 #include ".unsorted/8011C974.hpp"
+#include "ds/battle/battle_lib.hpp"
+#include "ds/battle/battle_system.hpp"
+#include "ds/pokemon.hpp"
 #include "gs/GSmath.hpp"
 #include "gs/GSthread.hpp"
 
@@ -10,6 +13,7 @@
 
 // TODO Replace with proper imports
 extern "C" {
+BattleSystem *fn_803AC828();
 void *fn_802544D0();
 void fn_802549D0();
 int fn_80255890(void *);
@@ -27,12 +31,9 @@ int fn_802553B8(void *, int, int);
 int fn_80393084(void *, int);
 Unk80035D9C *fn_80035D9C();
 int fn_80035ED8(Unk80035D9C *);
-int fn_803AC828();
-void *fn_803AC848();
 void fn_80255350(void *, int, int);
 void fn_8025643C(void *, int, int, void *, int);
 int fn_80393434(void *, int);
-int fn_803C8C48(int, void *, int, int);
 int fn_802552AC(void *, int, int);
 int fn_80035E38();
 Unk80045590 *fn_80045590();
@@ -47,7 +48,6 @@ int fn_80035EA8(Unk80035D9C *);
 int fn_8016FA3C();
 int fn_8005F198();
 int fn_80254E70(void *, int, int, int, int);
-u32 fn_803DAE64(u32, u8, int, int);
 int fn_80393050(void *, int);
 int fn_802550F8(void *, int, int, int, int);
 int fn_80036554(Unk80035D9C *, int, int, int);
@@ -85,7 +85,6 @@ void fn_802567E8(void *);
 void fn_80254AD0(void *, int);
 void fn_80256BC0(void *, int);
 int fn_80162A90(u32);
-u32 fn_803BACA4(void *, u8, int, int);
 int fn_80035E58(Unk80035D9C *);
 f32 fn_80393504(void *, int);
 f32 fn_80393538(void *, int);
@@ -1003,13 +1002,13 @@ void fn_8000D1B8(Unk8063E970 *p) {
     }
 }
 
-// TODO Returns whether fn_803AC848 has a value.
-// TODO Does not match yet (same size; the code differs).
+// TODO Returns whether the battle system and its context exist.
 bool fn_8000D230(void *) {
-    if (fn_803AC828() == 0) {
+    BattleSystem *battleSys = fn_803AC828();
+    if (battleSys == NULL) {
         return 0;
     }
-    return fn_803AC848() != 0;
+    return BattleSystem_GetBattleContext(battleSys) != NULL;
 }
 
 // TODO Resets the object for state 1 and prints the heap sizes.
@@ -1224,7 +1223,7 @@ void fn_8000DEC4(Unk8063E970 *bp) {
 }
 
 // TODO Returns fn_803DAE64 for side a, entry b and value c, folding a for two sides.
-u32 fn_8000DFC4(Unk8063E970 *p, int a, u8 b, int c, int d) {
+u32 fn_8000DFC4(Unk8063E970 *p, int a, u8 b, int c, void *d) {
     u8 m;
     if (b >= 7) {
         fn_8000C52C(lbl_804093EB);
@@ -1361,7 +1360,6 @@ void fn_8000E2C8(Unk8063E970 *p) {
 }
 
 // TODO Fills the per-side tables at 0x2890.
-// TODO Does not match yet (same size; the code differs).
 void fn_8000E88C(Unk8063E970 *p) {
     u8 i;
     u8 n;
@@ -1375,26 +1373,23 @@ void fn_8000E88C(Unk8063E970 *p) {
     memset(p->_28bc, 0, 4);
     n = p->_003e;
     for (i = 0; i < n; i++) {
-        int aa;
+        BattleSystem *battleSys;
         int v;
         p->_2890[i] = fn_8000EA70(p, i);
-        aa = fn_803AC828();
-        v = fn_803C8C48(aa, fn_803AC848(), 2, i);
+        battleSys = fn_803AC828();
+        v = BattleContext_Get(battleSys, BattleSystem_GetBattleContext(battleSys), BATTLECTX_SELECTED_PARTY_SLOT, i);
         p->_2898[i] = v;
         if ((u8)v <= 5) {
             u32 t;
-            fn_803AC828();
-            p->_289c[i] = fn_803BACA4(fn_803AC848(), i, 0x1a, 0);
-            fn_803AC828();
-            p->_28a0[i] = fn_803BACA4(fn_803AC848(), i, 0x3b, 0);
-            fn_803AC828();
-            p->_28b0[i] = fn_803BACA4(fn_803AC848(), i, 0x43, 0);
-            fn_803AC828();
-            t = fn_803BACA4(fn_803AC848(), i, 0x35, 0);
+            p->_289c[i] = BattleMon_Get(BattleSystem_GetBattleContext(fn_803AC828()), i, BATTLEMON_ABILITY, NULL);
+            p->_28a0[i] =
+                BattleMon_Get(BattleSystem_GetBattleContext(fn_803AC828()), i, BATTLEMON_MOVE_EFFECTS_MASK, NULL);
+            p->_28b0[i] = BattleMon_Get(BattleSystem_GetBattleContext(fn_803AC828()), i, BATTLEMON_ROLLOUT_COUNT, NULL);
+            t = BattleMon_Get(BattleSystem_GetBattleContext(fn_803AC828()), i, BATTLEMON_VOLATILE_STATUS, NULL);
             p->_28b4[i] = (t >> 10) & 3;
             p->_28b8[i] = (t >> 4) & 7;
-            fn_803AC828();
-            p->_28bc[i] = fn_803BACA4(fn_803AC848(), i, 0x42, 0);
+            p->_28bc[i] =
+                BattleMon_Get(BattleSystem_GetBattleContext(fn_803AC828()), i, BATTLEMON_PERISH_SONG_TURNS, NULL);
         } else {
             p->_289c[i] = 0;
             p->_28a0[i] = 0;
@@ -1407,11 +1402,10 @@ void fn_8000E88C(Unk8063E970 *p) {
 }
 
 // TODO Returns the 5 value of entry x.
-// TODO Does not match yet (same size; the code differs).
 u16 fn_8000EA70(Unk8063E970 *p, int x) {
-    int a = fn_803AC828();
-    void *b = fn_803AC848();
-    return fn_8000DFC4(p, x, fn_803C8C48(a, b, 2, x), 5, 0);
+    BattleSystem *battleSys = fn_803AC828();
+    BattleContext *battleCtx = BattleSystem_GetBattleContext(battleSys);
+    return fn_8000DFC4(p, x, BattleContext_Get(battleSys, battleCtx, BATTLECTX_SELECTED_PARTY_SLOT, x), 5, 0);
 }
 
 // TODO Sets the per-side table entry k from value v.
@@ -1712,26 +1706,23 @@ u32 fn_80012908(void *p, u32 a, u32 b, u32 c, u32 d) {
 }
 
 // TODO Returns the 0xA2 value of entry x.
-// TODO Does not match yet (same size; the code differs).
 u16 fn_8001370C(Unk8063E970 *p, int x) {
-    int a = fn_803AC828();
-    void *b = fn_803AC848();
-    return fn_8000DFC4(p, x, fn_803C8C48(a, b, 2, x), 0xa2, 0);
+    BattleSystem *battleSys = fn_803AC828();
+    BattleContext *battleCtx = BattleSystem_GetBattleContext(battleSys);
+    return fn_8000DFC4(p, x, BattleContext_Get(battleSys, battleCtx, BATTLECTX_SELECTED_PARTY_SLOT, x), 0xa2, 0);
 }
 
 // TODO Returns the 0xA3 value of entry x.
-// TODO Does not match yet (same size; the code differs).
 u16 fn_8001377C(Unk8063E970 *p, int x) {
-    int a = fn_803AC828();
-    void *b = fn_803AC848();
-    return fn_8000DFC4(p, x, fn_803C8C48(a, b, 2, x), 0xa3, 0);
+    BattleSystem *battleSys = fn_803AC828();
+    BattleContext *battleCtx = BattleSystem_GetBattleContext(battleSys);
+    return fn_8000DFC4(p, x, BattleContext_Get(battleSys, battleCtx, BATTLECTX_SELECTED_PARTY_SLOT, x), 0xa3, 0);
 }
 
 // TODO Fills out with the values of each entry.
-// TODO Does not match yet (same size; the code differs).
 void fn_800137EC(Unk8063E970 *p, Unk800137EC *out) {
     u16 v;
-    int aa;
+    BattleSystem *battleSys;
     u8 i;
     u8 n;
     Unk800137EC *o;
@@ -1745,8 +1736,13 @@ void fn_800137EC(Unk8063E970 *p, Unk800137EC *out) {
             continue;
         }
         o->_0 = v;
-        aa = fn_803AC828();
-        o->_2 = fn_8000DFC4(p, i, fn_803C8C48(aa, fn_803AC848(), 2, i), 0x9f, 0);
+        battleSys = fn_803AC828();
+        o->_2 = fn_8000DFC4(
+            p,
+            i,
+            BattleContext_Get(battleSys, BattleSystem_GetBattleContext(battleSys), BATTLECTX_SELECTED_PARTY_SLOT, i),
+            0x9f,
+            0);
         o->_4 = fn_80391200(lbl_8063CE34, fn_80391FFC(lbl_8063CE34 + 0x10, v));
         o->_5 = fn_803919C4(lbl_8063CE34 + 0x10, v);
         o->_6 = fn_803919F8(lbl_8063CE34 + 0x10, v);
@@ -3056,7 +3052,6 @@ int fn_800239DC(Unk8063E970 *p, Unk80035D9C *x, Unk800239DC *s, void *y) {
 }
 
 // TODO Marks the queued messages that match k and y; returns whether k is handled.
-// TODO Does not match yet (same size; the code differs).
 int fn_80023AB0(Unk8063E970 *p, u16 k, u32 y, u8 a, u16 b, Unk80035D9C *x) {
     u32 t = 0;
     s8 i;
@@ -3084,7 +3079,8 @@ int fn_80023AB0(Unk8063E970 *p, u16 k, u32 y, u8 a, u16 b, Unk80035D9C *x) {
     }
     if (t) {
         for (i = (u8)p->_2668 + 1; i < p->_1170; i++) {
-            if (t == p->_123c[i] && a == p->_11d8[i] && b == p->_11ec[i]) {
+            int j = i;
+            if (t == p->_123c[j] && a == p->_11d8[j] && b == p->_11ec[j]) {
                 fn_8000C52C(lbl_80408AB9);
                 p->_2668 = i;
             }
@@ -3219,7 +3215,6 @@ int fn_800241D4(void *p, int x) {
 }
 
 // TODO Returns whether side k is empty or used by an entry.
-// TODO Does not match yet (same size; the code differs).
 int fn_80024254(Unk8063E970 *bp, u8 k) {
     int n;
     u8 mask;
@@ -3230,7 +3225,8 @@ int fn_80024254(Unk8063E970 *bp, u8 k) {
     n = bp->_28dc;
     mask = 1 << k;
     for (i = 0; i < n; i++) {
-        if ((bp->_9a58[i]._16 & mask) || (bp->_9a58[i]._18[0] & mask)) {
+        Unk8000CC84 *e = &bp->_9a58[i];
+        if ((e->_16 & mask) || (e->_18[0] & mask)) {
             return 1;
         }
     }
