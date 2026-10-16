@@ -25,6 +25,9 @@ static inline void GXSetTexCoordGen(GXTexCoordID dst_coord, GXTexGenType func, G
 
 void GXBegin(GXPrimitive type, GXVtxFmt vtxfmt, u16 nverts);
 
+void GXDrawCylinder(u8 sides);
+void GXDrawSphere(u32 stacks, u32 sectors);
+
 static inline void GXEnd(void) {
 }
 

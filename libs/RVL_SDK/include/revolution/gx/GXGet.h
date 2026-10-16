@@ -9,6 +9,11 @@
 extern "C" {
 #endif
 
+// Geometry
+void GXGetVtxDesc(GXAttr attr, GXAttrType* type);
+void GXGetVtxDescv(GXVtxDescList* list);
+void GXGetVtxAttrFmtv(GXVtxFmt fmt, GXVtxAttrFmtList* list);
+
 // Texture
 GXBool GXGetTexObjMipMap(const GXTexObj* to);
 GXTexFmt GXGetTexObjFmt(const GXTexObj* to);
