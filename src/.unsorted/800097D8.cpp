@@ -68,8 +68,12 @@ s32 fn_80009DB0(u32, u8 v) {
     return 0;
 }
 
-void fn_8000A72C(Unk800097D8 *obj, u32 v) { obj->_D0 = v; }
-Unk800097D8 *fn_8000A734(void) { return lbl_8063E930; }
+void fn_8000A72C(Unk800097D8 *obj, u32 v) {
+    obj->_D0 = v;
+}
+Unk800097D8 *fn_8000A734(void) {
+    return lbl_8063E930;
+}
 
 void fn_8000A77C(void) {
     if (lbl_8063E930 != NULL) {
@@ -82,5 +86,4 @@ void fn_8000A790(void) {
         fn_8000A54C(lbl_8063E930);
     }
 }
-
 }

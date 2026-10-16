@@ -4,6 +4,7 @@
 
 extern "C" {
 
-s32 fn_80185D20(void) { return 0; }
-
+s32 fn_80185D20(void) {
+    return 0;
+}
 }
