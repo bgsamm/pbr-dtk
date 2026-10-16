@@ -218,9 +218,12 @@ void animInterpolateQuat(f32 cursor, GSanimTrackData *track, GSkeyframe *kf1, GS
             GSquat result;
             QUATSquad(
                 // NOTE(samm) The args appear to be in the wrong order (control values should be in the middle)
-                &GET_QUAT(track, valueIdx), &GET_QUAT(track, kf2->mValueIdx), &GET_QUAT(track, kf1->mControlIdxR),
-                &GET_QUAT(track, kf2->mControlIdxL), &result, t
-            );
+                &GET_QUAT(track, valueIdx),
+                &GET_QUAT(track, kf2->mValueIdx),
+                &GET_QUAT(track, kf1->mControlIdxR),
+                &GET_QUAT(track, kf2->mControlIdxL),
+                &result,
+                t);
             track->mCachedQuat = result;
         } break;
         case GS_INTERP_NONE:
