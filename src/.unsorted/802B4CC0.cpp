@@ -8,10 +8,6 @@ extern u8 lbl_806401B8;
 void fn_802B4D10();
 void fn_802B9D34();
 void fn_802C7CB0();
-extern u8 lbl_80568B78[];
-extern u8 lbl_8056BC40[];
-void fn_802C66B8(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7);
-extern u8 lbl_805686D8[];
 
 s32 fn_802B9574(void) {
     return 0;
@@ -51,6 +47,16 @@ void fn_802CA4B0(void) {
 void fn_802D63F8(void) {}
 void fn_802DD798(void) {}
 void fn_802DF894(void) {}
+}
+
+#include "common.hpp"
+
+extern "C" {
+
+extern u8 lbl_80568B78[];
+extern u8 lbl_8056BC40[];
+void fn_802C66B8(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7);
+
 void fn_802BDF6C(u32 a0, u32 a1, u32 a2, u32 a3, u32 a4, u32 a5, u32 a6, u32 a7) {
     fn_802C66B8(a0 + 0x8, a1, a2, a3, a4, a5, a6, a7);
 }
@@ -63,6 +69,14 @@ u8 fn_802C78FC(void) {
 u8 fn_802D9D80(void) {
     return *(u8 *)(lbl_8056BC40 + 0x1);
 }
+}
+
+#include "common.hpp"
+
+extern "C" {
+
+extern u8 lbl_805686D8[];
+
 void fn_802BD634(u32 v) {
     *(u32 *)(lbl_805686D8 + 0x80) = v;
 }
