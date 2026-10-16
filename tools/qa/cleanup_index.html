@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PBR Cleanup Index</title>
+<meta name="description" content="Every address name, raw offset, placeholder signature and fakematch construct left in the Pokemon Battle Revolution decompilation, by file.">
+<style>
+:root {
+    color-scheme: light dark;
+    --ground: #F4F4F6;
+    --surface: #FFFFFF;
+    --sunken: #ECEDF1;
+    --ink: #16171C;
+    --ink-2: #3E4250;
+    --muted: #6B7080;
+    --rule: #D6D8E0;
+    --accent: #3D5A99;
+    --names: #4B3F8F;
+    --names-soft: #E7E3F6;
+    --structure: #9E4A16;
+    --structure-soft: #F7E9DE;
+    --fakematch: #2A6372;
+    --fakematch-soft: #DEEBEF;
+    --ok: #2E6B3A;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --ground: #101116;
+        --surface: #17181F;
+        --sunken: #0B0C10;
+        --ink: #E8E9EF;
+        --ink-2: #C3C6D3;
+        --muted: #8E93A6;
+        --rule: #2C2F3B;
+        --accent: #8FA8E0;
+        --names: #A597EA;
+        --names-soft: #262248;
+        --structure: #E39A5C;
+        --structure-soft: #33251A;
+        --fakematch: #7DBCCD;
+        --fakematch-soft: #16303A;
+        --ok: #7CC489;
+    }
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--ground); color: var(--ink); font: 400 14px/1.5 var(--sans); }
+code, .mono { font-family: var(--mono); }
+a { color: var(--accent); }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.page { max-width: 1280px; margin: 0 auto; padding: 24px 16px 80px; }
+
+header h1 { margin: 0; font-size: 26px; letter-spacing: -0.01em; }
+header p { margin: 4px 0 0; color: var(--muted); }
+.families { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin: 20px 0; }
+.family { background: var(--surface); border: 1px solid var(--rule); border-left: 4px solid var(--fam); border-radius: 6px; padding: 12px 14px; }
+.family b { display: block; font-size: 24px; font-variant-numeric: tabular-nums; }
+.family span { color: var(--muted); }
+.family p { margin: 4px 0 0; color: var(--ink-2); font-size: 13px; }
+
+.layout { display: grid; grid-template-columns: 260px 1fr; gap: 20px; align-items: start; }
+@media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+aside { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 12px; position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow: auto; }
+@media (max-width: 860px) { aside { position: static; max-height: none; } }
+aside h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 14px 0 6px; }
+aside h2:first-child { margin-top: 0; }
+input[type=search], select { width: 100%; padding: 7px 9px; border: 1px solid var(--rule); border-radius: 5px; background: var(--ground); color: var(--ink); font: inherit; }
+.facet button { display: flex; width: 100%; justify-content: space-between; gap: 8px; align-items: center; border: 0; background: none; padding: 3px 6px; border-radius: 4px; cursor: pointer; text-align: left; }
+.facet button:hover { background: var(--sunken); }
+.facet button[aria-pressed=true] { background: var(--sunken); font-weight: 600; }
+.facet button.empty { color: var(--muted); }
+.facet .sw { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; background: var(--fam, var(--muted)); }
+.facet .n { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 12px; }
+.facet .label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin-bottom: 10px; }
+.toolbar .summary { font-weight: 600; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 5px; overflow: hidden; }
+.seg button { border: 0; background: var(--surface); padding: 4px 10px; cursor: pointer; }
+.seg button[aria-pressed=true] { background: var(--sunken); font-weight: 600; }
+.linkish { border: 0; background: none; color: var(--accent); cursor: pointer; padding: 0; }
+
+.file { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; margin-bottom: 6px; }
+.file-head { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center; width: 100%; border: 0; background: none; padding: 8px 12px; cursor: pointer; text-align: left; }
+.file-head .path { font-family: var(--mono); font-size: 13px; overflow-wrap: anywhere; }
+.file-head .count { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 3em; text-align: right; }
+.badge { font-size: 11px; padding: 1px 6px; border-radius: 9px; border: 1px solid var(--rule); color: var(--muted); white-space: nowrap; }
+.badge.matching { color: var(--ok); border-color: currentColor; }
+.bar { display: flex; height: 4px; margin: 0 12px 8px; border-radius: 2px; overflow: hidden; background: var(--sunken); }
+.bar i { display: block; height: 100%; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+td { padding: 3px 8px; border-top: 1px solid var(--rule); vertical-align: top; }
+td.line { width: 1%; white-space: nowrap; text-align: right; font-family: var(--mono); }
+td.cat { width: 1%; white-space: nowrap; }
+td.detail { width: 1%; white-space: nowrap; font-family: var(--mono); color: var(--ink-2); }
+td.code { font-family: var(--mono); color: var(--ink-2); overflow-wrap: anywhere; }
+td.file { font-family: var(--mono); white-space: nowrap; }
+.chip { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 3px; color: var(--fam); background: var(--fam-soft); font-weight: 600; }
+.more { text-align: center; padding: 10px; }
+.empty-state { padding: 40px; text-align: center; color: var(--muted); }
+footer { margin-top: 28px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="page">
+    <header>
+        <h1>PBR Cleanup Index</h1>
+        <p id="subtitle"></p>
+    </header>
+    <section class="families" id="families"></section>
+    <div class="layout">
+        <aside>
+            <h2>Search</h2>
+            <input id="q" type="search" placeholder="path, name or code" spellcheck="false" autocomplete="off">
+            <h2>Family</h2>
+            <div class="facet" id="f-family"></div>
+            <h2>Category</h2>
+            <div class="facet" id="f-category"></div>
+            <h2>Unit status</h2>
+            <div class="facet" id="f-status"></div>
+            <h2>Directory</h2>
+            <select id="f-dir"></select>
+        </aside>
+        <main>
+            <div class="toolbar">
+                <span class="summary" id="summary"></span>
+                <span class="seg" role="group" aria-label="View">
+                    <button type="button" data-view="files" aria-pressed="true">by file</button>
+                    <button type="button" data-view="list" aria-pressed="false">flat list</button>
+                </span>
+                <span class="seg" role="group" aria-label="Sort" id="sort">
+                    <button type="button" data-sort="count" aria-pressed="true">most sites</button>
+                    <button type="button" data-sort="path" aria-pressed="false">by path</button>
+                    <button type="button" data-sort="match" aria-pressed="false" hidden>closest to done</button>
+                </span>
+                <button class="linkish" type="button" id="expand">expand all</button>
+                <button class="linkish" type="button" id="collapse">collapse all</button>
+                <button class="linkish" type="button" id="reset">clear filters</button>
+            </div>
+            <div id="results"></div>
+        </main>
+    </div>
+    <footer>
+        Generated by <code>tools/qa/cleanup_index.py</code> from the rules in
+        <code>tools/qa/cleanup_rules.toml</code> and <code>tools/qa/fakematch_rules.toml</code>.
+        What each family means: <code>docs/STYLE.md</code>, "Definition of done".
+        <a id="tsv" href="cleanup_index.tsv">Download as TSV</a>.
+    </footer>
+</div>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+"use strict";
+const DATA = JSON.parse(document.getElementById("data").textContent);
+const META = DATA.meta;
+const FAMILY_TEXT = {
+    names: ["Names", "Address names, Unk types and TODO notes: names still to find."],
+    structure: ["Structure", "Raw offsets, placeholder signatures and extern \"C\" linkage: types still to write."],
+    fakematch: ["Fakematch", "Constructs lint.py reports: pragmas, asm, volatile, goto and the like."],
+};
+const CATEGORIES = DATA.categories.map(([id, family, message]) => ({ id, family, message }));
+const FILES = DATA.files.map(([path, status, match]) => ({ path, status, match, dir: dirOf(path) }));
+const SITES = DATA.sites.map(([c, f, line, detail, code]) => ({ c, f, line, detail, code }));
+const LIST_PAGE = 200;
+
+const state = { q: "", family: "", category: "", status: "", dir: "", view: "files", sort: "count" };
+const open = new Set();
+let listShown = LIST_PAGE;
+
+function dirOf(path) {
+    const parts = path.split("/").slice(0, -1);
+    return parts.slice(0, Math.min(parts.length, 3)).join("/");
+}
+function esc(text) {
+    return String(text).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[ch]);
+}
+function fmt(n) { return n.toLocaleString("en-US"); }
+function files(n) { return `${fmt(n)} file${n === 1 ? "" : "s"}`; }
+function sites(n) { return `${fmt(n)} site${n === 1 ? "" : "s"}`; }
+function statusOf(file) { return file.status || "header"; }
+function famStyle(family) { return `--fam: var(--${family}); --fam-soft: var(--${family}-soft)`; }
+function lineUrl(site) {
+    const file = FILES[site.f];
+    const rev = META.revision || "main";
+    return `${META.repo}/blob/${rev}/${file.path}#L${site.line}`;
+}
+
+function matches(site, skip) {
+    const cat = CATEGORIES[site.c];
+    const file = FILES[site.f];
+    if (skip !== "family" && state.family && cat.family !== state.family) return false;
+    if (skip !== "category" && state.category && cat.id !== state.category) return false;
+    if (skip !== "status" && state.status && statusOf(file) !== state.status) return false;
+    if (skip !== "dir" && state.dir && file.dir !== state.dir && !file.dir.startsWith(state.dir + "/")) return false;
+    if (state.q) {
+        const q = state.q.toLowerCase();
+        if (!file.path.toLowerCase().includes(q) && !site.code.toLowerCase().includes(q) && !site.detail.toLowerCase().includes(q)) return false;
+    }
+    return true;
+}
+
+function count(key, skip) {
+    const counts = new Map();
+    for (const site of SITES) {
+        if (!matches(site, skip)) continue;
+        const k = key(site);
+        counts.set(k, (counts.get(k) || 0) + 1);
+    }
+    return counts;
+}
+
+function facet(id, field, entries, counts) {
+    document.getElementById(id).innerHTML = entries.map(({ key, label, family }) => {
+        const n = counts.get(key) || 0;
+        const pressed = state[field] === key;
+        const swatch = family ? `<span class="sw" style="${famStyle(family)}"></span>` : "";
+        return `<button type="button" data-field="${field}" data-key="${esc(key)}" aria-pressed="${pressed}" class="${n ? "" : "empty"}">` +
+            `<span class="label">${swatch}${esc(label)}</span><span class="n">${fmt(n)}</span></button>`;
+    }).join("");
+}
+
+function renderFacets() {
+    facet("f-family", "family",
+        DATA.families.map(f => ({ key: f, label: FAMILY_TEXT[f][0], family: f })),
+        count(s => CATEGORIES[s.c].family, "family"));
+    facet("f-category", "category",
+        CATEGORIES.filter(c => !state.family || c.family === state.family)
+            .map(c => ({ key: c.id, label: c.id, family: c.family })),
+        count(s => CATEGORIES[s.c].id, "category"));
+    facet("f-status", "status",
+        ["NonMatching", "Matching", "header"].map(k => ({ key: k, label: k === "header" ? "header or not built" : k })),
+        count(s => statusOf(FILES[s.f]), "status"));
+    const dirs = count(s => FILES[s.f].dir, "dir");
+    const select = document.getElementById("f-dir");
+    select.innerHTML = `<option value="">all directories</option>` + [...dirs.keys()].sort()
+        .map(d => `<option value="${esc(d)}"${state.dir === d ? " selected" : ""}>${esc(d)} (${fmt(dirs.get(d))})</option>`).join("");
+    if (state.dir && !dirs.has(state.dir)) {
+        select.insertAdjacentHTML("beforeend", `<option value="${esc(state.dir)}" selected>${esc(state.dir)} (0)</option>`);
+    }
+}
+
+function renderFamilies() {
+    const totals = new Map();
+    for (const site of SITES) {
+        const family = CATEGORIES[site.c].family;
+        totals.set(family, (totals.get(family) || 0) + 1);
+    }
+    document.getElementById("families").innerHTML = DATA.families.map(f =>
+        `<div class="family" style="${famStyle(f)}"><b>${fmt(totals.get(f) || 0)}</b>` +
+        `<span>${esc(FAMILY_TEXT[f][0])}</span><p>${esc(FAMILY_TEXT[f][1])}</p></div>`).join("");
+    const fileCount = new Set(SITES.map(s => s.f)).size;
+    const rev = META.revision ? ` at <a href="${esc(META.repo)}/commit/${esc(META.revision)}"><code>${esc(META.revision.slice(0, 7))}</code></a>` : "";
+    const when = META.generated ? `, ${esc(META.generated)}` : "";
+    document.getElementById("subtitle").innerHTML =
+        `${sites(SITES.length)} in ${files(fileCount)} of <code>src/</code> and <code>include/</code>${rev}${when}.`;
+}
+
+function chip(site) {
+    const cat = CATEGORIES[site.c];
+    return `<span class="chip" style="${famStyle(cat.family)}" title="${esc(cat.message)}">${esc(cat.id)}</span>`;
+}
+
+function siteRow(site, withFile) {
+    const file = withFile ? `<td class="file">${esc(FILES[site.f].path)}</td>` : "";
+    return `<tr>${file}<td class="line"><a href="${esc(lineUrl(site))}">${site.line}</a></td>` +
+        `<td class="cat">${chip(site)}</td><td class="detail">${esc(site.detail)}</td><td class="code">${esc(site.code)}</td></tr>`;
+}
+
+function renderResults(hits) {
+    const results = document.getElementById("results");
+    if (!hits.length) {
+        results.innerHTML = `<div class="empty-state">Nothing left here.</div>`;
+        return;
+    }
+    if (state.view === "list") {
+        const rows = hits.slice(0, listShown).map(s => siteRow(s, true)).join("");
+        const more = hits.length > listShown
+            ? `<div class="more"><button class="linkish" type="button" id="more">show ${fmt(Math.min(LIST_PAGE, hits.length - listShown))} more of ${fmt(hits.length - listShown)}</button></div>` : "";
+        results.innerHTML = `<div class="file"><table>${rows}</table></div>${more}`;
+        return;
+    }
+    const byFile = new Map();
+    for (const site of hits) {
+        if (!byFile.has(site.f)) byFile.set(site.f, []);
+        byFile.get(site.f).push(site);
+    }
+    const groups = [...byFile.entries()];
+    if (state.sort === "count") groups.sort((a, b) => b[1].length - a[1].length || FILES[a[0]].path.localeCompare(FILES[b[0]].path));
+    else if (state.sort === "match") groups.sort((a, b) => (FILES[b[0]].match ?? -1) - (FILES[a[0]].match ?? -1) || a[1].length - b[1].length);
+    else groups.sort((a, b) => FILES[a[0]].path.localeCompare(FILES[b[0]].path));
+    results.innerHTML = groups.map(([f, sites]) => {
+        const file = FILES[f];
+        const isOpen = open.has(f);
+        const status = file.status
+            ? `<span class="badge${file.status === "Matching" ? " matching" : ""}">${esc(file.status)}${file.match != null ? " " + file.match.toFixed(1) + "%" : ""}</span>`
+            : `<span class="badge">header</span>`;
+        const perFamily = DATA.families.map(fam => [fam, sites.filter(s => CATEGORIES[s.c].family === fam).length]);
+        const bar = perFamily.filter(([, n]) => n).map(([fam, n]) =>
+            `<i style="width:${(100 * n / sites.length).toFixed(2)}%;background:var(--${fam})" title="${fam}: ${n}"></i>`).join("");
+        const body = isOpen ? `<table>${sites.map(s => siteRow(s, false)).join("")}</table>` : "";
+        return `<div class="file"><button class="file-head" type="button" data-file="${f}" aria-expanded="${isOpen}">` +
+            `<span class="path">${esc(file.path)}</span>${status}<span class="count">${fmt(sites.length)}</span></button>` +
+            `<div class="bar">${bar}</div>${body}</div>`;
+    }).join("");
+}
+
+function render() {
+    const hits = SITES.filter(s => matches(s));
+    const fileCount = new Set(hits.map(s => s.f)).size;
+    document.getElementById("summary").textContent = `${sites(hits.length)} in ${files(fileCount)}`;
+    renderFacets();
+    renderResults(hits);
+    for (const button of document.querySelectorAll("[data-view]")) button.setAttribute("aria-pressed", button.dataset.view === state.view);
+    for (const button of document.querySelectorAll("[data-sort]")) button.setAttribute("aria-pressed", button.dataset.sort === state.sort);
+    document.getElementById("sort").hidden = state.view !== "files";
+    document.getElementById("expand").hidden = document.getElementById("collapse").hidden = state.view !== "files";
+    writeHash();
+}
+
+function writeHash() {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(state)) {
+        if (value && !(key === "view" && value === "files") && !(key === "sort" && value === "count")) params.set(key, value);
+    }
+    const hash = params.toString();
+    history.replaceState(null, "", hash ? "#" + hash : location.pathname + location.search);
+}
+
+function readHash() {
+    const params = new URLSearchParams(location.hash.slice(1));
+    for (const key of Object.keys(state)) if (params.has(key)) state[key] = params.get(key);
+    document.getElementById("q").value = state.q;
+}
+
+document.addEventListener("click", event => {
+    const target = event.target.closest("button");
+    if (!target) return;
+    if (target.dataset.field) {
+        const field = target.dataset.field;
+        state[field] = state[field] === target.dataset.key ? "" : target.dataset.key;
+        if (field === "family" && state.category && CATEGORIES.find(c => c.id === state.category).family !== state.family && state.family) state.category = "";
+        listShown = LIST_PAGE;
+    } else if (target.dataset.view) {
+        state.view = target.dataset.view;
+    } else if (target.dataset.sort) {
+        state.sort = target.dataset.sort;
+    } else if (target.dataset.file !== undefined) {
+        const f = Number(target.dataset.file);
+        if (open.has(f)) open.delete(f); else open.add(f);
+    } else if (target.id === "expand") {
+        for (const s of SITES) if (matches(s)) open.add(s.f);
+    } else if (target.id === "collapse") {
+        open.clear();
+    } else if (target.id === "reset") {
+        Object.assign(state, { q: "", family: "", category: "", status: "", dir: "" });
+        document.getElementById("q").value = "";
+    } else if (target.id === "more") {
+        listShown += LIST_PAGE;
+    } else {
+        return;
+    }
+    render();
+});
+
+let typing;
+document.getElementById("q").addEventListener("input", event => {
+    clearTimeout(typing);
+    typing = setTimeout(() => { state.q = event.target.value.trim(); listShown = LIST_PAGE; render(); }, 150);
+});
+document.getElementById("f-dir").addEventListener("change", event => { state.dir = event.target.value; render(); });
+
+if (META.scores) document.querySelector("[data-sort=match]").hidden = false;
+readHash();
+renderFamilies();
+render();
+</script>
+</body>
+</html>

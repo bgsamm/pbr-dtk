@@ -40,3 +40,21 @@ Requirements: Python 3.12+, the build tools (`python configure.py` then `ninja`)
 A cleaner rewrite sometimes matches less than the code it replaces. A maintainer can accept that by adding the `accepted regression` label to the pull request. The regressions are then listed but don't fail the build. The PR description must say why each regression is necessary.
 
 Pushes to `main` never fail on regressions: they were accepted, or not, in the pull request.
+
+## Cleanup index
+
+`tools/qa/cleanup_index.py` lists every place in `src/` and `include/` that keeps code from the definition of done in `docs/STYLE.md`, in three families:
+
+- **names**: functions and data defined with an address name (`fn_`, `lbl_`), `Unk` types, `TODO` notes;
+- **structure**: raw pointer arithmetic, pointers moved by a constant or cast and indexed, placeholder parameters (`a0`...), `extern "C"` linkage;
+- **fakematch**: the other rules of `tools/qa/fakematch_rules.toml`.
+
+The rules are tree-sitter queries in `tools/qa/cleanup_rules.toml`. Each site is listed with its unit's status and match score, so the work can be picked file by file.
+
+```sh
+python tools/qa/cleanup_index.py                      # summary
+python tools/qa/cleanup_index.py --tsv -              # every site, as TSV
+python tools/qa/cleanup_index.py --out build/pages --report build/RPBP01/report.json
+```
+
+CI builds the page on every run (artifact `cleanup_index`) and publishes it to GitHub Pages from `main`.
