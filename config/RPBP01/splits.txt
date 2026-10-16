@@ -1599,6 +1599,7 @@ libs/RVL_SDK/src/gx/GXPixel.c:
 
 libs/RVL_SDK/src/gx/GXDraw.c:
 	.text       start:0x80284950 end:0x8028663C
+	.bss        start:0x80515FF8 end:0x80516280
 
 libs/RVL_SDK/src/gx/GXDisplayList.c:
 	.text       start:0x8028663C end:0x8028680C
