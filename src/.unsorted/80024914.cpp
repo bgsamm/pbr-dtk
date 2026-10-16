@@ -10,7 +10,10 @@ void fn_80024E40(void) {
     }
 }
 
-void fn_80025360(Unk80024914 *obj, u32 v) { obj->_0C = v; }
-u32 fn_80025368(Unk80024914 *obj) { return obj->_0C; }
-
+void fn_80025360(Unk80024914 *obj, u32 v) {
+    obj->_0C = v;
+}
+u32 fn_80025368(Unk80024914 *obj) {
+    return obj->_0C;
+}
 }

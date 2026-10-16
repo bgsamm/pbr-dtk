@@ -19,9 +19,10 @@ void fn_8004BFEC(void) {}
 void fn_8004BFF0(void) {}
 void fn_8004BFF4(void) {}
 void fn_8004C3E0(void) {}
-f32 fn_8004C3E4(void) { return lbl_80640A08; }
+f32 fn_8004C3E4(void) {
+    return lbl_80640A08;
+}
 void fn_8004C6DC(void) {}
-
 }
 
 // Battle effect objects (color animation helpers, effect factory)
@@ -157,5 +158,4 @@ f32 fn_8004B220(EffBase *self) {
     }
     return lbl_806409F8;
 }
-
 }

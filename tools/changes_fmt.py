@@ -31,13 +31,49 @@ def format_float(value: float) -> str:
     return "%6.2f" % value
 
 
-def get_changes(changes_file: str) -> Tuple[list[Change], list[Change]]:
+def pair_renames(functions: list[dict]) -> Tuple[list[dict], list[Tuple[dict, dict]]]:
+    """Pair functions that disappeared with ones that appeared at the same address.
+
+    objdiff pairs baseline and current functions by name, so a function renamed in
+    symbols.txt shows up as one function removed (no "to") and one added (no "from").
+    Matching those by virtual address turns them back into a single renamed function.
+    Returns the remaining functions and the (old, new) pairs.
+    """
+
+    def vaddr(func: dict) -> Optional[int]:
+        value = func.get("metadata", {}).get("virtual_address")
+        return int(value) if value is not None else None
+
+    removed: dict[int, list[dict]] = {}
+    added: dict[int, list[dict]] = {}
+    for func in functions:
+        addr = vaddr(func)
+        if addr is None:
+            continue
+        if "to" not in func and "from" in func:
+            removed.setdefault(addr, []).append(func)
+        elif "from" not in func and "to" in func:
+            added.setdefault(addr, []).append(func)
+
+    pairs = []
+    paired = set()
+    for addr, olds in removed.items():
+        news = added.get(addr, [])
+        if len(olds) == 1 and len(news) == 1:  # skip anything ambiguous
+            pairs.append((olds[0], news[0]))
+            paired.update((id(olds[0]), id(news[0])))
+    rest = [func for func in functions if id(func) not in paired]
+    return rest, pairs
+
+
+def get_changes(changes_file: str) -> Tuple[list[Change], list[Change], list[Change]]:
     changes_file = os.path.relpath(changes_file, root_dir)
     with open(changes_file, "r") as f:
         changes_json = json.load(f)
 
     regressions = []
     progressions = []
+    renames = []
 
     def diff_key(object_name: Optional[str], object: dict, key: str):
         from_value = object.get("from", {}).get(key, 0.0)
@@ -57,12 +93,22 @@ def get_changes(changes_file: str) -> Tuple[list[Change], list[Change]]:
         for key in UNIT_KEYS_TO_DIFF:
             diff_key(unit_name, unit, key)
         # Ignore sections
-        for func in unit.get("functions", []):
+        functions, pairs = pair_renames(unit.get("functions", []))
+        for func in functions:
             func_name = func["name"]
             for key in FUNCTION_KEYS_TO_DIFF:
                 diff_key(func_name, func, key)
+        for old, new in pairs:
+            func_name = f"{old['name']} -> {new['name']}"
+            merged = {"from": old.get("from", {}), "to": new.get("to", {})}
+            count = len(regressions) + len(progressions)
+            for key in FUNCTION_KEYS_TO_DIFF:
+                diff_key(func_name, merged, key)
+            if len(regressions) + len(progressions) == count:  # score unchanged
+                value = merged["to"].get("fuzzy_match_percent", 0.0)
+                renames.append((func_name, "renamed", value, value))
 
-    return regressions, progressions
+    return regressions, progressions, renames
 
 
 def generate_changes_plaintext(changes: list[Change]) -> str:
@@ -141,17 +187,18 @@ def main():
     )
     args = parser.parse_args()
 
-    regressions, progressions = get_changes(args.report_changes_file)
+    regressions, progressions, renames = get_changes(args.report_changes_file)
 
     if args.output:
         markdown_output = generate_changes_markdown(regressions, "regressions")
         if args.all:
             markdown_output += generate_changes_markdown(progressions, "progressions")
+            markdown_output += generate_changes_markdown(renames, "renames")
         with open(args.output, "w", encoding="utf-8") as f:
             f.write(markdown_output)
     else:
         if args.all:
-            changes = progressions + regressions
+            changes = progressions + renames + regressions
         else:
             changes = regressions
         text_output = generate_changes_plaintext(changes)
