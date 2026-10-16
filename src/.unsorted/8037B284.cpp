@@ -4,6 +4,7 @@
 
 extern "C" {
 
-void fn_8037BE70(u8 *p, u16 v) { *(u16 *)(p + 0x26) = v; }
-
+void fn_8037BE70(u8 *p, u16 v) {
+    *(u16 *)(p + 0x26) = v;
+}
 }

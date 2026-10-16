@@ -1,10 +1,11 @@
-#include "common.hpp"
 #include ".unsorted/80177C24.hpp"
 
 #include "ds/pokemon.hpp"
 #include "gs/GScache.hpp"
 #include "types/pokemonDeck.hpp"
 #include "types/trainerDeck.hpp"
+
+#include "common.hpp"
 
 struct UnkStruct2 {
     /* 0x00 */ u8 _00[0x88];
