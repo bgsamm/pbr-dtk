@@ -6,6 +6,8 @@
 #include "gs/GSrender.hpp"
 #include "gs/scene/GScamera.hpp"
 
+#include <revolution/gx/GXTransform.h>
+
 #include "common.hpp"
 
 void *operator new(unsigned long size);
@@ -33,7 +35,6 @@ void fn_80242A3C(Unk80242A00 *target, s32, s32, s32, f32 x, f32 y, f32 w, f32 h)
 void fn_80242CD0(Unk80242A00 *target, f32 *, f32 *);
 void fn_80243538(Unk80242A00 *target, s32, f32, f32, f32, f32, f32);
 f32 PSVECMag(const Vec *v);
-void GXProject(f32 x, f32 y, f32 z, const f32 *mtx, const f32 *pm, const f32 *vp, f32 *sx, f32 *sy, f32 *sz);
 }
 
 extern void *lbl_8063F778;
@@ -298,7 +299,7 @@ void fn_800334A0(Unk80033090 *p, f32 t) {
         f32 sy;
         f32 sz;
         f32 *viewport = (f32 *)fn_802352BC(GSrender::sInstance);
-        GXProject(v.x, v.y, v.z, (f32 *)camera->_1d4, camera->_14c, viewport, &sx, &sy, &sz);
+        GXProject(v.x, v.y, v.z, camera->_1d4, camera->_14c, viewport, &sx, &sy, &sz);
         lbl_8063F410->_444 = sz > lbl_806407E4 ? sz : -sz;
     }
     s32 changed = 0;

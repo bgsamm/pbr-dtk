@@ -7,6 +7,7 @@
 #include "gs/scene/GScamera.hpp"
 
 #include <cmath>
+#include <revolution/gx/GXTransform.h>
 
 #include "common.hpp"
 
@@ -17,7 +18,6 @@ extern "C" {
 f32 PSVECMag(const Vec *v);
 f32 PSVECDistance(const Vec *a, const Vec *b);
 f32 PSVECDotProduct(const Vec *a, const Vec *b);
-void GXProject(f32 x, f32 y, f32 z, const f32 *mtx, const f32 *pm, const f32 *vp, f32 *sx, f32 *sy, f32 *sz);
 GSvec3 fn_8003B674(u32 obj, u32 kind);
 f32 fn_8000739C();
 f32 fn_8003A5EC(u32 obj, int i);
@@ -1829,7 +1829,7 @@ int fn_80044554(Unk80040EA4 *e, Vec *in, Vec *out) {
         out->z = lbl_806408E0;
         return 0;
     }
-    GXProject(in->x, in->y, in->z, view, proj, &vp._00, &out->x, &out->y, &out->z);
+    GXProject(in->x, in->y, in->z, (const f32(*)[4])view, proj, &vp._00, &out->x, &out->y, &out->z);
     return 1;
 }
 
