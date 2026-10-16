@@ -25,7 +25,7 @@ This repository contains no game assets or assembly. You need your own copy of t
 [![Overview](https://decomp.dev/pbr-ret/pbr-decomp.svg?mode=overview)][progress site]
 
 <!-- progress:start -->
-**21.05 %** of the code matches the original (6,410 of 13,890 functions). **2.32 %** is in finished units linked into the build.
+**21.05%** of the code matches the original (6,410 of 13,890 functions). **2.32%** is in finished units linked into the build.
 
 | Area | Size | Matched | |
 |---|---:|---:|---|
