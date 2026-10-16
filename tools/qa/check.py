@@ -579,10 +579,10 @@ def symbol_issues(tree: Tree, results: List[CompileResult]) -> List[Issue]:
             local = [s for s in candidates if in_unit(s)]
             where = f"{unit['source']}: {elf.name}"
             if not candidates:
-                if elf.kind == "FUNC" and unit["source"].startswith("libs/"):
-                    # Library sources keep functions the game never calls,
-                    # which the linker strips. A wrong name still shows as
-                    # an unmatched function in the objdiff report.
+                if unit["source"].startswith("libs/"):
+                    # Library sources keep functions and data the game never
+                    # uses, which the linker strips. A wrong name still shows
+                    # as unmatched code or data in the objdiff report.
                     continue
                 issues.append(
                     Issue(
@@ -633,7 +633,7 @@ def symbol_issues(tree: Tree, results: List[CompileResult]) -> List[Issue]:
                 issues.append(
                     Issue(
                         "symbols",
-                        (name, "order", previous[1], function),
+                        (name, "order", function),
                         f"{unit['source']}: {function} (0x{address:08X}) is defined after "
                         f"{previous[1]} (0x{previous[0]:08X}); keep retail order",
                         unit["source"],
