@@ -12,8 +12,9 @@ Checks that need only the compilers (no game files):
                scope (static or global), names missing from symbols.txt,
                definitions outside the unit's address range, functions out of
                retail order, and undefined names that nothing provides
-  format       clang-format 23 on the changed files under src/ and include/
-  lint         tools/decomp/lint.py on the lines added, when the tree has it
+  format       clang-format (the major version pinned in tools/qa/requirements.txt)
+               on the changed files under src/ and include/
+  lint         tools/qa/lint.py on the lines added
 
 Checks that need the game files (--with-dol):
   regressions  objdiff report of the base against the change: a function that
@@ -105,7 +106,7 @@ INTRINSICS = {
     "__alloca",
     "__memcpy",
 }
-CLANG_FORMAT_MAJOR = "23"
+REQUIREMENTS = ROOT / "tools" / "qa" / "requirements.txt"
 FORMAT_PATHS = ["src", "include"]
 SOURCE_SUFFIXES = {".c", ".cpp", ".cp", ".h", ".hpp", ".inc"}
 ALL_CHECKS = ["diagnostics", "symbols", "format", "lint", "regressions", "apply"]
@@ -251,9 +252,8 @@ def configure_args_for_base(head: Tree, configure_args: List[str]) -> List[str]:
     """Point the base at the head's compilers and binutils, so the base tree
     needs no download."""
     args = list(configure_args)
-    compilers = Path(head.units[0]["compiler"]).parents[2] if head.units else None
-    if compilers and "--compilers" not in args:
-        args += ["--compilers", str(compilers)]
+    if "--compilers" not in args:
+        args += ["--compilers", head.tools["compilers"]]
     if "--binutils" not in args:
         args += ["--binutils", head.tools["binutils"]]
     return args
@@ -603,7 +603,10 @@ def symbol_issues(tree: Tree, results: List[CompileResult]) -> List[Issue]:
 
         text_order.sort()
         previous = None
-        for _, _, address, function in text_order:
+        previous_section = None
+        for section, _, address, function in text_order:
+            if section != previous_section:
+                previous, previous_section = None, section
             if previous and address < previous[0]:
                 issues.append(
                     Issue(
@@ -661,29 +664,40 @@ def changed_files(base: Optional[str], paths: List[str]) -> List[str]:
     )
 
 
-def find_clang_format() -> Optional[str]:
+def clang_format_major() -> str:
+    """The clang-format major version pinned in tools/qa/requirements.txt."""
+    match = re.search(r"^clang-format==(\d+)\.", REQUIREMENTS.read_text(), re.MULTILINE)
+    if match is None:
+        sys.exit(f"error: no clang-format version in {REQUIREMENTS}")
+    return match.group(1)
+
+
+def find_clang_format(major: str) -> Optional[str]:
     for candidate in [
         os.environ.get("CLANG_FORMAT"),
         "clang-format",
-        f"clang-format-{CLANG_FORMAT_MAJOR}",
+        f"clang-format-{major}",
     ]:
         if candidate and shutil.which(candidate):
             version = run([candidate, "--version"], ROOT, check=False).stdout
-            if re.search(rf"version {CLANG_FORMAT_MAJOR}\.", version):
+            if re.search(rf"version {major}\.", version):
                 return candidate
     return None
 
 
 def check_format(base: Optional[str]) -> CheckResult:
     result = CheckResult("format")
-    clang_format = find_clang_format()
+    major = clang_format_major()
+    clang_format = find_clang_format(major)
     if clang_format is None:
         result.failed = True
         result.notes.append(
-            f"clang-format {CLANG_FORMAT_MAJOR} not found (set CLANG_FORMAT, or "
-            f"`pip install clang-format=={CLANG_FORMAT_MAJOR}.1.3`)"
+            f"clang-format {major} not found (set CLANG_FORMAT, or "
+            "`pip install -r tools/qa/requirements.txt`)"
         )
         return result
+    # Whole files, not only the changed lines: a change to a file that is not
+    # formatted yet (some of src/gs and include/gs today) formats all of it.
     files = changed_files(base, FORMAT_PATHS)
     for path in files:
         check = run([clang_format, "--dry-run", "--Werror", path], ROOT, check=False)
@@ -709,10 +723,7 @@ def check_format(base: Optional[str]) -> CheckResult:
 
 def check_lint(base: Optional[str]) -> CheckResult:
     result = CheckResult("lint")
-    lint = ROOT / "tools" / "decomp" / "lint.py"
-    if not lint.exists():
-        result.skipped = "tools/decomp/lint.py is not in this tree"
-        return result
+    lint = ROOT / "tools" / "qa" / "lint.py"
     args = ["--all", "src", "include"] if base is None else [base]
     output = run([sys.executable, str(lint), *args], ROOT, check=False)
     text = output.stdout + output.stderr
@@ -827,17 +838,10 @@ def check_regressions(head_report: Path, base_report: Optional[Path]) -> CheckRe
         name = unit.get("name", "?")
         compare_measures(name, unit)
         functions = unit.get("functions", []) or []
-        removed = {}
         added = {}
         for function in functions:
             address = (function.get("metadata") or {}).get("virtual_address")
             if (
-                function.get("to") is None
-                and function.get("from") is not None
-                and address is not None
-            ):
-                removed[address] = function
-            elif (
                 function.get("from") is None
                 and function.get("to") is not None
                 and address is not None
@@ -892,14 +896,21 @@ def unlinked_complete_units(report: Path) -> List[str]:
 def apply_drift(tree_root: Path) -> Set[Tuple[str, str]]:
     """Lines `dtk dol apply` would change in symbols.txt, as (old, new)."""
     config = tree_root / "config" / VERSION
-    saved = {path: path.read_bytes() for path in config.rglob("*") if path.is_file()}
+    # Restore the bytes and the times, so the next ninja run does not see
+    # splits.txt or symbols.txt as changed and split again.
+    saved = {
+        path: (path.read_bytes(), path.stat())
+        for path in config.rglob("*")
+        if path.is_file()
+    }
     try:
         ninja(tree_root, "apply")
         after = (config / "symbols.txt").read_text().splitlines()
     finally:
-        for path, data in saved.items():
+        for path, (data, stat) in saved.items():
             path.write_bytes(data)
-    before = saved[config / "symbols.txt"].decode().splitlines()
+            os.utime(path, ns=(stat.st_atime_ns, stat.st_mtime_ns))
+    before = saved[config / "symbols.txt"][0].decode().splitlines()
     drift = set()
     removed: List[str] = []
     for line in difflib.ndiff(before, after):
@@ -924,6 +935,27 @@ def check_apply(head_root: Path, base_root: Optional[Path]) -> CheckResult:
 
 # --------------------------------------------------------------------------
 # Output
+
+
+def escape_data(text: str) -> str:
+    """Escape a workflow command's message."""
+    return text.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+
+
+def escape_property(text: str) -> str:
+    """Escape a workflow command's property value."""
+    return escape_data(text).replace(":", "%3A").replace(",", "%2C")
+
+
+def annotation(issue: Issue) -> str:
+    """A GitHub Actions error annotation; file-level issues have no line."""
+    properties = []
+    if issue.path:
+        properties.append(f"file={escape_property(issue.path)}")
+        if issue.line:
+            properties.append(f"line={issue.line}")
+    where = " " + ",".join(properties) if properties else ""
+    return f"::error{where}::{escape_data(f'{issue.check}: {issue.message}')}"
 
 
 def report(
@@ -953,8 +985,7 @@ def report(
             )
             print(f"    {location}{issue.message}")
             if github:
-                where = f" file={issue.path},line={issue.line}" if issue.path else ""
-                print(f"::error{where}::{issue.check}: {issue.message}")
+                print(annotation(issue))
         if show_inherited:
             for issue in result.inherited:
                 print(f"    (inherited) {issue.message}")
