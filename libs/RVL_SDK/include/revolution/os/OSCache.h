@@ -33,8 +33,12 @@ void ICEnable(void);
 void ICFlashInvalidate(void);
 void ICInvalidateRange(void* addr, u32 len);
 
+#define OS_CACHE_BASE 0xE0000000
+
 void LCEnable(void);
+u32 LCQueueLength(void);
 void LCDisable(void);
+void LCLoadBlocks(void* dst, const void* src, u32 blocks); // From doldecomp/ogws (CC0)
 void LCStoreBlocks(void* dst, void* src, u32 blocks);
 u32 LCStoreData(void* dst, void* src, u32 len);
 void LCQueueWait(u32 len);

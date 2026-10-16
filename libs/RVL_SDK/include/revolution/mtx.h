@@ -126,6 +126,24 @@ void C_VECSubtract(const Vec *a, const Vec *b, Vec *ab);
 #define VECSubtract PSVECSubtract
 #endif // DEBUG
 
+// From doldecomp/ogws (CC0), include/revolution/MTX/*.h
+void PSMTXConcatArray(const Mtx, const Mtx, Mtx, u32);
+void PSMTXTranspose(const Mtx, Mtx);
+void PSMTXRotAxisRad(Mtx, const Vec*, f32);
+void C_MTXLookAt(Mtx, const Vec*, const Vec*, const Vec*);
+void C_MTXLightFrustum(Mtx, f32, f32, f32, f32, f32, f32, f32, f32, f32);
+void C_MTXLightPerspective(Mtx, f32, f32, f32, f32, f32, f32);
+void C_MTXLightOrtho(Mtx, f32, f32, f32, f32, f32, f32, f32, f32);
+void PSQUATMultiply(const Quaternion* a, const Quaternion* b, Quaternion* prod);
+void PSQUATNormalize(const Quaternion* in, Quaternion* out);
+void C_QUATMtx(Quaternion* quat, const Mtx mtx);
+void C_QUATSlerp(const Quaternion* a, const Quaternion* b, Quaternion* out,
+                 f32 t);
+f32 PSVECMag(const Vec* v);
+f32 PSVECDotProduct(const Vec* a, const Vec* b);
+f32 PSVECSquareDistance(const Vec* a, const Vec* b);
+void C_VECHalfAngle(const Vec* a, const Vec* b, Vec* half);
+
 #ifdef __cplusplus
 }
 #endif

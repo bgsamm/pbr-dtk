@@ -24,6 +24,7 @@ void GXInitTexObjWrapMode(const GXTexObj* obj, GXTexWrapMode s, GXTexWrapMode t)
 void GXInitTexObjTlut(const GXTexObj* obj, u32 tlut_name);
 
 void GXInitTexObjUserData(const GXTexObj* obj, void* user_data);
+u32 GXGetTexObjTlut(GXTexObj*); // From doldecomp/ogws (CC0)
 void* GXGetTexObjUserData(const GXTexObj* obj);
 
 void GXLoadTexObjPreLoaded(const GXTexObj* obj, const GXTexRegion* region, GXTexMapID id);

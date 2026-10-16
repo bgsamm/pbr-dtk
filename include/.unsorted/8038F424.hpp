@@ -952,7 +952,7 @@ void fn_8017CED8(u8 *a);
 s32 WPADGetInfoAsync(s32 ch, void *info, void *cb);
 extern u8 lbl_8063CEF0[];
 extern u8 lbl_8063CFB0[];
-void fn_8037A9EC(u8 *p);
+void DetachSound__Q34nw4r3snd11SoundHandleFv(u8 *p); // nw4r::snd::SoundHandle::DetachSound
 extern u8 lbl_80405248[];
 s32 fn_803A5804(s32 *p, void *info);
 s32 fn_803D50C8(u8 *a, u8 *b);

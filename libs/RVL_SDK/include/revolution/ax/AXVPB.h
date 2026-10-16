@@ -75,6 +75,8 @@ void AXSetVoiceLpf(AXVPB* vpb, AXPBLPF* lpf);
 void AXSetVoiceLpfCoefs(AXVPB* vpb, u16 a0, u16 b0);
 void AXGetLpfCoefs(u16 freq, u16* a, u16* b);
 void AXSetVoiceRmtOn(AXVPB* vpb, u16 on);
+void AXSetMaxDspCycles(u32 num); // From doldecomp/ogws (CC0)
+s32 AXGetMaxVoices(void);
 void AXSetVoiceRmtMix(AXVPB* vpb, AXPBRMTMIX* mix);
 
 #ifdef __cplusplus

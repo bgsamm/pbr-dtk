@@ -298,7 +298,7 @@ u8 *fn_803A50E8(u8 *p, s32 del) {
         OSCancelAlarm(lbl_8063CEF0 + *(s32 *)p * 0x30);
         OSCancelAlarm(lbl_8063CFB0 + *(s32 *)p * 0x30);
         if (p + 0x20) {
-            fn_8037A9EC(p + 0x20);
+            DetachSound__Q34nw4r3snd11SoundHandleFv(p + 0x20);
         }
         if (del > 0) {
             ::operator delete(p);

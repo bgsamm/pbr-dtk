@@ -1,6 +1,11 @@
 #ifndef REVOLUTION_GX_STRUCTS_H
 #define REVOLUTION_GX_STRUCTS_H
 
+// From doldecomp/ogws (CC0), include/revolution/GX/GXHardware.h
+#define GX_BP_CMD_SZ (sizeof(u8) + sizeof(u32))
+#define GX_CP_CMD_SZ (sizeof(u8) + sizeof(u8) + sizeof(u32))
+#define GX_XF_CMD_SZ (sizeof(u8) + sizeof(u32) + sizeof(u32))
+
 #include <revolution/gx/GXEnum.h>
 #include <revolution/types.h>
 #include <revolution/vi/vitypes.h>

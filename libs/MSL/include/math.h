@@ -16,6 +16,7 @@ extern "C" {
 #define M_LN2 0.693147180559945309417
 
 #define M_PI 3.14159265358979323846
+#define FLT_EPSILON 1.19209289550781e-7f // From doldecomp/ogws (CC0)
 #define M_PI_2 1.57079632679489661923
 #define M_PI_4 0.785398163397448309616
 #define M_1_PI 0.318309886183790671538
@@ -169,6 +170,20 @@ inline float ldexpf(float x, int n) {
 }
 
 double floor(double x);
+inline float floorf(float x) {
+    return floor(x);
+}
+
+double modf(double x, double* iptr);
+inline float modff(float x, float* iptr) {
+    float frac;
+    double intg;
+
+    frac = modf(x, &intg);
+    *iptr = intg;
+
+    return frac;
+}
 
 #ifdef __cplusplus
 }
