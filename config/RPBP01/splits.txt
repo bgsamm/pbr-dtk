@@ -1559,7 +1559,13 @@ libs/RVL_SDK/src/mtx/vec.c:
 	.text       start:0x8027CD28 end:0x8027CE24
 
 src/.unsorted/8027CE24.cpp:
-	.text       start:0x8027CE24 end:0x8027D624
+	.text       start:0x8027CE24 end:0x8027D024
+
+libs/RVL_SDK/src/mtx/quat.c:
+	.text       start:0x8027D024 end:0x8027D5D8
+
+src/.unsorted/8027D5D8.cpp:
+	.text       start:0x8027D5D8 end:0x8027D624
 
 libs/RVL_SDK/src/gx/GXInit.c:
 	.text       start:0x8027D624 end:0x8027E7EC

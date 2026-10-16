@@ -649,6 +649,7 @@ config.libs = [
             Object(NonMatching, "mtx/mtx.c"),
             Object(NonMatching, "mtx/mtxvec.c"),
             Object(NonMatching, "mtx/vec.c"),
+            Object(NonMatching, "mtx/quat.c"),
         ],
     ),
     RVLSDKLib(
@@ -1030,6 +1031,7 @@ config.libs = [
             Object(NonMatching, ".unsorted/8027C5C0.cpp"),
             Object(NonMatching, ".unsorted/8027CA50.cpp"),
             Object(NonMatching, ".unsorted/8027CE24.cpp"),
+            Object(NonMatching, ".unsorted/8027D5D8.cpp"),
             Object(NonMatching, ".unsorted/80281F38.cpp"),
             Object(NonMatching, ".unsorted/80284950.cpp"),
             Object(NonMatching, ".unsorted/8028680C.cpp"),
