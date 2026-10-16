@@ -12,7 +12,7 @@ Each check runs on both trees and fails only on problems the change adds. Proble
 | `symbols` | no | a compiled symbol whose scope differs from `symbols.txt`, a name missing from `symbols.txt`, a definition outside the unit's `splits.txt` range, functions out of retail order, an undefined name that neither `symbols.txt` nor any unit provides |
 | `format` | no | a changed file under `src/` or `include/` that clang-format would change (the whole file is checked, not only the changed lines) |
 | `lint` | no | an error from `tools/qa/lint.py` on the added lines |
-| `regressions` | yes | a function that was 100% and no longer is, or a unit or the total losing matched or linked code or data (objdiff report of the base against the change) |
+| `regressions` | yes | a function that was 100% and no longer is, or a unit or the total losing matched or linked code or data (objdiff report of the base against the change). Code moved to another unit is compared where it now is. |
 | `apply` | yes | a line `dtk dol apply` would change in `symbols.txt` |
 
 With the game files, the output also lists units that are 100% but not marked `Matching`, and functions whose match dropped below their previous score. Explain those in the PR.
