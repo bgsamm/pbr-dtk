@@ -39,6 +39,7 @@ u32 fn_80007578(u32 v) {
     return old;
 }
 
-void fn_800077C0(Unk8000748C *obj) { obj->_06 = 1; }
-
+void fn_800077C0(Unk8000748C *obj) {
+    obj->_06 = 1;
+}
 }
