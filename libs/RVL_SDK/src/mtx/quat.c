@@ -5,6 +5,7 @@
 #define ASM asm
 #include <math.h>
 #include <revolution/mtx.h>
+#include <revolution/quat.h>
 
 #define MY_EPSILON 1e-5f
 
