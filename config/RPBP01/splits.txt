@@ -1550,10 +1550,13 @@ src/.unsorted/8027C5C0.cpp:
 	.text       start:0x8027C5C0 end:0x8027C9FC
 
 libs/RVL_SDK/src/mtx/mtxvec.c:
-	.text       start:0x8027C9FC end:0x8027CA50
+	.text       start:0x8027C9FC end:0x8027CAA4
 
-src/.unsorted/8027CA50.cpp:
-	.text       start:0x8027CA50 end:0x8027CD28
+libs/RVL_SDK/src/mtx/mtx44.c:
+	.text       start:0x8027CAA4 end:0x8027CCC4
+
+src/.unsorted/8027CCC4.cpp:
+	.text       start:0x8027CCC4 end:0x8027CD28
 
 libs/RVL_SDK/src/mtx/vec.c:
 	.text       start:0x8027CD28 end:0x8027CE24
