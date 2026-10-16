@@ -114,7 +114,7 @@ DOL_CHECKS = {"regressions", "apply"}
 # Helpers made by the DECOMP_FORCE_* macros of include/decomp.h: they only
 # pull literals or functions into the object, and the linker strips them.
 FORCE_HELPER = re.compile(r"^(FORCE(ACTIVE|LITERAL|DTOR)\w*|fake_function)$")
-FORCE_EXPANSION = re.compile(r"__LINE__\)\(\)\s*\{")
+FORCE_EXPANSION = re.compile(r"LINE__\)\(\)\s*\{")  # the compiler may cut the start
 # Undefined names the linker provides itself.
 LINKER_NAMES = re.compile(
     r"^(_SDA2?_BASE_|_stack_(addr|end)|_db_stack_(addr|end)|"
