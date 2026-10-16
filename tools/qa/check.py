@@ -811,50 +811,61 @@ def check_regressions(head_report: Path, base_report: Optional[Path]) -> CheckRe
     )
     changes = json.loads(changes_path.read_text())
 
-    unit_keys = [
-        "matched_code_percent",
-        "matched_data_percent",
-        "complete_code_percent",
-        "complete_data_percent",
-        "matched_functions",
+    # (measure, total): a unit may lose matched or linked code only by
+    # moving it to another unit, which takes it out of the unit's total too.
+    pairs = [
+        ("matched_code", "total_code"),
+        ("matched_data", "total_data"),
+        ("complete_code", "total_code"),
+        ("complete_data", "total_data"),
+        ("matched_functions", "total_functions"),
     ]
 
     def compare_measures(label: str, entry: dict) -> None:
         before, after = measures(entry.get("from")), measures(entry.get("to"))
         if not before:
             return
-        for key in unit_keys:
-            if key in before and float(after.get(key, 0)) < float(before[key]):
+        for key, total in pairs:
+            lost = float(before.get(key, 0)) - float(after.get(key, 0))
+            moved = float(before.get(total, 0)) - float(after.get(total, 0))
+            if lost > max(moved, 0):
                 result.new.append(
                     Issue(
                         "regressions",
                         (label, key),
-                        f"{label}: {key} {before[key]} -> {after.get(key, 0)}",
+                        f"{label}: {key} {before.get(key, 0)} -> {after.get(key, 0)} "
+                        f"({total} {before.get(total, 0)} -> {after.get(total, 0)})",
                     )
                 )
 
-    compare_measures("total", changes)
-    for unit in changes.get("units", []):
-        name = unit.get("name", "?")
-        compare_measures(name, unit)
-        functions = unit.get("functions", []) or []
-        added = {}
-        for function in functions:
+    # Functions that appear at an address, in any unit: a function that left
+    # a unit is compared with the one now at its address.
+    units = changes.get("units", [])
+    arrived: Dict[int, Tuple[str, dict]] = {}
+    for unit in units:
+        for function in unit.get("functions", []) or []:
             address = (function.get("metadata") or {}).get("virtual_address")
             if (
                 function.get("from") is None
                 and function.get("to") is not None
                 and address is not None
             ):
-                added[address] = function
-        for function in functions:
+                arrived[address] = (unit.get("name", "?"), function)
+
+    compare_measures("total", changes)
+    for unit in units:
+        name = unit.get("name", "?")
+        compare_measures(name, unit)
+        for function in unit.get("functions", []) or []:
             before = (function.get("from") or {}).get("fuzzy_match_percent")
             after = (function.get("to") or {}).get("fuzzy_match_percent")
             address = (function.get("metadata") or {}).get("virtual_address")
             label = function.get("name", "?")
-            if function.get("to") is None and address in added:
-                after = (added[address].get("to") or {}).get("fuzzy_match_percent")
-                label = f"{label} -> {added[address].get('name')}"
+            if function.get("to") is None and address in arrived:
+                other_unit, other = arrived[address]
+                after = (other.get("to") or {}).get("fuzzy_match_percent")
+                where = "" if other_unit == name else f"{other_unit}: "
+                label = f"{label} -> {where}{other.get('name')}"
             if before is None:
                 continue
             after = float(after or 0)
