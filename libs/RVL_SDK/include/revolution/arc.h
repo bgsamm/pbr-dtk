@@ -65,6 +65,8 @@ u32 ARCGetStartOffset(ARCFileInfo* info);
 u32 ARCGetLength(ARCFileInfo* info);
 BOOL ARCClose(ARCFileInfo* info);
 
+BOOL ARCEntrynumIsDir(const ARCHandle* handle, s32 entrynum);
+BOOL ARCGetCurrentDir(ARCHandle* handle, char* path, u32 maxlen);
 BOOL ARCChangeDir(ARCHandle* info, const char* path);
 BOOL ARCOpenDir(ARCHandle* info, const char* path, ARCDir* dir);
 BOOL ARCReadDir(ARCDir* dir, ARCDirEntry* entry);
