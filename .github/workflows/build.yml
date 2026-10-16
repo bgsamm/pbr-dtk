@@ -2,7 +2,11 @@ name: Build
 
 on:
   push:
+    # Pull request branches are checked by the pull_request event
+    branches: [main]
   pull_request:
+    # labeled/unlabeled: re-run when the "accepted regression" label changes
+    types: [opened, synchronize, reopened, labeled, unlabeled]
   workflow_dispatch:
 
 jobs:
@@ -18,10 +22,11 @@ jobs:
         version: [RPBP01]
 
     steps:
-    # Checkout the repository
+    # Checkout the repository (full history: the quality checks build the base commit)
     - name: Checkout
       uses: actions/checkout@v4
       with:
+        fetch-depth: 0
         submodules: recursive
 
     # Set Git config
@@ -39,8 +44,21 @@ jobs:
             --binutils /binutils --compilers /compilers
         ninja all_source progress build/${{ matrix.version }}/report.json
 
+    # Compare the change with its base: compiler diagnostics, symbols,
+    # match regressions and symbols.txt drift (see docs/quality.md)
+    - name: Quality checks
+      env:
+        BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+        # Regressions are accepted or refused in the pull request, not on main
+        QA_ACCEPT_REGRESSIONS: ${{ (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'accepted regression')) && '1' || '0' }}
+      run: |
+        python tools/qa/check.py --with-dol --only diagnostics,symbols,regressions,apply \
+            --base "$BASE" \
+            --configure-args "--map --version ${{ matrix.version }} --binutils /binutils --compilers /compilers"
+
     # Upload map files
     - name: Upload map
+      if: ${{ !cancelled() }}
       uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.version }}_maps
@@ -48,7 +66,31 @@ jobs:
 
     # Upload progress report
     - name: Upload report
+      if: ${{ !cancelled() }}
       uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.version }}_report
         path: build/${{ matrix.version }}/report.json
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install tools
+      run: pip install -r tools/qa/requirements.txt
+
+    # clang-format on the changed files, and the fakematch lint on the added lines
+    - name: Format and lint
+      env:
+        BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+      run: python tools/qa/check.py --only format,lint --base "$BASE"

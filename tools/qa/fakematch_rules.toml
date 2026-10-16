@@ -7,7 +7,7 @@
 # severity: "error"   - never allowed
 #           "warning" - allowed, but worth a second look
 #
-# To see how a snippet parses, run `python tools/decomp/lint.py --tree <file>`,
+# To see how a snippet parses, run `python tools/qa/lint.py --tree <file>`,
 # or use the playground on the tree-sitter website (language: C++).
 
 # Macros the parser can't make sense of. lint.py replaces them with spaces in
@@ -123,4 +123,30 @@ query = '''
   type: (type_descriptor
     declarator: (abstract_reference_declarator))
   value: (assignment_expression)) @match
+'''
+
+[[rule]]
+id = "raw-offset"
+severity = "warning"
+message = "raw pointer arithmetic instead of a structure"
+# e.g. `*(u32 *)(p + 0x2C)` or `*(u32 *)((u8 *)p + 0x2C)`
+query = '''
+(pointer_expression
+  operator: "*"
+  argument: (cast_expression
+    type: (type_descriptor declarator: (abstract_pointer_declarator))
+    value: (parenthesized_expression
+      (binary_expression operator: ["+" "-"] right: (number_literal))))) @match
+'''
+
+[[rule]]
+id = "placeholder-parameter"
+severity = "error"
+message = "placeholder parameter (a0, a1, ...)"
+# Signatures such as `void f(u32 a0, ..., u32 a7)` stand in for an unknown
+# prototype; declare the real parameters, or keep the function undecompiled.
+query = '''
+((parameter_declaration
+   declarator: [(identifier) (pointer_declarator)] @_name) @match
+  (#match? @_name "^\\**\\s*a[0-9]$"))
 '''
