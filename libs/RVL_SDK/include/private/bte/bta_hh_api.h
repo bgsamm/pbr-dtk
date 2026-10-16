@@ -26,12 +26,12 @@
 
 /* Includes changes by muff1n1634 and for this repository (KoopTheKoopa) */
 
-#include "bt_target.h"
-#include "bt_types.h"
-#include "data_types.h"
+#include <private/bte/bt_target.h>
+#include <private/bte/bt_types.h>
+#include <private/bte/data_types.h>
 
-#include "bta_api.h"
-#include "hiddefs.h"
+#include <private/bte/bta_api.h>
+#include <private/bte/hiddefs.h>
 
 #define BTA_HH_MAX_KNOWN		HID_HOST_MAX_DEVICES
 

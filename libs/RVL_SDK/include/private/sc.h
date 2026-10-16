@@ -8,7 +8,7 @@
 #include <revolution/nand.h>
 #include <revolution/os/OSThread.h>
 
-#include "bt_types.h"
+#include <private/bte/bt_types.h>
 
 #ifdef __cplusplus
 extern "C" {

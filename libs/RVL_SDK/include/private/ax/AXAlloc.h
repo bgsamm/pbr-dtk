@@ -10,7 +10,6 @@ extern "C" {
 AXVPB* __AXGetStackHead(u32 priority);
 void __AXServiceCallbackStack();
 void __AXInitVoiceStacks();
-void __AXAllocInit();
 void __AXPushFreeStack(AXVPB* vpb);
 AXVPB* __AXPopFreeStack();
 void __AXPushCallbackStack(AXVPB* vpb);

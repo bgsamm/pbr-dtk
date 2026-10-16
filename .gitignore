@@ -32,6 +32,21 @@ compile_commands.json
 
 # Miscellaneous
 analysis/
+temp/
 /*.txt
 *.bak
 *.exe
+.DS_Store
+
+# Original game files: never commit them
+*.iso
+*.wbfs
+*.rvz
+*.ciso
+*.gcz
+/extracted/
+/disc/
+
+# Ghidra projects
+*.gpr
+*.rep/

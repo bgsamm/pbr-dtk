@@ -1,0 +1,3 @@
+# For lint.py: pip install -r tools/decomp/requirements.txt
+tree-sitter==0.26.0
+tree-sitter-cpp==0.23.4

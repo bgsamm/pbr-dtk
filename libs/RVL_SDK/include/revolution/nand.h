@@ -56,7 +56,7 @@ extern "C" {
 
 enum {
     NAND_RESULT_FATAL_ERROR = -128,
-    NAND_RESULT_UNKNOWN = -64,
+    NAND_RESULT_UNKNOWN     = -64,
 
     NAND_RESULT_MAXDEPTH = -16,
     NAND_RESULT_AUTHENTICATION,
@@ -102,125 +102,158 @@ typedef enum {
     NAND_PERM_ROTH = (NAND_ACCESS_READ << 0),
     NAND_PERM_WOTH = (NAND_ACCESS_WRITE << 0),
     // Read/write by all
-    NAND_PERM_RALL = NAND_PERM_RUSR | NAND_PERM_RGRP | NAND_PERM_ROTH,
-    NAND_PERM_WALL = NAND_PERM_WUSR | NAND_PERM_WGRP | NAND_PERM_WOTH,
+    NAND_PERM_RALL  = NAND_PERM_RUSR | NAND_PERM_RGRP | NAND_PERM_ROTH,
+    NAND_PERM_WALL  = NAND_PERM_WUSR | NAND_PERM_WGRP | NAND_PERM_WOTH,
     NAND_PERM_RWALL = NAND_PERM_RALL | NAND_PERM_WALL
 } NANDPermission;
 
+// From doldecomp/ogws (CC0), include/revolution/NAND/nand.h
+typedef enum {
+    NAND_FILE_TYPE_NONE,
+    NAND_FILE_TYPE_FILE,
+    NAND_FILE_TYPE_DIR,
+} NANDFileType;
+
+#define NAND_BANNER_TITLE_MAX 32
+#define NAND_BANNER_ICON_MAX_FRAME 8
+#define NAND_BANNER_TEXTURE_SIZE 0x6000
+#define NAND_BANNER_ICON_SIZE 0x1200
+
+typedef struct NANDBanner {
+    u32 magic;                                                         // 0x0
+    u32 flags;                                                         // 0x4
+    u16 iconSpeed;                                                     // 0x8
+    u8 reserved[0x20 - 0xA];                                           // 0xA
+    u16 title[NAND_BANNER_TITLE_MAX];                                  // 0x20
+    u16 subtitle[NAND_BANNER_TITLE_MAX];                               // 0x60
+    u8 bannerTexture[NAND_BANNER_TEXTURE_SIZE];                        // 0xA0
+    u8 iconTexture[NAND_BANNER_ICON_SIZE][NAND_BANNER_ICON_MAX_FRAME]; // 0x60A0
+} NANDBanner;
+
 typedef struct NANDFileInfo {
-    s32 fileDescriptor;  // 0x00
-    s32 origFd;          // 0x04
+    s32 fileDescriptor; // 0x00
+    s32 origFd;         // 0x04
 
-    char origPath[NAND_MAX_PATH];  // 0x08
-    char tmpPath[NAND_MAX_PATH];   // 0x48
+    char origPath[NAND_MAX_PATH]; // 0x08
+    char tmpPath[NAND_MAX_PATH];  // 0x48
 
-    u8 accType;  // 0x88
-    u8 stage;    // 0x89
-    u8 mark;     // 0x8A
+    u8 accType; // 0x88
+    u8 stage;   // 0x89
+    u8 mark;    // 0x8A
 } NANDFileInfo;
 
 typedef struct NANDStatus {
-    u32 ownerId;    // 0x00
-    u16 groupId;    // 0x04
-    u8 attribute;   // 0x06
-    u8 permission;  // 0x07
+    u32 ownerId;   // 0x00
+    u16 groupId;   // 0x04
+    u8 attribute;  // 0x06
+    u8 permission; // 0x07
 } NANDStatus;
 
 typedef struct NANDCommandBlock NANDCommandBlock;
-typedef void (*NANDCallback)(s32 result, NANDCommandBlock* block);
+typedef void (*NANDCallback)(s32 result, NANDCommandBlock *block);
+typedef NANDCallback NANDAsyncCallback;
 
 struct NANDCommandBlock {
-    void* userData;         // 0x00
+    void *userData;         // 0x00
     NANDCallback callback;  // 0x04
-    void* fileInfo;         // 0x08
-    void* bytes;            // 0x0C
-    void* inodes;           // 0x10
-    void* status;           // 0x14
+    NANDFileInfo *fileInfo; // 0x08
+    void *bytes;            // 0x0C
+    void *inodes;           // 0x10
+    NANDStatus *status;     // 0x14
 
-    u32 ownerId;  // 0x18
-    u16 groupId;  // 0x1C
+    u32 ownerId; // 0x18
+    u16 groupId; // 0x1C
 
-    u8 nextStage;  // 0x1E
-    u32 attr;      // 0x20
+    u8 nextStage; // 0x1E
+    u32 attr;     // 0x20
 
-    u32 ownerAcc;   // 0x24
-    u32 groupAcc;   // 0x28
-    u32 othersAcc;  // 0x2C
+    u32 ownerAcc;  // 0x24
+    u32 groupAcc;  // 0x28
+    u32 othersAcc; // 0x2C
 
-    u32 num;                      // 0x30
-    char absPath[NAND_MAX_PATH];  // 0x34
-    u32* length;                  // 0x74
-    u32* pos;                     // 0x78
-    int state;                    // 0x7C
-    void* copyBuf;                // 0x80
-    u32 bufLength;                // 0x84
-    u8* type;                     // 0x88
-    u32 uniqueNo;                 // 0x8C
+    u32 num;                     // 0x30
+    char absPath[NAND_MAX_PATH]; // 0x34
+    u32 *length;                 // 0x74
+    u32 *pos;                    // 0x78
+    int state;                   // 0x7C
+    void *copyBuf;               // 0x80
+    u32 bufLength;               // 0x84
+    u8 *type;                    // 0x88
+    u32 uniqueNo;                // 0x8C
 
-    u32 reqBlocks;  // 0x90
-    u32 reqInodes;  // 0x94
+    u32 reqBlocks; // 0x90
+    u32 reqInodes; // 0x94
 
-    u32* answer;  // 0x98
+    u32 *answer; // 0x98
 
-    u32 homeBlocks;  // 0x9C
-    u32 homeInodes;  // 0xA0
+    u32 homeBlocks; // 0x9C
+    u32 homeInodes; // 0xA0
 
-    u32 userBlocks;  // 0xA4
-    u32 userInodes;  // 0xA8
+    u32 userBlocks; // 0xA4
+    u32 userInodes; // 0xA8
 
-    u32 workBlocks;  // 0xAC
-    u32 workInodes;  // 0xB0
+    u32 workBlocks; // 0xAC
+    u32 workInodes; // 0xB0
 
-    const char** dir;  // 0xB4
-
-    BOOL simpleFlag;  // 0xB8
+    const char **dir; // 0xB4
 };
 
 s32 NANDInit();
 
-s32 NANDCreate(const char* path, u8 perm, u8 attr);
+s32 NANDCreate(const char *path, u8 perm, u8 attr);
+s32 NANDCreateAsync(const char *path, u8 perm, u8 attr, NANDCallback callback, NANDCommandBlock *block);
 
-s32 NANDOpen(const char* path, NANDFileInfo* info, u8 accType);
-s32 NANDOpenAsync(const char* path, NANDFileInfo* info, u8 accType, NANDCallback callback, NANDCommandBlock* block);
-s32 NANDSafeOpen(const char* path, NANDFileInfo* info, u8 accType, void* buffer, u32 length);
+s32 NANDOpen(const char *path, NANDFileInfo *info, u8 accType);
+s32 NANDOpenAsync(const char *path, NANDFileInfo *info, u8 accType, NANDCallback callback, NANDCommandBlock *block);
+s32 NANDSafeOpen(const char *path, NANDFileInfo *info, u8 accType, void *buffer, u32 length);
 
-s32 NANDRead(NANDFileInfo* info, void* buffer, u32 length);
-s32 NANDReadAsync(NANDFileInfo* info, void* buffer, u32 length, NANDCallback callback, NANDCommandBlock* block);
+s32 NANDRead(NANDFileInfo *info, void *buffer, u32 length);
+s32 NANDReadAsync(NANDFileInfo *info, void *buffer, u32 length, NANDCallback callback, NANDCommandBlock *block);
 
-s32 NANDWrite(NANDFileInfo* info, const void* buffer, u32 length);
-s32 NANDWriteAsync(NANDFileInfo* info, const void* buffer, u32 length, NANDCallback callback, NANDCommandBlock* block);
+s32 NANDWrite(NANDFileInfo *info, const void *buffer, u32 length);
+s32 NANDWriteAsync(NANDFileInfo *info, const void *buffer, u32 length, NANDCallback callback, NANDCommandBlock *block);
 
-s32 NANDSeek(NANDFileInfo* info, s32 offset, s32 whence);
-s32 NANDSeekAsync(NANDFileInfo* info, s32 offset, s32 whence, NANDCallback callback, NANDCommandBlock* block);
+s32 NANDSeek(NANDFileInfo *info, s32 offset, s32 whence);
+s32 NANDSeekAsync(NANDFileInfo *info, s32 offset, s32 whence, NANDCallback callback, NANDCommandBlock *block);
 
-s32 NANDTell(NANDFileInfo* info, u32* pos);
+s32 NANDTell(NANDFileInfo *info, u32 *pos);
 
-s32 NANDGetLength(NANDFileInfo* info, u32* length);
-s32 NANDGetLengthAsync(NANDFileInfo* info, u32* length, NANDCallback callback, NANDCommandBlock* block);
+s32 NANDGetLength(NANDFileInfo *info, u32 *length);
+s32 NANDGetLengthAsync(NANDFileInfo *info, u32 *length, NANDCallback callback, NANDCommandBlock *block);
 
-s32 NANDGetStatus(const char* path, NANDStatus* status);
-s32 NANDSetStatus(const char* path, NANDStatus* status);
+s32 NANDGetStatus(const char *path, NANDStatus *status);
+s32 NANDSetStatus(const char *path, NANDStatus *status);
 
-s32 NANDClose(NANDFileInfo* info);
-s32 NANDCloseAsync(NANDFileInfo* info, NANDCallback callback, NANDCommandBlock* block);
-s32 NANDSafeClose(NANDFileInfo* info);
-s32 NANDSafeCloseAsync(NANDFileInfo* info, NANDCallback callback, NANDCommandBlock* block);
+s32 NANDClose(NANDFileInfo *info);
+s32 NANDCloseAsync(NANDFileInfo *info, NANDCallback callback, NANDCommandBlock *block);
+s32 NANDSafeClose(NANDFileInfo *info);
+s32 NANDSafeOpenAsync(const char *path,
+                      NANDFileInfo *info,
+                      u8 accType,
+                      void *buffer,
+                      u32 length,
+                      NANDCallback callback,
+                      NANDCommandBlock *block);
+s32 NANDSafeCloseAsync(NANDFileInfo *info, NANDCallback callback, NANDCommandBlock *block);
 
-s32 NANDDelete(const char* path);
+s32 NANDDelete(const char *path);
 
-s32 NANDGetType(const char* path, u8* type);
+s32 NANDGetType(const char *path, u8 *type);
 
-void NANDSetUserData(NANDCommandBlock* block, void* data);
-void* NANDGetUserData(NANDCommandBlock* block);
+void NANDSetUserData(NANDCommandBlock *block, void *data);
+void *NANDGetUserData(NANDCommandBlock *block);
 
-s32 NANDCreateDir(const char* path, u8 perm, u8 attr);
+s32 NANDCreateDir(const char *path, u8 perm, u8 attr);
+s32 NANDCreateDirAsync(const char *path, u8 perm, u8 attr, NANDCallback callback, NANDCommandBlock *block);
 
-s32 NANDChangeDir(const char* path);
-s32 NANDGetCurrentDir(char* path);
+s32 NANDChangeDir(const char *path);
+s32 NANDChangeDirAsync(const char *path, NANDCallback callback, NANDCommandBlock *block);
+s32 NANDGetCurrentDir(char *path);
 
-s32 NANDReadDir(const char* path, char* nameList, u32* num);
+s32 NANDReadDir(const char *path, char *nameList, u32 *num);
+s32 NANDReadDirAsync(const char *path, char *nameList, u32 *num, NANDCallback callback, NANDCommandBlock *block);
 
-s32 NANDGetHomeDir(char* path);
+s32 NANDGetHomeDir(char *path);
 
 /* NANDCheck */
 
@@ -229,14 +262,14 @@ enum {
 
     NAND_CHECK_HOME_INSSPACE = (1 << 0),
     NAND_CHECK_HOME_INSINODE = (1 << 1),
-    NAND_CHECK_SYS_INSSPACE = (1 << 2),
-    NAND_CHECK_SYS_INSINODE = (1 << 3),
+    NAND_CHECK_SYS_INSSPACE  = (1 << 2),
+    NAND_CHECK_SYS_INSINODE  = (1 << 3),
 };
 
-s32 NANDCheck(u32 fsblock, u32 inode, u32* answer);
+s32 NANDCheck(u32 fsblock, u32 inode, u32 *answer);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // REVOLUTION_NAND_H
+#endif // REVOLUTION_NAND_H

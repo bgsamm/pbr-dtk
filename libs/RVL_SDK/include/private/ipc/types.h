@@ -37,6 +37,14 @@ enum {
     IPC_RESULT_INVALID_SIZE         = -23
 };
 
+// From doldecomp/ogws (CC0), include/revolution/IPC/ipcclt.h
+typedef enum {
+    IPC_OPEN_NONE = 0,
+    IPC_OPEN_READ = (1 << 0),
+    IPC_OPEN_WRITE = (1 << 1),
+    IPC_OPEN_RW = IPC_OPEN_READ | IPC_OPEN_WRITE
+} IPCOpenMode;
+
 enum {
     IPC_REQ_NONE = 0,
     IPC_REQ_OPEN,

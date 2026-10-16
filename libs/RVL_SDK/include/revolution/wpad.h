@@ -18,7 +18,7 @@ extern "C" {
 #define WPAD_MAX_SPEAKER_VOLUME 127
 
 typedef void* (*WPADAllocFunc)(u32 size);
-typedef u8    (*WPADFreeFunc)(void* block);
+typedef BOOL  (*WPADFreeFunc)(void* block);
 
 typedef void (*WPADSyncDeviceCallback)(s32 result, s32 num);
 typedef void (*WPADClearDeviceCallback)(s32 result);
@@ -321,6 +321,7 @@ void WPADRegisterAllocator(WPADAllocFunc pAllocFunc, WPADFreeFunc pFreeFunc);
 u32 WPADGetWorkMemorySize(void);
 
 s32 WPADGetStatus(void);
+u8 WPADGetRadioSensitivity(s32 chan);
 u8 WPADGetSensorBarPosition(void);
 
 void WPADGetAccGravityUnit(s32 chan, u32 type, WPADAccGravityUnit* acc);

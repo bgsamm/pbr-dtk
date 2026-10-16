@@ -26,7 +26,7 @@
 
 /* Includes changes by muff1n1634 and for this repository (KoopTheKoopa) */
 
-#include "data_types.h"
+#include <private/bte/data_types.h>
 
 #define EVENT_MASK(evt)	((UINT16)(1 << (evt)))
 

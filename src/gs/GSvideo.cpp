@@ -1,14 +1,12 @@
 #include "gs/GSvideo.hpp"
 
+#include ".unsorted/8025B6AC.hpp"
 #include "gs/GSmem.hpp"
 #include "gs/GSrender.hpp"
 
 #include <cstring>
 
 #include "common.hpp"
-
-extern void fn_8025B6B4(u32);
-extern void fn_8025B6B8(f32 *, f32 *);
 
 extern f32 lbl_8063D988;
 
@@ -488,9 +486,13 @@ void GSvideo::fn_8023FE30(bool param1) {
     }
 
     if (mRenderMode.field_rendering) {
-        GXSetViewportJitter(
-            _a8.fval + var1, _ac.fval + var2, mViewportWidth.fval, mViewportHeight.fval, _b8.fval, _bc.fval, mNextField
-        );
+        GXSetViewportJitter(_a8.fval + var1,
+                            _ac.fval + var2,
+                            mViewportWidth.fval,
+                            mViewportHeight.fval,
+                            _b8.fval,
+                            _bc.fval,
+                            mNextField);
     } else {
         GXSetViewport(_a8.fval + var1, _ac.fval + var2, mViewportWidth.fval, mViewportHeight.fval, _b8.fval, _bc.fval);
     }

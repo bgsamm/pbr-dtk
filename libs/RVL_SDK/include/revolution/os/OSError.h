@@ -26,6 +26,10 @@ void OSVReport(const char* msg, va_list list);
 
 void OSPanic(const char* file, int line, const char* msg, ...);
 
+#define OS_ASSERT(exp, ...) \
+    if (!(exp))             \
+    OSPanic(__FILE__, __LINE__, __VA_ARGS__)
+
 #define OSHalt(msg) OSPanic(__FILE__, __LINE__, msg)
 #define OSAssertMsg(exp, msg)                                                                                                                  \
     if (!(exp))                                                                                                                                      \

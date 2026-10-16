@@ -9,8 +9,6 @@
 extern "C" {
 #endif
 
-void __OSRegisterStateEvent();
-BOOL __OSGetResetButtonStateRaw();
 IOSError __OSUnRegisterStateEvent();
 
 BOOL __OSInitSTM();
@@ -18,7 +16,6 @@ BOOL __OSInitSTM();
 void __OSHotReset();
 
 void __OSShutdownToSBY();
-void __OSShutdownToIDL();
 int __OSSetVIForceDimming(BOOL enable, u32 shiftY, u32 shiftX);
 
 s32 __OSSetIdleLEDMode(u32 mode);

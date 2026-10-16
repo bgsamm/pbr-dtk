@@ -43,8 +43,11 @@ union U32F32 {
 
 // NOTE(samm) Name known from RTTI
 class GSvideo {
-protected:
+public:
+    // Read directly by game code.
     /* 0x0 */ GXRenderModeObj mRenderMode;
+
+protected:
     /* 0x3c */ GSxfbHandle mXfbs[MAX_XFBS];
     /* 0x54 */ GSxfbHandle *mActiveXfb;
     /* 0x58 */ u8 mNumBuffers;
@@ -57,7 +60,12 @@ protected:
     /* 0x64 */ GXPixelFmt mPixelFmt;
     /* 0x68 */ f32 mYScale;
     /* 0x6c */ u32 mRetraceCount;
+
+public:
+    // Read directly by game code.
     /* 0x70 */ VideoFormat mVideoFmt;
+
+protected:
     /* 0x74 */ VIRetraceCallback mRetraceCallback;
     u8 _78;
     u8 _79;
@@ -112,6 +120,10 @@ public:
         if (height) {
             *height = mRenderMode.efbHeight;
         }
+    }
+
+    bool getHomeMenuActive() const {
+        return mHomeMenuActive;
     }
 
     u8 get_7a() {

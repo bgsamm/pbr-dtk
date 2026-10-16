@@ -16,6 +16,7 @@ struct GSnandFileHandle {
     /* 0x7 */ char mName[64];
     /* 0x48 */ NANDFileInfo mFileInfo;
     /* 0xd4 */ NANDCommandBlock mCommandBlock;
+    /* 0x18c */ u8 unk18C[4];  // TODO: was the trailing field of NANDCommandBlock
 };
 
 // size: 0xc80

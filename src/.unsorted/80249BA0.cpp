@@ -2,7 +2,7 @@
 
 #include "common.hpp"
 
-
-bool GSunk::fn_80249BA0(u32 param1, u32 param2) {
+// TODO role: always returns true
+bool GSunk::fn_80249BA0(u32, u32) {
     return true;
 }

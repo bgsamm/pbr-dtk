@@ -12,7 +12,7 @@
 struct Version {
     /* 0x0 */ u8 mMajor;
     /* 0x2 */ u16 mMinor;
-    /* 0x6 */ u8 mRevision;
+    /* 0x4 */ u8 mRevision;
 
     Version(u8 major, u16 minor, u8 revision) {
         mMajor = major;

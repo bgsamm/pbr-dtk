@@ -256,7 +256,7 @@ void WPADiExcludeButton(s32 chan);
 void WPADiCopyOut(s32 chan);
 
 BOOL WPADiSendSetPort(WPADCommandQueue* pQueue, u8 port, WPADCallback pCallback);
-BOOL WPADiSendSetReportType(WPADCommandQueue* pQueue, s32 format, BOOL unk, WPADCallback pCallback);
+BOOL WPADiSendSetReportType(WPADCommandQueue* pQueue, s32 format, WPADCallback pCallback);
 BOOL WPADiSendEnableDPD(WPADCommandQueue* pQueue, BOOL enable, WPADCallback pCallback);
 BOOL WPADiSendEnableSpeaker(WPADCommandQueue* pQueue, BOOL enable, WPADCallback pCallback);
 BOOL WPADiSendGetContStat(WPADCommandQueue* pQueue, WPADInfo* pInfo, WPADCallback pCallback);
@@ -276,7 +276,6 @@ u16 _WPADGetStackBufferStatus(s32 chan);
 u16 _WPADGetModuleBufferStatus(s32 chan);
 
 inline void __WPADShutdown();
-void __WPADReconnect(BOOL recFlag);
 
 #ifdef __cplusplus
 }

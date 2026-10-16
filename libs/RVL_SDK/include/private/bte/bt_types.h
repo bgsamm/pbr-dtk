@@ -26,7 +26,7 @@
 
 /* Includes changes by muff1n1634 and for this repository (KoopTheKoopa) */
 
-#include "data_types.h"
+#include <private/bte/data_types.h>
 
 #define UINT8_TO_STREAM(p, u8)									\
 	do															\

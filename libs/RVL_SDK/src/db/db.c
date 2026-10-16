@@ -1,0 +1,62 @@
+// Imported from koopthekoopa/wii-ipl (CC0), libs/RVL_SDK/src/db/db.c
+#include <private/db.h>
+#include <private/os.h>
+
+#include <stdarg.h>
+
+
+BOOL DBVerbose;
+DBInterface* __DBInterface;
+
+void DBInit() {
+    __DBInterface = OSPhysicalToCached(OS_ADDR_DB_INTERFACE);
+    __DBInterface->ExceptionDestination = (void*)OSCachedToPhysical(__DBExceptionDestination);
+    DBVerbose = TRUE;
+}
+
+BOOL DBIsDebuggerPresent() {
+    if (__DBInterface == NULL) {
+        return FALSE;
+    }
+    return __DBInterface->bPresent;
+}
+
+void __DBExceptionDestinationAux() {
+    u32* contextAddr = (void*)OS_ADDR_CURRENT_CONTEXT_REAL;
+    OSContext* context = OSPhysicalToCached(*contextAddr);
+
+    OSReport("DBExceptionDestination\n");
+    OSDumpContext(context);
+
+    PPCHalt();
+}
+
+asm void __DBExceptionDestination() {
+    // clang-format off
+#ifdef __MWERKS__
+    nofralloc
+    
+    // Set up MMU
+    mfmsr r3
+    ori r3, r3, (MSR_IR | MSR_DR)
+    mtmsr r3
+
+    b __DBExceptionDestinationAux
+#endif // __MWERKS__
+    // clang-format on
+}
+
+BOOL __DBIsExceptionMarked(__OSException exception) {
+    u32 mask = (1 << exception);
+    return __DBInterface->exceptionMask & mask;
+}
+
+// Stubbed for release
+void DBPrintf(const char* format, ...) {
+#ifdef ENABLE_DB_REPORT
+    va_list list;
+    va_start(list, format);
+    OSVReport(format, list);
+    va_end(list);
+#endif
+}

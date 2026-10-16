@@ -26,13 +26,13 @@
 
 /* Includes changes by muff1n1634 and for this repository (KoopTheKoopa) */
 
-#include "bt_target.h"
-#include "bt_types.h"
+#include <private/bte/bt_target.h>
+#include <private/bte/bt_types.h>
 
-#include "data_types.h"
+#include <private/bte/data_types.h>
 
-#include "hcidefs.h"
-#include "sdp_api.h"
+#include <private/bte/hcidefs.h>
+#include <private/bte/sdp_api.h>
 
 #define BTM_COD_SERVICE_CLASS_MASK	0xffe0
 #define BTM_COD_SERVICE_CLASS_LO_B	0x00e0

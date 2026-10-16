@@ -35,6 +35,9 @@ void ICInvalidateRange(void* addr, u32 len);
 
 void LCEnable(void);
 void LCDisable(void);
+void LCStoreBlocks(void* dst, void* src, u32 blocks);
+u32 LCStoreData(void* dst, void* src, u32 len);
+void LCQueueWait(u32 len);
 
 #ifdef __cplusplus
 }

@@ -1,0 +1,96 @@
+# Progress log
+
+## 2026-10 — project setup and first push
+
+Starting point: the bgsamm/pbr-dtk tree at 2.42 % of code matched (601 of 13,890 functions), DOL hash verified locally.
+
+| Step | Code matched | Functions |
+|---|---|---|
+| Starting point | 2.42 % | 601 |
+| Trivial functions (empty bodies, constant returns, simple accessors) | 2.62 % | 1,800 |
+| More trivial functions, per-unit static initializers named | 2.84 % | 2,336 |
+| Hand decompilation of the DS bridge, battle engine, battle presentation, menus, networking, Pokémon data | 5.59 % | 3,955 |
+| Revolution SDK imported from wii-ipl (45 files) | 7.1 % | 4,461 |
+| End of the first push | 10.89 % | 5,005 |
+| Remaining 16 SDK files from wii-ipl compiled (NonMatching) | 12.08 % | 5,173 |
+| OSCache, db, OS, OSNet, OSStateTM, OSPlayRecord, dvdfs code identical | 12.14 % | 5,188 |
+| NAND code identical | 12.16 % | 5,196 |
+| WPAD, vi3in1 and most of vi code identical | 12.47 % | 5,213 |
+| DS bridge: `DS_Rand` and the message queue comparison | 12.47 % | 5,215 |
+| Small accessors of five early units rewritten with typed structures | 12.49 % | 5,245 |
+| Small functions of three more units (value variant, vector helpers) | 12.49 % | 5,256 |
+| Accessors of global objects in six more units | 12.50 % | 5,267 |
+| C library imported from Petari, code identical in 48 units | 13.70 % | 5,377 |
+| Accessors of global objects in five more units | 13.71 % | 5,397 |
+| MetroTRK imported from Petari, code identical in 27 units | 14.26 % | 5,540 |
+| Battle engine: `battle_lib` rewritten from the Platinum decompilation, 135 of 140 functions identical | 15.44 % | 5,619 |
+| Battle engine: unit 803A60D8 split by source file, `battle_io_command` rewritten and linked, battle system accessors typed | 15.47 % | 5,624 |
+| Scattered small functions of eight units (tables, counters, record accessors) | 15.49 % | 5,654 |
+| DVD queue, error, disc id, fatal and low-level driver imported from ogws, code identical | 15.68 % | 5,688 |
+| Leaf functions and their wrappers in five units (object methods called on a global, list append, heap free) | 15.69 % | 5,705 |
+| Battle engine: battle message side check and helpers, bag item use named | 15.72 % | 5,707 |
+| DVD state machine (dvd.c) and file seek imported from ogws, 53 of 54 functions identical | 16.13 % | 5,758 |
+| Battle engine: battle message format buffers and nickname helpers, string template setters named | 16.22 % | 5,760 |
+| Wrappers of the 80250F18 global object and 80036F88 typed, two leaves added | 16.22 % | 5,765 |
+| Wrappers and leaf methods of the 80250F18 and 80249D38 global objects | 16.24 % | 5,787 |
+| Thread-bound record methods of 80228B0C (suspend, resume, id, state) | 16.24 % | 5,798 |
+| 80158E50: fn_8015AAF0 and the three helpers it calls decompiled, allocator of the 80249D38 object | 16.27 % | 5,803 |
+| Battle engine: battle display named and typed from the Platinum decompilation, 90 of 100 functions identical | 16.43 % | 5,822 |
+| Methods of the 80250F18 table object and track helpers of the 80249D38 object (tables, free lists, recursive free) | 16.45 % | 5,831 |
+| Battle engine: battle controller decompiled from the Platinum decompilation and linked, 79 of 79 functions identical | 16.71 % | 5,859 |
+| Lookup, registration and start methods of the 80249D38 object (blob table, tracks) | 16.72 % | 5,864 |
+| Battle engine: battler command tasks (player and AI) and their assignment, battle display at 98 of 100 functions | 16.79 % | 5,872 |
+| Track update and presence test of the 80249D38 object, its small forwarders | 16.81 % | 5,875 |
+| Battle engine: player party and yes/no tasks, battle display complete (100 of 100) and linked with its data | 16.85 % | 5,877 |
+| Track commit step and table start loop of the 80249D38 object | 16.85 % | 5,878 |
+| Five more units linked (801E07E8, 8025B6AC, 80249B7C, 80249BA0, gs/render/8023B64C): `.sbss` and `.bss` splits, mangled names in `symbols.txt` | 16.85 % | 5,880 |
+| Three more units decompiled and linked (80167994, 800477E8, 80164E3C), accessors of 8025DF80 typed | 16.87 % | 5,887 |
+| Battle engine: player battle controller written from the Platinum decompilation, 57 of 59 functions identical | 17.46 % | 5,915 |
+| Battle engine: battle teardown and a battler counter in battle_main, battle_system at 57 of 60 | 17.48 % | 5,918 |
+| DS layer: `convert_pokemon` and `convert_save` linked, `pokemon` fully decompiled with 73 of 74 functions identical | 17.64 % | 5,930 |
+| Audio interface (ai) and audio mixer (ax) imported from ogws, 84 of 88 functions identical | 17.98 % | 5,997 |
+| DS layer: `BoxPokemon_IncreaseDataInternal` matched (`pokemon` 74 of 74), every `MON_DATA` value named | 18.00 % | 5,998 |
+| Wi-Fi network manager (`gsapi::WiFiNetwork`, unit 80263CBC) rewritten as a class, 110 of 111 functions identical | 18.01 % | 6,000 |
+| Battle camera manager (unit 800400E8) finished as typed structures, scene camera fields and `eftseq` animation nodes named from their use and RTTI | 18.01 % | 6,000 |
+| Viewport manager (unit 80032FE8) rewritten with typed structures, render target and global render settings fields named by offset | 18.01 % | 6,000 |
+| Unit 800559D4 rewritten with a typed global context, 104 of 105 functions identical | 18.07 % | 6,003 |
+| Unit 8013F044 rewritten with typed structures and C++ linkage, 81 of 89 functions identical | 18.09 % | 6,003 |
+| NAND open/close and core, system configuration (SC) imported from ogws, 84 functions identical | 18.49 % | 6,084 |
+| AX effects (reverb, delay, chorus, hooks, source coefficients) and heap common imported from ogws, 29 functions identical | 18.59 % | 6,107 |
+| OS error, exec and mutex units imported from ogws, 12 functions identical | 18.66 % | 6,119 |
+| Prfile2 FAT file system (VF, 41 units) imported from ogws, 298 of 305 functions identical | 20.93 % | 6,407 |
+| Unit 8000ADC0 rewritten with typed structures and C++ linkage, 139 of 194 functions identical | 20.94 % | 6,409 |
+| Battle engine: Battle_Main written, battle_main complete (3 of 3) and linked with its data | **21.05 %** | **6,410** |
+
+
+By area at the end, from the README table (generated by `tools/progress.py`): Pokémon data 70.2 % (now including the item data readers, 78 KiB), entry point 34.7 %, game networking 28.6 %, battle presentation 21.2 %, battle engine 68.6 % (the DS battle engine units, 204 KiB), gs engine 18.2 %, battle loop 17.0 %, SDK 26.7 %, runtime, C library and MetroTRK 86.9 %, scenes and menus 4.8 %.
+
+### Compiler notes
+
+- DS-derived code (`src/ds/`: unit 803D9EB4 and the battle engine units) and some menu units are built with `-O4,s -inline noauto`: loops are not unrolled, `_savegpr` is used, inline constructors stay out of line.
+- The game code rarely inlines functions from the same file; `#pragma dont_inline` reproduces it where needed.
+- Virtual calls need real C++ classes (the compiler uses r12); the slot is (offset - 8) / 4.
+- Local declaration order drives register and stack allocation; call arguments are evaluated right to left.
+- Signed `a < b` compiles to xor/srawi/and/subf/srwi; unsigned to subfc/subfe.
+- Write float constants as literals (`0.5f`): declaring them `extern` changes the instruction scheduling.
+- Each unit has a static initializer (`__sinit_<unit>_cpp`) for the `Version` object in `common.hpp`; some call the constructor out of line (`__ct__7VersionFUcUsUc`).
+
+### Open issues
+
+- `dvd.c`: `DVDCheckDiskAsync` is not written yet.
+- `NANDCore`: `NANDGetType` and `nandIsRelativePath` are in the imported source but not in the binary. `nandChangeDir`, `NANDChangeDirAsync` and `nandChangeDirCallback` and `SCFlush` are written from the binary. The two NAND check functions at 802EA66C are not written yet.
+- `OSExec`: five functions after `__OSGetExecParams` are not in the imported source and stay unwritten (callback, 8026BD34, 8026C328, 8026C474, `__OSBootDol`). `OSFatal` needs more header work (VI, EXI, render mode names) and is not imported yet.
+- `vf`: `nand_drv` has one function in the binary (the original uses a different NAND driver); a few functions of `d_common`, `d_vf`, `d_vf_sys`, `pf_volume` and `pf_driver` are not in the binary.
+- `ai`/`ax`: four functions of `AXVPB` that are not in ogws are not written yet.
+- Fourteen of the 16 wii-ipl SDK files (OSCache, db, OS, OSNet, OSStateTM, OSPlayRecord, dvdfs, nand, OSNandbootInfo, OSStateFlags, __ppc_eabi_init, i2c, WPAD, vi3in1) now have code identical to the original, but stay `NonMatching` until the data sections are split. Left to do: `VIConfigure` in vi (register allocation) and OSAudioSystem, which needs the DSP boot code from game data.
+- The C library units split from the old `801C7830` unit have identical code but no data splits yet. The code gaps left between them (`qsort`, `rand`, `atof`, the area around `fseek`) have no source yet, and the assembly parts of MetroTRK (`targsupp.s`, a few stubs) and the debugger library after `801D9F70` are not split.
+- Jump tables and data remain in automatic splits, so functions with a `switch` can show 99.8 % instead of 100 % until the data sections are split; units cannot be marked `Matching` before that.
+- Most matched functions outside `src/gs/` and `src/ds/DSbridge.cpp` still use placeholder names and types (`fn_`, offset access): they are scaffolding, to be rewritten unit by unit following [STYLE.md](STYLE.md).
+
+## Static recompilation (evaluated, not pursued)
+
+Neither tool is ready for RPBP01; they do not replace matching.
+
+- **NWiiRecomp** (`BlackLineInteractive/NWiiRecomp`): C++, own GX renderer, SDL2. Experimental: only GameCube games are reported to boot, no Wii game listed as working.
+- **DolRecomp** (`ExpansionPak/DolRecomp`): C11, GPL-3.0, CPU only (graphics, audio and input left to the host). The README says the project is probably no longer maintained.
+- Neither handles `.fsys`. Decision: stay on matching decompilation; revisit NWiiRecomp if its GX renderer and Wii support mature.
