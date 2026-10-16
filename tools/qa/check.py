@@ -39,6 +39,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 import argparse
+import dataclasses
 import difflib
 import json
 import os
@@ -578,10 +579,10 @@ def symbol_issues(tree: Tree, results: List[CompileResult]) -> List[Issue]:
             local = [s for s in candidates if in_unit(s)]
             where = f"{unit['source']}: {elf.name}"
             if not candidates:
-                if elf.kind == "FUNC" and unit["source"].startswith("libs/"):
-                    # Library sources keep functions the game never calls,
-                    # which the linker strips. A wrong name still shows as
-                    # an unmatched function in the objdiff report.
+                if unit["source"].startswith("libs/"):
+                    # Library sources keep functions and data the game never
+                    # uses, which the linker strips. A wrong name still shows
+                    # as unmatched code or data in the objdiff report.
                     continue
                 issues.append(
                     Issue(
@@ -593,7 +594,12 @@ def symbol_issues(tree: Tree, results: List[CompileResult]) -> List[Issue]:
                 )
                 continue
             if not local:
-                if ranges:
+                stripped_static = (
+                    elf.kind == "FUNC"
+                    and elf.bind == "local"
+                    and unit["source"].startswith("libs/")
+                )  # a stripped library static sharing another unit's name
+                if ranges and not stripped_static:
                     issues.append(
                         Issue(
                             "symbols",
@@ -627,7 +633,7 @@ def symbol_issues(tree: Tree, results: List[CompileResult]) -> List[Issue]:
                 issues.append(
                     Issue(
                         "symbols",
-                        (name, "order", previous[1], function),
+                        (name, "order", function),
                         f"{unit['source']}: {function} (0x{address:08X}) is defined after "
                         f"{previous[1]} (0x{previous[0]:08X}); keep retail order",
                         unit["source"],
@@ -658,7 +664,19 @@ def symbol_issues(tree: Tree, results: List[CompileResult]) -> List[Issue]:
                     unit["source"],
                 )
             )
-    return issues
+    # Keyed without the unit, which goes in the detail: renaming or splitting
+    # a unit keeps its problems inherited. Placeholder units (src/.unsorted)
+    # all get `version` and its initializer from common.hpp; their addresses
+    # are only known once the file is identified.
+    return [
+        dataclasses.replace(issue, key=issue.key[1:], detail=issue.key[0])
+        for issue in issues
+        if not (
+            issue.path.startswith("src/.unsorted/")
+            and issue.key[1] in ("unknown", "outside")
+            and (issue.key[2] == "version" or issue.key[2].startswith("__sinit_"))
+        )
+    ]
 
 
 # --------------------------------------------------------------------------

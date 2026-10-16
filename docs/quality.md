@@ -9,7 +9,7 @@ Each check runs on both trees and fails only on problems the change adds. Proble
 | Check | Needs the game files | Fails on |
 |---|---|---|
 | `diagnostics` | no | a new compiler warning or error under the extra warning flags; in C units, a call to a function with no prototype (`-requireprotos`) |
-| `symbols` | no | a compiled symbol whose scope differs from `symbols.txt`, a name missing from `symbols.txt` (except functions under `libs/`, which the linker may strip), a definition outside the unit's `splits.txt` range, functions out of retail order, an undefined name that neither `symbols.txt` nor any unit provides |
+| `symbols` | no | a compiled symbol whose scope differs from `symbols.txt`, a name missing from `symbols.txt` (except under `libs/`, whose unused code and data the linker strips), a definition outside the unit's `splits.txt` range, functions out of retail order, an undefined name that neither `symbols.txt` nor any unit provides. In placeholder units (`src/.unsorted/`), `version` and its static initializer are not checked |
 | `format` | no | a changed file under `src/` or `include/` that clang-format would change (the whole file is checked, not only the changed lines) |
 | `lint` | no | an error from `tools/qa/lint.py` on the added lines |
 | `regressions` | yes | a function that was 100% and no longer is, or a unit or the total losing matched or linked code or data (objdiff report of the base against the change). Code moved to another unit is compared where it now is. |
