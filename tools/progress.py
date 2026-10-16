@@ -14,7 +14,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REPORT = os.path.join(ROOT, "build", "RPBP01", "report.json")
 README = os.path.join(ROOT, "README.md")
 
-# Areas of main.dol, see docs/architecture.md (boundaries are approximate)
+# Areas of main.dol, see docs/game-map.md (boundaries are approximate)
 AREAS = [
     ("Startup", [(0x80004000, 0x80006BC4)]),
     ("Game entry point", [(0x80006BC4, 0x80010000)]),
@@ -27,7 +27,10 @@ AREAS = [
     ("Game sound", [(0x80250000, 0x8025B6AC)]),
     ("Game networking", [(0x8025B6AC, 0x80268228)]),
     ("Revolution SDK", [(0x80268228, 0x80304DC4)]),
-    ("Other Nintendo libraries (VF, DWC, NW4R, HOME menu)", [(0x80304DC4, 0x8038F424), (0x8039A068, 0x803A60D8)]),
+    (
+        "Other Nintendo libraries (VF, DWC, NW4R, HOME menu)",
+        [(0x80304DC4, 0x8038F424), (0x8039A068, 0x803A60D8)],
+    ),
     ("Battle engine (ported from the DS games)", [(0x803A60D8, 0x803D9208)]),
     ("Pokémon data", [(0x8038F424, 0x8039A068), (0x803D9208, 0x803E3000)]),
 ]
@@ -60,16 +63,14 @@ def main():
                     break
 
     code = measures["matched_code_percent"]
-    linked = measures.get("complete_code_percent", measures.get("linked_code_percent", 0.0))
+    linked = measures.get(
+        "complete_code_percent", measures.get("linked_code_percent", 0.0)
+    )
     lines = [
         "<!-- progress:start -->",
-        f"![Code matched](https://img.shields.io/badge/code%20matched-{code:.1f}%25-blue)"
-        f" ![Functions](https://img.shields.io/badge/functions-{measures['matched_functions']}%2F{measures['total_functions']}-blue)"
-        f" ![Linked](https://img.shields.io/badge/linked-{linked:.1f}%25-green)",
-        "",
-        f"**{code:.2f} %** of the code matches the original "
+        f"**{code:.2f}%** of the code matches the original "
         f"({measures['matched_functions']:,} of {measures['total_functions']:,} functions). "
-        f"**{linked:.2f} %** is in finished units linked into the build.",
+        f"**{linked:.2f}%** is in finished units linked into the build.",
         "",
         "| Area | Size | Matched | |",
         "|---|---:|---:|---|",
@@ -77,7 +78,9 @@ def main():
     for name, _ in AREAS:
         total, matched = totals[name]
         percent = 100 * matched / total if total else 0.0
-        lines.append(f"| {name} | {total / 1024:,.0f} KiB | {percent:.1f} % | `{bar(percent)}` |")
+        lines.append(
+            f"| {name} | {total / 1024:,.0f} KiB | {percent:.1f} % | `{bar(percent)}` |"
+        )
     lines += [
         "",
         f"_Updated {datetime.date.today().isoformat()} from the objdiff report of a local build._",
