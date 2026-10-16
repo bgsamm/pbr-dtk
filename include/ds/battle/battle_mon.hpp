@@ -1,7 +1,8 @@
 #pragma once
 
-#include <revolution/types.h>
 #include "ds/pokemon.hpp"
+
+#include <revolution/types.h>
 
 #define NUM_BOOSTABLE_STATS 8
 
