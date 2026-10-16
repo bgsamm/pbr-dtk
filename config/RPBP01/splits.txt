@@ -1725,6 +1725,8 @@ libs/RVL_SDK/src/ipc/ipcProfile.c:
 
 libs/RVL_SDK/src/ipc/fs.c:
 	.text       start:0x802A46EC end:0x802A5B28
+	.sdata      start:0x8063DC50 end:0x8063DC60
+	.sbss       start:0x806400D8 end:0x806400EC
 
 src/.unsorted/802A5B28.cpp:
 	.text       start:0x802A5B28 end:0x802A5B84
