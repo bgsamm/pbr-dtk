@@ -1,6 +1,7 @@
 // Imported from doldecomp/ogws (CC0), src/revolution/NWC24/NWC24System.c
 #include <private/nwc24_ogws.h>
 #include <private/nwc24_ogws/NWC24Internal.h>
+#include <private/os/OSStateTM.h>
 
 #include <revolution/os.h>
 #include <revolution/sc.h>

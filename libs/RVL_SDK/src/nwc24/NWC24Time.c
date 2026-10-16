@@ -1,6 +1,7 @@
 // Imported from doldecomp/ogws (CC0), src/revolution/NWC24/NWC24Time.c
 #include <private/nwc24_ogws.h>
 #include <private/nwc24_ogws/NWC24Internal.h>
+#include <private/os/OSTime.h>
 
 #include <decomp.h>
 #include <revolution/sc.h>
