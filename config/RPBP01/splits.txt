@@ -1706,7 +1706,22 @@ libs/RVL_SDK/src/mem/mem_list.c:
 	.text       start:0x8029777C end:0x80297890
 
 src/.unsorted/80297890.cpp:
-	.text       start:0x80297890 end:0x802A270C
+	.text       start:0x80297890 end:0x8029ADF8
+
+libs/RVL_SDK/src/dsp/dsp.c:
+	.text       start:0x8029ADF8 end:0x8029B034
+	.sdata      start:0x8063DBC0 end:0x8063DBC4
+	.sbss       start:0x8063FF28 end:0x8063FF2C
+
+libs/RVL_SDK/src/dsp/dsp_debug.c:
+	.text       start:0x8029B034 end:0x8029B084
+
+libs/RVL_SDK/src/dsp/dsp_task.c:
+	.text       start:0x8029B084 end:0x8029B918
+	.sbss       start:0x8063FF30 end:0x8063FF48
+
+src/.unsorted/8029B918.cpp:
+	.text       start:0x8029B918 end:0x802A270C
 
 libs/RVL_SDK/src/cx/CXUncompression.c:
 	.text       start:0x802A270C end:0x802A2880
