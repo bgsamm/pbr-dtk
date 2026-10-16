@@ -1,6 +1,6 @@
 # Quality checks
 
-`tools/qa/check.py` checks a change against its base commit. CI runs it on every push and pull request, and it runs the same way locally.
+`tools/qa/check.py` checks a change against its base commit. CI runs it on every pull request and every push to `main`, and it runs the same way locally.
 
 Each check runs on both trees and fails only on problems the change adds. Problems the base already has are counted as inherited, so existing code never blocks an unrelated change, and every new problem does.
 
@@ -10,8 +10,8 @@ Each check runs on both trees and fails only on problems the change adds. Proble
 |---|---|---|
 | `diagnostics` | no | a new compiler warning or error under the extra warning flags; in C units, a call to a function with no prototype (`-requireprotos`) |
 | `symbols` | no | a compiled symbol whose scope differs from `symbols.txt`, a name missing from `symbols.txt`, a definition outside the unit's `splits.txt` range, functions out of retail order, an undefined name that neither `symbols.txt` nor any unit provides |
-| `format` | no | a changed file under `src/` or `include/` that clang-format 23 would change |
-| `lint` | no | an error from `tools/decomp/lint.py` on the added lines |
+| `format` | no | a changed file under `src/` or `include/` that clang-format would change (the whole file is checked, not only the changed lines) |
+| `lint` | no | an error from `tools/qa/lint.py` on the added lines |
 | `regressions` | yes | a function that was 100% and no longer is, or a unit or the total losing matched or linked code or data (objdiff report of the base against the change) |
 | `apply` | yes | a line `dtk dol apply` would change in `symbols.txt` |
 
@@ -33,11 +33,13 @@ python tools/qa/check.py --only symbols,format
 
 The base defaults to the merge base of `HEAD` and `origin/main`, and is checked out as a worktree in `build/qa/base`. Uncommitted changes in the working tree are included.
 
-Requirements: Python 3.12+, the build tools (`python configure.py` then `ninja`), clang-format 23 (`pip install clang-format==23.1.3`, or set `CLANG_FORMAT`), and tree-sitter for `lint.py` (`pip install -r tools/decomp/requirements.txt`).
+Requirements: Python 3.12+, the build tools (`python configure.py` then `ninja`), and the packages in `tools/qa/requirements.txt` (`pip install -r tools/qa/requirements.txt`): clang-format 23 and tree-sitter for `lint.py`. To use another clang-format 23 binary, set `CLANG_FORMAT`.
 
 ## Accepting a regression
 
-A cleaner rewrite sometimes matches less than the code it replaces. A maintainer can accept that by adding the `accepted regression` label to the pull request. The regressions are then listed but don't fail the build. The PR description must say why.
+A cleaner rewrite sometimes matches less than the code it replaces. A maintainer can accept that by adding the `accepted regression` label to the pull request. The regressions are then listed but don't fail the build. The PR description must say why each regression is necessary.
+
+Pushes to `main` never fail on regressions: they were accepted, or not, in the pull request.
 
 ## Cleanup index
 
@@ -45,7 +47,7 @@ A cleaner rewrite sometimes matches less than the code it replaces. A maintainer
 
 - **names**: functions and data defined with an address name (`fn_`, `lbl_`), `Unk` types, `TODO` notes;
 - **structure**: raw pointer arithmetic, pointers moved by a constant or cast and indexed, placeholder parameters (`a0`...), `extern "C"` linkage;
-- **fakematch**: every rule of `tools/decomp/fakematch_rules.toml`.
+- **fakematch**: the other rules of `tools/qa/fakematch_rules.toml`.
 
 The rules are tree-sitter queries in `tools/qa/cleanup_rules.toml`. Each site is listed with its unit's status and match score, so the work can be picked file by file.
 

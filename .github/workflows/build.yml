@@ -2,6 +2,8 @@ name: Build
 
 on:
   push:
+    # Pull request branches are checked by the pull_request event
+    branches: [main]
   pull_request:
     # labeled/unlabeled: re-run when the "accepted regression" label changes
     types: [opened, synchronize, reopened, labeled, unlabeled]
@@ -47,7 +49,8 @@ jobs:
     - name: Quality checks
       env:
         BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
-        QA_ACCEPT_REGRESSIONS: ${{ contains(github.event.pull_request.labels.*.name, 'accepted regression') && '1' || '0' }}
+        # Regressions are accepted or refused in the pull request, not on main
+        QA_ACCEPT_REGRESSIONS: ${{ (github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'accepted regression')) && '1' || '0' }}
       run: |
         python tools/qa/check.py --with-dol --only diagnostics,symbols,regressions,apply \
             --base "$BASE" \
@@ -55,6 +58,7 @@ jobs:
 
     # Upload map files
     - name: Upload map
+      if: ${{ !cancelled() }}
       uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.version }}_maps
@@ -62,7 +66,7 @@ jobs:
 
     # Upload progress report
     - name: Upload report
-      if: success() || failure()
+      if: ${{ !cancelled() }}
       uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.version }}_report
@@ -83,7 +87,7 @@ jobs:
         python-version: "3.12"
 
     - name: Install tools
-      run: pip install clang-format==23.1.3 -r tools/decomp/requirements.txt
+      run: pip install -r tools/qa/requirements.txt
 
     # clang-format on the changed files, and the fakematch lint on the added lines
     - name: Format and lint
@@ -106,7 +110,7 @@ jobs:
         python-version: "3.12"
 
     - name: Install tools
-      run: pip install -r tools/decomp/requirements.txt
+      run: pip install -r tools/qa/requirements.txt
 
     - name: Download report
       uses: actions/download-artifact@v4

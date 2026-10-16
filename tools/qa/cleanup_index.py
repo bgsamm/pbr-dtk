@@ -4,13 +4,13 @@
 Lists every site that keeps the code from the definition of done in
 docs/STYLE.md: address names, Unk types and TODO notes (names still to find),
 raw offsets, placeholder parameters and extern "C" linkage (memory and
-signatures still to type), and the constructs tools/decomp/lint.py reports
+signatures still to type), and the constructs tools/qa/lint.py reports
 (fakematches). Each site is listed with its unit's status and, given a
 report.json, its match score.
 
 The rules are tree-sitter queries: cleanup_rules.toml next to this script,
-plus tools/decomp/fakematch_rules.toml. Needs tree-sitter:
-  pip install -r tools/decomp/requirements.txt
+plus fakematch_rules.toml. Needs tree-sitter:
+  pip install -r tools/qa/requirements.txt
 
 Usage:
   python tools/qa/cleanup_index.py               summary on stdout
@@ -32,11 +32,10 @@ import sys
 import tempfile
 import tomllib
 
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "tools" / "decomp"))
+import lint  # next to this script; exits with a hint without tree-sitter
+from tree_sitter import Node, Query, QueryCursor
 
-import lint  # noqa: E402  (tools/decomp; exits with a hint without tree-sitter)
-from tree_sitter import Node, Query, QueryCursor  # noqa: E402
+ROOT = lint.ROOT
 
 RULES_PATH = Path(__file__).with_name("cleanup_rules.toml")
 TEMPLATE_PATH = Path(__file__).with_name("cleanup_index.html")
@@ -76,28 +75,37 @@ def load_categories() -> Tuple[List[Category], List[str]]:
     """Our cleanup rules, then the fakematch rules; and the macros to blank."""
     config = tomllib.loads(RULES_PATH.read_text(encoding="utf-8"))
     fakematch = lint.load_rules()
-    fakematch_ids = {rule.id for rule in fakematch.rules}
+    fakematch_by_id = {rule.id: rule for rule in fakematch.rules}
     categories = []
     for entry in config["rule"]:
-        if entry["id"] in fakematch_ids:
-            continue
         if entry["family"] not in FAMILIES:
             sys.exit(f"error: rule {entry['id']}: unknown family {entry['family']!r}")
-        try:
-            query = Query(lint.LANGUAGE, entry["query"])
-        except Exception as error:
-            sys.exit(f"error: rule {entry['id']}: bad query: {error}")
+        if "query" not in entry:
+            # A fakematch rule listed in another family
+            if entry["id"] not in fakematch_by_id:
+                sys.exit(f"error: rule {entry['id']}: no query and no fakematch rule")
+            rule = fakematch_by_id[entry["id"]]
+            query, message = rule.query, entry.get("message", rule.message)
+        else:
+            try:
+                query = Query(lint.LANGUAGE, entry["query"])
+            except Exception as error:
+                sys.exit(f"error: rule {entry['id']}: bad query: {error}")
+            message = entry["message"]
         categories.append(
             Category(
                 entry["id"],
                 entry["family"],
-                entry["message"],
+                message,
                 query,
                 entry.get("once_per_name", False),
                 tuple(entry.get("skip_inside", [])),
             )
         )
+    listed = {category.id for category in categories}
     for rule in fakematch.rules:
+        if rule.id in listed:
+            continue
         categories.append(Category(rule.id, "fakematch", rule.message, rule.query))
     return categories, fakematch.blank_macros
 

@@ -2,16 +2,16 @@
 """Find fakematch constructs in game code (src/ and include/).
 
 Usage:
-  python tools/decomp/lint.py [<base_ref>]     lines added since the merge base
-                                               with <base_ref> (default: origin/main)
-  python tools/decomp/lint.py --all [<path>...]
-                                               whole files; each path is a file or a
-                                               directory (default: src include)
-  python tools/decomp/lint.py --tree <file>    print a file's syntax tree, for
-                                               writing rules
+  python tools/qa/lint.py [<base_ref>]     lines added since the merge base
+                                            with <base_ref> (default: origin/main)
+  python tools/qa/lint.py --all [<path>...]
+                                            whole files; each path is a file or a
+                                            directory (default: src include)
+  python tools/qa/lint.py --tree <file>    print a file's syntax tree, for
+                                            writing rules
 
 The rules live in fakematch_rules.toml, next to this script. Needs tree-sitter:
-  pip install -r tools/decomp/requirements.txt
+  pip install -r tools/qa/requirements.txt
 
 Exits 1 if any error is found. Warnings are reported but never fail.
 """
@@ -30,11 +30,10 @@ try:
     import tree_sitter_cpp
 except ImportError:
     sys.exit(
-        "error: lint.py needs tree-sitter: "
-        "pip install -r tools/decomp/requirements.txt"
+        "error: lint.py needs tree-sitter: pip install -r tools/qa/requirements.txt"
     )
 
-from common import ROOT
+ROOT = Path(__file__).resolve().parents[2]
 
 PATHS = ["src", "include"]  # game code only; libs/ (SDK, runtime) is exempt
 SOURCE_SUFFIXES = {".c", ".cpp", ".cp", ".h", ".hpp", ".inc"}

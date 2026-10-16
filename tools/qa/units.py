@@ -17,6 +17,9 @@ from pathlib import Path
 def main() -> None:
     output = Path(sys.argv[1]).resolve()
     root = Path.cwd()
+    # Python puts this script's folder on sys.path, not the current directory.
+    # Add the checkout being read, so that `tools.project` is its own copy:
+    # check.py also runs the head's units.py in the base tree.
     sys.path.insert(0, str(root))
 
     import tools.project as project
@@ -68,6 +71,7 @@ def main() -> None:
         "binutils": _absolute(
             root, config.binutils_path or config.build_dir / "binutils"
         ),
+        "compilers": _absolute(root, config.compilers()),
         "symbols": (root / "config" / config.version / "symbols.txt").as_posix(),
         "splits": (root / "config" / config.version / "splits.txt").as_posix(),
     }

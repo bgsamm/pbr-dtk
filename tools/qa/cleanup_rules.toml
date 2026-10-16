@@ -1,8 +1,8 @@
 # Cleanup rules for cleanup_index.py.
 #
-# Same query format as tools/decomp/fakematch_rules.toml, whose rules the
-# index also lists (family "fakematch"). A rule here whose id is also a
-# fakematch rule is left out, so nothing is counted twice.
+# Same query format as fakematch_rules.toml, whose rules the index also lists
+# (family "fakematch"). A rule here with no query is the fakematch rule of the
+# same id, listed in this rule's family instead, so nothing is counted twice.
 #
 # family:          "names" (names still to find) or "structure" (memory still
 #                  accessed without a type); see "Definition of done" in
@@ -76,16 +76,7 @@ query = '''
 [[rule]]
 id = "raw-offset"
 family = "structure"
-message = "raw pointer arithmetic instead of a structure"
-# `*(u32 *)(p + 0x2C)`, `*(u32 *)((u8 *)p + 0x2C)`
-query = '''
-(pointer_expression
-  operator: "*"
-  argument: (cast_expression
-    type: (type_descriptor declarator: (abstract_pointer_declarator))
-    value: (parenthesized_expression
-      (binary_expression operator: ["+" "-"] right: (number_literal))))) @match
-'''
+# the fakematch rule: `*(u32 *)(p + 0x2C)`, `*(u32 *)((u8 *)p + 0x2C)`
 
 [[rule]]
 id = "offset-cast"
@@ -122,12 +113,7 @@ query = '''
 [[rule]]
 id = "placeholder-parameter"
 family = "structure"
-message = "placeholder parameter (a0, a1, ...)"
-query = '''
-((parameter_declaration
-   declarator: [(identifier) (pointer_declarator)] @_name) @match
-  (#match? @_name "^\\**\\s*a[0-9]$"))
-'''
+# the fakematch rule: `void f(u32 a0, u32 a1)`
 
 [[rule]]
 id = "extern-c"
