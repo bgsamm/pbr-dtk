@@ -6,5 +6,4 @@ extern "C" {
 
 void fn_8022DD2C(void) {}
 void fn_8022DD30(void) {}
-
 }
