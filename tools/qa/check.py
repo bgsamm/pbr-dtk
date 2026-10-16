@@ -594,7 +594,12 @@ def symbol_issues(tree: Tree, results: List[CompileResult]) -> List[Issue]:
                 )
                 continue
             if not local:
-                if ranges:
+                stripped_static = (
+                    elf.kind == "FUNC"
+                    and elf.bind == "local"
+                    and unit["source"].startswith("libs/")
+                )  # a stripped library static sharing another unit's name
+                if ranges and not stripped_static:
                     issues.append(
                         Issue(
                             "symbols",
