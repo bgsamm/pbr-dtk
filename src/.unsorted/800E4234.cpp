@@ -6,5 +6,4 @@ extern "C" {
 
 void fn_800E46A0(void) {}
 void fn_800E5670(void) {}
-
 }
